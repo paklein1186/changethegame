@@ -2,6 +2,8 @@
 
 ## Edge functions
 
+- Keep `nodeModulesDir: "none"` in root `deno.json`: published functions resolve
+  `npm:` imports from Deno's cache, not gitignored local dependency folders.
 - Run `deno install` inside `supabase/functions` after a clean checkout or whenever
   `deno check` reports a missing package: the preview build type-checks every
   `supabase/functions/*/index.ts`, and the npm packages those functions import are
