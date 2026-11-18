@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { dataResult, errorResult, requireAuth, supabaseForUser } from "../supabase";
+import { supabaseForToken } from "../supabase";
 
 export default defineTool({
   name: "create_personal_task",
@@ -19,9 +19,9 @@ export default defineTool({
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   handler: async ({ title, description, priority, due_date }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const { data, error } = await supabaseForUser(ctx)
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const { data, error } = await supabaseForToken(ctx.getToken() ?? "")
       .from("personal_tasks")
       .insert({
         user_id: userId,
@@ -33,7 +33,11 @@ export default defineTool({
       })
       .select("id, title, status, priority, due_date")
       .single();
-    if (error) return errorResult(error.message);
-    return dataResult({ created: data });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const payload = { created: data };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload },
+    };
   },
 });

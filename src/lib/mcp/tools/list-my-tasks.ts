@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { dataResult, errorResult, requireAuth, supabaseForUser } from "../supabase";
+import { supabaseForToken } from "../supabase";
 
 export default defineTool({
   name: "list_my_tasks",
@@ -13,9 +13,9 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ include_done, limit }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const supabase = supabaseForUser(ctx);
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
     const max = limit ?? 30;
 
     let personalQuery = supabase
@@ -35,11 +35,15 @@ export default defineTool({
     if (!include_done) subtaskQuery = subtaskQuery.neq("status", "done");
 
     const [personal, subtasks] = await Promise.all([personalQuery, subtaskQuery]);
-    if (personal.error) return errorResult(personal.error.message);
+    if (personal.error) return { content: [{ type: "text", text: personal.error.message }], isError: true };
 
-    return dataResult({
+    const payload = {
       personal_tasks: personal.data ?? [],
       assigned_quest_subtasks: subtasks.data ?? [],
-    });
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload },
+    };
   },
 });

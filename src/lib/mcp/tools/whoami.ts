@@ -1,5 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
-import { dataResult, errorResult, requireAuth, supabaseForUser } from "../supabase";
+import { supabaseForToken } from "../supabase";
 
 export default defineTool({
   name: "whoami",
@@ -9,17 +9,21 @@ export default defineTool({
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async (_input, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const { data, error } = await supabaseForUser(ctx)
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const { data, error } = await supabaseForToken(ctx.getToken() ?? "")
       .from("profiles")
       .select(
         "user_id, name, headline, bio, location, xp_total, xp_level, coins_balance, ctg_balance, credits_balance, biopoints_balance, persona_type, current_plan_code",
       )
       .eq("user_id", userId)
       .maybeSingle();
-    if (error) return errorResult(error.message);
-    if (!data) return errorResult("No profile found for this account.");
-    return dataResult({ profile: data });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "No profile found for this account." }], isError: true };
+    const payload = { profile: data };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload },
+    };
   },
 });

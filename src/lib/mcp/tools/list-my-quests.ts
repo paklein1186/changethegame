@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { dataResult, errorResult, requireAuth, supabaseForUser } from "../supabase";
+import { supabaseForToken } from "../supabase";
 
 export default defineTool({
   name: "list_my_quests",
@@ -12,9 +12,9 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ limit }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const supabase = supabaseForUser(ctx);
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
     const max = limit ?? 20;
 
     const [created, joined] = await Promise.all([
@@ -27,20 +27,32 @@ export default defineTool({
         .limit(max),
       supabase
         .from("quest_participants")
-        .select("role, status, quests!inner(id, title, status, guild_id, created_at, is_deleted)")
+        .select("quest_id, role, status, created_at")
         .eq("user_id", userId)
+        .order("created_at", { ascending: false })
         .limit(max),
     ]);
+    if (created.error) return { content: [{ type: "text", text: created.error.message }], isError: true };
+    if (joined.error) return { content: [{ type: "text", text: joined.error.message }], isError: true };
 
-    if (created.error) return errorResult(created.error.message);
+    const questIds = (joined.data ?? []).map((row) => row.quest_id);
+    const { data: joinedQuests, error: joinedQuestsError } = await supabase
+      .from("quests")
+      .select("id, title, status, guild_id, created_at")
+      .in("id", questIds)
+      .eq("is_deleted", false);
+    if (joinedQuestsError) return { content: [{ type: "text", text: joinedQuestsError.message }], isError: true };
 
-    const participating = (joined.data ?? [])
-      .map((row: Record<string, unknown>) => {
-        const quest = row.quests as Record<string, unknown> | null;
-        return quest && quest.is_deleted === false ? { ...quest, my_role: row.role, my_status: row.status } : null;
-      })
-      .filter(Boolean);
+    const visible = joinedQuests ?? [];
+    const participating = (joined.data ?? []).flatMap((row) => {
+      const quest = visible.find((item) => item.id === row.quest_id);
+      return quest ? [{ ...quest, my_role: row.role, my_status: row.status }] : [];
+    });
 
-    return dataResult({ created: created.data ?? [], participating });
+    const payload = { created: created.data ?? [], participating };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload },
+    };
   },
 });

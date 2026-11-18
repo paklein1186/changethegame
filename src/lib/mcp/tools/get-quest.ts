@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { dataResult, errorResult, requireAuth, supabaseForUser } from "../supabase";
+import { supabaseForToken } from "../supabase";
 
 export default defineTool({
   name: "get_quest",
@@ -12,8 +12,8 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ quest_id }, ctx) => {
-    if (!requireAuth(ctx)) return errorResult("Not authenticated.");
-    const supabase = supabaseForUser(ctx);
+    if (!ctx.getUserId()) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
 
     const { data: quest, error } = await supabase
       .from("quests")
@@ -22,8 +22,8 @@ export default defineTool({
       )
       .eq("id", quest_id)
       .maybeSingle();
-    if (error) return errorResult(error.message);
-    if (!quest) return errorResult("Quest not found or not visible to you.");
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!quest) return { content: [{ type: "text", text: "Quest not found or not visible to you." }], isError: true };
 
     const [subtasks, participants, updates] = await Promise.all([
       supabase
@@ -45,11 +45,15 @@ export default defineTool({
         .limit(10),
     ]);
 
-    return dataResult({
+    const payload = {
       quest,
       subtasks: subtasks.data ?? [],
       participants: participants.data ?? [],
       recent_updates: updates.data ?? [],
-    });
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload },
+    };
   },
 });

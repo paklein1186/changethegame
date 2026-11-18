@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { dataResult, errorResult, requireAuth, supabaseForUser } from "../supabase";
+import { supabaseForToken } from "../supabase";
 
 export default defineTool({
   name: "list_my_guilds",
@@ -12,22 +12,37 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ limit }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const { data, error } = await supabaseForUser(ctx)
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
+
+    const { data: memberships, error } = await supabase
       .from("guild_members")
-      .select("role, joined_at, guilds!inner(id, name, description, type, is_deleted)")
+      .select("guild_id, role, joined_at")
       .eq("user_id", userId)
       .limit(limit ?? 50);
-    if (error) return errorResult(error.message);
-    const guilds = (data ?? [])
-      .map((row: Record<string, unknown>) => {
-        const guild = row.guilds as Record<string, unknown> | null;
-        return guild && guild.is_deleted === false
-          ? { id: guild.id, name: guild.name, description: guild.description, type: guild.type, my_role: row.role, joined_at: row.joined_at }
-          : null;
-      })
-      .filter(Boolean);
-    return dataResult({ count: guilds.length, guilds });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+
+    const guildIds = (memberships ?? []).map((row) => row.guild_id);
+    const { data: guilds, error: guildsError } = await supabase
+      .from("guilds")
+      .select("id, name, description, type, is_deleted")
+      .in("id", guildIds)
+      .eq("is_deleted", false);
+    if (guildsError) return { content: [{ type: "text", text: guildsError.message }], isError: true };
+
+    const visible = guilds ?? [];
+    const rows = (memberships ?? []).flatMap((row) => {
+      const guild = visible.find((item) => item.id === row.guild_id);
+      return guild
+        ? [{ id: guild.id, name: guild.name, description: guild.description, type: guild.type, my_role: row.role, joined_at: row.joined_at }]
+        : [];
+    });
+
+    const payload = { count: rows.length, guilds: rows };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload },
+    };
   },
 });

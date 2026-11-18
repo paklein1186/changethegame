@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { dataResult, errorResult, requireAuth, supabaseForUser } from "../supabase";
+import { supabaseForToken } from "../supabase";
 
 export default defineTool({
   name: "search_quests",
@@ -18,9 +18,9 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ query, status, guild_id, limit }, ctx) => {
-    if (!requireAuth(ctx)) return errorResult("Not authenticated.");
+    if (!ctx.getUserId()) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
     const escaped = query.replace(/[%,()]/g, " ").trim();
-    let q = supabaseForUser(ctx)
+    let q = supabaseForToken(ctx.getToken() ?? "")
       .from("quests")
       .select("id, title, description, status, guild_id, reward_xp, ctg_budget, coins_budget, created_at")
       .eq("is_deleted", false)
@@ -31,7 +31,11 @@ export default defineTool({
     if (status) q = q.eq("status", status);
     if (guild_id) q = q.eq("guild_id", guild_id);
     const { data, error } = await q;
-    if (error) return errorResult(error.message);
-    return dataResult({ count: data?.length ?? 0, quests: data ?? [] });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const payload = { count: data?.length ?? 0, quests: data ?? [] };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload },
+    };
   },
 });

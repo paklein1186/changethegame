@@ -1,0 +1,12 @@
+{
+  "name": "changethegame-edge-functions",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@lovable.dev/mcp-js": "0.24.0",
+    "@supabase/supabase-js": "2.57.2",
+    "hono": "4",
+    "mcp-lite": "^0.10.0",
+    "zod": "^3.25.76"
+  }
+}

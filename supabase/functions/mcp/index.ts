@@ -10,25 +10,13 @@ import { defineTool } from "npm:@lovable.dev/mcp-js@0.24.0";
 
 // src/lib/mcp/supabase.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.95.3";
-function supabaseForUser(ctx) {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY;
+function supabaseForToken(token = "") {
+  const url = process.env.SUPABASE_URL ?? "";
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY ?? "";
   return createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    global: { headers: { Authorization: `Bearer ${token}` } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
-}
-function requireAuth(ctx) {
-  return ctx.isAuthenticated() ? ctx.getUserId() ?? null : null;
-}
-function errorResult(message) {
-  return { content: [{ type: "text", text: message }], isError: true };
-}
-function dataResult(structured) {
-  return {
-    content: [{ type: "text", text: JSON.stringify(structured, null, 2) }],
-    structuredContent: structured
-  };
 }
 
 // src/lib/mcp/tools/whoami.ts
@@ -39,14 +27,18 @@ var whoami_default = defineTool({
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async (_input, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const { data, error } = await supabaseForUser(ctx).from("profiles").select(
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const { data, error } = await supabaseForToken(ctx.getToken() ?? "").from("profiles").select(
       "user_id, name, headline, bio, location, xp_total, xp_level, coins_balance, ctg_balance, credits_balance, biopoints_balance, persona_type, current_plan_code"
     ).eq("user_id", userId).maybeSingle();
-    if (error) return errorResult(error.message);
-    if (!data) return errorResult("No profile found for this account.");
-    return dataResult({ profile: data });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "No profile found for this account." }], isError: true };
+    const payload = { profile: data };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
@@ -65,14 +57,18 @@ var search_quests_default = defineTool2({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ query, status, guild_id, limit }, ctx) => {
-    if (!requireAuth(ctx)) return errorResult("Not authenticated.");
+    if (!ctx.getUserId()) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
     const escaped = query.replace(/[%,()]/g, " ").trim();
-    let q = supabaseForUser(ctx).from("quests").select("id, title, description, status, guild_id, reward_xp, ctg_budget, coins_budget, created_at").eq("is_deleted", false).eq("is_draft", false).or(`title.ilike.%${escaped}%,description.ilike.%${escaped}%`).order("created_at", { ascending: false }).limit(limit ?? 10);
+    let q = supabaseForToken(ctx.getToken() ?? "").from("quests").select("id, title, description, status, guild_id, reward_xp, ctg_budget, coins_budget, created_at").eq("is_deleted", false).eq("is_draft", false).or(`title.ilike.%${escaped}%,description.ilike.%${escaped}%`).order("created_at", { ascending: false }).limit(limit ?? 10);
     if (status) q = q.eq("status", status);
     if (guild_id) q = q.eq("guild_id", guild_id);
     const { data, error } = await q;
-    if (error) return errorResult(error.message);
-    return dataResult({ count: data?.length ?? 0, quests: data ?? [] });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const payload = { count: data?.length ?? 0, quests: data ?? [] };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
@@ -88,24 +84,28 @@ var get_quest_default = defineTool3({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ quest_id }, ctx) => {
-    if (!requireAuth(ctx)) return errorResult("Not authenticated.");
-    const supabase = supabaseForUser(ctx);
+    if (!ctx.getUserId()) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
     const { data: quest, error } = await supabase.from("quests").select(
       "id, title, description, status, quest_nature, guild_id, owner_type, owner_id, reward_xp, credit_reward, ctg_budget, coins_budget, funding_goal_credits, ai_summary, created_at, updated_at"
     ).eq("id", quest_id).maybeSingle();
-    if (error) return errorResult(error.message);
-    if (!quest) return errorResult("Quest not found or not visible to you.");
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!quest) return { content: [{ type: "text", text: "Quest not found or not visible to you." }], isError: true };
     const [subtasks, participants, updates] = await Promise.all([
       supabase.from("quest_subtasks").select("id, title, status, priority, due_date, assignee_user_ids, xp_reward, ctg_reward, order_index").eq("quest_id", quest_id).order("order_index", { ascending: true }).limit(100),
       supabase.from("quest_participants").select("user_id, role, status, created_at").eq("quest_id", quest_id).limit(100),
       supabase.from("quest_updates").select("id, content, created_at").eq("quest_id", quest_id).order("created_at", { ascending: false }).limit(10)
     ]);
-    return dataResult({
+    const payload = {
       quest,
       subtasks: subtasks.data ?? [],
       participants: participants.data ?? [],
       recent_updates: updates.data ?? []
-    });
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
@@ -121,20 +121,29 @@ var list_my_quests_default = defineTool4({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ limit }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const supabase = supabaseForUser(ctx);
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
     const max = limit ?? 20;
     const [created, joined] = await Promise.all([
       supabase.from("quests").select("id, title, status, guild_id, created_at").eq("created_by_user_id", userId).eq("is_deleted", false).order("created_at", { ascending: false }).limit(max),
-      supabase.from("quest_participants").select("role, status, quests!inner(id, title, status, guild_id, created_at, is_deleted)").eq("user_id", userId).limit(max)
+      supabase.from("quest_participants").select("quest_id, role, status, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(max)
     ]);
-    if (created.error) return errorResult(created.error.message);
-    const participating = (joined.data ?? []).map((row) => {
-      const quest = row.quests;
-      return quest && quest.is_deleted === false ? { ...quest, my_role: row.role, my_status: row.status } : null;
-    }).filter(Boolean);
-    return dataResult({ created: created.data ?? [], participating });
+    if (created.error) return { content: [{ type: "text", text: created.error.message }], isError: true };
+    if (joined.error) return { content: [{ type: "text", text: joined.error.message }], isError: true };
+    const questIds = (joined.data ?? []).map((row) => row.quest_id);
+    const { data: joinedQuests, error: joinedQuestsError } = await supabase.from("quests").select("id, title, status, guild_id, created_at").in("id", questIds).eq("is_deleted", false);
+    if (joinedQuestsError) return { content: [{ type: "text", text: joinedQuestsError.message }], isError: true };
+    const visible = joinedQuests ?? [];
+    const participating = (joined.data ?? []).flatMap((row) => {
+      const quest = visible.find((item) => item.id === row.quest_id);
+      return quest ? [{ ...quest, my_role: row.role, my_status: row.status }] : [];
+    });
+    const payload = { created: created.data ?? [], participating };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
@@ -150,15 +159,24 @@ var list_my_guilds_default = defineTool5({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ limit }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const { data, error } = await supabaseForUser(ctx).from("guild_members").select("role, joined_at, guilds!inner(id, name, description, type, is_deleted)").eq("user_id", userId).limit(limit ?? 50);
-    if (error) return errorResult(error.message);
-    const guilds = (data ?? []).map((row) => {
-      const guild = row.guilds;
-      return guild && guild.is_deleted === false ? { id: guild.id, name: guild.name, description: guild.description, type: guild.type, my_role: row.role, joined_at: row.joined_at } : null;
-    }).filter(Boolean);
-    return dataResult({ count: guilds.length, guilds });
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
+    const { data: memberships, error } = await supabase.from("guild_members").select("guild_id, role, joined_at").eq("user_id", userId).limit(limit ?? 50);
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const guildIds = (memberships ?? []).map((row) => row.guild_id);
+    const { data: guilds, error: guildsError } = await supabase.from("guilds").select("id, name, description, type, is_deleted").in("id", guildIds).eq("is_deleted", false);
+    if (guildsError) return { content: [{ type: "text", text: guildsError.message }], isError: true };
+    const visible = guilds ?? [];
+    const rows = (memberships ?? []).flatMap((row) => {
+      const guild = visible.find((item) => item.id === row.guild_id);
+      return guild ? [{ id: guild.id, name: guild.name, description: guild.description, type: guild.type, my_role: row.role, joined_at: row.joined_at }] : [];
+    });
+    const payload = { count: rows.length, guilds: rows };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
@@ -175,20 +193,24 @@ var list_my_tasks_default = defineTool6({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ include_done, limit }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const supabase = supabaseForUser(ctx);
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
     const max = limit ?? 30;
     let personalQuery = supabase.from("personal_tasks").select("id, title, description, status, priority, due_date, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(max);
     if (!include_done) personalQuery = personalQuery.neq("status", "done");
     let subtaskQuery = supabase.from("quest_subtasks").select("id, quest_id, title, status, priority, due_date, xp_reward, ctg_reward").contains("assignee_user_ids", [userId]).order("due_date", { ascending: true }).limit(max);
     if (!include_done) subtaskQuery = subtaskQuery.neq("status", "done");
     const [personal, subtasks] = await Promise.all([personalQuery, subtaskQuery]);
-    if (personal.error) return errorResult(personal.error.message);
-    return dataResult({
+    if (personal.error) return { content: [{ type: "text", text: personal.error.message }], isError: true };
+    const payload = {
       personal_tasks: personal.data ?? [],
       assigned_quest_subtasks: subtasks.data ?? []
-    });
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
@@ -207,9 +229,9 @@ var create_personal_task_default = defineTool7({
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   handler: async ({ title, description, priority, due_date }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const { data, error } = await supabaseForUser(ctx).from("personal_tasks").insert({
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const { data, error } = await supabaseForToken(ctx.getToken() ?? "").from("personal_tasks").insert({
       user_id: userId,
       title,
       description: description ?? null,
@@ -217,8 +239,12 @@ var create_personal_task_default = defineTool7({
       due_date: due_date ?? null,
       status: "todo"
     }).select("id, title, status, priority, due_date").single();
-    if (error) return errorResult(error.message);
-    return dataResult({ created: data });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    const payload = { created: data };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
@@ -237,17 +263,22 @@ var update_personal_task_default = defineTool8({
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   handler: async ({ task_id, status, priority, due_date }, ctx) => {
-    const userId = requireAuth(ctx);
-    if (!userId) return errorResult("Not authenticated.");
-    const patch = {};
-    if (status) patch.status = status;
-    if (priority) patch.priority = priority;
-    if (due_date) patch.due_date = due_date;
-    if (Object.keys(patch).length === 0) return errorResult("Nothing to update.");
-    const { data, error } = await supabaseForUser(ctx).from("personal_tasks").update(patch).eq("id", task_id).eq("user_id", userId).select("id, title, status, priority, due_date").maybeSingle();
-    if (error) return errorResult(error.message);
-    if (!data) return errorResult("Task not found or not yours.");
-    return dataResult({ updated: data });
+    const userId = ctx.getUserId();
+    if (!userId) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const patch = {
+      ...status ? { status } : {},
+      ...priority ? { priority } : {},
+      ...due_date ? { due_date } : {}
+    };
+    if (Object.keys(patch).length === 0) return { content: [{ type: "text", text: "Nothing to update." }], isError: true };
+    const { data, error } = await supabaseForToken(ctx.getToken() ?? "").from("personal_tasks").update(patch).eq("id", task_id).eq("user_id", userId).select("id, title, status, priority, due_date").maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: "Task not found or not yours." }], isError: true };
+    const payload = { updated: data };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+      structuredContent: { ...payload }
+    };
   }
 });
 
