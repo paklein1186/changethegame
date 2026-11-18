@@ -15,6 +15,13 @@
       "when": 1795002056577,
       "tag": "0001_tighten_private_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795002830907,
+      "tag": "0002_scope_translations_mentions_calendar",
+      "breakpoints": true
     }
   ]
 }

@@ -74,39 +74,12 @@ export default function PublicBooking() {
     queryKey: ["provider-calendar-busy", providerUserId],
     queryFn: async () => {
       if (!providerUserId) return [];
-      const { data: busyEvents, error: busyErr } = await supabase
-        .from("calendar_busy_events")
-        .select("start_at, end_at, source_calendar_id, connection_id")
-        .eq("user_id", providerUserId);
-      if (busyErr) {
-        console.error("[PublicBooking] Failed to fetch busy events:", busyErr);
+      const { data, error } = await (supabase.rpc as any)("get_provider_busy_slots", { _provider_id: providerUserId });
+      if (error) {
+        console.error("Failed to fetch provider busy slots:", error);
         return [];
       }
-      if (!busyEvents || busyEvents.length === 0) {
-        console.log("[PublicBooking] No busy events found for provider", providerUserId);
-        return [];
-      }
-      const connectionIds = [...new Set(busyEvents.map(e => e.connection_id))];
-      const { data: prefs, error: prefsErr } = await supabase
-        .from("calendar_subcalendar_preferences")
-        .select("source_calendar_id, is_enabled, connection_id")
-        .eq("user_id", providerUserId)
-        .in("connection_id", connectionIds);
-      if (prefsErr) {
-        console.warn("[PublicBooking] Could not fetch subcalendar prefs, using all busy events:", prefsErr);
-        return busyEvents;
-      }
-      const disabledSet = new Set<string>();
-      if (prefs?.length) {
-        for (const p of prefs as any[]) {
-          if (!p.is_enabled) disabledSet.add(`${p.connection_id}::${p.source_calendar_id}`);
-        }
-      }
-      const filtered = busyEvents.filter((e: any) =>
-        !e.source_calendar_id || !disabledSet.has(`${e.connection_id}::${e.source_calendar_id}`)
-      );
-      console.log(`[PublicBooking] Busy events: ${busyEvents.length} total, ${filtered.length} after filtering`);
-      return filtered;
+      return (data ?? []) as { start_at: string; end_at: string }[];
     },
     enabled: !!providerUserId,
     staleTime: 30_000,

@@ -11275,6 +11275,13 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_provider_busy_slots: {
+        Args: { _provider_id: string }
+        Returns: {
+          end_at: string
+          start_at: string
+        }[]
+      }
       get_recent_data_points: {
         Args: {
           p_limit?: number
