@@ -328,6 +328,13 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
       region = findByName(String(lieu.region), territoryPool, TERRITORY_ALIASES);
       if (region && farTown(region)) region = null;
     }
+    // Pas de région fournie : on la déduit des coordonnées (« state » d'OSM : Wallonie, Bretagne…),
+    // sinon le lieu n'apparaîtrait que dans l'écosystème de son pays.
+    if (!region && !lieu.region && hasCoords && (lat !== 0 || lon !== 0)) {
+      const g = await reverse(lat, lon);
+      const key = g?.state ? officialRegionKey(g.state) : null;
+      if (key) region = await ensureRegion(key, country);
+    }
     if (lieu.region && !region) note(summary.unmatched_places, String(lieu.region));
     if (lieu.pays && !country) note(summary.unmatched_places, String(lieu.pays));
     const territoryIds = [region, country].filter((t, i, a): t is any => !!t && a.findIndex((x) => x?.id === t.id) === i).map((t) => t.id as string);
@@ -352,7 +359,7 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
   const GEO_BUDGET = 30;
   let geoCalls = 0;
   let lastGeo = 0;
-  const geoCache = new Map<string, { name: string; lat: number; lon: number } | null>();
+  const geoCache = new Map<string, { name: string; lat: number; lon: number; state?: string } | null>();
   const reverse = async (lat: number, lon: number) => {
     const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
     if (geoCache.has(key)) return geoCache.get(key) ?? null;
@@ -361,7 +368,7 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
     const wait = 1_100 - (Date.now() - lastGeo);
     if (wait > 0) await sleep(wait);
     lastGeo = Date.now();
-    let out: { name: string; lat: number; lon: number } | null = null;
+    let out: { name: string; lat: number; lon: number; state?: string } | null = null;
     try {
       const res = await fetch(`${NOMINATIM_URL}/reverse?format=jsonv2&zoom=10&addressdetails=1&accept-language=fr&lat=${lat}&lon=${lon}`, {
         headers: { "User-Agent": `changethegame-agent-sync/1.0 (${SITE_URL})` },
@@ -371,7 +378,12 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
         const j = await res.json();
         const a = j?.address ?? {};
         const name = a.city ?? a.town ?? a.village ?? a.municipality ?? a.hamlet ?? null;
-        if (name) out = { name: String(name), lat: Number(j.lat), lon: Number(j.lon) };
+        // « state » vaut la province en Belgique (« Namur ») et la région en France ; le code ISO de niveau 4
+        // (BE-WAL, BE-VLG, BE-BRU) sert de secours pour les régions belges.
+        const iso = String(a["ISO3166-2-lvl4"] ?? "");
+        const isoRegion = ({ "BE-WAL": "Wallonie", "BE-VLG": "Flandre", "BE-BRU": "Bruxelles" } as Record<string, string>)[iso];
+        const state = a.state ? String(a.state) : isoRegion;
+        if (name) out = { name: String(name), lat: Number(j.lat), lon: Number(j.lon), state: state && officialRegionKey(state) ? state : isoRegion ?? state };
       } else err(`géocodage → ${res.status}`);
     } catch (e: any) { err(`géocodage : ${e?.message ?? e}`); }
     geoCache.set(key, out);
