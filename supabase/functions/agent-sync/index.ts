@@ -38,7 +38,21 @@ function describeLieu(lieu: any, agentName: string): string {
   ];
   const detail = lines.filter(([, v]) => fmt(v)).map(([k, v]) => `${k} : ${fmt(v)}`);
   if (detail.length) parts.push(detail.join("\n"));
-  parts.push(`Source : ${agentName}.`);
+  if (!parts.length) {
+    // Pas encore de synthèse chez l'agent : une phrase neutre à partir de ce qu'on sait, plutôt qu'une fiche vide.
+    const commune = fmt(lieu.commune ?? lieu.ville);
+    const where = [fmt(lieu.region), fmt(lieu.pays)].filter((v) => v && v !== commune).join(", ");
+    const themes = [...splitTerms(lieu.categories), ...splitTerms(lieu.mots_cles)].slice(0, 6);
+    let intro = "Tiers-lieu";
+    if (commune) intro += ` situé à ${commune}`;
+    if (where) intro += commune ? ` (${where})` : ` situé en ${where}`;
+    intro += ".";
+    if (themes.length) intro += ` Thèmes : ${themes.join(", ")}.`;
+    parts.push(intro);
+    parts.push(`Fiche en cours de complétion sur ${agentName} : la présentation détaillée du lieu apparaîtra ici dès qu'elle sera disponible.`);
+  } else {
+    parts.push(`Source : ${agentName}.`);
+  }
   return parts.join("\n\n").slice(0, 4000);
 }
 
