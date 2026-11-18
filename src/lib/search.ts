@@ -22,6 +22,32 @@ export interface SearchFilters {
   priceMax?: number;
 }
 
+// Territory names are stored in English or with accents (« Wallonia », « Liège »): people type « wallonie », « liege ».
+// Territories are few, so they are matched here, accent-insensitively, with French/English equivalents.
+const norm = (s: string) =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+const TERRITORY_EQUIVALENTS: Record<string, string[]> = {
+  wallonie: ["wallonia"], "region wallonne": ["wallonia"], flandre: ["flanders"], vlaanderen: ["flanders"],
+  bruxelles: ["brussels"], brussel: ["brussels"], belgique: ["belgium"], belgie: ["belgium"],
+  suisse: ["switzerland"], allemagne: ["germany"], espagne: ["spain"], "royaume uni": ["uk"], angleterre: ["uk"],
+  bourgogne: ["burgundy"], lisbonne: ["lisbon"], geneve: ["geneva"], grece: ["greece", "grece"],
+  brittany: ["bretagne"], normandy: ["normandie"], corsica: ["corse"], burgundy: ["bourgogne"],
+};
+let territoryCache: { at: number; rows: any[] } | null = null;
+async function searchTerritories(term: string): Promise<any[]> {
+  if (!territoryCache || Date.now() - territoryCache.at > 5 * 60_000) {
+    const { data } = await (supabase as any).from("territories").select("id, name, level, summary, logo_url").eq("is_deleted", false).limit(5000);
+    territoryCache = { at: Date.now(), rows: data ?? [] };
+  }
+  const q = norm(term);
+  if (!q) return [];
+  const wanted = [q, ...(TERRITORY_EQUIVALENTS[q] ?? [])];
+  return territoryCache.rows
+    .filter((t) => { const n = norm(t.name ?? ""); return wanted.some((w) => n.includes(w)); })
+    .sort((a, b) => Number(norm(b.name) === q || wanted.includes(norm(b.name))) - Number(norm(a.name) === q || wanted.includes(norm(a.name))))
+    .slice(0, 20);
+}
+
 // Characters that break PostgREST's or() syntax (and ilike wildcards) are turned into spaces.
 const cleanTerm = (query: string) => query.replace(/[,()"\\%*]/g, " ").replace(/\s+/g, " ").trim();
 
@@ -63,7 +89,7 @@ export async function globalSearch(
     db.from("pods").select("id, name, description, image_url").eq("is_deleted", false).eq("is_draft", false).or(`name.ilike.${q},description.ilike.${q}`).limit(20),
     db.from("services").select("id, title, description, price_amount, image_url").eq("is_deleted", false).eq("is_draft", false).or(`title.ilike.${q},description.ilike.${q}`).limit(20),
     db.from("companies").select("id, name, description, logo_url, banner_url").eq("is_deleted", false).or(`name.ilike.${q},description.ilike.${q}`).limit(20),
-    db.from("territories").select("id, name, level, summary, logo_url").eq("is_deleted", false).ilike("name", q).limit(20),
+    searchTerritories(term).then((data) => ({ data })),
   ]);
 
   const blockedIds = new Set(

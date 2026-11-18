@@ -360,11 +360,38 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
   let geoCalls = 0;
   let lastGeo = 0;
   const geoCache = new Map<string, { name: string; lat: number; lon: number; state?: string } | null>();
+  // OpenStreetMap (Nominatim) refuse parfois les serveurs partagés de Supabase (403) ou limite le débit (429) :
+  // on bascule alors sur Photon (même données OpenStreetMap, sans clé) pour le reste du passage.
+  let nominatimBlocked = false;
+  const PHOTON_URL = Deno.env.get("PHOTON_URL") ?? "https://photon.komoot.io";
+  const photon = async (path: string, wantCountry?: string): Promise<{ name: string; lat: number; lon: number; state?: string } | null> => {
+    try {
+      const res = await fetch(`${PHOTON_URL}/${path}`, {
+        headers: { "User-Agent": `changethegame-agent-sync/1.0 (${SITE_URL})` },
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (!res.ok) { err(`géocodage (Photon) → ${res.status}`); return null; }
+      const features: any[] = (await res.json())?.features ?? [];
+      const f = features.find((x) => !wantCountry || String(x?.properties?.countrycode ?? "").toLowerCase() === wantCountry) ?? null;
+      if (!f) return null;
+      const pr = f.properties ?? {};
+      const name = pr.city ?? (["city", "town", "village", "locality"].includes(pr.type) ? pr.name : null);
+      if (!name) return null;
+      const [lon, lat] = f.geometry?.coordinates ?? [];
+      return { name: String(name), lat: Number(lat), lon: Number(lon), state: pr.state ? String(pr.state) : undefined };
+    } catch (e: any) { err(`géocodage (Photon) : ${e?.message ?? e}`); return null; }
+  };
+
   const reverse = async (lat: number, lon: number) => {
     const key = `${lat.toFixed(3)},${lon.toFixed(3)}`;
     if (geoCache.has(key)) return geoCache.get(key) ?? null;
     if (geoCalls >= GEO_BUDGET) return undefined;
     geoCalls++;
+    if (nominatimBlocked) {
+      const out = await photon(`reverse?lat=${lat}&lon=${lon}&lang=fr`);
+      geoCache.set(key, out);
+      return out;
+    }
     const wait = 1_100 - (Date.now() - lastGeo);
     if (wait > 0) await sleep(wait);
     lastGeo = Date.now();
@@ -384,6 +411,9 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
         const isoRegion = ({ "BE-WAL": "Wallonie", "BE-VLG": "Flandre", "BE-BRU": "Bruxelles" } as Record<string, string>)[iso];
         const state = a.state ? String(a.state) : isoRegion;
         if (name) out = { name: String(name), lat: Number(j.lat), lon: Number(j.lon), state: state && officialRegionKey(state) ? state : isoRegion ?? state };
+      } else if (res.status === 403 || res.status === 429) {
+        nominatimBlocked = true;
+        out = await photon(`reverse?lat=${lat}&lon=${lon}&lang=fr`);
       } else err(`géocodage → ${res.status}`);
     } catch (e: any) { err(`géocodage : ${e?.message ?? e}`); }
     geoCache.set(key, out);
@@ -399,10 +429,16 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
     if (geoCache.has(key)) return geoCache.get(key) ?? null;
     if (geoCalls >= GEO_BUDGET) return undefined;
     geoCalls++;
+    const photonQuery = `api?${new URLSearchParams({ q: params.q ?? params.postalcode ?? "", lang: "fr", limit: "5" })}`;
+    if (nominatimBlocked) {
+      const out = await photon(photonQuery, cc);
+      geoCache.set(key, out);
+      return out;
+    }
     const wait = 1_100 - (Date.now() - lastGeo);
     if (wait > 0) await sleep(wait);
     lastGeo = Date.now();
-    let out: { name: string; lat: number; lon: number } | null = null;
+    let out: { name: string; lat: number; lon: number; state?: string } | null = null;
     try {
       const res = await fetch(`${NOMINATIM_URL}/search?${qs}`, {
         headers: { "User-Agent": `changethegame-agent-sync/1.0 (${SITE_URL})` },
@@ -413,6 +449,9 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
         const a = j?.address ?? {};
         const name = a.city ?? a.town ?? a.village ?? a.municipality ?? null;
         if (name) out = { name: String(name), lat: Number(j.lat), lon: Number(j.lon) };
+      } else if (res.status === 403 || res.status === 429) {
+        nominatimBlocked = true;
+        out = await photon(photonQuery, cc);
       } else err(`géocodage → ${res.status}`);
     } catch (e: any) { err(`géocodage : ${e?.message ?? e}`); }
     geoCache.set(key, out);
@@ -454,7 +493,15 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
       if (t.latitude != null && t.longitude != null && cLat != null && cLon != null) return km(Number(t.latitude), Number(t.longitude), cLat, cLon) < 30;
       return !t.parent_id || parents.has(t.parent_id);
     });
-    if (existing) return { id: existing.id, name: existing.name, created: false };
+    if (existing) {
+      // Commune créée plus tôt sans région (rattachée au pays) : on la range dans sa région, pour qu'elle
+      // apparaisse dans l'écosystème régional. Le déclencheur de la base met à jour la hiérarchie.
+      if (region?.id && country?.id && existing.level === "TOWN" && existing.parent_id === country.id && !opts.dryRun) {
+        const { error } = await sb.from("territories").update({ parent_id: region.id }).eq("id", existing.id).eq("parent_id", country.id);
+        if (!error) existing.parent_id = region.id;
+      }
+      return { id: existing.id, name: existing.name, created: false };
+    }
 
     note(summary.new_territories, name);
     if (opts.dryRun) return { id: null, name, created: true };
