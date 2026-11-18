@@ -96,12 +96,17 @@ export function UnitAgentsTab({ unitType, unitId, unitName, isAdmin, parentGuild
   });
 
   const runSync = async (agentId: string, dryRun: boolean) => {
+    // One notice per agent: it shows progress, then turns into the result.
+    const toastId = `agent-sync-${agentId}`;
+    toast.loading(dryRun ? t("agentsUi.simulating") : t("agentsUi.syncing"), { id: toastId, duration: Infinity });
     const { data, error } = await supabase.functions.invoke("agent-sync", { body: { agent_id: agentId, dry_run: dryRun } });
     qc.invalidateQueries({ queryKey: ["agent-sync-runs", agentId] });
     qc.invalidateQueries({ queryKey: ["agent-sync-last", agentId] });
-    if (error) { toast.error(t("agentsUi.syncFailed")); return; }
+    if (error) { toast.error(t("agentsUi.syncFailed"), { id: toastId, duration: 6000 }); return; }
     const r = data?.results?.[0];
     toast.message(dryRun ? t("agentsUi.syncSimulation") : t("agentsUi.syncDone"), {
+      id: toastId,
+      duration: 10000,
       description: r
         ? t("agentsUi.syncSummary", { fetched: r.fetched ?? 0, created: r.created ?? 0, updated: r.updated ?? 0, events: r.events_sent ?? 0, errors: r.errors?.length ?? 0 }) +
           (r.skipped_over_limit ? ` ${t("agentsUi.syncRemaining", { count: r.skipped_over_limit })}` : "") +
@@ -311,10 +316,16 @@ function FreeForYouBadge({ ua, unitLevel, userId }: { ua: any; unitLevel: boolea
 
 function AgentManageBar({ ua, unitType, userId, onEdit, onSync, onFreeFor }: {
   ua: any; unitType: string; userId: string;
-  onEdit: () => void; onSync: (agentId: string, dryRun: boolean) => void; onFreeFor: (value: string) => void;
+  onEdit: () => void; onSync: (agentId: string, dryRun: boolean) => Promise<void>; onFreeFor: (value: string) => void;
 }) {
   const { t } = useTranslation();
   const canManage = useCanManageAgent(ua.agent_id, userId);
+  const [running, setRunning] = useState<"simulate" | "sync" | null>(null);
+  const start = async (dryRun: boolean) => {
+    if (running) return;
+    setRunning(dryRun ? "simulate" : "sync");
+    try { await onSync(ua.agent_id, dryRun); } finally { setRunning(null); }
+  };
   if (!canManage) return null;
   const unit = t(`agentForm.unit.${unitType}`);
   return (
@@ -325,11 +336,22 @@ function AgentManageBar({ ua, unitType, userId, onEdit, onSync, onFreeFor }: {
         </Button>
         {ua.agents?.sync_enabled && (
           <>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => onSync(ua.agent_id, true)}>{t("agentsUi.simulateSync")}</Button>
-            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => onSync(ua.agent_id, false)}>{t("agentsUi.syncNow")}</Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!!running} onClick={() => start(true)}>
+              {running === "simulate" && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
+              {t("agentsUi.simulateSync")}
+            </Button>
+            <Button size="sm" variant="outline" className="h-7 text-xs" disabled={!!running} onClick={() => start(false)}>
+              {running === "sync" && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
+              {t("agentsUi.syncNow")}
+            </Button>
           </>
         )}
       </div>
+      {running && (
+        <p className="text-xs text-muted-foreground" role="status" aria-live="polite">
+          {running === "simulate" ? t("agentsUi.simulating") : t("agentsUi.syncing")}
+        </p>
+      )}
       {ua.agents?.sync_enabled && <AgentSyncStatus agentId={ua.agent_id} />}
       {!ua.inherited && ua.agents?.billing_currency !== "free" && (
         <div className="flex items-center gap-2">

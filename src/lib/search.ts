@@ -22,140 +22,91 @@ export interface SearchFilters {
   priceMax?: number;
 }
 
+// Characters that break PostgREST's or() syntax (and ilike wildcards) are turned into spaces.
+const cleanTerm = (query: string) => query.replace(/[,()"\\%*]/g, " ").replace(/\s+/g, " ").trim();
+
+/** Keeps only the ids linked to the given topic / territory, in one query per filter. */
+async function keepLinked(table: string, fk: string, ids: string[], filters?: SearchFilters): Promise<Set<string>> {
+  let keep = new Set(ids);
+  if (!ids.length) return keep;
+  const tables: [string, string | undefined][] = [
+    [`${table}_topics`, filters?.topicId && "topic_id"],
+    [`${table}_territories`, filters?.territoryId && "territory_id"],
+  ];
+  for (const [tbl, col] of tables) {
+    if (!col) continue;
+    const value = col === "topic_id" ? filters!.topicId! : filters!.territoryId!;
+    const { data } = await (supabase as any).from(tbl).select(fk).eq(col, value).in(fk, [...keep]);
+    keep = new Set((data ?? []).map((r: any) => r[fk]));
+  }
+  return keep;
+}
+
 export async function globalSearch(
   query: string,
   currentUserId: string,
   filters?: SearchFilters,
 ): Promise<SearchResult[]> {
-  const results: SearchResult[] = [];
-  const q = `%${query}%`;
+  const term = cleanTerm(query);
+  if (!term) return [];
+  const q = `%${term}%`;
+  const db = supabase as any;
 
-  // Get blocked user IDs
-  const { data: blocks } = await supabase
-    .from("user_blocks")
-    .select("blocker_id, blocked_id")
-    .or(`blocker_id.eq.${currentUserId},blocked_id.eq.${currentUserId}`);
+  // Every source is queried at the same time: the dialog used to wait for eight round trips in a row.
+  const [blocks, users, guilds, quests, pods, services, companies, territories] = await Promise.all([
+    currentUserId
+      ? db.from("user_blocks").select("blocker_id, blocked_id").or(`blocker_id.eq.${currentUserId},blocked_id.eq.${currentUserId}`)
+      : Promise.resolve({ data: [] }),
+    db.from("profiles_public").select("user_id, name, headline, avatar_url").or(`name.ilike.${q},headline.ilike.${q}`).limit(20),
+    db.from("guilds").select("id, name, description, logo_url, banner_url").eq("is_deleted", false).eq("is_draft", false).or(`name.ilike.${q},description.ilike.${q}`).limit(20),
+    db.from("quests").select("id, title, description, cover_image_url").eq("is_deleted", false).eq("is_draft", false).or(`title.ilike.${q},description.ilike.${q}`).limit(20),
+    db.from("pods").select("id, name, description, image_url").eq("is_deleted", false).eq("is_draft", false).or(`name.ilike.${q},description.ilike.${q}`).limit(20),
+    db.from("services").select("id, title, description, price_amount, image_url").eq("is_deleted", false).eq("is_draft", false).or(`title.ilike.${q},description.ilike.${q}`).limit(20),
+    db.from("companies").select("id, name, description, logo_url, banner_url").eq("is_deleted", false).or(`name.ilike.${q},description.ilike.${q}`).limit(20),
+    db.from("territories").select("id, name, level, summary, logo_url").eq("is_deleted", false).ilike("name", q).limit(20),
+  ]);
+
   const blockedIds = new Set(
-    (blocks ?? []).map((b) => b.blocker_id === currentUserId ? b.blocked_id : b.blocker_id)
+    (blocks.data ?? []).map((b: any) => (b.blocker_id === currentUserId ? b.blocked_id : b.blocker_id)),
   );
+  const userRows = (users.data ?? []).filter((u: any) => u.user_id && u.user_id !== currentUserId && !blockedIds.has(u.user_id));
+  const filtering = !!(filters?.topicId || filters?.territoryId);
+  const [userKeep, guildKeep, questKeep, serviceKeep] = filtering
+    ? await Promise.all([
+        keepLinked("user", "user_id", userRows.map((u: any) => u.user_id), filters),
+        keepLinked("guild", "guild_id", (guilds.data ?? []).map((g: any) => g.id), filters),
+        keepLinked("quest", "quest_id", (quests.data ?? []).map((x: any) => x.id), filters),
+        keepLinked("service", "service_id", (services.data ?? []).map((x: any) => x.id), filters),
+      ])
+    : [null, null, null, null];
 
-  // Users — search profiles_public view
-  const { data: users } = await supabase
-    .from("profiles_public")
-    .select("user_id, name, headline, avatar_url")
-    .or(`name.ilike.${q},headline.ilike.${q}`)
-    .limit(20);
-
-  for (const u of users ?? []) {
-    if (!u.user_id || u.user_id === currentUserId || blockedIds.has(u.user_id)) continue;
-    if (filters?.topicId) {
-      const { count } = await supabase.from("user_topics").select("id", { count: "exact", head: true }).eq("user_id", u.user_id).eq("topic_id", filters.topicId);
-      if (!count) continue;
-    }
-    if (filters?.territoryId) {
-      const { count } = await supabase.from("user_territories").select("id", { count: "exact", head: true }).eq("user_id", u.user_id).eq("territory_id", filters.territoryId);
-      if (!count) continue;
-    }
+  const results: SearchResult[] = [];
+  for (const u of userRows) {
+    if (userKeep && !userKeep.has(u.user_id)) continue;
     results.push({ type: "USER", id: u.user_id, title: u.name ?? "Unknown", subtitle: u.headline ?? undefined, url: `/users/${u.user_id}`, imageUrl: u.avatar_url ?? undefined });
   }
-
-  // Guilds
-  const { data: guildsData } = await supabase
-    .from("guilds")
-    .select("id, name, description, logo_url, banner_url")
-    .eq("is_deleted", false).eq("is_draft", false)
-    .or(`name.ilike.${q},description.ilike.${q}`)
-    .limit(20);
-
-  for (const g of guildsData ?? []) {
-    if (filters?.topicId) {
-      const { count } = await supabase.from("guild_topics").select("id", { count: "exact", head: true }).eq("guild_id", g.id).eq("topic_id", filters.topicId);
-      if (!count) continue;
-    }
-    if (filters?.territoryId) {
-      const { count } = await supabase.from("guild_territories").select("id", { count: "exact", head: true }).eq("guild_id", g.id).eq("territory_id", filters.territoryId);
-      if (!count) continue;
-    }
+  for (const g of guilds.data ?? []) {
+    if (guildKeep && !guildKeep.has(g.id)) continue;
     results.push({ type: "GUILD", id: g.id, title: g.name, subtitle: g.description ?? undefined, url: `/guilds/${g.id}`, logoUrl: g.logo_url ?? undefined, imageUrl: g.banner_url ?? undefined });
   }
-
-  // Quests
-  const { data: questsData } = await supabase
-    .from("quests")
-    .select("id, title, description, cover_image_url")
-    .eq("is_deleted", false).eq("is_draft", false)
-    .or(`title.ilike.${q},description.ilike.${q}`)
-    .limit(20);
-
-  for (const quest of questsData ?? []) {
-    if (filters?.topicId) {
-      const { count } = await supabase.from("quest_topics").select("id", { count: "exact", head: true }).eq("quest_id", quest.id).eq("topic_id", filters.topicId);
-      if (!count) continue;
-    }
-    if (filters?.territoryId) {
-      const { count } = await supabase.from("quest_territories").select("id", { count: "exact", head: true }).eq("quest_id", quest.id).eq("territory_id", filters.territoryId);
-      if (!count) continue;
-    }
+  for (const quest of quests.data ?? []) {
+    if (questKeep && !questKeep.has(quest.id)) continue;
     results.push({ type: "QUEST", id: quest.id, title: quest.title, subtitle: quest.description ?? undefined, url: `/quests/${quest.id}`, imageUrl: quest.cover_image_url ?? undefined });
   }
-
-  // Pods
-  const { data: podsData } = await supabase
-    .from("pods")
-    .select("id, name, description, image_url")
-    .eq("is_deleted", false).eq("is_draft", false)
-    .or(`name.ilike.${q},description.ilike.${q}`)
-    .limit(20);
-
-  for (const p of podsData ?? []) {
+  // Pods, companies and territories have no topic / territory filter (unchanged behaviour).
+  for (const p of pods.data ?? []) {
     results.push({ type: "POD", id: p.id, title: p.name, subtitle: p.description ?? undefined, url: `/pods/${p.id}`, imageUrl: p.image_url ?? undefined });
   }
-
-  // Services
-  const servicesQuery = supabase
-    .from("services")
-    .select("id, title, description, price_amount, image_url")
-    .eq("is_deleted", false).eq("is_draft", false)
-    .or(`title.ilike.${q},description.ilike.${q}`)
-    .limit(20);
-
-  const { data: servicesData } = await servicesQuery;
-
-  for (const s of servicesData ?? []) {
-    if (filters?.topicId) {
-      const { count } = await supabase.from("service_topics").select("id", { count: "exact", head: true }).eq("service_id", s.id).eq("topic_id", filters.topicId);
-      if (!count) continue;
-    }
-    if (filters?.territoryId) {
-      const { count } = await supabase.from("service_territories").select("id", { count: "exact", head: true }).eq("service_id", s.id).eq("territory_id", filters.territoryId);
-      if (!count) continue;
-    }
+  for (const s of services.data ?? []) {
+    if (serviceKeep && !serviceKeep.has(s.id)) continue;
     if (filters?.priceMin !== undefined && (s.price_amount ?? 0) < filters.priceMin) continue;
     if (filters?.priceMax !== undefined && (s.price_amount ?? 0) > filters.priceMax) continue;
     results.push({ type: "SERVICE", id: s.id, title: s.title, subtitle: `€${s.price_amount ?? 0}`, url: `/services/${s.id}`, imageUrl: s.image_url ?? undefined });
   }
-
-  // Companies
-  const { data: companiesData } = await supabase
-    .from("companies")
-    .select("id, name, description, logo_url, banner_url")
-    .eq("is_deleted", false)
-    .or(`name.ilike.${q},description.ilike.${q}`)
-    .limit(20);
-
-  for (const c of companiesData ?? []) {
+  for (const c of companies.data ?? []) {
     results.push({ type: "COMPANY", id: c.id, title: c.name, subtitle: c.description ?? undefined, url: `/companies/${c.id}`, logoUrl: c.logo_url ?? undefined, imageUrl: c.banner_url ?? undefined });
   }
-
-  // Territories
-  const { data: territoriesData } = await supabase
-    .from("territories")
-    .select("id, name, level, summary, logo_url")
-    .eq("is_deleted", false)
-    .ilike("name", q)
-    .limit(20);
-
-  for (const t of territoriesData ?? []) {
+  for (const t of territories.data ?? []) {
     results.push({ type: "TERRITORY", id: t.id, title: t.name, subtitle: t.level ?? undefined, url: `/territories/${t.id}`, logoUrl: t.logo_url ?? undefined });
   }
 

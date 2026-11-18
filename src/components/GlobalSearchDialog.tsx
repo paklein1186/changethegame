@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Search, Shield } from "lucide-react";
+import { Search, Shield, Loader2 } from "lucide-react";
 import {
-  CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem,
+  CommandDialog, CommandInput, CommandList, CommandGroup, CommandItem,
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -36,6 +36,8 @@ export function GlobalSearchDialog() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
+  // The query whose results are on screen: until it matches the typed text, we are still searching.
+  const [answeredFor, setAnsweredFor] = useState("");
   const currentUser = useCurrentUser();
   const navigate = useNavigate();
 
@@ -53,13 +55,24 @@ export function GlobalSearchDialog() {
 
   // Debounced async search
   useEffect(() => {
-    if (query.trim().length < 2) { setResults([]); return; }
+    const q = query.trim();
+    if (q.length < 2) { setResults([]); setAnsweredFor(""); return; }
+    let cancelled = false; // a slower, older answer must not replace the latest one
     const timer = setTimeout(async () => {
-      const res = await globalSearch(query, currentUser.id);
-      setResults(res);
+      try {
+        const res = await globalSearch(q, currentUser.id);
+        if (!cancelled) setResults(res);
+      } catch {
+        if (!cancelled) setResults([]);
+      } finally {
+        if (!cancelled) setAnsweredFor(q);
+      }
     }, 300);
-    return () => clearTimeout(timer);
+    return () => { cancelled = true; clearTimeout(timer); };
   }, [query, currentUser.id]);
+
+  const typed = query.trim();
+  const searching = typed.length >= 2 && answeredFor !== typed;
 
   const grouped = (() => {
     const map = new Map<SearchResultType, SearchResult[]>();
@@ -115,7 +128,7 @@ export function GlobalSearchDialog() {
         </kbd>
       </button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
         <CommandInput
           placeholder={t("search.inputPlaceholder")}
           value={query}
@@ -128,8 +141,14 @@ export function GlobalSearchDialog() {
           }}
         />
         <CommandList>
-          {query.trim().length >= 2 && results.length === 0 && (
-            <CommandEmpty>{t("search.noResults")}</CommandEmpty>
+          {searching && (
+            <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground" role="status" aria-live="polite">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {t("search.searching")}
+            </div>
+          )}
+          {!searching && typed.length >= 2 && results.length === 0 && (
+            <div className="py-6 text-center text-sm text-muted-foreground" role="status">{t("search.noResults")}</div>
           )}
 
           {Array.from(grouped.entries()).map(([type, items]) => (
