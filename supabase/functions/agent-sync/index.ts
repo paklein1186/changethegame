@@ -6,6 +6,7 @@
 //
 // Appel : cron (en-tête x-cron-secret) pour tous les agents `sync_enabled`,
 // ou utilisateur connecté qui gère l'agent (créateur ou admin de la guilde propriétaire) (body { agent_id, dry_run? }).
+import { authenticateCronRequest } from "../_shared/cron-auth.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
@@ -773,7 +774,8 @@ serve(async (req) => {
 
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const cronSecret = Deno.env.get("CRON_SECRET");
-  const isCron = !!cronSecret && req.headers.get("x-cron-secret") === cronSecret;
+  const managedCron = !!Deno.env.get("LOVABLE_CRON_SECRET") && authenticateCronRequest(req) === null;
+  const isCron = managedCron || (!!cronSecret && req.headers.get("x-cron-secret") === cronSecret);
 
   let userId: string | null = null;
   if (!isCron) {
