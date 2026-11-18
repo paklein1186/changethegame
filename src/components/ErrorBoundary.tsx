@@ -1,7 +1,8 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
-import { ServerCrash, RefreshCw } from "lucide-react";
+import { ServerCrash, RefreshCw, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { logger } from "@/lib/logger";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   children: ReactNode;
@@ -46,9 +47,27 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({ hasError: false, error: null });
   };
 
+  // A rejected session (edge function answered 401) is recoverable by signing
+  // in again; keep the user out of a dead end.
+  private isAuthFailure = () => {
+    const message = this.state.error?.message ?? "";
+    return /\b401\b|Unauthorized/i.test(message);
+  };
+
+  private handleSignInAgain = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // ignore: the local session is cleared either way
+    }
+    window.location.assign("/login");
+  };
+
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
+
+      const authFailure = this.isAuthFailure();
 
       return (
         <div className="flex min-h-[50vh] items-center justify-center">
@@ -56,9 +75,13 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
               <ServerCrash className="h-8 w-8 text-destructive" />
             </div>
-            <h2 className="mb-2 text-2xl font-bold font-display">Something went wrong</h2>
+            <h2 className="mb-2 text-2xl font-bold font-display">
+              {authFailure ? "Your session has expired" : "Something went wrong"}
+            </h2>
             <p className="mb-2 text-muted-foreground">
-              An unexpected error occurred. You can try refreshing this section.
+              {authFailure
+                ? "You need to sign in again to keep using the site."
+                : "An unexpected error occurred. You can try refreshing this section."}
             </p>
             {this.state.error && (
               <p className="mb-4 text-xs text-muted-foreground/60 font-mono break-all">
@@ -66,11 +89,18 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
             )}
             <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={this.handleRetry}>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Retry
-              </Button>
-              <Button variant="default" onClick={() => window.location.assign("/")}>
+              {authFailure ? (
+                <Button variant="default" onClick={this.handleSignInAgain}>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Sign in again
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={this.handleRetry}>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Retry
+                </Button>
+              )}
+              <Button variant={authFailure ? "outline" : "default"} onClick={() => window.location.assign("/")}>
                 Back to Home
               </Button>
             </div>
