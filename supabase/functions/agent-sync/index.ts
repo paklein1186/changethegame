@@ -157,14 +157,25 @@ const isTimeout = (e: unknown) => e instanceof DOMException && (e.name === "Time
 
 // Un agent hébergé sur une offre gratuite (Render…) s'endort après inactivité et met jusqu'à une minute à se
 // réveiller : on le réveille d'abord, puis on lit le flux avec un délai plus large, et on réessaie une fois.
+class FeedTimeout extends Error {
+  constructor(public serverAwake: boolean) { super("feed timeout"); }
+}
+
 async function fetchFeed(base: string, secret: string, path: string) {
   // Budget total ≈ 130 s, sous la limite d'exécution d'une fonction (150 s).
-  await fetch(base.replace(/\/$/, ""), { signal: AbortSignal.timeout(50_000) }).catch(() => {});
+  // Le réveil dit aussi si le serveur répond : si oui, un délai sur le flux vient de l'agent lui-même.
+  const serverAwake = await fetch(base.replace(/\/$/, ""), { signal: AbortSignal.timeout(50_000) })
+    .then(() => true).catch(() => false);
   try {
     return await callAgent(base, secret, path, {}, 50_000);
   } catch (e) {
     if (!isTimeout(e)) throw e;
-    return await callAgent(base, secret, path, {}, 30_000);
+    try {
+      return await callAgent(base, secret, path, {}, 30_000);
+    } catch (e2) {
+      if (isTimeout(e2)) throw new FeedTimeout(serverAwake);
+      throw e2;
+    }
   }
 }
 
@@ -205,8 +216,10 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
   try {
     feedRes = await fetchFeed(base, secret, `/lieux${since}`);
   } catch (e) {
-    err(isTimeout(e)
-      ? "GET /lieux : l'agent n'a pas répondu en 2 minutes (serveur en veille ou surchargé). Relancez dans quelques minutes."
+    err(e instanceof FeedTimeout
+      ? e.serverAwake
+        ? "GET /lieux : le serveur de l'agent répond, mais la liste des lieux n'est pas revenue en 80 s (deux essais). Le blocage est côté agent : à signaler à son équipe."
+        : "GET /lieux : le serveur de l'agent ne répond pas (en veille, arrêté ou injoignable). Relancez dans quelques minutes."
       : `GET /lieux : ${String((e as any)?.message ?? e)}`);
     return summary;
   }
