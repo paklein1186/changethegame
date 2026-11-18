@@ -75,6 +75,57 @@ const TERRITORY_ALIASES: Record<string, string> = {
   "italie": "italy", "irlande": "ireland", "etats unis": "usa", "australie": "australia",
 };
 
+// Régions officielles que les agents écrivent souvent sous forme de province ou de département
+// (« Province de Namur », « Hauts-de-France (Pas-de-Calais) »). Clé normalisée → nom canonique et pays.
+// Une région absente chez nous est créée (niveau REGION, rattachée au pays) pour que l'écosystème régional existe.
+const OFFICIAL_REGIONS: Record<string, { name: string; country: string }> = {
+  "wallonia": { name: "Wallonia", country: "belgium" },
+  "flanders": { name: "Flanders", country: "belgium" },
+  "brussels": { name: "Brussels", country: "belgium" },
+  "auvergne rhone alpes": { name: "Auvergne-Rhône-Alpes", country: "france" },
+  "burgundy": { name: "Burgundy", country: "france" },
+  "bretagne": { name: "Bretagne", country: "france" },
+  "centre val de loire": { name: "Centre-Val de Loire", country: "france" },
+  "corse": { name: "Corse", country: "france" },
+  "grand est": { name: "Grand Est", country: "france" },
+  "hauts de france": { name: "Hauts-de-France", country: "france" },
+  "ile de france": { name: "Île-de-France", country: "france" },
+  "normandie": { name: "Normandie", country: "france" },
+  "nouvelle aquitaine": { name: "Nouvelle-Aquitaine", country: "france" },
+  "occitanie": { name: "Occitanie", country: "france" },
+  "pays de la loire": { name: "Pays de la Loire", country: "france" },
+  "provence alpes cote d azur": { name: "Provence-Alpes-Côte d'Azur", country: "france" },
+  "guadeloupe": { name: "Guadeloupe", country: "france" },
+  "martinique": { name: "Martinique", country: "france" },
+  "guyane": { name: "Guyane", country: "france" },
+  "reunion": { name: "Réunion", country: "france" },
+  "mayotte": { name: "Mayotte", country: "france" },
+};
+const REGION_ALIASES: Record<string, string> = {
+  // Provinces belges → région
+  "namur": "wallonia", "luxembourg": "wallonia", "hainaut": "wallonia", "liege": "wallonia", "brabant wallon": "wallonia",
+  "anvers": "flanders", "antwerpen": "flanders", "limbourg": "flanders", "limburg": "flanders",
+  "flandre orientale": "flanders", "oost vlaanderen": "flanders", "flandre occidentale": "flanders",
+  "west vlaanderen": "flanders", "brabant flamand": "flanders", "vlaams brabant": "flanders",
+  "wallonie": "wallonia", "region wallonne": "wallonia", "flandre": "flanders", "vlaanderen": "flanders",
+  "bruxelles": "brussels", "bruxelles capitale": "brussels", "region de bruxelles capitale": "brussels", "brussel": "brussels",
+  // Anciennes régions françaises → région actuelle
+  "bourgogne": "burgundy", "bourgogne franche comte": "burgundy", "franche comte": "burgundy",
+  "auvergne": "auvergne rhone alpes", "rhone alpes": "auvergne rhone alpes", "nord pas de calais": "hauts de france",
+  "picardie": "hauts de france", "aquitaine": "nouvelle aquitaine", "limousin": "nouvelle aquitaine",
+  "poitou charentes": "nouvelle aquitaine", "languedoc roussillon": "occitanie", "midi pyrenees": "occitanie",
+  "alsace": "grand est", "lorraine": "grand est", "champagne ardenne": "grand est", "paca": "provence alpes cote d azur",
+  "basse normandie": "normandie", "haute normandie": "normandie", "centre": "centre val de loire", "la reunion": "reunion",
+};
+/** « Province de Namur », « Hauts-de-France (Pas-de-Calais) », « Région Bretagne » → clé de région officielle, ou null. */
+function officialRegionKey(raw: string): string | null {
+  const n = normTax(String(raw).replace(/\(.*?\)/g, " "))
+    .replace(/^(province|provincie|region|departement)( de la| de l| des| du| de| d)? /, "")
+    .trim();
+  const key = REGION_ALIASES[n] ?? n;
+  return OFFICIAL_REGIONS[key] ? key : null;
+}
+
 const TOPIC_ALIASES: Record<string, string> = {
   "tiers lieu": "third spaces", "tiers lieux": "third spaces", "third place": "third spaces", "third places": "third spaces",
   "culture": "arts culture", "arts": "arts culture", "art et culture": "arts culture", "culturel": "arts culture",
@@ -239,7 +290,25 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
 
   // Thèmes : « tiers-lieux » + ceux que les catégories / mots-clés du lieu désignent.
   // Territoires : la région en principal, le pays en complément — seulement s'ils existent chez nous.
-  const taxonomyFor = (lieu: any) => {
+  // Région officielle reconnue mais absente chez nous : créée une fois (sauf simulation), rattachée au pays.
+  const ensureRegion = async (key: string, country: any) => {
+    const def = OFFICIAL_REGIONS[key];
+    const found = territoryPool.find((t: any) => ["REGION", "PROVINCE"].includes(t.level) && normTax(t.name) === key)
+      ?? territoryPool.find((t: any) => t.level === "REGION" && normTax(t.name) === normTax(def.name));
+    if (found) return found;
+    const parent = country ?? territoryPool.find((t: any) => t.level === "NATIONAL" && (normTax(t.name) === def.country || TERRITORY_ALIASES[normTax(t.name)] === def.country));
+    note(summary.new_territories, def.name);
+    if (opts.dryRun) return null;
+    const { data: row, error } = await sb.from("territories").insert({
+      name: def.name, level: "REGION", slug: slugify(def.name), parent_id: parent?.id ?? null, created_by_user_id: agentUserId,
+    }).select("id, name, slug, level, latitude, longitude, parent_id").single();
+    if (error || !row) { err(`région « ${def.name} » : ${error?.message}`); return null; }
+    territoryPool.push(row);
+    summary.territories_created++;
+    return row;
+  };
+
+  const taxonomyFor = async (lieu: any) => {
     const topicIds = new Set<string>(tiersLieuxTopicId ? [tiersLieuxTopicId] : []);
     for (const term of [...splitTerms(lieu.categories), ...splitTerms(lieu.mots_cles)]) {
       const hit = findByName(term, topicPool, TOPIC_ALIASES);
@@ -250,9 +319,15 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
     const lat = Number(lieu.latitude), lon = Number(lieu.longitude);
     const hasCoords = lieu.latitude != null && lieu.longitude != null && Number.isFinite(lat) && Number.isFinite(lon);
     const farTown = (t: any) => !!t && t.level === "TOWN" && !(t.latitude != null && t.longitude != null && hasCoords && km(Number(t.latitude), Number(t.longitude), lat, lon) < 8);
-    let region = lieu.region ? findByName(String(lieu.region), territoryPool, TERRITORY_ALIASES) : null;
-    if (region && farTown(region)) region = null;
     const country = lieu.pays ? findByName(String(lieu.pays), territoryPool, TERRITORY_ALIASES) : null;
+    // Province ou région administrative connue (« Province de Namur » → Wallonie) avant la recherche par nom :
+    // sinon « Province de Luxembourg » tomberait sur le pays Luxembourg, et « Liège » sur la ville.
+    const regionKey = lieu.region ? officialRegionKey(String(lieu.region)) : null;
+    let region = regionKey ? await ensureRegion(regionKey, country) : null;
+    if (!region && !regionKey && lieu.region) {
+      region = findByName(String(lieu.region), territoryPool, TERRITORY_ALIASES);
+      if (region && farTown(region)) region = null;
+    }
     if (lieu.region && !region) note(summary.unmatched_places, String(lieu.region));
     if (lieu.pays && !country) note(summary.unmatched_places, String(lieu.pays));
     const territoryIds = [region, country].filter((t, i, a): t is any => !!t && a.findIndex((x) => x?.id === t.id) === i).map((t) => t.id as string);
@@ -303,6 +378,35 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
     return out;
   };
 
+  // Sans commune ni coordonnées : géocodage du code postal ou de l'adresse, limité au pays du lieu.
+  const COUNTRY_CODES: Record<string, string> = { belgium: "be", france: "fr", switzerland: "ch", luxembourg: "lu", germany: "de", spain: "es", portugal: "pt" };
+  const forward = async (params: Record<string, string>, countryName: string | null) => {
+    const cc = countryName ? COUNTRY_CODES[TERRITORY_ALIASES[normTax(countryName)] ?? normTax(countryName)] : undefined;
+    const qs = new URLSearchParams({ format: "jsonv2", addressdetails: "1", limit: "1", "accept-language": "fr", ...params, ...(cc ? { countrycodes: cc } : {}) });
+    const key = `fwd:${qs.toString()}`;
+    if (geoCache.has(key)) return geoCache.get(key) ?? null;
+    if (geoCalls >= GEO_BUDGET) return undefined;
+    geoCalls++;
+    const wait = 1_100 - (Date.now() - lastGeo);
+    if (wait > 0) await sleep(wait);
+    lastGeo = Date.now();
+    let out: { name: string; lat: number; lon: number } | null = null;
+    try {
+      const res = await fetch(`${NOMINATIM_URL}/search?${qs}`, {
+        headers: { "User-Agent": `changethegame-agent-sync/1.0 (${SITE_URL})` },
+        signal: AbortSignal.timeout(8_000),
+      });
+      if (res.ok) {
+        const j = (await res.json())?.[0];
+        const a = j?.address ?? {};
+        const name = a.city ?? a.town ?? a.village ?? a.municipality ?? null;
+        if (name) out = { name: String(name), lat: Number(j.lat), lon: Number(j.lon) };
+      } else err(`géocodage → ${res.status}`);
+    } catch (e: any) { err(`géocodage : ${e?.message ?? e}`); }
+    geoCache.set(key, out);
+    return out;
+  };
+
   type Town = { id: string | null; name: string; created: boolean };
   // "budget" : plus de crédit de géocodage pour ce passage — le lieu sera repris au suivant.
   const locateTown = async (lieu: any, region: any, country: any): Promise<Town | null | "budget"> => {
@@ -311,8 +415,17 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
     let name: string | null = fmt(lieu.commune ?? lieu.ville) || null;
     let cLat: number | null = hasCoords ? lat : null;
     let cLon: number | null = hasCoords ? lon : null;
-    if (!name) {
-      if (!hasCoords) return null;
+    if (!name && !hasCoords) {
+      const postal = fmt(lieu.code_postal ?? lieu.cp ?? lieu.postal_code ?? lieu.zip);
+      const address = fmt(lieu.adresse ?? lieu.address ?? lieu.localisation);
+      if (!postal && !address) return null;
+      const g = await forward(address ? { q: [address, postal].filter(Boolean).join(" ") } : { postalcode: postal }, lieu.pays ? String(lieu.pays) : null);
+      if (g === undefined) return "budget";
+      if (!g) return null;
+      summary.geocoded = (summary.geocoded ?? 0) + 1;
+      name = g.name;
+      if (Number.isFinite(g.lat) && Number.isFinite(g.lon)) { cLat = g.lat; cLon = g.lon; }
+    } else if (!name) {
       const g = await reverse(lat, lon);
       if (g === undefined) return "budget";
       if (!g) return null;
@@ -415,7 +528,7 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
         if (createdThisRun >= opts.maxCreate) { summary.skipped_over_limit++; cursorBlocked = true; continue; }
         createdThisRun++;
         summary.created++;
-        const tax = taxonomyFor(lieu);
+        const tax = await taxonomyFor(lieu);
         const town = await locateTown(lieu, tax.region, tax.country);
         if (town === "budget") { summary.geocode_remaining++; cursorBlocked = true; }
         if (opts.dryRun) continue;
@@ -454,7 +567,7 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
         const { data: guild } = await sb.from("guilds").select("id, claimed_at, auto_created_by_agent_id, is_deleted, logo_url").eq("id", ref.entity_id).maybeSingle();
         if (guild && !guild.claimed_at && guild.auto_created_by_agent_id === agent.id && !guild.is_deleted) {
           await sb.from("guilds").update({ description: describeLieu(lieu, agent.name) }).eq("id", guild.id);
-          const tax = taxonomyFor(lieu);
+          const tax = await taxonomyFor(lieu);
           await applyTaxonomy(guild.id, { topicIds: tax.topicIds, territoryIds: [] }, true);
           await reconcileTerritories(guild.id, lieu, tax);
           if (!guild.logo_url) await applyPhoto(guild.id, lieu);
