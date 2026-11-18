@@ -320,11 +320,8 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
     setSigningUp(true);
 
     // Pre-check if email already exists in profiles to give immediate feedback
-    const { data: existingProfile } = await supabase
-      .from("profiles")
-      .select("user_id")
-      .eq("email", email.trim().toLowerCase())
-      .maybeSingle();
+    const { data: existingUserId } = await supabase.rpc("get_user_id_by_email", { lookup_email: email.trim().toLowerCase() });
+    const existingProfile = existingUserId ? { user_id: existingUserId } : null;
 
     if (existingProfile) {
       setSigningUp(false);

@@ -1,3 +1,4 @@
+import { attachEmails } from "@/lib/profileEmails";
 import { useState, useMemo, useCallback } from "react";
 import {
   Search, Download, Eye, SlidersHorizontal, ChevronLeft, ChevronRight,
@@ -92,10 +93,11 @@ export function CTGUserWalletsTab() {
       if (!wallets?.length) return [];
 
       const userIds = wallets.map((w) => w.user_id);
-      const { data: profiles } = await supabase
+      const { data: profilesRaw } = await supabase
         .from("profiles")
-        .select("user_id, name, email, avatar_url, created_at")
+        .select("user_id, name, avatar_url, created_at")
         .in("user_id", userIds);
+      const profiles = await attachEmails(profilesRaw);
 
       const profileMap = Object.fromEntries(
         (profiles ?? []).map((p) => [p.user_id, p])

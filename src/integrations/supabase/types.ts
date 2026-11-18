@@ -11275,6 +11275,13 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_profile_emails: {
+        Args: { _user_ids: string[] }
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
       get_provider_busy_slots: {
         Args: { _provider_id: string }
         Returns: {
@@ -11398,6 +11405,10 @@ export type Database = {
       }
       is_guild_admin: {
         Args: { _guild_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_quest_member: {
+        Args: { _quest_id: string; _uid: string }
         Returns: boolean
       }
       link_natural_system: {

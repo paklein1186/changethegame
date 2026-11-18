@@ -1,3 +1,4 @@
+import { attachEmails } from "@/lib/profileEmails";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { notifyEntityFollowersAndMembers } from "@/lib/notifyEntityActivity";
 import { useState } from "react";
@@ -160,10 +161,11 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
       if (error) throw error;
       // fetch profiles for members
       const userIds = data.map((m: any) => m.user_id);
-      const { data: profiles } = await supabase
+      const { data: profilesRaw } = await supabase
         .from("profiles")
-        .select("user_id, name, email, avatar_url")
+        .select("user_id, name, avatar_url")
         .in("user_id", userIds);
+      const profiles = await attachEmails(profilesRaw);
       return data.map((m: any) => ({
         ...m,
         user: profiles?.find((p: any) => p.user_id === m.user_id),

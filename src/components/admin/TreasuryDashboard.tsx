@@ -49,7 +49,7 @@ export function TreasuryDashboard() {
         { data: bookings },
         { data: demurrageLog },
       ] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }).gt("credits_balance", 0),
+        supabase.from("profiles").select("user_id", { count: "exact", head: true }).gt("credits_balance", 0),
         supabase.from("credit_transactions").select("amount, type").gte("created_at", new Date(Date.now() - 30 * 86400000).toISOString()),
         supabase.from("bookings").select("amount, payment_status").eq("payment_status", "PAID").gte("created_at", new Date(Date.now() - 30 * 86400000).toISOString()),
         supabase.from("demurrage_log").select("fade_amount").gte("created_at", new Date(Date.now() - 30 * 86400000).toISOString()),

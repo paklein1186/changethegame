@@ -1,3 +1,4 @@
+import { attachEmails } from "@/lib/profileEmails";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,10 +69,11 @@ export function BroadcastHistoryPanel() {
       // Fetch profile names — column is "name", not "display_name"
       const userIds = rows.map((r) => r.user_id);
       if (userIds.length > 0) {
-        const { data: profiles } = await supabase
+        const { data: profilesRaw } = await supabase
           .from("profiles")
-          .select("id, name, email")
+          .select("id, name")
           .in("id", userIds);
+        const profiles = await attachEmails(profilesRaw as any[], "id");
 
         const profileMap = new Map((profiles ?? []).map((p: any) => [p.id, p]));
         rows.forEach((r) => {

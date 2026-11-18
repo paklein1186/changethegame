@@ -1,3 +1,4 @@
+import { attachEmails } from "@/lib/profileEmails";
 import { useState, useEffect } from "react";
 import { Star, Crown, Users, Download, Settings } from "lucide-react";
 import { GovernanceTab } from "./tabs/ContentTabs";
@@ -146,10 +147,10 @@ function ShareholdersList() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("user_id, name, email, total_shares_a, total_shares_b, governance_weight, is_cooperative_member")
+        .select("user_id, name, total_shares_a, total_shares_b, governance_weight, is_cooperative_member")
         .eq("is_cooperative_member", true)
         .order("governance_weight", { ascending: false });
-      return data ?? [];
+      return attachEmails(data);
     },
   });
 

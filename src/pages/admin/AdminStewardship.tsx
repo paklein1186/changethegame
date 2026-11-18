@@ -1,3 +1,4 @@
+import { attachEmails } from "@/lib/profileEmails";
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -134,9 +135,9 @@ export default function AdminStewardship() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("user_id, name, email")
+        .select("user_id, name")
         .order("name");
-      return (data || []).map((p: any) => ({
+      return (await attachEmails(data)).map((p: any) => ({
         id: p.user_id,
         label: p.name || t("adminStewardship.unnamed"),
         sub: p.email,

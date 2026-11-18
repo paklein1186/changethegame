@@ -1,3 +1,4 @@
+import { attachEmails } from "@/lib/profileEmails";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,9 +28,9 @@ export default function AdminCommunityUsers() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("user_id, name, email, avatar_url, role, xp, contribution_index, created_at")
+        .select("user_id, name, avatar_url, role, xp, contribution_index, created_at")
         .order("created_at", { ascending: false });
-      return data ?? [];
+      return attachEmails(data);
     },
   });
 

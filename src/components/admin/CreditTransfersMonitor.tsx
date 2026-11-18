@@ -1,3 +1,4 @@
+import { attachEmails } from "@/lib/profileEmails";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,10 +23,10 @@ export function CreditTransfersMonitor() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("user_id, name, email, credits_balance, avatar_url")
+        .select("user_id, name, credits_balance, avatar_url")
         .order("credits_balance", { ascending: false })
         .limit(50);
-      return data ?? [];
+      return attachEmails(data);
     },
     staleTime: 30_000,
   });
@@ -56,10 +57,11 @@ export function CreditTransfersMonitor() {
     queryKey: ["admin-profiles-for-tx", userIds.slice(0, 50).join(",")],
     queryFn: async () => {
       if (userIds.length === 0) return {};
-      const { data } = await supabase
+      const { data: raw } = await supabase
         .from("profiles")
-        .select("user_id, name, email")
+        .select("user_id, name")
         .in("user_id", userIds.slice(0, 50));
+      const data = await attachEmails(raw);
       const map: Record<string, { name: string; email: string }> = {};
       (data ?? []).forEach(p => { map[p.user_id] = { name: p.name || "", email: p.email || "" }; });
       return map;

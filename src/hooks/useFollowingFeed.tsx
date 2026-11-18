@@ -121,7 +121,7 @@ export function useFollowingFeed(filterType?: string) {
       if (authorIds.length > 0) {
         const { data: profiles } = await supabase
           .from("profiles")
-          .select("user_id, name, avatar_url, email")
+          .select("user_id, name, avatar_url")
           .in("user_id", authorIds);
         const profileMap = new Map(
           (profiles ?? []).map((p) => [p.user_id, p])

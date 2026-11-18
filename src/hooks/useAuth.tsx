@@ -37,13 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("user_id, email, name, avatar_url, role, has_completed_onboarding, preferred_language, onboarding_skipped")
+      .select("user_id, name, avatar_url, role, has_completed_onboarding, preferred_language, onboarding_skipped")
       .eq("user_id", userId)
       .single();
     if (data) {
       setUser({
         id: data.user_id,
-        email: data.email,
+        email: (await supabase.auth.getUser()).data.user?.email ?? "",
         name: data.name,
         avatarUrl: data.avatar_url ?? undefined,
         role: data.role,
