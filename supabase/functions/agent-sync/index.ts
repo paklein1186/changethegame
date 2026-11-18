@@ -144,12 +144,27 @@ async function importPhoto(sb: any, guildId: string, url: string): Promise<strin
   return sb.storage.from("entity-images").getPublicUrl(path).data.publicUrl ?? null;
 }
 
-async function callAgent(base: string, secret: string, path: string, init: RequestInit = {}) {
+async function callAgent(base: string, secret: string, path: string, init: RequestInit = {}, timeoutMs = 25_000) {
   return await fetch(`${base.replace(/\/$/, "")}${path}`, {
     ...init,
     headers: { "Content-Type": "application/json", "X-Webhook-Secret": secret, ...(init.headers ?? {}) },
-    signal: AbortSignal.timeout(25_000),
+    signal: AbortSignal.timeout(timeoutMs),
   });
+}
+
+const isTimeout = (e: unknown) => e instanceof DOMException && (e.name === "TimeoutError" || e.name === "AbortError");
+
+// Un agent hébergé sur une offre gratuite (Render…) s'endort après inactivité et met jusqu'à une minute à se
+// réveiller : on le réveille d'abord, puis on lit le flux avec un délai plus large, et on réessaie une fois.
+async function fetchFeed(base: string, secret: string, path: string) {
+  // Budget total ≈ 130 s, sous la limite d'exécution d'une fonction (150 s).
+  await fetch(base.replace(/\/$/, ""), { signal: AbortSignal.timeout(50_000) }).catch(() => {});
+  try {
+    return await callAgent(base, secret, path, {}, 50_000);
+  } catch (e) {
+    if (!isTimeout(e)) throw e;
+    return await callAgent(base, secret, path, {}, 30_000);
+  }
 }
 
 // ── synchronisation d'un agent ─────────────────────────────────────────────
@@ -185,7 +200,15 @@ async function syncAgent(sb: any, agent: any, opts: { dryRun: boolean; maxCreate
   // 1. Flux des lieux -------------------------------------------------------
   // Un lancement manuel relit tout le flux (idempotent) : rattrape un curseur trop avancé.
   const since = agent.sync_cursor && !opts.full ? `?updated_since=${encodeURIComponent(agent.sync_cursor)}` : "";
-  const feedRes = await callAgent(base, secret, `/lieux${since}`);
+  let feedRes: Response;
+  try {
+    feedRes = await fetchFeed(base, secret, `/lieux${since}`);
+  } catch (e) {
+    err(isTimeout(e)
+      ? "GET /lieux : l'agent n'a pas répondu en 2 minutes (serveur en veille ou surchargé). Relancez dans quelques minutes."
+      : `GET /lieux : ${String((e as any)?.message ?? e)}`);
+    return summary;
+  }
   if (!feedRes.ok) { err(`GET /lieux → ${feedRes.status}`); return summary; }
   const lieux: any[] = (await feedRes.json())?.lieux ?? [];
   summary.fetched = lieux.length;
