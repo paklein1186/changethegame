@@ -319,24 +319,20 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
     }
     setSigningUp(true);
 
-    // Pre-check if email already exists in profiles to give immediate feedback
-    const { data: existingUserId } = await supabase.rpc("get_user_id_by_email", { lookup_email: email.trim().toLowerCase() });
-    const existingProfile = existingUserId ? { user_id: existingUserId } : null;
-
-    if (existingProfile) {
-      setSigningUp(false);
-      setSignupError("This email is already registered. Please use a different one or log in.");
-      toast({ title: "Email already in use", description: "Try a different email address or log in.", variant: "destructive" });
-      return;
-    }
-
+    // No pre-check on the address: sign-up itself reports an existing account. (A lookup function
+    // returning a list made every address look taken, and it let anyone test which addresses have an account.)
     const roleMap: Record<string, string> = { creative: "GAMECHANGER", impact: "GAMECHANGER", hybrid: "BOTH", org_rep: "ECOSYSTEM_BUILDER" };
     const role = roleMap[selectedPersona || ""] || "GAMECHANGER";
     const { error } = await signUp(email.trim(), password, name.trim(), role);
     setSigningUp(false);
     if (error) {
-      setSignupError(error);
-      toast({ title: "Signup failed", description: error, variant: "destructive" });
+      if (/already (registered|exists)|user_already_exists/i.test(error)) {
+        setSignupError("This email is already registered. Please use a different one or log in.");
+        toast({ title: "Email already in use", description: "Try a different email address or log in.", variant: "destructive" });
+      } else {
+        setSignupError(error);
+        toast({ title: "Signup failed", description: error, variant: "destructive" });
+      }
     } else {
       setSignupError(null);
       // Resolve interest labels and keep raw IDs for persistence

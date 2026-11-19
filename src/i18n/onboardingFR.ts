@@ -37,6 +37,8 @@ export const ONBOARDING_FR: Record<string, string> = {
   "Password must be at least 6 characters": "Le mot de passe doit contenir au moins 6 caractères",
   "Email already in use": "Cet e-mail est déjà utilisé",
   "Try a different email address or log in.": "Essayez une autre adresse ou connectez-vous.",
+  "This email is already registered. Please use a different one or log in.": "Cette adresse a déjà un compte. Utilisez-en une autre ou connectez-vous.",
+  "Create account & continue": "Créer mon compte et continuer",
   "Login failed": "Échec de la connexion",
   "Signup failed": "Échec de l'inscription",
   "Log in to continue with your booking.": "Connectez-vous pour continuer votre réservation.",
