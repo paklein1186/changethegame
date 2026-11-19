@@ -43,6 +43,13 @@
       "when": 1795103011126,
       "tag": "0005_guild_euro_membership",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795109774897,
+      "tag": "0006_guild_membership_plan_details",
+      "breakpoints": true
     }
   ]
 }
