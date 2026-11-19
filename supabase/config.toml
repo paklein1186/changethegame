@@ -146,3 +146,6 @@ verify_jwt = false
 
 [functions.search-index-sync]
 verify_jwt = false
+
+[functions.guild-euro-webhook]
+verify_jwt = false
