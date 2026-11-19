@@ -10,28 +10,79 @@ const corsHeaders = {
 const BASE_URL = "https://changethegame.xyz";
 const APP_NAME = "changethegame";
 
-function wrapTemplate(body: string): string {
-  return `
-<div style="font-family: Georgia, 'Times New Roman', serif; max-width: 560px; margin: 0 auto; padding: 32px 16px; color: #2d2d2d;">
-  <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #8b7355; margin-bottom: 24px;">${APP_NAME}</p>
-  ${body}
-  <hr style="border: none; border-top: 1px solid #e5ddd0; margin: 32px 0 16px;" />
-  <p style="font-size: 13px; color: #8b7355;">You're receiving this because you're part of our learning community. Together, we grow. 🌱</p>
-</div>`;
-}
+const esc = (v: string) => v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
-function buildWelcomeHtml(name: string): string {
-  return wrapTemplate(`
-    <h2 style="font-size: 22px; font-weight: normal; margin-bottom: 16px;">Welcome aboard, ${name}!</h2>
-    <p>We're thrilled to have you join this community of changemakers, builders, and dreamers working together to regenerate our world.</p>
-    <p>Here are a few things you can do to get started:</p>
-    <ul style="padding-left: 20px; line-height: 1.8;">
-      <li><a href="${BASE_URL}/quests" style="color: #6b5b3e;">Explore open quests</a> and find projects that resonate with you</li>
-      <li><a href="${BASE_URL}/guilds" style="color: #6b5b3e;">Join a guild</a> — a community of practice in your area of passion</li>
-      <li><a href="${BASE_URL}/services" style="color: #6b5b3e;">Browse services</a> offered by fellow members</li>
-    </ul>
-    <p>Every small step matters. We can't wait to see what you'll create. ✨</p>
-  `);
+// Même charte que les autres e-mails de la plateforme (send-notification-email) : violet changethegame, DM Sans.
+const COPY = {
+  fr: {
+    subject: (n: string) => n ? `Bienvenue sur changethegame, ${n} 🌿` : "Bienvenue sur changethegame 🌿",
+    hello: (n: string) => n ? `Bienvenue, ${n} !` : "Bienvenue !",
+    intro: "Ravi de vous compter parmi les personnes, collectifs et lieux qui coopèrent sur leurs territoires.",
+    start: "Pour bien démarrer :",
+    items: [
+      ["/explore?tab=quests", "Découvrir les quêtes", "et rejoindre un projet qui vous parle"],
+      ["/explore?tab=entities", "Trouver une guilde", "— un collectif autour de vos sujets"],
+      ["/explore?tab=territories", "Explorer votre territoire", "et l'écosystème qui l'anime"],
+      ["/profile/edit", "Compléter votre profil", "pour que les bonnes personnes vous trouvent"],
+    ],
+    cta: "Ouvrir changethegame",
+    footer: "Vous recevez cet e-mail parce que vous venez de créer votre compte.",
+    prefs: "Gérer mes notifications",
+  },
+  en: {
+    subject: (n: string) => n ? `Welcome to changethegame, ${n} 🌿` : "Welcome to changethegame 🌿",
+    hello: (n: string) => n ? `Welcome, ${n}!` : "Welcome!",
+    intro: "Glad to have you among the people, collectives and places cooperating across their territories.",
+    start: "A few ways to get started:",
+    items: [
+      ["/explore?tab=quests", "Discover quests", "and join a project that speaks to you"],
+      ["/explore?tab=entities", "Find a guild", "— a collective around the topics you care about"],
+      ["/explore?tab=territories", "Explore your territory", "and the ecosystem around it"],
+      ["/profile/edit", "Complete your profile", "so the right people can find you"],
+    ],
+    cta: "Open changethegame",
+    footer: "You're receiving this email because you just created your account.",
+    prefs: "Manage notifications",
+  },
+} as const;
+
+function buildWelcomeHtml(name: string, lang: "fr" | "en"): string {
+  const c = COPY[lang];
+  const items = c.items.map(([path, label, rest]) => `
+        <tr><td style="padding:8px 0;font-size:15px;line-height:1.5;color:hsl(250,12%,36%);">
+          <a href="${BASE_URL}${path}" style="color:hsl(262,83%,58%);font-weight:600;text-decoration:none;">${label}</a> ${rest}
+        </td></tr>`).join("");
+  return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background:#f5f4fb;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
+    <div style="background:linear-gradient(135deg,hsl(262,83%,58%),hsl(290,70%,58%));border-radius:12px 12px 0 0;padding:20px 28px;">
+      <span style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.9);">${APP_NAME}</span>
+    </div>
+    <div style="background:#ffffff;border:1px solid hsl(250,18%,90%);border-top:none;border-radius:0 0 12px 12px;padding:32px 28px;">
+      <h1 style="font-size:22px;font-weight:700;color:hsl(250,30%,8%);margin:0 0 12px;">${c.hello(esc(name))}</h1>
+      <p style="font-size:15px;line-height:1.6;color:hsl(250,12%,36%);margin:0 0 20px;">${c.intro}</p>
+      <p style="font-size:15px;font-weight:600;color:hsl(250,30%,8%);margin:0 0 4px;">${c.start}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 24px;">${items}
+      </table>
+      <a href="${BASE_URL}/home" style="display:inline-block;background:hsl(262,83%,58%);color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">${c.cta}</a>
+      <hr style="border:none;border-top:1px solid hsl(250,18%,90%);margin:32px 0 20px;" />
+      <p style="font-size:12px;color:hsl(250,12%,46%);line-height:1.6;margin:0;">
+        ${c.footer}
+        <a href="${BASE_URL}/me/settings" style="color:hsl(262,83%,58%);text-decoration:underline;">${c.prefs}</a>
+      </p>
+    </div>
+    <p style="text-align:center;font-size:11px;color:hsl(250,12%,46%);margin-top:16px;">
+      <a href="${BASE_URL}" style="color:hsl(250,12%,46%);">changethegame.xyz</a>
+    </p>
+  </div>
+</body>
+</html>`;
 }
 
 serve(async (req) => {
@@ -40,7 +91,7 @@ serve(async (req) => {
   }
 
   try {
-    const { userId } = await req.json();
+    const { userId, lang: uiLang } = await req.json();
     if (!userId) {
       return new Response(JSON.stringify({ error: "userId is required" }), {
         status: 400,
@@ -56,6 +107,18 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Seule la personne elle-même (ou un appel serveur) peut déclencher son e-mail de bienvenue.
+    const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
+    if (token !== supabaseServiceKey) {
+      const { data: auth } = await supabase.auth.getUser(token);
+      if (!auth?.user || auth.user.id !== userId) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
 
     // Check if welcome email was already sent (idempotency via activity_log)
     const { data: existing } = await supabase
@@ -75,7 +138,7 @@ serve(async (req) => {
     // Fetch user profile
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("name, email")
+      .select("name, email, preferred_language")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -84,7 +147,10 @@ serve(async (req) => {
     }
 
     const email = profile.email;
-    const name = profile.name || "there";
+    // Langue de l'interface au moment de l'inscription, sinon celle du profil (qui vaut « en » par défaut).
+    const langSource = String(uiLang ?? (profile as any).preferred_language ?? "").toLowerCase();
+    const lang: "fr" | "en" = langSource.startsWith("fr") ? "fr" : "en";
+    const name = String(profile.name ?? "").trim();
 
     if (!email) {
       throw new Error("User has no email address");
@@ -100,8 +166,8 @@ serve(async (req) => {
       body: JSON.stringify({
         from: `${APP_NAME} <hello@changethegame.xyz>`,
         to: [email],
-        subject: `Welcome to ${APP_NAME}, ${name}! 🌿`,
-        html: buildWelcomeHtml(name),
+        subject: COPY[lang].subject(name),
+        html: buildWelcomeHtml(name, lang),
       }),
     });
 

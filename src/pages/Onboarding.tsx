@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useEffect, useCallback } from "react";
 import { notifyPlatformAdmins } from "@/lib/notifyAdmins";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
@@ -607,7 +608,7 @@ export default function Onboarding() {
 
       // Send welcome email (fire-and-forget)
       supabase.functions.invoke("send-welcome-email", {
-        body: { userId: authUser.id },
+        body: { userId: authUser.id, lang: i18n.language },
       });
 
       await refreshProfile();
