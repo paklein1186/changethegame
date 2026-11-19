@@ -30,3 +30,10 @@ SET label = EXCLUDED.label,
     per_small_place_cents = EXCLUDED.per_small_place_cents,
     per_large_place_cents = EXCLUDED.per_large_place_cents,
     sort_order = EXCLUDED.sort_order;
+
+-- Codes d'adhésion (migration 20261120100000) : formule donnée aux lieux payés par un partenaire bénéficiaire.
+-- Les personnes supplémentaires d'une organisation d'accompagnement reçoivent la formule du payeur.
+UPDATE public.guild_membership_plans
+SET small_place_plan_code = 'lieu_moins_20',
+    large_place_plan_code = 'lieu_20_et_plus'
+WHERE guild_id = '<GUILD_ID>' AND code = 'partenaire_beneficiaire';

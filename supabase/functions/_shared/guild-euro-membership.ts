@@ -28,7 +28,7 @@ export async function guildForMetadata(admin: any, ref: string, meta: any) {
   return guild;
 }
 
-async function grantBadges(admin: any, guildId: string, userId: string, planCode: string, expiresAt: string | null) {
+export async function grantBadges(admin: any, guildId: string, userId: string, planCode: string, expiresAt: string | null) {
   const { data: plan } = await admin
     .from("guild_membership_plans")
     .select("badge_codes")
@@ -115,6 +115,10 @@ export async function activateFromSubscription(
 
   if (meta.plan_code) await grantBadges(admin, guild.id, meta.user_id, meta.plan_code, end);
 
+  // Places payées pour d'autres : un code par place, puis prolongation des bénéficiaires.
+  await syncCodes(admin, guild.id, meta, sub.id, end);
+  await extendBeneficiaries(admin, guild.id, meta.user_id, sub.id, end);
+
   if (notify && !alreadyDone) {
     const { data: admins } = await admin
       .from("guild_members")
@@ -138,4 +142,183 @@ export async function activateFromSubscription(
     }
   }
   return { guild_id: guild.id, user_id: meta.user_id, current_period_end: end };
+}
+
+// ---------------------------------------------------------------------------
+// Codes d'adhésion : un payeur paie des places, chaque bénéficiaire active la sienne.
+// ---------------------------------------------------------------------------
+
+export type Slot = "extra_person" | "small_place" | "large_place";
+
+/** Nombre de places payées pour d'autres, lu dans les métadonnées de l'abonnement. */
+export function slotsFromMetadata(meta: any): Record<Slot, number> {
+  const n = (v: unknown) => {
+    const x = Number(v ?? 0);
+    return Number.isInteger(x) && x > 0 && x <= 500 ? x : 0;
+  };
+  return { extra_person: n(meta?.extra_persons), small_place: n(meta?.small_places), large_place: n(meta?.large_places) };
+}
+
+// Sans 0/O, 1/I/L : un code se dicte et se recopie sans erreur.
+const ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+
+/** Code de la forme XXXX-XXXX-XXXX (environ 59 bits de hasard). */
+export function newCode(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(12));
+  const chars = [...bytes].map((b) => ALPHABET[b % ALPHABET.length]);
+  return [0, 4, 8].map((i) => chars.slice(i, i + 4).join("")).join("-");
+}
+
+/** Remet un code saisi à la main dans sa forme canonique (majuscules, tirets), ou null s'il est invalide. */
+export function normalizeCode(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const clean = raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (clean.length !== 12 || [...clean].some((c) => !ALPHABET.includes(c))) return null;
+  return [0, 4, 8].map((i) => clean.slice(i, i + 4)).join("-");
+}
+
+/** Formule donnée au bénéficiaire d'une place, d'après la formule du payeur. */
+export function beneficiaryPlan(plan: any, slot: Slot): string | null {
+  if (slot === "extra_person") return plan?.extra_person_plan_code ?? plan?.code ?? null;
+  if (slot === "small_place") return plan?.small_place_plan_code ?? null;
+  return plan?.large_place_plan_code ?? null;
+}
+
+/**
+ * Crée les codes manquants pour un abonnement (idempotent : un code par place et par rang),
+ * puis aligne leur date de validité sur la fin de période payée.
+ */
+export async function syncCodes(admin: any, guildId: string, meta: any, subscriptionId: string, end: string | null) {
+  const slots = slotsFromMetadata(meta);
+  if (!slots.extra_person && !slots.small_place && !slots.large_place) return;
+  const { data: plan } = await admin
+    .from("guild_membership_plans")
+    .select("code, extra_person_plan_code, small_place_plan_code, large_place_plan_code")
+    .eq("guild_id", guildId)
+    .eq("code", meta.plan_code)
+    .maybeSingle();
+
+  const rows: any[] = [];
+  for (const slot of Object.keys(slots) as Slot[]) {
+    const planCode = beneficiaryPlan(plan, slot);
+    if (!planCode) continue; // formule non prévue pour ce type de place : pas de code
+    for (let position = 1; position <= slots[slot]; position++) {
+      rows.push({
+        guild_id: guildId,
+        code: newCode(),
+        slot,
+        position,
+        plan_code: planCode,
+        payer_user_id: meta.user_id,
+        stripe_subscription_id: subscriptionId,
+        valid_until: end,
+      });
+    }
+  }
+  if (rows.length) {
+    await admin
+      .from("guild_membership_codes")
+      .upsert(rows, { onConflict: "stripe_subscription_id,slot,position", ignoreDuplicates: true });
+  }
+  await admin.from("guild_membership_codes").update({ valid_until: end }).eq("stripe_subscription_id", subscriptionId);
+}
+
+/** Renouvellement payé : les bénéficiaires restent adhérents jusqu'à la nouvelle fin de période. */
+export async function extendBeneficiaries(admin: any, guildId: string, payerId: string, subscriptionId: string, end: string | null) {
+  const { data: rows } = await admin
+    .from("user_guild_memberships")
+    .select("user_id, plan_code")
+    .eq("guild_id", guildId)
+    .eq("stripe_subscription_id", subscriptionId)
+    .neq("user_id", payerId);
+  for (const r of rows ?? []) {
+    await admin
+      .from("user_guild_memberships")
+      .update({ status: "active", current_period_end: end, membership_expires_at: end })
+      .eq("guild_id", guildId)
+      .eq("user_id", r.user_id)
+      .eq("stripe_subscription_id", subscriptionId);
+    if (r.plan_code) await grantBadges(admin, guildId, r.user_id, r.plan_code, end);
+  }
+}
+
+export type RedeemResult =
+  | { ok: true; guild_id: string; plan_code: string; current_period_end: string | null }
+  | { ok: false; reason: "invalid" | "used" | "expired" | "already_member" | "own_code" };
+
+/**
+ * Utilise un code pour la personne connectée : réserve le code (une seule fois), puis active
+ * son adhésion, liée à l'abonnement du payeur.
+ */
+export async function redeemCode(admin: any, userId: string, raw: unknown): Promise<RedeemResult> {
+  const code = normalizeCode(raw);
+  if (!code) return { ok: false, reason: "invalid" };
+  const { data: c } = await admin.from("guild_membership_codes").select("*").eq("code", code).maybeSingle();
+  if (!c || c.revoked_at) return { ok: false, reason: "invalid" };
+
+  const done = (): RedeemResult => ({ ok: true, guild_id: c.guild_id, plan_code: c.plan_code, current_period_end: c.valid_until });
+  if (c.redeemed_by_user_id === userId) return done(); // déjà utilisé par cette personne : rien à refaire
+  if (c.redeemed_by_user_id) return { ok: false, reason: "used" };
+  if (c.payer_user_id === userId) return { ok: false, reason: "own_code" };
+  if (c.valid_until && new Date(c.valid_until).getTime() <= Date.now()) return { ok: false, reason: "expired" };
+
+  const { data: existing } = await admin
+    .from("user_guild_memberships")
+    .select("role, status, current_period_end, stripe_subscription_id, joined_at")
+    .eq("guild_id", c.guild_id)
+    .eq("user_id", userId)
+    .maybeSingle();
+  const stillPaid =
+    existing?.role === "member" &&
+    existing?.stripe_subscription_id &&
+    ["active", "grace"].includes(existing?.status ?? "") &&
+    (!existing?.current_period_end || new Date(existing.current_period_end).getTime() > Date.now());
+  if (stillPaid) return { ok: false, reason: "already_member" };
+
+  // Réservation atomique : seule la première personne qui arrive obtient le code.
+  const { data: claimed } = await admin
+    .from("guild_membership_codes")
+    .update({ redeemed_by_user_id: userId, redeemed_at: new Date().toISOString() })
+    .eq("id", c.id)
+    .is("redeemed_by_user_id", null)
+    .select("id");
+  if (!claimed?.length) return { ok: false, reason: "used" };
+
+  await admin.from("user_guild_memberships").upsert(
+    {
+      user_id: userId,
+      guild_id: c.guild_id,
+      role: "member",
+      status: "active",
+      joined_at: existing?.joined_at ?? new Date().toISOString(),
+      membership_expires_at: c.valid_until,
+      current_period_end: c.valid_until,
+      cancel_at_period_end: false,
+      last_payment_at: new Date().toISOString(),
+      plan_code: c.plan_code,
+      payer_user_id: c.payer_user_id,
+      stripe_customer_id: null,
+      stripe_subscription_id: c.stripe_subscription_id,
+      amount_paid_cents: null,
+      currency: null,
+    },
+    { onConflict: "user_id,guild_id" },
+  );
+  await admin
+    .from("guild_members")
+    .insert({ guild_id: c.guild_id, user_id: userId, role: "MEMBER" })
+    .then(() => undefined, () => undefined);
+  await grantBadges(admin, c.guild_id, userId, c.plan_code, c.valid_until);
+
+  await admin.from("notifications").insert({
+    user_id: c.payer_user_id,
+    type: "GUILD_MEMBERSHIP_CODE_REDEEMED",
+    title: "Code d'adhésion utilisé",
+    body: `Un de vos codes d'adhésion (${c.plan_code}) vient d'être activé.`,
+    related_entity_type: "guild",
+    related_entity_id: c.guild_id,
+    deep_link_url: `/guilds/${c.guild_id}`,
+  }).then(() => undefined, () => undefined);
+
+  return done();
 }
