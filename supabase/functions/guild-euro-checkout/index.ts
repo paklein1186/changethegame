@@ -31,10 +31,16 @@ function returnUrl(requested: unknown, fallback: string): string {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+  // Domaines d'aperçu Lovable acceptés par défaut, pour que les brouillons reviennent sur eux-mêmes.
+  const suffixes = (Deno.env.get("GUILD_CHECKOUT_RETURN_SUFFIXES") ?? ".lovableproject.com,.lovable.app")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   if (typeof requested === "string") {
     try {
       const u = new URL(requested);
-      if (allowed.includes(u.origin)) return u.toString();
+      const suffixOk = u.protocol === "https:" && suffixes.some((s) => s.startsWith(".") && u.hostname.endsWith(s));
+      if (allowed.includes(u.origin) || suffixOk) return u.toString();
     } catch {
       /* adresse invalide : on garde l'adresse par défaut */
     }
@@ -168,7 +174,9 @@ serve(async (req) => {
       ],
       metadata,
       subscription_data: { metadata },
-      success_url: withParam(back, "ok"),
+      // {CHECKOUT_SESSION_ID} est remplacé par Stripe ; il ne doit pas être encodé.
+      // La page de retour le transmet à guild-euro-confirm pour activer l'adhésion sans attendre le webhook.
+      success_url: `${withParam(back, "ok")}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: withParam(back, "annulee"),
       locale: "fr",
     });
