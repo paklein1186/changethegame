@@ -3,6 +3,8 @@
 -- 20261119150000_guild_euro_membership.sql.
 -- Remplacer <GUILD_ID> par l'identifiant de la guilde Trois-Tiers.
 -- Source des montants : communaute.yaml du site Trois-Tiers (décisions du 19/11/2026).
+-- Description et avantages de chaque formule : bouton « Compléter avec le modèle » dans
+-- Réglages de la guilde → Membership & Contributions → Cotisation en euros.
 
 UPDATE public.guilds
 SET euro_membership_enabled = true,

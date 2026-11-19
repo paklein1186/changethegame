@@ -21,6 +21,8 @@ interface EntityJoinButtonProps {
   currentUserId: string;
   currentUserName?: string;
   onJoined?: () => void;
+  /** Phrase affichée après avoir rejoint ou candidaté, quand l'entité propose une adhésion payante. */
+  membershipHint?: string;
 }
 
 const TABLE_MAP = {
@@ -44,6 +46,7 @@ export function EntityJoinButton({
   currentUserId,
   currentUserName,
   onJoined,
+  membershipHint,
 }: EntityJoinButtonProps) {
   const { toast } = useToast();
   const { notifyJoinRequest } = useNotifications();
@@ -83,7 +86,7 @@ export function EntityJoinButton({
     if (error) {
       toast({ title: "Failed to join", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: `Joined ${label}!` });
+      toast({ title: `Joined ${label}!`, description: membershipHint });
       onJoined?.();
     }
   };
@@ -110,7 +113,7 @@ export function EntityJoinButton({
     } else {
       setPendingApp(true);
       setApplyOpen(false);
-      toast({ title: "Application submitted!", description: "Admins will review it." });
+      toast({ title: "Application submitted!", description: membershipHint ? `Admins will review it. ${membershipHint}` : "Admins will review it." });
       // Notify admins about the join request
       notifyJoinRequest({ entityType, entityId, entityName: entityName || label, applicantName: currentUserName || "Someone" });
     }

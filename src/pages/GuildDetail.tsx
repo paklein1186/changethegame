@@ -87,6 +87,7 @@ import { SectionBanner, HintTooltip, EmptyHint, HINTS } from "@/components/onboa
 import { usePersona } from "@/hooks/usePersona";
 import { GuildMembershipCard } from "@/components/guild/GuildMembershipCard";
 import { GuildEuroMembershipCard } from "@/components/guild/GuildEuroMembershipCard";
+import { GuildAdherentBadge } from "@/components/guild/GuildAdherentBadge";
 import { GuildOVNTab } from "@/components/guild/GuildOVNTab";
 import { GuildContributionMap } from "@/components/ocu/GuildContributionMap";
 import { GuildMonetizationTab } from "@/components/guild/GuildMonetizationTab";
@@ -400,7 +401,13 @@ export default function GuildDetail() {
     autoFollowEntity(currentUser.id, "GUILD", guild.id);
     qc.invalidateQueries({ queryKey: ["guild", id] });
     qc.invalidateQueries({ queryKey: ["guild-members-profiles", id] });
-    toast({ title: "Joined guild!" });
+    const offersMembership = Boolean((guild as any).euro_membership_enabled || guild.enable_membership);
+    toast({
+      title: "Joined guild!",
+      description: offersMembership
+        ? "Vous suivez la guilde comme observateur. Pour accéder à tout, devenez adhérent : voir la carte Cotisation dans l'onglet Overview."
+        : undefined,
+    });
   };
 
   const leaveGuild = async () => {
@@ -504,7 +511,7 @@ export default function GuildDetail() {
               {!isMember && (
                 isLoggedIn ? (
                   <div className="flex flex-col gap-1 items-end">
-                    <EntityJoinButton entityType="guild" entityId={guild.id} entityName={guild.name} joinPolicy={guild.join_policy || "OPEN"} applicationQuestions={(guild.application_questions as string[]) || []} currentUserId={currentUser.id} currentUserName={currentUser.name} onJoined={() => { qc.invalidateQueries({ queryKey: ["guild", id] }); qc.invalidateQueries({ queryKey: ["guild-members-profiles", id] }); }} />
+                    <EntityJoinButton entityType="guild" entityId={guild.id} entityName={guild.name} joinPolicy={guild.join_policy || "OPEN"} applicationQuestions={(guild.application_questions as string[]) || []} currentUserId={currentUser.id} currentUserName={currentUser.name} membershipHint={((guild as any).euro_membership_enabled || guild.enable_membership) ? "Cette guilde propose une adhésion avec cotisation : vous êtes observateur jusqu'à votre adhésion (carte Cotisation, onglet Overview)." : undefined} onJoined={() => { qc.invalidateQueries({ queryKey: ["guild", id] }); qc.invalidateQueries({ queryKey: ["guild-members-profiles", id] }); }} />
                     <PlanLimitBadge limitReached={limits.guildLimitReached} xpCost={EXTRA_GUILD_CREDIT_COST} itemLabel="guild slot" compact />
                   </div>
                 ) : (
@@ -737,6 +744,7 @@ export default function GuildDetail() {
                       <p className="text-sm font-medium">{m.user?.name}</p>
                       <div className="flex items-center gap-1 flex-wrap mt-0.5">
                         <span className="text-xs text-muted-foreground capitalize">{(m.role || "member").toLowerCase()}</span>
+                        <GuildAdherentBadge guild={guild} userId={m.user_id} />
                         {userRoles.map((r) => (
                           <Badge key={r.id} variant="secondary" className="text-[10px] px-1.5 py-0" style={{ backgroundColor: r.color + "22", color: r.color, borderColor: r.color + "44" }}>
                             {r.name}

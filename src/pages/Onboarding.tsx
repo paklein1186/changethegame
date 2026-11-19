@@ -151,8 +151,8 @@ export default function Onboarding() {
   const { data: existingGuilds = [] } = useQuery({
     queryKey: ["onboarding-guilds"],
     queryFn: async () => {
-      const { data } = await supabase.from("guilds").select("id, name, join_policy").eq("is_deleted", false).eq("is_approved", true).limit(100);
-      return data || [];
+      const { data } = await supabase.from("guilds").select("id, name, join_policy, enable_membership, euro_membership_enabled" as any).eq("is_deleted", false).eq("is_approved", true).limit(100);
+      return ((data as any[]) || []) as Array<{ id: string; name: string; join_policy: string | null; enable_membership?: boolean; euro_membership_enabled?: boolean }>;
     },
   });
   const { data: existingCompanies = [] } = useQuery({

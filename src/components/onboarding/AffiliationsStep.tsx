@@ -23,7 +23,7 @@ interface Props {
   onLinksChange: (links: AffiliationLink) => void;
   manualAffiliations: ManualAffiliation[];
   onAffiliationsChange: (affiliations: ManualAffiliation[]) => void;
-  existingGuilds: Array<{ id: string; name: string }>;
+  existingGuilds: Array<{ id: string; name: string; enable_membership?: boolean; euro_membership_enabled?: boolean }>;
   existingCompanies: Array<{ id: string; name: string }>;
   selectedEntityIds: string[];
   onToggleEntity: (id: string) => void;
@@ -186,6 +186,19 @@ export function AffiliationsStep({
             ))}
           </div>
         )}
+        {(() => {
+          const withMembership = existingGuilds.filter(
+            (g) => selectedEntityIds.includes(g.id) && (g.euro_membership_enabled || g.enable_membership),
+          );
+          if (!withMembership.length) return null;
+          return (
+            <p className="text-xs text-muted-foreground rounded-md border border-border bg-muted/30 p-2.5">
+              {withMembership.map((g) => g.name).join(", ")}{" "}
+              {withMembership.length > 1 ? "proposent" : "propose"} une adhésion avec cotisation. En rejoignant, vous êtes
+              d'abord observateur ; vous pourrez devenir adhérent depuis la page de la guilde.
+            </p>
+          );
+        })()}
       </div>
 
       <p className="text-xs text-muted-foreground italic">
