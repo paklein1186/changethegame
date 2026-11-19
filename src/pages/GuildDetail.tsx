@@ -86,6 +86,7 @@ import { Leaf, Network } from "lucide-react";
 import { SectionBanner, HintTooltip, EmptyHint, HINTS } from "@/components/onboarding/ContextualHint";
 import { usePersona } from "@/hooks/usePersona";
 import { GuildMembershipCard } from "@/components/guild/GuildMembershipCard";
+import { GuildEuroMembershipCard } from "@/components/guild/GuildEuroMembershipCard";
 import { GuildOVNTab } from "@/components/guild/GuildOVNTab";
 import { GuildContributionMap } from "@/components/ocu/GuildContributionMap";
 import { GuildMonetizationTab } from "@/components/guild/GuildMonetizationTab";
@@ -692,7 +693,9 @@ export default function GuildDetail() {
           </div>
 
           <HighlightedPostsTiles guildId={guild.id} onViewAll={() => setActiveTab("activity")} />
-          <GuildMembershipCard guild={guild} />
+          {(guild as any).euro_membership_enabled
+            ? <GuildEuroMembershipCard guild={guild} />
+            : <GuildMembershipCard guild={guild} />}
           <PartnersBlock entityType="GUILD" entityId={guild.id} />
         </TabsContent>
 
