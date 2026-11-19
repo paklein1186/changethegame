@@ -49,6 +49,26 @@ interface EntityApplicationsTabProps {
   currentUserId: string;
 }
 
+/** Si la guilde propose une adhésion payante, invite la personne acceptée à devenir adhérente. */
+async function inviteToMembership(guildId: string, userId: string) {
+  const { data: guild } = await supabase
+    .from("guilds")
+    .select("name, enable_membership, euro_membership_enabled" as any)
+    .eq("id", guildId)
+    .maybeSingle();
+  const g = guild as any;
+  if (!g || !(g.euro_membership_enabled || g.enable_membership)) return;
+  await supabase.from("notifications").insert({
+    user_id: userId,
+    type: "GUILD_MEMBERSHIP_INVITE",
+    title: `Devenez adhérent de ${g.name}`,
+    body: "Votre candidature est acceptée. Vous êtes observateur ; l'adhésion avec cotisation ouvre l'accès complet.",
+    related_entity_type: "guild",
+    related_entity_id: guildId,
+    deep_link_url: `/guilds/${guildId}`,
+  } as any);
+}
+
 export function EntityApplicationsTab({ entityType, entityId, entityName, currentUserId }: EntityApplicationsTabProps) {
   const { toast } = useToast();
   const { notifyApplicationDecision, notifyGuildMemberAdded } = useNotifications();
@@ -140,6 +160,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
     // If approved, also notify them they were added
     if (action === "APPROVED") {
       notifyGuildMemberAdded({ guildId: entityId, userId: app.applicant_user_id });
+      if (entityType === "guild") void inviteToMembership(entityId, app.applicant_user_id);
     }
     fetchApps();
   };

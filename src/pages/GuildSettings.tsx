@@ -60,6 +60,7 @@ import { WebVisibilityEditor } from "@/components/website/WebVisibilityEditor";
 import { SiteCodeManager } from "@/components/website/SiteCodeManager";
 import { FeedpointVisibilitySettings } from "@/components/website/FeedpointVisibilitySettings";
 import { GuildMembershipSettingsPanel } from "@/components/guild/GuildMembershipSettingsPanel";
+import { GuildEuroPlansSettings } from "@/components/guild/GuildEuroPlansSettings";
 import { GuildMcpTokensPanel } from "@/components/guild/GuildMcpTokensPanel";
 import { GuildAgentSettingsPanel } from "@/components/guild/GuildAgentSettingsPanel";
 import { ExitProtocolSettings } from "@/components/ocu/ExitProtocolSettings";
@@ -875,7 +876,10 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
               {/* ── Membership & Contributions ── */}
               {activeTab === "membership-contributions" && (
-                <GuildMembershipSettingsPanel guild={guild} guildId={guildId} />
+                <>
+                  <GuildMembershipSettingsPanel guild={guild} guildId={guildId} />
+                  <GuildEuroPlansSettings guild={guild} guildId={guildId} />
+                </>
               )}
 
               {/* ── Applications ── */}
