@@ -68,10 +68,26 @@ window.location.href = data.url; // page de paiement Stripe
 
 Exemple : 350 € + 3 × 60 € + 2 × 100 € = 730 € par an.
 
+## Codes d'adhésion : payer pour d'autres (décision du 19/11/2026)
+
+Un payeur (organisation d'accompagnement, GAL partenaire bénéficiaire) paie des places en plus de sa propre adhésion.
+À l'activation du paiement, **un code par place** est créé (`guild_membership_codes`, format `XXXX-XXXX-XXXX`).
+Le payeur distribue ses codes ; chaque bénéficiaire saisit le sien avec son propre compte et devient adhérent.
+
+| Élément | Rôle |
+| --- | --- |
+| `supabase/migrations/20261120100000_guild_membership_codes.sql` | Table des codes ; formule donnée à chaque type de place (`small_place_plan_code`, `large_place_plan_code`, `extra_person_plan_code`) |
+| `supabase/functions/guild-membership-redeem` | `POST { code }` : utilise un code pour la personne connectée |
+| `supabase/functions/guild-membership-codes` | `GET ?guild_id=` : codes achetés par la personne connectée (utilisé ou non, sans dire par qui) |
+
+- Formule du bénéficiaire : lieux portés → `lieu_moins_20` / `lieu_20_et_plus` ; personne supplémentaire → formule du payeur.
+- Les bénéficiaires partagent l'abonnement Stripe du payeur : renouvellement → prolongés ; impayé ou résiliation → même statut.
+- Un code ne sert qu'une fois ; refusé s'il est expiré, s'il est utilisé par le payeur lui-même, ou si la personne a déjà
+  sa propre cotisation en cours. Le payeur reçoit une notification quand un code est utilisé.
+- Pas encore géré : changer le nombre de places en cours d'année, retirer un code déjà utilisé.
+
 ## Limites connues
 
-- Le payeur est encore la personne connectée : le paiement d'un GAL pour ses lieux, ou d'une organisation pour plusieurs
-  personnes, compte les quantités mais n'attribue pas encore l'adhésion à chacun.
 - Un seul badge par rôle et par personne (contrainte existante) : le badge « actif » à portée multiple viendra ensuite.
 - Les fonctions n'ont pas pu être vérifiées par `deno check` depuis l'environnement de développement (esm.sh inaccessible) ;
   la migration a été validée par un analyseur SQL, pas sur une base réelle.
