@@ -36,6 +36,13 @@
       "when": 1795036206862,
       "tag": "0004_territory_hierarchy",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795103011126,
+      "tag": "0005_guild_euro_membership",
+      "breakpoints": true
     }
   ]
 }

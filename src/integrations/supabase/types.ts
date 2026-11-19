@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.1"
-  }
   public: {
     Tables: {
       achievements: {
@@ -3821,19 +3816,28 @@ export type Database = {
         Row: {
           created_at: string
           entity_role_id: string
+          expires_at: string | null
           id: string
+          scope_id: string | null
+          scope_type: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
           entity_role_id: string
+          expires_at?: string | null
           id?: string
+          scope_id?: string | null
+          scope_type?: string | null
           user_id: string
         }
         Update: {
           created_at?: string
           entity_role_id?: string
+          expires_at?: string | null
           id?: string
+          scope_id?: string | null
+          scope_type?: string | null
           user_id?: string
         }
         Relationships: [
@@ -3848,6 +3852,7 @@ export type Database = {
       }
       entity_roles: {
         Row: {
+          code: string | null
           color: string | null
           created_at: string
           entity_id: string
@@ -3858,6 +3863,7 @@ export type Database = {
           sort_order: number
         }
         Insert: {
+          code?: string | null
           color?: string | null
           created_at?: string
           entity_id: string
@@ -3868,6 +3874,7 @@ export type Database = {
           sort_order?: number
         }
         Update: {
+          code?: string | null
           color?: string | null
           created_at?: string
           entity_id?: string
@@ -4951,6 +4958,65 @@ export type Database = {
           },
         ]
       }
+      guild_membership_plans: {
+        Row: {
+          active: boolean
+          badge_codes: string[]
+          base_amount_cents: number
+          billing_interval: string
+          code: string
+          created_at: string
+          currency: string
+          guild_id: string
+          id: string
+          label: string
+          per_extra_person_cents: number
+          per_large_place_cents: number
+          per_small_place_cents: number
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          badge_codes?: string[]
+          base_amount_cents?: number
+          billing_interval?: string
+          code: string
+          created_at?: string
+          currency?: string
+          guild_id: string
+          id?: string
+          label: string
+          per_extra_person_cents?: number
+          per_large_place_cents?: number
+          per_small_place_cents?: number
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          badge_codes?: string[]
+          base_amount_cents?: number
+          billing_interval?: string
+          code?: string
+          created_at?: string
+          currency?: string
+          guild_id?: string
+          id?: string
+          label?: string
+          per_extra_person_cents?: number
+          per_large_place_cents?: number
+          per_small_place_cents?: number
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_membership_plans_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guild_service_visibility: {
         Row: {
           created_at: string
@@ -5121,6 +5187,7 @@ export type Database = {
           enable_membership: boolean
           entry_fee_credits: number | null
           entry_fee_max_credits: number | null
+          euro_membership_enabled: boolean
           evidence_required_override: boolean | null
           exit_bad_leaver_decision: string
           exit_bad_leaver_fmv_pct: number
@@ -5161,6 +5228,7 @@ export type Database = {
           redistribution_percent: number
           requires_application_before_payment: boolean
           sales_commission_default_pct: number
+          stripe_account_ref: string | null
           twitter_url: string | null
           type: Database["public"]["Enums"]["guild_type"]
           universe_visibility: string
@@ -5191,6 +5259,7 @@ export type Database = {
           enable_membership?: boolean
           entry_fee_credits?: number | null
           entry_fee_max_credits?: number | null
+          euro_membership_enabled?: boolean
           evidence_required_override?: boolean | null
           exit_bad_leaver_decision?: string
           exit_bad_leaver_fmv_pct?: number
@@ -5231,6 +5300,7 @@ export type Database = {
           redistribution_percent?: number
           requires_application_before_payment?: boolean
           sales_commission_default_pct?: number
+          stripe_account_ref?: string | null
           twitter_url?: string | null
           type?: Database["public"]["Enums"]["guild_type"]
           universe_visibility?: string
@@ -5261,6 +5331,7 @@ export type Database = {
           enable_membership?: boolean
           entry_fee_credits?: number | null
           entry_fee_max_credits?: number | null
+          euro_membership_enabled?: boolean
           evidence_required_override?: boolean | null
           exit_bad_leaver_decision?: string
           exit_bad_leaver_fmv_pct?: number
@@ -5301,6 +5372,7 @@ export type Database = {
           redistribution_percent?: number
           requires_application_before_payment?: boolean
           sales_commission_default_pct?: number
+          stripe_account_ref?: string | null
           twitter_url?: string | null
           type?: Database["public"]["Enums"]["guild_type"]
           universe_visibility?: string
@@ -9051,6 +9123,27 @@ export type Database = {
           },
         ]
       }
+      stripe_guild_events: {
+        Row: {
+          account_ref: string
+          event_id: string
+          received_at: string
+          type: string
+        }
+        Insert: {
+          account_ref: string
+          event_id: string
+          received_at?: string
+          type: string
+        }
+        Update: {
+          account_ref?: string
+          event_id?: string
+          received_at?: string
+          type?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           ai_agents_enabled: boolean | null
@@ -10199,42 +10292,60 @@ export type Database = {
       }
       user_guild_memberships: {
         Row: {
+          amount_paid_cents: number | null
           cancel_at_period_end: boolean
           chosen_fee_credits: number | null
+          currency: string | null
           current_period_end: string | null
           guild_id: string
           id: string
           joined_at: string
           last_payment_at: string | null
           membership_expires_at: string | null
+          payer_user_id: string | null
+          plan_code: string | null
           role: string
           status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           user_id: string
         }
         Insert: {
+          amount_paid_cents?: number | null
           cancel_at_period_end?: boolean
           chosen_fee_credits?: number | null
+          currency?: string | null
           current_period_end?: string | null
           guild_id: string
           id?: string
           joined_at?: string
           last_payment_at?: string | null
           membership_expires_at?: string | null
+          payer_user_id?: string | null
+          plan_code?: string | null
           role?: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           user_id: string
         }
         Update: {
+          amount_paid_cents?: number | null
           cancel_at_period_end?: boolean
           chosen_fee_credits?: number | null
+          currency?: string | null
           current_period_end?: string | null
           guild_id?: string
           id?: string
           joined_at?: string
           last_payment_at?: string | null
           membership_expires_at?: string | null
+          payer_user_id?: string | null
+          plan_code?: string | null
           role?: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -12081,3 +12192,4 @@ export const Constants = {
     },
   },
 } as const
+

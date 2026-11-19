@@ -42,3 +42,35 @@ SELECT set_config('request.jwt.claims', '', true);
 INSERT INTO public.user_guild_memberships (user_id, guild_id, role, status, last_payment_at, chosen_fee_credits)
 VALUES ('00000000-0000-4000-a000-000000000002', '4964c699-4684-43a9-b508-cee21c77e24e', 'member', 'active', now(), 100)
 ON CONFLICT (user_id, guild_id) DO NOTHING;
+
+-- Cotisations Trois-Tiers (docs/trois-tiers/cotisations.sql)
+-- Formules de cotisation de la guilde Trois-Tiers (montants en centimes d'euro).
+-- À exécuter une fois, dans l'éditeur SQL de Supabase, APRÈS la migration
+-- 20261119150000_guild_euro_membership.sql.
+-- Remplacer 4964c699-4684-43a9-b508-cee21c77e24e par l'identifiant de la guilde Trois-Tiers.
+-- Source des montants : communaute.yaml du site Trois-Tiers (décisions du 19/11/2026).
+
+UPDATE public.guilds
+SET euro_membership_enabled = true,
+    stripe_account_ref = 'GUILD'          -- secrets STRIPE_SECRET_KEY_GUILD / STRIPE_WEBHOOK_SECRET_GUILD
+WHERE id = '4964c699-4684-43a9-b508-cee21c77e24e';
+
+INSERT INTO public.guild_membership_plans
+  (guild_id, code, label, billing_interval, base_amount_cents, per_extra_person_cents, per_small_place_cents, per_large_place_cents, sort_order)
+VALUES
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'citoyen',                   'Citoyen soutenant',             'year', 6000,  0,    0,    0,     10),
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'citoyen_mensuel',           'Citoyen soutenant (mensuel)',   'month', 500,  0,    0,    0,     11),
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'accompagnant_freelance',    'Accompagnant freelance',        'year', 10000, 0,    0,    0,     20),
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'accompagnant_organisation', 'Organisation d''accompagnement','year', 10000, 5000, 0,    0,     30),
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'partenaire_allie',          'Partenaire allié',              'year', 35000, 0,    0,    0,     40),
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'partenaire_beneficiaire',   'Partenaire bénéficiaire',       'year', 35000, 0,    6000, 10000, 50),
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'lieu_moins_20',             'Lieu (moins de 20 usagers)',    'year', 6000,  0,    0,    0,     60),
+  ('4964c699-4684-43a9-b508-cee21c77e24e', 'lieu_20_et_plus',           'Lieu (20 usagers ou plus)',     'year', 10000, 0,    0,    0,     61)
+ON CONFLICT (guild_id, code) DO UPDATE
+SET label = EXCLUDED.label,
+    billing_interval = EXCLUDED.billing_interval,
+    base_amount_cents = EXCLUDED.base_amount_cents,
+    per_extra_person_cents = EXCLUDED.per_extra_person_cents,
+    per_small_place_cents = EXCLUDED.per_small_place_cents,
+    per_large_place_cents = EXCLUDED.per_large_place_cents,
+    sort_order = EXCLUDED.sort_order;
