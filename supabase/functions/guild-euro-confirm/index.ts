@@ -4,10 +4,12 @@
 // La fonction relit la session directement chez Stripe (la seule source fiable) et active
 // l'adhésion si le paiement est confirmé. Utile quand le webhook ne peut pas joindre le
 // serveur (environnement de test protégé) et comme filet de sécurité en production.
+// Sert aussi aux packs de questions (paiement unique) : l'achat est crédité, une seule fois.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { activateFromSubscription } from "../_shared/guild-euro-membership.ts";
+import { grantCreditsFromSession } from "../_shared/guild-credits.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -58,6 +60,12 @@ serve(async (req) => {
     }
     if (session.status !== "complete" || !["paid", "no_payment_required"].includes(session.payment_status)) {
       return json({ ok: false, pending: true, status: session.status, payment_status: session.payment_status });
+    }
+    if (session.mode === "payment") {
+      const achat = await grantCreditsFromSession(admin, guild.stripe_account_ref, session);
+      if (!achat) return fail("This payment could not be matched to the guild.", 409);
+      log("Credits confirmed", { guildId, userId: userData.user.id, credits: achat.credits });
+      return json({ ok: true, kind: "credits", credits: achat.credits, expires_at: achat.expires_at });
     }
     if (!session.subscription) return fail("No subscription on this payment.");
 

@@ -86,6 +86,27 @@ Le payeur distribue ses codes ; chaque bénéficiaire saisit le sien avec son pr
   sa propre cotisation en cours. Le payeur reçoit une notification quand un code est utilisé.
 - Pas encore géré : changer le nombre de places en cours d'année, retirer un code déjà utilisé.
 
+## Packs de questions (bibliothèque, décision du 20/11/2026)
+
+Au-delà des 50 questions par mois comprises dans l'adhésion, un membre de la guilde achète un pack,
+payé une fois sur le même compte Stripe que les cotisations : **50 questions pour 5 €, 200 questions
+pour 15 €, sans limite de durée** (`docs/trois-tiers/packs-questions.sql`).
+
+- Migration `20261120150000_guild_credit_packs.sql` : `guild_credit_packs` (packs proposés),
+  `guild_credit_purchases` (achats et solde restant), `guild_credit_uses` (journal), fonctions serveur
+  `guild_credit_balance` et `consume_guild_credits` (décompte atomique, jamais au-delà du solde ;
+  réservées à la clé service_role).
+- `guild-credits-checkout` : `{ guild_id, pack_code, return_url }` → page Stripe (paiement unique ;
+  réservé aux membres de la guilde ; fermé si le paiement en euros de la guilde est désactivé).
+- Crédit : `guild-euro-webhook` (`checkout.session.completed`, `checkout.session.async_payment_succeeded`)
+  et `guild-euro-confirm` au retour (`session_id`), idempotents (une session ne crédite qu'une fois).
+- `guild-credits` : `{ action: "balance", guild_id }` → solde, achats, packs ;
+  `{ action: "consume", guild_id, amount, reason }` → décompte (appelé par le site après une réponse).
+- Mise en place : exécuter la migration puis `packs-questions.sql` ; déployer `guild-credits`,
+  `guild-credits-checkout`, `guild-euro-webhook` et `guild-euro-confirm` ; dans Stripe, ajouter
+  l'événement `checkout.session.async_payment_succeeded` au webhook existant.
+- Test SQL hors Supabase : `supabase/tests/guild_credit_packs.sql` (mode d'emploi en tête du fichier).
+
 ## Limites connues
 
 - Un seul badge par rôle et par personne (contrainte existante) : le badge « actif » à portée multiple viendra ensuite.
