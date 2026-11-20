@@ -8,13 +8,15 @@
 //   - paiement initial ou renouvellement payé → adhésion active jusqu'à la fin de période,
 //     badges de la formule (ex. « adherent ») attribués avec la même date d'expiration ;
 //   - échec de paiement → statut past_due ; abonnement supprimé → statut canceled ;
-//   - arrêt du renouvellement demandé dans Stripe → cancel_at_period_end.
+//   - arrêt du renouvellement demandé dans Stripe → cancel_at_period_end ;
+//   - pack de questions payé (paiement unique, metadata.kind = guild_credits) → achat crédité.
 // Le paiement initial est aussi confirmé par guild-euro-confirm au retour de Stripe :
 // les deux chemins sont idempotents.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { activateFromSubscription } from "../_shared/guild-euro-membership.ts";
+import { grantCreditsFromSession } from "../_shared/guild-credits.ts";
 
 const log = (step: string, details?: unknown) =>
   console.log(`[GUILD-EURO-WEBHOOK] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
@@ -72,8 +74,14 @@ serve(async (req) => {
 
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const session = event.data.object;
+        if (session.mode === "payment") {
+          await grantCreditsFromSession(admin, ref, session);
+          break;
+        }
+        if (event.type !== "checkout.session.completed") break;
         if (session.mode !== "subscription" || !session.subscription) break;
         const sub = await stripe.subscriptions.retrieve(
           typeof session.subscription === "string" ? session.subscription : session.subscription.id,
