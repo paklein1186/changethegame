@@ -4963,6 +4963,62 @@ export type Database = {
           },
         ]
       }
+      guild_membership_codes: {
+        Row: {
+          code: string
+          created_at: string
+          guild_id: string
+          id: string
+          payer_user_id: string
+          plan_code: string
+          position: number
+          redeemed_at: string | null
+          redeemed_by_user_id: string | null
+          revoked_at: string | null
+          slot: string
+          stripe_subscription_id: string
+          valid_until: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          guild_id: string
+          id?: string
+          payer_user_id: string
+          plan_code: string
+          position: number
+          redeemed_at?: string | null
+          redeemed_by_user_id?: string | null
+          revoked_at?: string | null
+          slot: string
+          stripe_subscription_id: string
+          valid_until?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          guild_id?: string
+          id?: string
+          payer_user_id?: string
+          plan_code?: string
+          position?: number
+          redeemed_at?: string | null
+          redeemed_by_user_id?: string | null
+          revoked_at?: string | null
+          slot?: string
+          stripe_subscription_id?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_membership_codes_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guild_membership_plans: {
         Row: {
           active: boolean
@@ -4974,12 +5030,15 @@ export type Database = {
           created_at: string
           currency: string
           description: string | null
+          extra_person_plan_code: string | null
           guild_id: string
           id: string
           label: string
+          large_place_plan_code: string | null
           per_extra_person_cents: number
           per_large_place_cents: number
           per_small_place_cents: number
+          small_place_plan_code: string | null
           sort_order: number
         }
         Insert: {
@@ -4992,12 +5051,15 @@ export type Database = {
           created_at?: string
           currency?: string
           description?: string | null
+          extra_person_plan_code?: string | null
           guild_id: string
           id?: string
           label: string
+          large_place_plan_code?: string | null
           per_extra_person_cents?: number
           per_large_place_cents?: number
           per_small_place_cents?: number
+          small_place_plan_code?: string | null
           sort_order?: number
         }
         Update: {
@@ -5010,12 +5072,15 @@ export type Database = {
           created_at?: string
           currency?: string
           description?: string | null
+          extra_person_plan_code?: string | null
           guild_id?: string
           id?: string
           label?: string
+          large_place_plan_code?: string | null
           per_extra_person_cents?: number
           per_large_place_cents?: number
           per_small_place_cents?: number
+          small_place_plan_code?: string | null
           sort_order?: number
         }
         Relationships: [

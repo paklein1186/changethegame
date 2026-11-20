@@ -50,6 +50,13 @@
       "when": 1795109774897,
       "tag": "0006_guild_membership_plan_details",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795162817319,
+      "tag": "0007_guild_membership_codes",
+      "breakpoints": true
     }
   ]
 }
