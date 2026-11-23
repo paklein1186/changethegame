@@ -11341,6 +11341,20 @@ export type Database = {
         Args: { p_ctg_amount: number; p_user_id: string }
         Returns: Json
       }
+      feed_post_allows: {
+        Args: { p_action?: string; p_post_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      feed_post_readable: {
+        Args: {
+          p_context_id: string
+          p_context_type: string
+          p_room_id: string
+          p_user_id: string
+          p_visibility: string
+        }
+        Returns: boolean
+      }
       find_direct_conversation: {
         Args: { other_user_id: string }
         Returns: string
@@ -11583,6 +11597,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      guild_audience_allows: {
+        Args: {
+          p_audience: string
+          p_guild_id: string
+          p_role_ids: string[]
+          p_user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -11705,6 +11728,10 @@ export type Database = {
           total_released: number
           users_processed: number
         }[]
+      }
+      room_allows: {
+        Args: { p_action: string; p_room_id: string; p_user_id: string }
+        Returns: boolean
       }
       search_index_keyword: {
         Args: {

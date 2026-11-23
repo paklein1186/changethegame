@@ -57,6 +57,13 @@
       "when": 1795162817319,
       "tag": "0007_guild_membership_codes",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795450583860,
+      "tag": "0008_discussion_rooms_access",
+      "breakpoints": true
     }
   ]
 }
