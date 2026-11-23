@@ -64,6 +64,13 @@
       "when": 1795450583860,
       "tag": "0008_discussion_rooms_access",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795452188146,
+      "tag": "0009_decision_polls_access",
+      "breakpoints": true
     }
   ]
 }

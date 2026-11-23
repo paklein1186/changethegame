@@ -11310,6 +11310,10 @@ export type Database = {
         Args: { _quest_id: string }
         Returns: undefined
       }
+      decision_poll_allows: {
+        Args: { p_action: string; p_poll_id: string; p_user_id: string }
+        Returns: boolean
+      }
       distribute_commons_pulse: {
         Args: { p_triggered_by?: string }
         Returns: Json
