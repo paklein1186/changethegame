@@ -321,7 +321,9 @@ async function hydrateProfiles(sb: any, rows: any[] | null, key: string): Promis
 }
 
 
-async function gatherContext(supabase: any, entityType: string, entityId: string): Promise<{ name: string; summary: string; topicNames: string[]; attachments: { url: string; mime_type: string; file_name: string }[] }> {
+// `lecteur` : client au nom de la personne qui parle à l'agent. Les messages (et leurs pièces jointes)
+// sont lus avec ses droits, pour que l'agent ne répète jamais un salon qu'elle ne peut pas voir.
+async function gatherContext(supabase: any, entityType: string, entityId: string, lecteur: any = supabase): Promise<{ name: string; summary: string; topicNames: string[]; attachments: { url: string; mime_type: string; file_name: string }[] }> {
   let name = "Unknown";
   const parts: string[] = [];
   const relatedQuestIds = new Set<string>();
@@ -465,7 +467,7 @@ async function gatherContext(supabase: any, entityType: string, entityId: string
     const postSelect = "id, content, created_at, author_user_id, context_type, context_id, posted_as_entity_type, posted_as_entity_id, post_attachments(url, mime_type, file_name, type)";
     const postBuckets: any[][] = [];
 
-    const { data: directPosts, error: directPostsErr } = await supabase
+    const { data: directPosts, error: directPostsErr } = await lecteur
       .from("feed_posts")
       .select(postSelect)
       .in("context_type", contextTypes)
@@ -477,7 +479,7 @@ async function gatherContext(supabase: any, entityType: string, entityId: string
 
     const relatedQuestIdList = Array.from(relatedQuestIds);
     if (relatedQuestIdList.length) {
-      const { data: questPosts, error: questPostsErr } = await supabase
+      const { data: questPosts, error: questPostsErr } = await lecteur
         .from("feed_posts")
         .select(postSelect)
         .in("context_type", ["QUEST", "QUEST_DISCUSSION", "QUEST_EVENT"])
@@ -489,7 +491,7 @@ async function gatherContext(supabase: any, entityType: string, entityId: string
       if (questPosts?.length) postBuckets.push(questPosts);
     }
 
-    const { data: actingPosts, error: actingPostsErr } = await supabase
+    const { data: actingPosts, error: actingPostsErr } = await lecteur
       .from("feed_posts")
       .select(postSelect)
       .eq("posted_as_entity_type", entityType)
@@ -641,7 +643,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { name: entityName, summary: contextSummary, attachments } = await gatherContext(supabase, entityType, entityId);
+    const { name: entityName, summary: contextSummary, attachments } = await gatherContext(supabase, entityType, entityId, supabaseAuth);
     const { threadId: existingThreadId, messages: dbHistory, starredSummary } = await getConversationFromDB(supabase, entityType, entityId);
 
     const { agentsSection, changesSection, consultable } = await gatherAgentsBrief(supabase, entityType, entityId, authData.user.id);
