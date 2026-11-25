@@ -412,9 +412,10 @@
     "explorePlatform": "Explore the platform",
     "welcome": {
       "tagline": "Human-powered · AI-augmented · Game-changing",
-      "question": "What brings you here?",
-      "sub": "Choose your path — we'll shape your experience around it.",
+      "question": "How do you want to contribute?",
+      "sub": "Choose your profile — we'll shape your experience around it.",
       "changeLater": "You can always change your path later in your settings.",
+      "otherPostures": "Running an initiative, leading a territory or committing an organization? Back to home",
       "discover": "Discover",
       "login": "Log in",
       "personas": {
@@ -424,7 +425,7 @@
           "tagline": "Start creations, join circles, share skill sessions"
         },
         "impact": {
-          "title": "I'm an Impact Builder",
+          "title": "I put my skills at the service of projects",
           "subtitle": "Consultant, facilitator, practitioner, ecosystem builder",
           "tagline": "Launch missions, join guilds, offer services"
         },
@@ -472,12 +473,12 @@
     },
     "impact": {
       "hero": {
-        "badge": "Missions · Guilds · Territories",
+        "badge": "Skills · Missions · Guilds",
         "title1": "A home for",
-        "title2": "operators,",
-        "title3": "builders,",
-        "title4": "catalysts.",
-        "sub": "Find missions, collaborators, guilds, and partners to move territories forward.",
+        "title2": "consultants,",
+        "title3": "facilitators,",
+        "title4": "practitioners.",
+        "sub": "Put your skills at the service of initiatives and territories: find missions, collaborators and guilds.",
         "cta1": "Start a Mission",
         "cta2": "Offer a Service",
         "cta3": "Join a Guild",
@@ -641,7 +642,7 @@
         "title2": "changemakers,",
         "title3": "creators,",
         "title4": "builders.",
-        "sub": "Browse quests, communities, and services — see if this is the right place for you.",
+        "sub": "Browse initiatives, territories, quests and services — see if this is the right place for you.",
         "cta1": "Browse Everything",
         "cta2": "Create an Account",
         "piLink": "Not sure which path is yours? Talk to Pi."
@@ -691,7 +692,7 @@
         "title1": "Your organization,",
         "title2": "anchored in",
         "title3": "living ecosystems.",
-        "sub": "Connect your institution with a network of changemakers, guilds, and territories.",
+        "sub": "Local authority, company, foundation: support concrete action in territories, join a network of actors and report on your commitment.",
         "cta1": "Join as an Organization",
         "cta2": "Learn more",
         "piLink": "Questions? Talk to Pi."
@@ -4668,5 +4669,129 @@
     "urgent": "Now",
     "add": "Add",
     "dismiss": "Dismiss"
+  },
+  "metaHome": {
+    "badge": "The cooperative ecosystem of living territories",
+    "title": "Projects that care for people and the living world grow better together.",
+    "sub": "ChangeTheGame pools people, places, know-how and means so these projects can emerge and grow, close to the ground.",
+    "question": "What brings you here?",
+    "doors": {
+      "initiative": {
+        "title": "I run an initiative",
+        "desc": "Amplify its impact, find new resources, make its ways of acting visible.",
+        "cta": "Grow my initiative"
+      },
+      "territory": {
+        "title": "I lead a territory or a network",
+        "desc": "See your ecosystem at a glance, connect its actors, keep a community alive.",
+        "cta": "Connect my territory"
+      },
+      "contributor": {
+        "title": "I want to contribute",
+        "desc": "Creative, consultant, facilitator, looking for missions: put your talents at the service of projects."
+      },
+      "organization": {
+        "title": "I commit an organization or funding",
+        "desc": "Local authority, company, foundation: support concrete action and report on it."
+      },
+      "explorer": {
+        "title": "I'll look around first",
+        "desc": "Browse initiatives, territories and opportunities, without signing up."
+      }
+    },
+    "storyShort": "In Belgium, a shared farm grew into a network of 50 places and over 200 users, carried by Trois-Tiers: a network of practitioners, then an academy, then a public contract won by the collective.",
+    "storyCta": "Discover Trois-Tiers",
+    "coopTitle": "A platform owned by those who bring it to life",
+    "coopDesc": "ChangeTheGame is a cooperative carried by Poiethic. Its governance opens up through colleges — users, operators, funders — at the community's pace.",
+    "coopVision": "Vision & purpose",
+    "coopTeam": "Team & ecosystem"
+  },
+  "personaPages": {
+    "nav": {
+      "wander": "Wander",
+      "enter": "Enter",
+      "explore": "Explore",
+      "login": "Log in",
+      "signup": "Sign up"
+    },
+    "impact": {
+      "fieldsTitle": "Your fields of impact",
+      "fieldsSub": "These Houses shape what appears in your Explore and Network views.",
+      "fieldsEmpty": "Select your Houses during onboarding to personalise your experience.",
+      "featuredTitle": "Featured Missions",
+      "featuredSub": "Open missions waiting for your contribution.",
+      "featuredEmpty": "No featured missions yet — launch one!",
+      "featuredAll": "See all Missions",
+      "guildsTitle": "Active Guilds",
+      "guildsSub": "Structured networks driving collective action.",
+      "guildsEmpty": "No guilds yet — start one!",
+      "guildsAll": "See all Guilds"
+    },
+    "creative": {
+      "canDoTitle": "What you can do here",
+      "canDo1t": "Launch a Creation",
+      "canDo1d": "Start a story, project, journey, performance, or experiment.",
+      "canDo2t": "Share Your Craft",
+      "canDo2d": "Teach, jam, mentor, or offer skill sessions.",
+      "canDo3t": "Find Your Circle",
+      "canDo3d": "Join studios, collectives, ensembles, Houses of Art.",
+      "constellationTitle": "Your artistic constellation",
+      "constellationSub": "Your Houses shape the world you see across changethegame.",
+      "constellationCta": "Explore your Houses",
+      "housesTitle": "Houses of Art",
+      "housesSub": "Seven creative Houses to shape your journey and find kindred spirits.",
+      "housesCta": "Explore the Houses",
+      "featuredTitle": "Featured Creations",
+      "featuredSub": "Open creative quests waiting for your spark.",
+      "featuredEmpty": "No featured creations yet — be the first!",
+      "resonance": "Resonance",
+      "featuredAll": "See all Creations",
+      "circlesTitle": "Circles & Studios",
+      "circlesSub": "Creative collectives to co-create with.",
+      "circlesEmpty": "No circles yet — start one!",
+      "circlesAll": "See all Circles",
+      "sessionsAll": "See all Sessions"
+    },
+    "hybrid": {
+      "featuredTitle": "Featured Quests",
+      "featuredSub": "Missions and creations waiting for hybrid minds.",
+      "featuredEmpty": "No featured quests yet — start one!",
+      "featuredAll": "See all Quests",
+      "groupsTitle": "Guilds & Circles",
+      "groupsSub": "Spaces where impact meets imagination.",
+      "groupsEmpty": "No groups yet — form one!",
+      "groupsAll": "See all Groups",
+      "constellationTitle": "Your hybrid constellation",
+      "constellationSub": "Your Houses combine your creative lineage and your fields of impact.",
+      "constellationCta": "Refine your Houses"
+    },
+    "browse": {
+      "findTitle": "What you'll find here",
+      "find1t": "Quests & Missions",
+      "find1d": "Open projects and challenges you can contribute to — from impact missions to creative experiments.",
+      "find2t": "Communities & Groups",
+      "find2d": "Guilds, circles, traditional organisations — find your people and collaborate.",
+      "find3t": "Services & Skills",
+      "find3d": "Book expertise or offer your own — from consulting to creative skill sessions.",
+      "featuredTitle": "Featured Quests",
+      "featuredSub": "Open projects waiting for contributors.",
+      "featuredEmpty": "No featured quests yet.",
+      "featuredAll": "See all quests",
+      "communitiesTitle": "Communities",
+      "communitiesSub": "Active guilds, circles, and organisations.",
+      "communitiesEmpty": "No communities yet.",
+      "communitiesAll": "See all communities",
+      "housesTitle": "Topic Houses",
+      "housesSub": "Browse thematic communities shaping the future.",
+      "housesAll": "Browse all Houses",
+      "joinTitle": "Ready to join?",
+      "joinSub": "Create your account and start contributing.",
+      "joinCta": "Create your account",
+      "joinExplore": "Explore first"
+    },
+    "otherDoors": {
+      "title": "Not quite you?",
+      "home": "Back to home"
+    }
   }
 }

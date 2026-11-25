@@ -1,3 +1,5 @@
+import { LandingPostureLinks } from "@/components/landing/LandingPostureLinks";
+import { setPosture } from "@/lib/posture";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -158,24 +160,24 @@ export default function CreativeLanding() {
       {/* ─── Nav ─── */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
         <div className="container flex h-14 items-center justify-between">
-          <Link to="/welcome" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+          <Link to="/home" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
             <img src={logoImg} alt="changethegame" className="h-6 w-6" /> changethegame
           </Link>
           <nav className="flex items-center gap-2">
             <Button size="sm" variant="ghost" asChild>
-              <Link to="/explore"><Compass className="h-4 w-4 mr-1" /> Wander</Link>
+              <Link to="/explore"><Compass className="h-4 w-4 mr-1" /> {t("personaPages.nav.wander")}</Link>
             </Button>
             {user ? (
               <Button size="sm" asChild>
-                <Link to="/">Enter</Link>
+                <Link to="/">{t("personaPages.nav.enter")}</Link>
               </Button>
             ) : (
               <>
                 <Button size="sm" variant="ghost" asChild>
-                  <Link to="/login">Log in</Link>
+                  <Link to="/login">{t("personaPages.nav.login")}</Link>
                 </Button>
                 <Button size="sm" asChild>
-                  <Link to="/signup">Sign up</Link>
+                  <Link to="/signup" onClick={() => setPosture("contributor")}>{t("personaPages.nav.signup")}</Link>
                 </Button>
               </>
             )}
@@ -247,12 +249,12 @@ export default function CreativeLanding() {
       {/* ─── What You Can Do Here ─── */}
       <section className="border-t border-border bg-muted/40">
         <div className="container py-16 md:py-24">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">What you can do here</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">{t("personaPages.creative.canDoTitle")}</h2>
           <div className="grid gap-8 sm:grid-cols-3">
             {[
-              { icon: Feather, title: "Launch a Creation", text: "Start a story, project, journey, performance, or experiment.", action: "launch a creation", route: "/quests/new" },
-              { icon: Palette, title: "Share Your Craft", text: "Teach, jam, mentor, or offer skill sessions.", action: "share your craft", route: "/services/new" },
-              { icon: Users, title: "Find Your Circle", text: "Join studios, collectives, ensembles, Houses of Art.", action: "find your circle", route: "/explore" },
+              { icon: Feather, title: t("personaPages.creative.canDo1t"), text: t("personaPages.creative.canDo1d"), action: "launch a creation", route: "/quests/new" },
+              { icon: Palette, title: t("personaPages.creative.canDo2t"), text: t("personaPages.creative.canDo2d"), action: "share your craft", route: "/services/new" },
+              { icon: Users, title: t("personaPages.creative.canDo3t"), text: t("personaPages.creative.canDo3d"), action: "find your circle", route: "/explore" },
             ].map((card, i) => (
               <motion.div
                 key={card.title}
@@ -332,9 +334,9 @@ export default function CreativeLanding() {
       {userHouses.length > 0 && (
         <section className="border-t border-border">
           <div className="container py-16 md:py-24 text-center">
-            <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">Your artistic constellation</h2>
+            <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">{t("personaPages.creative.constellationTitle")}</h2>
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-              Your Houses shape the world you see across changethegame.
+              {t("personaPages.creative.constellationSub")}
             </p>
             <div className="flex flex-wrap gap-3 justify-center mb-8">
               {userHouses.map((house, i) => {
@@ -356,7 +358,7 @@ export default function CreativeLanding() {
               })}
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link to="/explore/houses">Explore your Houses <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+              <Link to="/explore/houses">{t("personaPages.creative.constellationCta")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
             </Button>
           </div>
         </section>
@@ -366,9 +368,9 @@ export default function CreativeLanding() {
       {userHouses.length === 0 && (
         <section className="border-t border-border">
           <div className="container py-16 md:py-24 text-center">
-            <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">Houses of Art</h2>
+            <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">{t("personaPages.creative.housesTitle")}</h2>
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-              Seven creative Houses to shape your journey and find kindred spirits.
+              {t("personaPages.creative.housesSub")}
             </p>
             <div className="flex flex-wrap gap-3 justify-center mb-8">
               {houseEntries.map((house, i) => (
@@ -381,7 +383,7 @@ export default function CreativeLanding() {
               ))}
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link to="/explore/houses">Explore the Houses <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+              <Link to="/explore/houses">{t("personaPages.creative.housesCta")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
             </Button>
           </div>
         </section>
@@ -394,14 +396,14 @@ export default function CreativeLanding() {
             {/* Creations */}
             <div>
               <h2 className="font-display text-xl font-bold mb-1 flex items-center gap-2">
-                <Star className="h-5 w-5 text-primary" /> Featured Creations
+                <Star className="h-5 w-5 text-primary" /> {t("personaPages.creative.featuredTitle")}
               </h2>
-              <p className="text-sm text-muted-foreground mb-5">Open creative quests waiting for your spark.</p>
+              <p className="text-sm text-muted-foreground mb-5">{t("personaPages.creative.featuredSub")}</p>
               <div className="space-y-3">
                 {loadingCreations ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
                 ) : creations.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No featured creations yet — be the first!</p>
+                  <p className="text-sm text-muted-foreground">{t("personaPages.creative.featuredEmpty")}</p>
                 ) : (
                   creations.slice(0, 3).map((q, i) => (
                     <motion.div key={q.id} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -411,7 +413,7 @@ export default function CreativeLanding() {
                       >
                         <div className="flex items-center justify-between mb-1">
                           <h3 className="font-display font-semibold text-sm">{q.title}</h3>
-                          <Badge className="bg-primary/10 text-primary border-0 text-xs">{q.reward_xp} Resonance</Badge>
+                          <Badge className="bg-primary/10 text-primary border-0 text-xs">{q.reward_xp} {t("personaPages.creative.resonance")}</Badge>
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-2">{q.description}</p>
                       </Link>
@@ -420,21 +422,21 @@ export default function CreativeLanding() {
                 )}
               </div>
               <Button variant="ghost" size="sm" asChild className="mt-4">
-                <Link to="/explore">See all Creations <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/explore">{t("personaPages.creative.featuredAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
             </div>
 
             {/* Circles */}
             <div>
               <h2 className="font-display text-xl font-bold mb-1 flex items-center gap-2">
-                <Music className="h-5 w-5 text-accent" /> Circles & Studios
+                <Music className="h-5 w-5 text-accent" /> {t("personaPages.creative.circlesTitle")}
               </h2>
-              <p className="text-sm text-muted-foreground mb-5">Creative collectives to co-create with.</p>
+              <p className="text-sm text-muted-foreground mb-5">{t("personaPages.creative.circlesSub")}</p>
               <div className="space-y-3">
                 {loadingCircles ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
                 ) : circles.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No circles yet — start one!</p>
+                  <p className="text-sm text-muted-foreground">{t("personaPages.creative.circlesEmpty")}</p>
                 ) : (
                   circles.map((g, i) => (
                     <motion.div key={g.id} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -461,7 +463,7 @@ export default function CreativeLanding() {
                 )}
               </div>
               <Button variant="ghost" size="sm" asChild className="mt-4">
-                <Link to="/explore">See all Circles <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/explore">{t("personaPages.creative.circlesAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
             </div>
 
@@ -498,7 +500,7 @@ export default function CreativeLanding() {
                 )}
               </div>
               <Button variant="ghost" size="sm" asChild className="mt-4">
-                <Link to="/services">See all Sessions <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/services">{t("personaPages.creative.sessionsAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
             </div>
           </div>
@@ -581,7 +583,7 @@ export default function CreativeLanding() {
           <p className="text-muted-foreground mb-6">{t("landing.creative.cta.sub")}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button size="lg" asChild>
-              <Link to="/signup">{t("landing.creative.cta.btn1")} <ArrowRight className="h-4 w-4 ml-1" /></Link>
+              <Link to="/signup" onClick={() => setPosture("contributor")}>{t("landing.creative.cta.btn1")} <ArrowRight className="h-4 w-4 ml-1" /></Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <Link to="/explore">{t("landing.creative.cta.btn2")}</Link>
@@ -591,6 +593,7 @@ export default function CreativeLanding() {
       </section>
 
       {/* ─── Footer ─── */}
+      <LandingPostureLinks current="contributor" />
       <SiteFooter />
       <CookieConsentBanner />
       <GuestOnboardingAssistant open={guestOpen} onOpenChange={setGuestOpen} actionLabel={guestAction} />

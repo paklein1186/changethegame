@@ -144,6 +144,7 @@ import HybridLanding from "./pages/HybridLanding";
 import ImpactLanding from "./pages/ImpactLanding";
 import WelcomePage from "./pages/WelcomePage";
 import HomeLanding from "./pages/HomeLanding";
+import MetaHome from "./pages/MetaHome";
 import BrowseLanding from "./pages/BrowseLanding";
 import OrganizationsLanding from "./pages/OrganizationsLanding";
 const OrganizationLanding = lazy(() => import("./pages/OrganizationLanding"));
@@ -219,7 +220,9 @@ const App = () => (
 
                 {/* Public pages */}
                 <Route path="/" element={<Index />} />
-                <Route path="/home" element={<HomeLanding />} />
+                <Route path="/home" element={<MetaHome />} />
+                <Route path="/home/initiative" element={<HomeLanding mode="initiative" />} />
+                <Route path="/home/territoire" element={<HomeLanding mode="territory" />} />
                 <Route path="/welcome" element={<WelcomePage />} />
                 <Route path="/landing/creative" element={<CreativeLanding />} />
                 <Route path="/landing/hybrid" element={<HybridLanding />} />

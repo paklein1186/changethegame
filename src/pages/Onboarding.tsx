@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight, ArrowLeft, Sparkles, Loader2, MapPin, Hash,
   Check, Compass, Heart, Palette, Rocket, Users, Briefcase,
-  GraduationCap, HelpCircle, Image as ImageIcon, Building2, Target, Landmark,
+  GraduationCap, HelpCircle, Image as ImageIcon, Building2, Target, Landmark, Sprout,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { getPosture } from "@/lib/posture";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useTopics, useTerritories } from "@/hooks/useSupabaseData";
@@ -122,6 +123,9 @@ export default function Onboarding() {
 
   // Project
   const [wantsProject, setWantsProject] = useState<boolean | null>(null);
+  // Entry posture chosen on the public home ("I run an initiative", "I lead a territory"…)
+  const [posture] = useState(() => getPosture());
+  const [createdQuestId, setCreatedQuestId] = useState<string | null>(null);
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDesc, setProjectDesc] = useState("");
   const [projectStatus, setProjectStatus] = useState("STARTING");
@@ -226,6 +230,13 @@ export default function Onboarding() {
           setIsCreativePath(true);
         } else if (ctx.persona === "impact" || ctx.persona === "hybrid") {
           setIsCreativePath(false);
+        }
+        // Entry posture from the public home: pre-fill the matching path
+        if (ctx.posture === "initiative") {
+          setIntentions(prev => Array.from(new Set([...prev, "project", "impact"])));
+          setWantsProject(true);
+        } else if (ctx.posture === "territory") {
+          setIntentions(prev => Array.from(new Set([...prev, "community", "project"])));
         }
         // Clean up legacy wizard flag
         if (ctx.show_post_signup_wizard) {
@@ -552,6 +563,7 @@ export default function Onboarding() {
         }).select("id").single();
 
         if (quest?.id) {
+          setCreatedQuestId(quest.id);
           // Emit $CTG for quest creation
           supabase.rpc('emit_ctg_for_contribution', {
             p_user_id: authUser.id,
@@ -1366,10 +1378,18 @@ export default function Onboarding() {
       <div className="space-y-5 overflow-y-auto max-h-[500px] pr-1">
         <div>
           <h2 className="font-display text-2xl font-bold">
-            {creative ? "Show us something you've made 🌟" : "A project you're proud of? 🚀"}
+            {creative
+              ? "Show us something you've made 🌟"
+              : posture === "initiative"
+                ? "Tell us about your initiative 🌱"
+                : "A project you're proud of? 🚀"}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            {creative ? "A creation, project, or piece you're proud of." : "Past or present — share something you care about."}
+            {creative
+              ? "A creation, project, or piece you're proud of."
+              : posture === "initiative"
+                ? "What it does, for whom and where — so the right people and resources can find it."
+                : "Past or present — share something you care about."}
           </p>
         </div>
 
@@ -1612,8 +1632,24 @@ export default function Onboarding() {
             )}
 
             <div className="w-full space-y-3">
+              {/* Next step matching the entry posture chosen on the public home */}
+              {!creative && posture === "initiative" && (
+                <Button asChild className="w-full" variant="default">
+                  <Link to={createdQuestId ? `/quests/${createdQuestId}` : "/quests/new"}>
+                    <Sprout className="h-4 w-4 mr-2" />
+                    {createdQuestId ? "Open your initiative and publish its needs" : "Present your initiative"}
+                  </Link>
+                </Button>
+              )}
+              {!creative && posture === "territory" && (
+                <Button asChild className="w-full" variant="default">
+                  <Link to="/territories">
+                    <Landmark className="h-4 w-4 mr-2" /> Open your territory space
+                  </Link>
+                </Button>
+              )}
               {/* Profile Enrichment CTA */}
-              <Button asChild className="w-full" variant="default">
+              <Button asChild className="w-full" variant={!creative && (posture === "initiative" || posture === "territory") ? "outline" : "default"}>
                 <Link to="/profile/enrich">
                   <Sparkles className="h-4 w-4 mr-2" /> Enrich your profile with AI
                 </Link>
