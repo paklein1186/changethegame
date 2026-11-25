@@ -1,3 +1,4 @@
+import { LandingPostureLinks } from "@/components/landing/LandingPostureLinks";
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -106,19 +107,19 @@ export default function BrowseLanding() {
       {/* ─── Nav ─── */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
         <div className="container flex h-14 items-center justify-between">
-          <Link to="/welcome" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+          <Link to="/home" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
             <img src={logoImg} alt="changethegame" className="h-6 w-6" /> changethegame
           </Link>
           <nav className="flex items-center gap-2">
             <Button size="sm" variant="ghost" asChild>
-              <Link to="/explore"><Compass className="h-4 w-4 mr-1" /> Explore</Link>
+              <Link to="/explore"><Compass className="h-4 w-4 mr-1" /> {t("personaPages.nav.explore")}</Link>
             </Button>
             {user ? (
-              <Button size="sm" asChild><Link to="/">Enter</Link></Button>
+              <Button size="sm" asChild><Link to="/">{t("personaPages.nav.enter")}</Link></Button>
             ) : (
               <>
-                <Button size="sm" variant="ghost" asChild><Link to="/login">Log in</Link></Button>
-                <Button size="sm" asChild><Link to="/welcome">Sign up</Link></Button>
+                <Button size="sm" variant="ghost" asChild><Link to="/login">{t("personaPages.nav.login")}</Link></Button>
+                <Button size="sm" asChild><Link to="/home">{t("personaPages.nav.signup")}</Link></Button>
               </>
             )}
           </nav>
@@ -163,7 +164,7 @@ export default function BrowseLanding() {
               <Link to="/explore"><Compass className="h-4 w-4" /> {t("landing.browse.hero.cta1")}</Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="gap-2">
-              <Link to="/welcome"><Sparkles className="h-4 w-4" /> {t("landing.browse.hero.cta2")}</Link>
+              <Link to="/home"><Sparkles className="h-4 w-4" /> {t("landing.browse.hero.cta2")}</Link>
             </Button>
           </motion.div>
 
@@ -183,12 +184,12 @@ export default function BrowseLanding() {
       {/* ─── What you'll find ─── */}
       <section className="border-t border-border bg-muted/40">
         <div className="container py-16 md:py-24">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">What you'll find here</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">{t("personaPages.browse.findTitle")}</h2>
           <div className="grid gap-8 sm:grid-cols-3">
             {[
-              { icon: Target, title: "Quests & Missions", text: "Open projects and challenges you can contribute to — from impact missions to creative experiments." },
-              { icon: Users, title: "Communities & Groups", text: "Guilds, circles, traditional organisations — find your people and collaborate." },
-              { icon: Briefcase, title: "Services & Skills", text: "Book expertise or offer your own — from consulting to creative skill sessions." },
+              { icon: Target, title: t("personaPages.browse.find1t"), text: t("personaPages.browse.find1d") },
+              { icon: Users, title: t("personaPages.browse.find2t"), text: t("personaPages.browse.find2d") },
+              { icon: Briefcase, title: t("personaPages.browse.find3t"), text: t("personaPages.browse.find3d") },
             ].map((card, i) => (
               <motion.div key={card.title} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
                 className="rounded-2xl border border-border bg-card p-8 text-center"
@@ -250,14 +251,14 @@ export default function BrowseLanding() {
             {/* Quests */}
             <div>
               <h2 className="font-display text-xl font-bold mb-1 flex items-center gap-2">
-                <Star className="h-5 w-5 text-primary" /> Featured Quests
+                <Star className="h-5 w-5 text-primary" /> {t("personaPages.browse.featuredTitle")}
               </h2>
-              <p className="text-sm text-muted-foreground mb-5">Open projects waiting for contributors.</p>
+              <p className="text-sm text-muted-foreground mb-5">{t("personaPages.browse.featuredSub")}</p>
               <div className="space-y-3">
                 {loadingQuests ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
                 ) : quests.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No featured quests yet.</p>
+                  <p className="text-sm text-muted-foreground">{t("personaPages.browse.featuredEmpty")}</p>
                 ) : (
                   quests.map((q, i) => (
                     <motion.div key={q.id} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -273,7 +274,7 @@ export default function BrowseLanding() {
                 )}
               </div>
               <Button variant="ghost" size="sm" asChild className="mt-4">
-                <Link to="/explore">See all quests <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/explore">{t("personaPages.browse.featuredAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
             </div>
 
@@ -288,14 +289,14 @@ export default function BrowseLanding() {
             {/* Groups */}
             <div>
               <h2 className="font-display text-xl font-bold mb-1 flex items-center gap-2">
-                <Layers className="h-5 w-5 text-accent" /> Communities
+                <Layers className="h-5 w-5 text-accent" /> {t("personaPages.browse.communitiesTitle")}
               </h2>
-              <p className="text-sm text-muted-foreground mb-5">Active guilds, circles, and organisations.</p>
+              <p className="text-sm text-muted-foreground mb-5">{t("personaPages.browse.communitiesSub")}</p>
               <div className="space-y-3">
                 {loadingGroups ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
                 ) : groups.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No communities yet.</p>
+                  <p className="text-sm text-muted-foreground">{t("personaPages.browse.communitiesEmpty")}</p>
                 ) : (
                   groups.map((g, i) => (
                     <motion.div key={g.id} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -319,7 +320,7 @@ export default function BrowseLanding() {
                 )}
               </div>
               <Button variant="ghost" size="sm" asChild className="mt-4">
-                <Link to="/explore">See all communities <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/explore">{t("personaPages.browse.communitiesAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
             </div>
           </div>
@@ -329,9 +330,9 @@ export default function BrowseLanding() {
       {/* ─── Houses / Topics ─── */}
       <section ref={triggerRef} className="border-t border-border bg-muted/40">
         <div className="container py-16 md:py-24 text-center">
-          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">Topic Houses</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">{t("personaPages.browse.housesTitle")}</h2>
           <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-            Browse thematic communities shaping the future.
+            {t("personaPages.browse.housesSub")}
           </p>
           <div className="flex flex-wrap gap-2 justify-center mb-8">
             {loadingTopics ? (
@@ -349,7 +350,7 @@ export default function BrowseLanding() {
             )}
           </div>
           <Button variant="outline" size="sm" asChild>
-            <Link to="/explore/houses">Browse all Houses <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+            <Link to="/explore/houses">{t("personaPages.browse.housesAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
           </Button>
         </div>
       </section>
@@ -374,19 +375,20 @@ export default function BrowseLanding() {
       <section className="border-t border-border bg-primary/5">
         <div className="container py-16 text-center">
           <Heart className="h-8 w-8 text-primary mx-auto mb-4" />
-          <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">Ready to join?</h2>
-          <p className="text-muted-foreground mb-6">Create your account and start contributing.</p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">{t("personaPages.browse.joinTitle")}</h2>
+          <p className="text-muted-foreground mb-6">{t("personaPages.browse.joinSub")}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button size="lg" asChild>
-              <Link to="/welcome">Create your account <ArrowRight className="h-4 w-4 ml-1" /></Link>
+              <Link to="/home">{t("personaPages.browse.joinCta")} <ArrowRight className="h-4 w-4 ml-1" /></Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/explore">Explore first</Link>
+              <Link to="/explore">{t("personaPages.browse.joinExplore")}</Link>
             </Button>
           </div>
         </div>
       </section>
 
+      <LandingPostureLinks current="explorer" />
       <SiteFooter />
       <CookieConsentBanner />
       <GuestOnboardingAssistant open={guestOpen} onOpenChange={setGuestOpen} actionLabel={guestAction} />

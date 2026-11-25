@@ -1,3 +1,5 @@
+import { LandingPostureLinks } from "@/components/landing/LandingPostureLinks";
+import { setPosture } from "@/lib/posture";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -126,19 +128,19 @@ export default function HybridLanding() {
       {/* ─── Nav ─── */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
         <div className="container flex h-14 items-center justify-between">
-          <Link to="/welcome" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+          <Link to="/home" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
             <img src={logoImg} alt="changethegame" className="h-6 w-6" /> changethegame
           </Link>
           <nav className="flex items-center gap-2">
             <Button size="sm" variant="ghost" asChild>
-              <Link to="/explore"><Compass className="h-4 w-4 mr-1" /> Explore</Link>
+              <Link to="/explore"><Compass className="h-4 w-4 mr-1" /> {t("personaPages.nav.explore")}</Link>
             </Button>
             {user ? (
-              <Button size="sm" asChild><Link to="/">Enter</Link></Button>
+              <Button size="sm" asChild><Link to="/">{t("personaPages.nav.enter")}</Link></Button>
             ) : (
               <>
-                <Button size="sm" variant="ghost" asChild><Link to="/login">Log in</Link></Button>
-                <Button size="sm" asChild><Link to="/signup">Sign up</Link></Button>
+                <Button size="sm" variant="ghost" asChild><Link to="/login">{t("personaPages.nav.login")}</Link></Button>
+                <Button size="sm" asChild><Link to="/signup" onClick={() => setPosture("contributor")}>{t("personaPages.nav.signup")}</Link></Button>
               </>
             )}
           </nav>
@@ -257,14 +259,14 @@ export default function HybridLanding() {
             {/* Quests */}
             <div>
               <h2 className="font-display text-xl font-bold mb-1 flex items-center gap-2">
-                <Star className="h-5 w-5 text-primary" /> Featured Quests
+                <Star className="h-5 w-5 text-primary" /> {t("personaPages.hybrid.featuredTitle")}
               </h2>
-              <p className="text-sm text-muted-foreground mb-5">Missions and creations waiting for hybrid minds.</p>
+              <p className="text-sm text-muted-foreground mb-5">{t("personaPages.hybrid.featuredSub")}</p>
               <div className="space-y-3">
                 {loadingQuests ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
                 ) : quests.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No featured quests yet — start one!</p>
+                  <p className="text-sm text-muted-foreground">{t("personaPages.hybrid.featuredEmpty")}</p>
                 ) : (
                   quests.slice(0, 3).map((q, i) => (
                     <motion.div key={q.id} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -280,7 +282,7 @@ export default function HybridLanding() {
                 )}
               </div>
               <Button variant="ghost" size="sm" asChild className="mt-4">
-                <Link to="/explore">See all Quests <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/explore">{t("personaPages.hybrid.featuredAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
             </div>
 
@@ -299,14 +301,14 @@ export default function HybridLanding() {
             {/* Groups */}
             <div>
               <h2 className="font-display text-xl font-bold mb-1 flex items-center gap-2">
-                <Layers className="h-5 w-5 text-accent" /> Guilds & Circles
+                <Layers className="h-5 w-5 text-accent" /> {t("personaPages.hybrid.groupsTitle")}
               </h2>
-              <p className="text-sm text-muted-foreground mb-5">Spaces where impact meets imagination.</p>
+              <p className="text-sm text-muted-foreground mb-5">{t("personaPages.hybrid.groupsSub")}</p>
               <div className="space-y-3">
                 {loadingGroups ? (
                   Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
                 ) : groups.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No groups yet — form one!</p>
+                  <p className="text-sm text-muted-foreground">{t("personaPages.hybrid.groupsEmpty")}</p>
                 ) : (
                   groups.map((g, i) => (
                     <motion.div key={g.id} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}>
@@ -330,7 +332,7 @@ export default function HybridLanding() {
                 )}
               </div>
               <Button variant="ghost" size="sm" asChild className="mt-4">
-                <Link to="/explore">See all Groups <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/explore">{t("personaPages.hybrid.groupsAll")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
             </div>
           </div>
@@ -340,9 +342,9 @@ export default function HybridLanding() {
       {/* ─── Your Houses ─── */}
       <section ref={triggerRef} className="border-t border-border">
         <div className="container py-16 md:py-24 text-center">
-          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">Your hybrid constellation</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">{t("personaPages.hybrid.constellationTitle")}</h2>
           <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-            Your Houses combine your creative lineage and your fields of impact.
+            {t("personaPages.hybrid.constellationSub")}
           </p>
           {userHouses.length > 0 ? (
             <div className="flex flex-wrap gap-3 justify-center mb-8">
@@ -376,7 +378,7 @@ export default function HybridLanding() {
             </div>
           )}
           <Button variant="outline" size="sm" asChild>
-            <Link to="/explore/houses">Refine your Houses <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+            <Link to="/explore/houses">{t("personaPages.hybrid.constellationCta")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
           </Button>
         </div>
       </section>
@@ -433,7 +435,7 @@ export default function HybridLanding() {
           <p className="text-muted-foreground mb-6">{t("landing.hybrid.cta.sub")}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button size="lg" asChild>
-              <Link to="/signup">{t("landing.hybrid.cta.btn1")} <ArrowRight className="h-4 w-4 ml-1" /></Link>
+              <Link to="/signup" onClick={() => setPosture("contributor")}>{t("landing.hybrid.cta.btn1")} <ArrowRight className="h-4 w-4 ml-1" /></Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <Link to="/explore">{t("landing.hybrid.cta.btn2")}</Link>
@@ -442,6 +444,7 @@ export default function HybridLanding() {
         </div>
       </section>
 
+      <LandingPostureLinks current="contributor" />
       <SiteFooter />
       <CookieConsentBanner />
       <GuestOnboardingAssistant open={guestOpen} onOpenChange={setGuestOpen} actionLabel={guestAction} />

@@ -1,3 +1,5 @@
+import { LandingPostureLinks } from "@/components/landing/LandingPostureLinks";
+import { setPosture } from "@/lib/posture";
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -105,7 +107,7 @@ export default function OrganizationLanding() {
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
         <div className="container flex h-14 items-center justify-between">
-          <Link to="/welcome" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+          <Link to="/home" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
             <img src={logoImg} alt="changethegame" className="h-6 w-6" /> changethegame
           </Link>
           <nav className="flex items-center gap-2">
@@ -115,7 +117,7 @@ export default function OrganizationLanding() {
             ) : (
               <>
                 <Button size="sm" variant="ghost" asChild><Link to="/login">{t("landing.nav.login", "Log in")}</Link></Button>
-                <Button size="sm" asChild><Link to="/signup">{t("landing.nav.signup", "Sign up")}</Link></Button>
+                <Button size="sm" asChild><Link to="/signup" onClick={() => setPosture("organization")}>{t("landing.nav.signup", "Sign up")}</Link></Button>
               </>
             )}
           </nav>
@@ -151,7 +153,7 @@ export default function OrganizationLanding() {
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
             className="mt-8 flex flex-col sm:flex-row gap-3 justify-center"
           >
-            <Button size="lg" className="gap-2" onClick={() => handleGatedClick("join as organization", "/onboarding/organization")}>
+            <Button size="lg" className="gap-2" onClick={() => { setPosture("organization"); handleGatedClick("join as organization", "/onboarding/organization"); }}>
               <Building2 className="h-4 w-4" /> {t("landing.org.hero.cta1", "Create Organization Profile")}
             </Button>
             <Button size="lg" variant="outline" className="gap-2" asChild>
@@ -313,7 +315,7 @@ export default function OrganizationLanding() {
             {t("landing.org.cta.sub", "Create your organization profile and start collaborating.")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button size="lg" onClick={() => handleGatedClick("join as organization", "/onboarding/organization")}>
+            <Button size="lg" onClick={() => { setPosture("organization"); handleGatedClick("join as organization", "/onboarding/organization"); }}>
               {t("landing.org.cta.cta1", "Create Organization Profile")} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button size="lg" variant="outline" asChild>
@@ -323,6 +325,7 @@ export default function OrganizationLanding() {
         </div>
       </section>
 
+      <LandingPostureLinks current="organization" />
       <SiteFooter />
       <CookieConsentBanner />
       <GuestOnboardingAssistant open={guestOpen} onOpenChange={setGuestOpen} actionLabel={guestAction} />
