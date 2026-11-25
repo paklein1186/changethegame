@@ -58,6 +58,7 @@ import { ProfileCTGStats } from "@/components/ctg/CTGIntegrationWidgets";
 import { LivingTab } from "@/components/living/LivingTab";
 import { Leaf, Bot } from "lucide-react";
 import { MyContributionsSummary } from "@/components/ocu/MyContributionsSummary";
+import { CapabilitiesPanel } from "@/components/opportunities/CapabilitiesPanel";
 
 // ─── Persona badge helper ──────────────────────────────────
 const PERSONA_META: Record<string, { label: string; color: string }> = {
@@ -673,6 +674,9 @@ function UserProfileInner() {
         {/* ─── Overview ─── */}
         <TabsContent value="overview">
           <div className="space-y-8">
+            {isLoggedIn && profile?.userId && (
+              <CapabilitiesPanel ownerType="profile" ownerId={profile.userId} canManage={isOwnProfile} />
+            )}
             {/* Entities preview — shown first */}
             {totalEntities > 0 && (
               <section>

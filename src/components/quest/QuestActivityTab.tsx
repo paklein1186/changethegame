@@ -18,6 +18,8 @@ import { GuildDiscussionTab } from "@/components/guild/GuildDiscussionTab";
 import { GuildRitualsTab } from "@/components/guild/GuildRitualsTab";
 import { CommentTargetType, AttachmentTargetType } from "@/types/enums";
 import { formatDistanceToNow } from "date-fns";
+import { NeedSuggestionsPanel } from "@/components/opportunities/NeedSuggestionsPanel";
+import { OpportunitiesPanel } from "@/components/opportunities/OpportunitiesPanel";
 
 const updateIcons: Record<string, typeof Sparkles> = {
   MILESTONE: Sparkles,
@@ -226,7 +228,9 @@ export function QuestActivityTab({
         </TabsContent>
 
         <TabsContent value="opportunities" className="mt-4">
+          <NeedSuggestionsPanel questId={quest.id} />
           <QuestNeedsManager questId={quest.id} questOwnerId={quest.created_by_user_id} />
+          {currentUser.id && <OpportunitiesPanel questId={quest.id} className="mt-4" />}
         </TabsContent>
 
         {documentsSlot && <TabsContent value="documents" className="mt-4">{documentsSlot}</TabsContent>}

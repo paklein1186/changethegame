@@ -149,3 +149,6 @@ verify_jwt = false
 
 [functions.guild-euro-webhook]
 verify_jwt = false
+
+[functions.opportunity-engine]
+verify_jwt = false

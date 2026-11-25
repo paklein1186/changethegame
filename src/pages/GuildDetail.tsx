@@ -96,6 +96,8 @@ import { QuestThumbnail } from "@/components/quest/QuestHostChips";
 import { useGuildMembership, canAccessGuildVoting } from "@/hooks/useGuildMembership";
 import { GuildCTGStat } from "@/components/ctg/CTGIntegrationWidgets";
 import { translateTopicName, translateEntityType } from "@/lib/entityLabels";
+import { OpportunitiesPanel } from "@/components/opportunities/OpportunitiesPanel";
+import { CapabilitiesPanel } from "@/components/opportunities/CapabilitiesPanel";
 /** Extracted tabs bar with admin-reorderable tabs — order stored in guild features_config */
 function GuildTabsBar({ allTabs, defaultOrder, isAdmin, guildId, featuresConfig }: {
   allTabs: TabDefinition[]; defaultOrder: string[];
@@ -613,6 +615,9 @@ export default function GuildDetail() {
               </div>
             </div>
           )}
+
+          {currentUser.id && <OpportunitiesPanel guildId={guild.id} />}
+          {isAdmin && <CapabilitiesPanel ownerType="guild" ownerId={guild.id} canManage />}
 
           <div>
             <h3 className="font-display font-semibold mb-2">Details</h3>
