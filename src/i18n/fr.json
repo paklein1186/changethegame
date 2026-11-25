@@ -4548,6 +4548,7 @@
     }
   },
   "matchOpportunities": {
+    "book": "Réserver",
     "title": "Opportunités repérées",
     "titleGuild": "Opportunités autour de cette guilde",
     "titleQuest": "Qui pourrait aider cette quête",
@@ -4590,6 +4591,9 @@
     "feedbackFailed": "Votre réponse n'a pas été enregistrée. Réessayez."
   },
   "capabilities": {
+    "seeService": "Voir le service",
+    "makeService": "En faire un service",
+    "makeServiceHint": "Cliquez sur l'icône calendrier d'une capacité pour la proposer comme service réservable.",
     "title": "Peut offrir",
     "titleOwn": "Ce que je peux offrir",
     "subtitle": "Déduit de votre activité (tâches, projets, services, cours, attestations, CV). Seul ce que vous confirmez est visible par les autres.",

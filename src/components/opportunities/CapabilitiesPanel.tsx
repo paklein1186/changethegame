@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Check, X, Plus, Loader2, Wand2, FileText, ChevronDown } from "lucide-react";
+import { Check, X, Plus, Loader2, Wand2, FileText, ChevronDown, CalendarPlus, CalendarCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -114,17 +114,36 @@ export function CapabilitiesPanel({ ownerType, ownerId, canManage }: {
         <div className="space-y-4">
           {confirmed.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {confirmed.map((c) => (
+              {confirmed.map((c) => {
+                const serviceUrl = c.evidence?.find((e) => e.kind === "service" && e.url?.startsWith("/services/"))?.url;
+                const makeService = `/services/new?${new URLSearchParams({ title: c.label, description: c.description ?? "" })}`;
+                return (
                 <Badge key={c.id} variant="secondary" className="text-xs gap-1 py-1">
                   {c.label}
+                  {serviceUrl ? (
+                    <Link to={serviceUrl} title={t("capabilities.seeService")} aria-label={t("capabilities.seeService")} className="opacity-70 hover:opacity-100">
+                      <CalendarCheck className="h-3 w-3" />
+                    </Link>
+                  ) : canManage && ownerType === "profile" && (
+                    <Link to={makeService} title={t("capabilities.makeService")} aria-label={t("capabilities.makeService")} className="opacity-60 hover:opacity-100">
+                      <CalendarPlus className="h-3 w-3" />
+                    </Link>
+                  )}
                   {canManage && (
                     <button onClick={() => setStatus(c.id, "dismissed")} aria-label={t("capabilities.remove")} className="ml-0.5 opacity-60 hover:opacity-100">
                       <X className="h-3 w-3" />
                     </button>
                   )}
                 </Badge>
-              ))}
+                );
+              })}
             </div>
+          )}
+
+          {canManage && ownerType === "profile" && confirmed.some((c) => !c.evidence?.some((e) => e.kind === "service")) && (
+            <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+              <CalendarPlus className="h-3 w-3" /> {t("capabilities.makeServiceHint")}
+            </p>
           )}
 
           {canManage && toReview.length > 0 && (

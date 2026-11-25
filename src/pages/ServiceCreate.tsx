@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, useSearchParams } from "react-router-dom";
 import { Loader2, Check, CalendarClock, ArrowRight, Video, Briefcase, Users } from "lucide-react";
 import { UrlScrapePanel } from "@/components/UrlScrapePanel";
 import { ImageUpload } from "@/components/ImageUpload";
@@ -24,8 +24,10 @@ export default function ServiceCreate() {
   const { id: editId } = useParams<{ id: string }>();
   const isEditMode = !!editId;
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  // Prefill from "Make it a service" on a capability (?title=…&description=…), new services only.
+  const [prefill] = useSearchParams();
+  const [title, setTitle] = useState(() => (prefill.get("title") ?? "").slice(0, 120));
+  const [description, setDescription] = useState(() => prefill.get("description") ?? "");
   const [duration, setDuration] = useState("60");
   const [price, setPrice] = useState("0");
   const [currency, setCurrency] = useState("EUR");

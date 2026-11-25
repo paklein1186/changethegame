@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin } from "lucide-react";
+import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, CalendarCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +31,8 @@ export interface Opportunity {
   score: number;
   territory_names: string[] | null;
   my_verdict: "help" | "not_relevant" | "later" | null;
+  /** Service the matched capability is backed by: the quest holder can book it directly. */
+  capability_service_url?: string | null;
 }
 
 type Scope = "me" | "guilds" | "all";
@@ -182,7 +184,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                     {(o.territory_names ?? []).slice(0, 2).map((p) => (
                       <span key={p} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground"><MapPin className="h-3 w-3" />{p}</span>
                     ))}
-                    <div className="ml-auto flex items-center gap-1">
+                    <div className="ml-auto flex flex-wrap items-center justify-end gap-1 max-w-full">
                       {o.direction === "you_can_help" ? (
                         o.my_verdict === "help" ? (
                           <span className="text-xs text-primary font-medium">{t("matchOpportunities.helpOffered")}</span>
@@ -197,9 +199,16 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                           </>
                         )
                       ) : (
-                        <Button size="sm" variant="outline" className="h-7 text-xs gap-1" asChild>
-                          <Link to={helperUrl(o)}>{t("matchOpportunities.viewProfile")} <ArrowRight className="h-3 w-3" /></Link>
-                        </Button>
+                        <>
+                          {o.capability_service_url && (
+                            <Button size="sm" className="h-7 text-xs gap-1" asChild>
+                              <Link to={o.capability_service_url}><CalendarCheck className="h-3.5 w-3.5" /> {t("matchOpportunities.book")}</Link>
+                            </Button>
+                          )}
+                          <Button size="sm" variant="outline" className="h-7 text-xs gap-1" asChild>
+                            <Link to={helperUrl(o)}>{t("matchOpportunities.viewProfile")} <ArrowRight className="h-3 w-3" /></Link>
+                          </Button>
+                        </>
                       )}
                       <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: o.match_id, verdict: "not_relevant" })} title={t("matchOpportunities.notRelevant")} aria-label={t("matchOpportunities.notRelevant")}>
                         <X className="h-3.5 w-3.5" />

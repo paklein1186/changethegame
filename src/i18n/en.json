@@ -4562,6 +4562,7 @@
     }
   },
   "matchOpportunities": {
+    "book": "Book",
     "title": "Opportunities spotted",
     "titleGuild": "Opportunities around this guild",
     "titleQuest": "Who could help this quest",
@@ -4604,6 +4605,9 @@
     "feedbackFailed": "Could not save your answer. Try again."
   },
   "capabilities": {
+    "seeService": "See the service",
+    "makeService": "Make it a service",
+    "makeServiceHint": "Click the calendar icon on a capability to offer it as a bookable service.",
     "title": "Can offer",
     "titleOwn": "What I can offer",
     "subtitle": "Inferred from your activity (tasks, projects, services, courses, attestations, CV). Only what you confirm is visible to others.",

@@ -338,12 +338,14 @@ serve(async (req) => {
             category: c.category, description: clip(c.description ?? "", 400) || null, evidence,
             confidence: Math.max(0, Math.min(1, Number(c.confidence) || 0.5)),
           };
+          // Adossée à un service que le titulaire a lui-même publié : déjà rendue publique par lui, donc confirmée.
+          const backedByService = evidence.some((e: any) => e.kind === "service");
           const prev = byLabel.get(key);
           if (!prev) {
-            const { error } = await sb.from("capabilities").insert({ owner_type: o.type, owner_id: o.id, label, ...fields });
+            const { error } = await sb.from("capabilities").insert({ owner_type: o.type, owner_id: o.id, label, ...fields, ...(backedByService ? { status: "confirmed" } : {}) });
             if (!error) report.capabilities_written++;
           } else if (prev.status === "inferred") {
-            await sb.from("capabilities").update(fields).eq("id", prev.id);
+            await sb.from("capabilities").update({ ...fields, ...(backedByService ? { status: "confirmed" } : {}) }).eq("id", prev.id);
             report.capabilities_written++;
           } else {
             // confirmée ou écartée par son titulaire : on ne met à jour que les preuves
