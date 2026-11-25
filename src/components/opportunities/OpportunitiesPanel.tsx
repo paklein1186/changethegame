@@ -33,6 +33,7 @@ export interface Opportunity {
   my_verdict: "help" | "not_relevant" | "later" | null;
   /** Service the matched capability is backed by: the quest holder can book it directly. */
   capability_service_url?: string | null;
+  capability_service_title?: string | null;
 }
 
 type Scope = "me" | "guilds" | "all";
@@ -202,7 +203,12 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                         <>
                           {o.capability_service_url && (
                             <Button size="sm" className="h-7 text-xs gap-1" asChild>
-                              <Link to={o.capability_service_url}><CalendarCheck className="h-3.5 w-3.5" /> {t("matchOpportunities.book")}</Link>
+                              <Link
+                                to={o.capability_service_url}
+                                title={o.capability_service_title ? `${t("matchOpportunities.book")} : ${o.capability_service_title}` : undefined}
+                              >
+                                <CalendarCheck className="h-3.5 w-3.5" /> {t("matchOpportunities.book")}
+                              </Link>
                             </Button>
                           )}
                           <Button size="sm" variant="outline" className="h-7 text-xs gap-1" asChild>
