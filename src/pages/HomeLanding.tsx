@@ -1,10 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Sparkles, Check, X, Map, Database, FileText,
-  Eye, Rocket, HandHeart, Users, Bot, Radio, Repeat, Network,
-  Quote, Building2, Landmark, Coins, Compass, UserRound, Leaf,
-  ShieldCheck, GitBranch, Mail,
+  ArrowRight, Sparkles, Map, Database, FileText, Eye, Network, HandHeart,
+  Quote, ShieldCheck, GitBranch, Mail, Users, MapPin, Coins, Compass,
+  Sprout, Landmark, Building2,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import heroCollective from "@/assets/home-collective.png.asset.json";
@@ -15,6 +14,7 @@ import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { LandingLanguageSwitcher } from "@/components/LandingLanguageSwitcher";
 import { LandingStatBar } from "@/components/landing/LandingStatBar";
 import { LandingLivingMapSection } from "@/components/landing/LandingLivingMapSection";
+import { LandingEntityConstellation } from "@/components/landing/LandingEntityConstellation";
 
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -48,7 +48,6 @@ function linkifyEntities(text: string): React.ReactNode[] {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-
   return (
     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary mb-3">
       {children}
@@ -61,6 +60,7 @@ export default function HomeLanding() {
   const { t } = useTranslation();
   useDocumentTitle(t("pageTitles.landing"));
   const k = (s: string) => t(`landing.home.${s}`);
+  const v = (s: string) => t(`landingV2.${s}`);
 
   const failures = [
     { icon: Map, t: k("problem.c1t"), d: k("problem.c1d") },
@@ -68,15 +68,17 @@ export default function HomeLanding() {
     { icon: FileText, t: k("problem.c3t"), d: k("problem.c3d") },
   ];
 
-  const pillars = [
-    { icon: Eye, n: "01", t: k("pillars.p1t"), s: k("pillars.p1s"), d: k("pillars.p1d"), to: "/explore" },
-    { icon: Rocket, n: "02", t: k("pillars.p2t"), s: k("pillars.p2s"), d: k("pillars.p2d"), to: "/explore/quests-info" },
-    { icon: HandHeart, n: "03", t: k("pillars.p3t"), s: k("pillars.p3s"), d: k("pillars.p3d"), to: "/explore/people-info" },
-    { icon: Users, n: "04", t: k("pillars.p4t"), s: k("pillars.p4s"), d: k("pillars.p4d"), to: "/explore/guilds-info" },
-    { icon: Bot, n: "05", t: k("pillars.p5t"), s: k("pillars.p5s"), d: k("pillars.p5d"), to: "/agents" },
-    { icon: Radio, n: "06", t: k("pillars.p6t"), s: k("pillars.p6s"), d: k("pillars.p6d"), to: "/territories" },
-    { icon: Repeat, n: "07", t: k("pillars.p7t"), s: k("pillars.p7s"), d: k("pillars.p7d"), to: "/opportunities" },
-    { icon: Network, n: "08", t: k("pillars.p8t"), s: k("pillars.p8s"), d: k("pillars.p8d"), to: "/explore" },
+  const entityGroups = [
+    { icon: Users, key: "who" },
+    { icon: MapPin, key: "where" },
+    { icon: Coins, key: "with" },
+    { icon: Compass, key: "why" },
+  ];
+
+  const gestures = [
+    { icon: Eye, n: "01", key: "g1", to: "/explore" },
+    { icon: Network, n: "02", key: "g2", to: "/agents" },
+    { icon: HandHeart, n: "03", key: "g3", to: "/explore/quests-info" },
   ];
 
   const storySteps = [1, 2, 3, 4, 5].map((i) => ({
@@ -84,15 +86,11 @@ export default function HomeLanding() {
     d: k(`story.s${i}d`),
   }));
 
-  const personas = [
-    { icon: Building2, t: k("personas.a1t"), d: k("personas.a1d") },
-    { icon: Landmark, t: k("personas.a2t"), d: k("personas.a2d") },
-    { icon: Coins, t: k("personas.a3t"), d: k("personas.a3d") },
-    { icon: Compass, t: k("personas.a4t"), d: k("personas.a4d") },
-    { icon: UserRound, t: k("personas.a5t"), d: k("personas.a5d") },
-    { icon: Leaf, t: k("personas.a6t"), d: k("personas.a6d") },
+  const doors = [
+    { icon: Sprout, key: "d1", to: "/welcome" },
+    { icon: Landmark, key: "d2", to: "/territories" },
+    { icon: Building2, key: "d3", to: "/opportunities" },
   ];
-
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -122,7 +120,7 @@ export default function HomeLanding() {
           <div className="container relative z-10 px-5 sm:px-6 lg:px-8 py-16 md:py-28 text-center">
             <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-6">
-                <Sparkles className="h-3 w-3" /> {k("hero.badge")}
+                <Sparkles className="h-3 w-3" /> {v("hero.badge")}
               </span>
             </motion.div>
             <motion.h1
@@ -131,8 +129,8 @@ export default function HomeLanding() {
               transition={{ delay: 0.1, duration: 0.6 }}
               className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.08] max-w-4xl mx-auto"
             >
-              {k("hero.title1")}{" "}
-              <span className="text-primary">{k("hero.title2")}</span>
+              {v("hero.title1")}{" "}
+              <span className="text-primary">{v("hero.title2")}</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -140,7 +138,7 @@ export default function HomeLanding() {
               transition={{ delay: 0.25, duration: 0.6 }}
               className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
             >
-              {k("hero.sub")}
+              {v("hero.sub")}
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -148,11 +146,13 @@ export default function HomeLanding() {
               transition={{ delay: 0.4, duration: 0.5 }}
               className="mt-9 flex flex-col sm:flex-row gap-3 justify-center"
             >
-              <Button size="lg" className="gap-2" onClick={() => navigate("/welcome")}>
-                {k("hero.cta1")} <ArrowRight className="h-4 w-4" />
+              <Button size="lg" className="gap-2" asChild>
+                <Link to="/explore">
+                  {v("hero.cta1")} <ArrowRight className="h-4 w-4" />
+                </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link to="/explore">{k("hero.cta2")}</Link>
+                <a href="#co-experimentation">{v("hero.cta2")}</a>
               </Button>
             </motion.div>
             <motion.div
@@ -163,7 +163,7 @@ export default function HomeLanding() {
             >
               <img
                 src={heroCollective.url}
-                alt={k("hero.title1") + " " + k("hero.title2")}
+                alt={v("hero.title1") + " " + v("hero.title2")}
                 loading="lazy"
                 className="w-full rounded-2xl border border-border shadow-lg"
               />
@@ -171,9 +171,11 @@ export default function HomeLanding() {
             <div className="mt-12">
               <LandingStatBar />
             </div>
-
           </div>
         </section>
+
+        {/* ─── Living map: what is connecting right now ─── */}
+        <LandingLivingMapSection />
 
         {/* ─── Problem ─── */}
         <section className="border-b border-border">
@@ -213,80 +215,54 @@ export default function HomeLanding() {
           </div>
         </section>
 
-        {/* ─── Shift ─── */}
+        {/* ─── Entities ─── */}
         <section className="border-b border-border bg-muted/30">
           <div className="container px-5 sm:px-6 lg:px-8 py-14 md:py-20">
-            <div className="text-center max-w-2xl mx-auto">
-              <SectionLabel>{k("shift.label")}</SectionLabel>
-              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{k("shift.title")}</h2>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-2 mt-12 max-w-4xl mx-auto">
-              <div className="rounded-2xl border border-border bg-background/60 p-7">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{k("shift.aLabel")}</p>
-                <h3 className="font-display text-2xl font-bold mb-3 text-muted-foreground">{k("shift.aTitle")}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{k("shift.aDesc")}</p>
-              </div>
-              <div className="rounded-2xl border-2 border-primary/40 bg-card p-7 shadow-sm">
-                <p className="text-xs uppercase tracking-wider text-primary mb-2">{k("shift.bLabel")}</p>
-                <h3 className="font-display text-2xl font-bold mb-3 text-primary">{k("shift.bTitle")}</h3>
-                <p className="text-sm text-foreground/80 leading-relaxed">{k("shift.bDesc")}</p>
-              </div>
-            </div>
-
-            <p className="text-center text-sm text-muted-foreground mt-8">{k("shift.note")}</p>
-          </div>
-        </section>
-
-        {/* ─── Concept ─── */}
-        <section className="border-b border-border">
-          <div className="container px-5 sm:px-6 lg:px-8 py-14 md:py-20 grid gap-10 lg:grid-cols-2 lg:items-start">
-            <div>
-              <SectionLabel>{k("concept.label")}</SectionLabel>
+            <div className="max-w-3xl">
+              <SectionLabel>{v("entities.label")}</SectionLabel>
               <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight leading-tight">
-                {k("concept.title")}
+                {v("entities.title")}
               </h2>
-              <p className="mt-5 text-muted-foreground leading-relaxed">{k("concept.lead")}</p>
+              <p className="mt-5 text-muted-foreground leading-relaxed">{v("entities.lead")}</p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6">
-                <h3 className="font-display font-semibold mb-4">{k("concept.areTitle")}</h3>
-                <ul className="space-y-3">
-                  {[1, 2, 3, 4].map((i) => (
-                    <li key={i} className="flex gap-2.5 text-sm">
-                      <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      <span>{k(`concept.are${i}`)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-2xl border border-border bg-card p-6">
-                <h3 className="font-display font-semibold mb-4 text-muted-foreground">{k("concept.notTitle")}</h3>
-                <ul className="space-y-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <li key={i} className="flex gap-2.5 text-sm text-muted-foreground">
-                      <X className="h-4 w-4 shrink-0 mt-0.5" />
-                      <span>{k(`concept.not${i}`)}</span>
-                    </li>
-                  ))}
-                </ul>
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center mt-10">
+              <LandingEntityConstellation />
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {entityGroups.map((g, i) => (
+                  <motion.div
+                    key={g.key}
+                    custom={i}
+                    variants={fadeUp}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, margin: "-60px" }}
+                    className="rounded-2xl border border-border bg-card p-6"
+                  >
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+                      <g.icon className="h-5 w-5" />
+                    </div>
+                    <p className="text-xs uppercase tracking-wider text-primary mb-1">{v(`entities.groups.${g.key}.label`)}</p>
+                    <h3 className="font-display font-semibold mb-1.5">{v(`entities.groups.${g.key}.title`)}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{v(`entities.groups.${g.key}.desc`)}</p>
+                  </motion.div>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* ─── Pillars / features ─── */}
-        <section className="border-b border-border bg-muted/30">
+        {/* ─── How it works: three gestures ─── */}
+        <section className="border-b border-border">
           <div className="container px-5 sm:px-6 lg:px-8 py-14 md:py-20">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <SectionLabel>{k("pillars.label")}</SectionLabel>
-              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{k("pillars.title")}</h2>
-              <p className="mt-3 text-muted-foreground">{k("pillars.sub")}</p>
+              <SectionLabel>{v("how.label")}</SectionLabel>
+              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{v("how.title")}</h2>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {pillars.map((p, i) => (
+            <div className="grid gap-4 md:grid-cols-3">
+              {gestures.map((p, i) => (
                 <motion.div
                   key={p.n}
                   custom={i}
@@ -305,57 +281,57 @@ export default function HomeLanding() {
                       </div>
                       <span className="text-xs font-mono text-muted-foreground">{p.n}</span>
                     </div>
-                    <h3 className="font-display text-lg font-bold uppercase tracking-tight">{p.t}</h3>
-                    <p className="text-xs text-primary mb-2">{p.s}</p>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{p.d}</p>
+                    <h3 className="font-display text-lg font-bold uppercase tracking-tight">{v(`how.${p.key}t`)}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-2">{v(`how.${p.key}d`)}</p>
                   </Link>
                 </motion.div>
               ))}
             </div>
+
+            <div className="text-center mt-8">
+              <Link to="/how-it-works" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+                {v("how.more")} <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           </div>
         </section>
 
-        {/* ─── Living map + galleries ─── */}
-        <LandingLivingMapSection />
-
-
-
-        {/* ─── Personas ─── */}
+        {/* ─── Doors: where to start ─── */}
         <section className="border-b border-border bg-muted/30">
           <div className="container px-5 sm:px-6 lg:px-8 py-14 md:py-20">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <SectionLabel>{k("personas.label")}</SectionLabel>
-              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{k("personas.title")}</h2>
-              <p className="mt-3 text-muted-foreground">{k("personas.sub")}</p>
+              <SectionLabel>{v("doors.label")}</SectionLabel>
+              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{v("doors.title")}</h2>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {personas.map((p, i) => (
+            <div className="grid gap-4 md:grid-cols-3">
+              {doors.map((d, i) => (
                 <motion.div
-                  key={p.t}
+                  key={d.key}
                   custom={i}
                   variants={fadeUp}
                   initial="hidden"
                   whileInView="show"
                   viewport={{ once: true, margin: "-40px" }}
-                  className="rounded-2xl border border-border bg-card p-6 flex gap-4"
                 >
-                  <div className="h-10 w-10 shrink-0 rounded-xl bg-accent/50 text-foreground flex items-center justify-center">
-                    <p.icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-semibold">{p.t}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mt-1">{p.d}</p>
-                  </div>
+                  <Link
+                    to={d.to}
+                    className="group flex h-full flex-col rounded-2xl border border-border bg-card p-7 transition-all hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5"
+                  >
+                    <div className="h-10 w-10 rounded-xl bg-accent/50 text-foreground flex items-center justify-center mb-5">
+                      <d.icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-display text-xl font-bold leading-snug">{v(`doors.${d.key}t`)}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-2 flex-1">{v(`doors.${d.key}d`)}</p>
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                      {v(`doors.${d.key}cta`)} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                  </Link>
                 </motion.div>
               ))}
             </div>
 
-            <div className="text-center mt-10">
-              <Button size="lg" className="gap-2" onClick={() => navigate("/welcome")}>
-                {k("personas.cta")} <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
+            <p className="text-center text-sm text-muted-foreground mt-8 max-w-2xl mx-auto">{v("doors.others")}</p>
           </div>
         </section>
 
@@ -408,10 +384,24 @@ export default function HomeLanding() {
           </div>
         </section>
 
-        {/* ─── Governance ─── */}
-        <section className="border-b border-border">
+        {/* ─── Our course & governance ─── */}
+        <section className="border-b border-border bg-muted/30">
           <div className="container px-5 sm:px-6 lg:px-8 py-14 md:py-20">
             <div className="max-w-3xl">
+              <SectionLabel>{v("cap.label")}</SectionLabel>
+              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight leading-tight">{v("cap.title")}</h2>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 mt-10">
+              {["vision", "purpose"].map((key) => (
+                <div key={key} className="rounded-2xl border border-primary/30 bg-primary/5 p-7">
+                  <p className="text-xs uppercase tracking-wider text-primary mb-2">{v(`cap.${key}Label`)}</p>
+                  <p className="font-display text-lg leading-relaxed">{v(`cap.${key}`)}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="max-w-3xl mt-16">
               <SectionLabel>{k("governance.label")}</SectionLabel>
               <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{k("governance.title")}</h2>
               <p className="mt-5 text-muted-foreground leading-relaxed">{k("governance.lead")}</p>
@@ -449,14 +439,11 @@ export default function HomeLanding() {
           </div>
         </section>
 
-
-
-
         {/* ─── Final CTA ─── */}
-        <section>
+        <section id="co-experimentation" className="scroll-mt-20">
           <div className="container px-5 sm:px-6 lg:px-8 py-14 md:py-20 text-center max-w-2xl mx-auto">
-            <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{k("final.title")}</h2>
-            <p className="mt-3 text-lg text-primary">{k("final.sub")}</p>
+            <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">{v("final.title")}</h2>
+            <p className="mt-3 text-lg text-primary">{v("final.sub")}</p>
             <p className="mt-5 text-muted-foreground leading-relaxed">{k("final.body")}</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
               <Button size="lg" className="gap-2" onClick={() => navigate("/welcome")}>

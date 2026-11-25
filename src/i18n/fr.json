@@ -1398,7 +1398,7 @@
       "subtitle": "Notre philosophie, structure et feuille de route."
     },
     "ecosystem": {
-      "title": "Écosystème",
+      "title": "Économie & gouvernance",
       "subtitle": "Comment la valeur circule et la gouvernance fonctionne."
     },
     "legal": {
@@ -1601,7 +1601,7 @@
   },
   "footer": {
     "vision": "Vision",
-    "ecosystem": "Écosystème",
+    "ecosystem": "Économie & gouvernance",
     "legal": "Légal",
     "culture": "Culture",
     "transparency": "Transparence",
@@ -1617,7 +1617,7 @@
     "terms": "Conditions",
     "contact": "Contact",
     "about": "À propos",
-    "tagline": "Porté par l'humain. Augmenté par l'IA. Propriété de la communauté."
+    "tagline": "L’écosystème coopératif des territoires vivants"
   },
   "manifestoPage": {
     "believe1": "Nous croyons que les gens peuvent créer des choses extraordinaires quand ils sont vus, reconnus et soutenus.",
@@ -4397,5 +4397,154 @@
   "guildOverview": {
     "recentQuests": "Quêtes récentes",
     "seeAll": "Tout voir"
+  },
+  "landingV2": {
+    "hero": {
+      "badge": "Écosystème coopératif des territoires vivants",
+      "title1": "Sur votre territoire, des dizaines de projets avancent sans se connaître.",
+      "title2": "Reliez-les.",
+      "sub": "ChangeTheGame met en commun les personnes, les lieux, les savoir-faire et les moyens pour que naissent et grandissent, au plus près du terrain, des projets qui prennent soin des humains et du vivant.",
+      "cta1": "Explorer un territoire",
+      "cta2": "Lancer une co-expérimentation"
+    },
+    "entities": {
+      "label": "Les entités",
+      "title": "Tout ce qui fait un territoire, enfin au même endroit",
+      "lead": "Un territoire, ce ne sont pas seulement des profils. Ce sont des gens, des lieux, des manières de faire, des moyens disponibles et des besoins qui attendent une réponse.",
+      "center": "Votre territoire",
+      "figureLabel": "Votre territoire au centre, relié aux individus, organisations, collectifs, consortiums, lieux, méthodologies, ressources, opportunités et besoins.",
+      "names": {
+        "individuals": "Individus",
+        "organizations": "Organisations",
+        "collectives": "Collectifs",
+        "consortiums": "Consortiums",
+        "places": "Lieux",
+        "methodologies": "Méthodologies",
+        "resources": "Ressources",
+        "opportunities": "Opportunités",
+        "needs": "Besoins"
+      },
+      "groups": {
+        "who": {
+          "label": "Qui agit",
+          "title": "Individus · Organisations · Collectifs · Consortiums",
+          "desc": "Habitants, associations, entreprises, collectivités, réseaux, alliances de projet : chacun rend visible ce qu'il fait et ce qu'il sait faire."
+        },
+        "where": {
+          "label": "Où et comment",
+          "title": "Lieux · Méthodologies",
+          "desc": "Tiers-lieux, fermes, bâtiments à réactiver ; démarches éprouvées, prêtes à être reprises et adaptées ailleurs."
+        },
+        "with": {
+          "label": "Avec quoi",
+          "title": "Ressources · Opportunités",
+          "desc": "Compétences, matériel, espaces, financements, appels à projets : ce qui est disponible, et ce qui s'ouvre."
+        },
+        "why": {
+          "label": "Pour quoi",
+          "title": "Besoins",
+          "desc": "Ce qui manque ici et maintenant. Le point de départ de chaque mise en relation."
+        }
+      }
+    },
+    "how": {
+      "label": "Comment ça marche",
+      "title": "Trois gestes, un même commun.",
+      "g1t": "Rendre visible",
+      "g1d": "Chaque initiative, lieu, savoir-faire et besoin trouve sa place sur la carte vivante du territoire.",
+      "g2t": "Relier",
+      "g2d": "Des agents repèrent les connexions possibles. Des humains décident lesquelles valent la peine.",
+      "g3t": "Agir ensemble",
+      "g3d": "Des quêtes avec des moyens identifiés, des contributions reconnues, une valeur partagée entre celles et ceux qui la créent.",
+      "more": "Découvrir les 8 espaces de la plateforme"
+    },
+    "doors": {
+      "label": "Pour qui",
+      "title": "Par où entrer ?",
+      "d1t": "Je porte un projet ou un lieu",
+      "d1d": "Être vu, trouver des alliés et des moyens, reprendre ce qui a marché ailleurs.",
+      "d1cta": "Créer ma fiche",
+      "d2t": "J'anime un territoire, une collectivité ou un réseau",
+      "d2d": "Voir son écosystème d'un coup d'œil, repérer doublons et complémentarités, faire vivre une communauté.",
+      "d2cta": "Ouvrir un espace territoire",
+      "d3t": "J'engage une entreprise ou un financement",
+      "d3d": "Soutenir des actions concrètes sur un territoire, et pouvoir en rendre compte.",
+      "d3cta": "Explorer les besoins",
+      "others": "Accompagnants, citoyens engagés, et même rivières, forêts et sols comme parties prenantes : chacun a sa place."
+    },
+    "cap": {
+      "label": "Notre cap",
+      "title": "Des territoires où les projets qui relient humains et vivant peuvent naître et grandir.",
+      "visionLabel": "Vision",
+      "vision": "Au plus près du terrain, des lieux et des projets en harmonie avec le vivant, qui créent du lien et de la valeur pour le territoire — conçus pour, avec et par ses habitants et toutes ses organisations, publiques comme privées.",
+      "purposeLabel": "Raison d'être",
+      "purpose": "Être l'écosystème qui fournit les ressources — humaines, matérielles, méthodologiques, financières — dont ces lieux et ces projets ont besoin pour émerger et se déployer."
+    },
+    "final": {
+      "title": "Vous animez un territoire ou un réseau ? Co-expérimentons ensemble.",
+      "sub": "Pas un logiciel à acheter : un pilote à co-construire."
+    }
+  },
+  "purposePage": {
+    "tab": "Raison d'être",
+    "title": "Vision & raison d'être",
+    "subtitle": "Ce vers quoi nous tendons, ce que nous faisons pour y arriver, et comment nous nous organisons.",
+    "visionLabel": "Vision",
+    "vision": "Un monde où, dans les territoires et au plus près du terrain, émergent et se déploient des lieux et des projets porteurs de respect et d'harmonie entre humains et avec le vivant : des projets à forte valeur ajoutée territoriale, porteurs de cohésion sociale et territoriale, développés pour, avec et par les citoyens et toutes les organisations, privées comme publiques, présentes sur le territoire.",
+    "purposeLabel": "Raison d'être",
+    "purpose": "changethegame est un écosystème pourvoyeur de ressources au service de l'émergence et du déploiement de ces lieux et de ces projets dans les territoires.",
+    "governanceLabel": "Gouvernance",
+    "governance": "Une coopérative : la plateforme appartient à celles et ceux qui la font vivre. Sa gouvernance s'ouvre par collèges — utilisateurs, opérateurs, financeurs — au rythme de la communauté."
+  },
+  "teamHub": {
+    "footerLabel": "Équipe & écosystème",
+    "title": "Équipe & écosystème",
+    "subtitle": "Qui fait changethegame, la coopérative qui la porte et les réseaux avec qui elle grandit.",
+    "tabs": {
+      "team": "Équipe",
+      "cooperative": "Coopérative",
+      "networks": "Réseaux & partenaires"
+    },
+    "team": {
+      "pa": {
+        "role": "Cofondateur · vision & écosystèmes",
+        "bio": "Quinze ans d'expérience des communs territoriaux et des projets participatifs, une centaine de lieux initiés ou accompagnés. Enseigne l'économie régénérative."
+      },
+      "emelie": {
+        "role": "Cofondatrice · produit",
+        "bio": "Conçoit l'expérience de la plateforme et pilote son développement."
+      },
+      "jeanPhilippe": {
+        "role": "Partenariats & réseaux",
+        "bio": "Fait connaître changethegame et tisse les relations avec les réseaux qui accompagnent les territoires."
+      },
+      "yannick": {
+        "role": "Rôle à préciser",
+        "bio": "Présentation à venir."
+      }
+    },
+    "cooperative": {
+      "lead": "changethegame est porté par Poiethic et s'organise en coopérative : la plateforme est un commun, et celles et ceux qui la font vivre en sont sociétaires. La gouvernance s'ouvre par étapes.",
+      "colleges": {
+        "users": "Collège utilisateurs",
+        "operators": "Collège opérateurs",
+        "funders": "Collège financeurs"
+      },
+      "membersTitle": "Membres fondateurs",
+      "membersPending": "La liste des membres fondateurs sera publiée ici avec leur accord.",
+      "ctaGovernance": "Comprendre la gouvernance",
+      "ctaCoop": "L'aventure coopérative"
+    },
+    "networks": {
+      "lead": "changethegame grandit avec des réseaux qui tissent déjà des coopérations sur leurs territoires.",
+      "items": {
+        "troisTiers": "Communauté apprenante des tiers-lieux : plus de 200 usagers et 50 lieux en réseau en Belgique.",
+        "poiethic": "Studio d'innovation qui porte changethegame et la propulse."
+      },
+      "see": "Voir sur la plateforme",
+      "joinTitle": "Votre réseau anime un territoire ?",
+      "joinDesc": "Nous cherchons des réseaux et des territoires pionniers pour co-expérimenter la plateforme.",
+      "joinCta": "Nous écrire"
+    }
   }
 }

@@ -1412,7 +1412,7 @@
       "subtitle": "Our philosophy, structure and roadmap."
     },
     "ecosystem": {
-      "title": "Ecosystem",
+      "title": "Economy & governance",
       "subtitle": "How value circulates and governance works."
     },
     "legal": {
@@ -1615,7 +1615,7 @@
   },
   "footer": {
     "vision": "Vision",
-    "ecosystem": "Ecosystem",
+    "ecosystem": "Economy & governance",
     "legal": "Legal",
     "culture": "Culture",
     "transparency": "Transparency",
@@ -1631,7 +1631,7 @@
     "terms": "Terms",
     "contact": "Contact",
     "about": "About",
-    "tagline": "Human-powered. AI-augmented. Community-owned."
+    "tagline": "The cooperative ecosystem of living territories"
   },
   "manifestoPage": {
     "believe1": "We believe people can create extraordinary things when they are seen, trusted, and supported.",
@@ -4411,5 +4411,154 @@
   "guildOverview": {
     "recentQuests": "Recent quests",
     "seeAll": "See all"
+  },
+  "landingV2": {
+    "hero": {
+      "badge": "The cooperative ecosystem of living territories",
+      "title1": "In your territory, dozens of projects move forward without knowing each other.",
+      "title2": "Connect them.",
+      "sub": "ChangeTheGame pools people, places, know-how and means so that projects caring for people and the living world can emerge and grow, close to the ground.",
+      "cta1": "Explore a territory",
+      "cta2": "Start a co-experiment"
+    },
+    "entities": {
+      "label": "The entities",
+      "title": "Everything that makes a territory, finally in one place",
+      "lead": "A territory is more than a list of profiles. It is people, places, ways of doing things, available means, and needs waiting for an answer.",
+      "center": "Your territory",
+      "figureLabel": "Your territory at the centre, connected to individuals, organizations, collectives, consortiums, places, methodologies, resources, opportunities and needs.",
+      "names": {
+        "individuals": "Individuals",
+        "organizations": "Organizations",
+        "collectives": "Collectives",
+        "consortiums": "Consortiums",
+        "places": "Places",
+        "methodologies": "Methodologies",
+        "resources": "Resources",
+        "opportunities": "Opportunities",
+        "needs": "Needs"
+      },
+      "groups": {
+        "who": {
+          "label": "Who acts",
+          "title": "Individuals · Organizations · Collectives · Consortiums",
+          "desc": "Residents, associations, companies, local authorities, networks, project alliances: everyone makes visible what they do and what they know how to do."
+        },
+        "where": {
+          "label": "Where and how",
+          "title": "Places · Methodologies",
+          "desc": "Third places, farms, buildings to bring back to life; proven approaches, ready to be reused and adapted elsewhere."
+        },
+        "with": {
+          "label": "With what",
+          "title": "Resources · Opportunities",
+          "desc": "Skills, equipment, spaces, funding, calls for projects: what is available, and what is opening up."
+        },
+        "why": {
+          "label": "What for",
+          "title": "Needs",
+          "desc": "What is missing here and now. The starting point of every connection."
+        }
+      }
+    },
+    "how": {
+      "label": "How it works",
+      "title": "Three gestures, one shared commons.",
+      "g1t": "Make visible",
+      "g1d": "Every initiative, place, skill and need finds its place on the territory's living map.",
+      "g2t": "Connect",
+      "g2d": "Agents spot possible connections. People decide which ones are worth pursuing.",
+      "g3t": "Act together",
+      "g3d": "Quests with identified means, recognised contributions, and value shared among those who create it.",
+      "more": "Discover the platform's 8 spaces"
+    },
+    "doors": {
+      "label": "For whom",
+      "title": "Where to start?",
+      "d1t": "I run a project or a place",
+      "d1d": "Be seen, find allies and means, reuse what worked elsewhere.",
+      "d1cta": "Create my profile",
+      "d2t": "I lead a territory, a local authority or a network",
+      "d2d": "See your ecosystem at a glance, spot overlaps and complementarities, keep a community alive.",
+      "d2cta": "Open a territory space",
+      "d3t": "I commit a company or funding",
+      "d3d": "Support concrete action in a territory, and be able to report on it.",
+      "d3cta": "Explore needs",
+      "others": "Facilitators, engaged citizens, and even rivers, forests and soils as stakeholders: everyone has a place."
+    },
+    "cap": {
+      "label": "Our course",
+      "title": "Territories where projects connecting people and the living world can emerge and grow.",
+      "visionLabel": "Vision",
+      "vision": "Close to the ground, places and projects in harmony with the living world, creating bonds and value for their territory — designed for, with and by its residents and all its organizations, public and private.",
+      "purposeLabel": "Purpose",
+      "purpose": "To be the ecosystem that provides the resources — human, material, methodological, financial — these places and projects need to emerge and grow."
+    },
+    "final": {
+      "title": "Do you lead a territory or a network? Let's co-experiment.",
+      "sub": "Not software to buy: a pilot to build together."
+    }
+  },
+  "purposePage": {
+    "tab": "Purpose",
+    "title": "Vision & purpose",
+    "subtitle": "What we are working towards, what we do to get there, and how we organise ourselves.",
+    "visionLabel": "Vision",
+    "vision": "A world where, in every territory and close to the ground, places and projects emerge and grow that embody respect and harmony among people and with the living world: projects with high territorial value, fostering social and territorial cohesion, developed for, with and by citizens and all the private and public organizations present in the territory.",
+    "purposeLabel": "Purpose",
+    "purpose": "changethegame is an ecosystem that provides resources for the emergence and growth of these places and projects in territories.",
+    "governanceLabel": "Governance",
+    "governance": "A cooperative: the platform belongs to those who bring it to life. Its governance opens up through colleges — users, operators, funders — at the community's pace."
+  },
+  "teamHub": {
+    "footerLabel": "Team & ecosystem",
+    "title": "Team & ecosystem",
+    "subtitle": "Who builds changethegame, the cooperative behind it, and the networks it grows with.",
+    "tabs": {
+      "team": "Team",
+      "cooperative": "Cooperative",
+      "networks": "Networks & partners"
+    },
+    "team": {
+      "pa": {
+        "role": "Co-founder · vision & ecosystems",
+        "bio": "Fifteen years of experience with territorial commons and participatory projects, around a hundred places initiated or supported. Teaches regenerative economics."
+      },
+      "emelie": {
+        "role": "Co-founder · product",
+        "bio": "Designs the platform experience and leads its development."
+      },
+      "jeanPhilippe": {
+        "role": "Partnerships & networks",
+        "bio": "Spreads the word about changethegame and builds relationships with the networks that support territories."
+      },
+      "yannick": {
+        "role": "Role to be confirmed",
+        "bio": "Introduction coming soon."
+      }
+    },
+    "cooperative": {
+      "lead": "changethegame is carried by Poiethic and organised as a cooperative: the platform is a commons, and those who bring it to life are its members. Governance opens up step by step.",
+      "colleges": {
+        "users": "Users college",
+        "operators": "Operators college",
+        "funders": "Funders college"
+      },
+      "membersTitle": "Founding members",
+      "membersPending": "The list of founding members will be published here with their consent.",
+      "ctaGovernance": "Understand the governance",
+      "ctaCoop": "The cooperative venture"
+    },
+    "networks": {
+      "lead": "changethegame grows with networks that already weave cooperation across their territories.",
+      "items": {
+        "troisTiers": "Learning community of third places: more than 200 users and 50 places networked in Belgium.",
+        "poiethic": "Innovation studio that carries and powers changethegame."
+      },
+      "see": "See on the platform",
+      "joinTitle": "Does your network lead a territory?",
+      "joinDesc": "We are looking for pioneering networks and territories to co-experiment with the platform.",
+      "joinCta": "Write to us"
+    }
   }
 }
