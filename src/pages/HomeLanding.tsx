@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -19,6 +18,7 @@ import { LandingEntityConstellation } from "@/components/landing/LandingEntityCo
 
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { setPosture } from "@/lib/posture";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 22 },
@@ -56,13 +56,13 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function HomeLanding() {
+export default function HomeLanding({ mode = "initiative" }: { mode?: "initiative" | "territory" }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   useDocumentTitle(t("pageTitles.landing"));
   const k = (s: string) => t(`landing.home.${s}`);
   const v = (s: string) => t(`landingV2.${s}`);
-  const [mode, setMode] = useState<"initiative" | "territory">("initiative");
+  const MODE_PATH = { initiative: "/home/initiative", territory: "/home/territoire" } as const;
   const h = (s: string) => v(`hero.${mode === "initiative" ? "initiative." : ""}${s}`);
 
   const failures = [
@@ -96,9 +96,9 @@ export default function HomeLanding() {
   ];
 
   const doors = [
-    { icon: Sprout, key: "d1", to: "/welcome" },
-    { icon: Landmark, key: "d2", to: "/territories" },
-    { icon: Building2, key: "d3", to: "/opportunities" },
+    { icon: Sprout, key: "d1", to: "/signup", posture: "initiative" as const },
+    { icon: Landmark, key: "d2", to: "/territories", posture: "territory" as const },
+    { icon: Building2, key: "d3", to: "/opportunities", posture: "organization" as const },
   ];
 
   return (
@@ -115,7 +115,7 @@ export default function HomeLanding() {
             <Button variant="ghost" size="sm" className="hidden sm:inline-flex" onClick={() => navigate("/login")}>
               {k("nav.login")}
             </Button>
-            <Button size="sm" className="gap-1.5 px-2.5 sm:px-3" onClick={() => navigate("/welcome")}>
+            <Button size="sm" className="gap-1.5 px-2.5 sm:px-3" onClick={() => { setPosture(mode); navigate("/signup"); }}>
               <span className="truncate max-w-[9rem]">{k("nav.cta")}</span> <ArrowRight className="h-3.5 w-3.5 shrink-0" />
             </Button>
           </nav>
@@ -138,7 +138,7 @@ export default function HomeLanding() {
                     key={m}
                     type="button"
                     aria-pressed={mode === m}
-                    onClick={() => setMode(m)}
+                    onClick={() => navigate(MODE_PATH[m], { replace: true })}
                     className={
                       "rounded-full px-4 py-2 text-sm font-medium transition-colors min-h-[40px] " +
                       (mode === m ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground")
@@ -178,7 +178,10 @@ export default function HomeLanding() {
               className="mt-9 flex flex-col sm:flex-row gap-3 justify-center"
             >
               <Button size="lg" className="gap-2" asChild>
-                <Link to={mode === "initiative" ? "/welcome" : "/explore"}>
+                <Link
+                  to={mode === "initiative" ? "/signup" : "/explore"}
+                  onClick={() => mode === "initiative" && setPosture("initiative")}
+                >
                   {h("cta1")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -322,7 +325,7 @@ export default function HomeLanding() {
 
             <div className="mt-8">
               <Button size="lg" className="gap-2" asChild>
-                <Link to="/welcome">
+                <Link to="/signup" onClick={() => setPosture("initiative")}>
                   {v("initiatives.cta")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -393,6 +396,7 @@ export default function HomeLanding() {
                 >
                   <Link
                     to={d.to}
+                    onClick={() => setPosture(d.posture)}
                     className="group flex h-full flex-col rounded-2xl border border-border bg-card p-7 transition-all hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5"
                   >
                     <div className="h-10 w-10 rounded-xl bg-accent/50 text-foreground flex items-center justify-center mb-5">
@@ -523,7 +527,7 @@ export default function HomeLanding() {
             <p className="mt-3 text-lg text-primary">{v("final.sub")}</p>
             <p className="mt-5 text-muted-foreground leading-relaxed">{k("final.body")}</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <Button size="lg" className="gap-2" onClick={() => navigate("/welcome")}>
+              <Button size="lg" className="gap-2" onClick={() => { setPosture(mode); navigate("/signup"); }}>
                 {k("final.cta1")} <ArrowRight className="h-4 w-4" />
               </Button>
               <Button size="lg" variant="outline" className="gap-2" asChild>

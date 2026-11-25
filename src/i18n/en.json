@@ -412,9 +412,10 @@
     "explorePlatform": "Explore the platform",
     "welcome": {
       "tagline": "Human-powered · AI-augmented · Game-changing",
-      "question": "What brings you here?",
-      "sub": "Choose your path — we'll shape your experience around it.",
+      "question": "How do you want to contribute?",
+      "sub": "Choose your profile — we'll shape your experience around it.",
       "changeLater": "You can always change your path later in your settings.",
+      "otherPostures": "Running an initiative, leading a territory or committing an organization? Back to home",
       "discover": "Discover",
       "login": "Log in",
       "personas": {
@@ -424,7 +425,7 @@
           "tagline": "Start creations, join circles, share skill sessions"
         },
         "impact": {
-          "title": "I'm an Impact Builder",
+          "title": "I put my skills at the service of projects",
           "subtitle": "Consultant, facilitator, practitioner, ecosystem builder",
           "tagline": "Launch missions, join guilds, offer services"
         },
@@ -4668,5 +4669,41 @@
     "urgent": "Now",
     "add": "Add",
     "dismiss": "Dismiss"
+  },
+  "metaHome": {
+    "badge": "The cooperative ecosystem of living territories",
+    "title": "Projects that care for people and the living world grow better together.",
+    "sub": "ChangeTheGame pools people, places, know-how and means so these projects can emerge and grow, close to the ground.",
+    "question": "What brings you here?",
+    "doors": {
+      "initiative": {
+        "title": "I run an initiative",
+        "desc": "Amplify its impact, find new resources, make its ways of acting visible.",
+        "cta": "Grow my initiative"
+      },
+      "territory": {
+        "title": "I lead a territory or a network",
+        "desc": "See your ecosystem at a glance, connect its actors, keep a community alive.",
+        "cta": "Connect my territory"
+      },
+      "contributor": {
+        "title": "I want to contribute",
+        "desc": "Creative, consultant, facilitator, looking for missions: put your talents at the service of projects."
+      },
+      "organization": {
+        "title": "I commit an organization or funding",
+        "desc": "Local authority, company, foundation: support concrete action and report on it."
+      },
+      "explorer": {
+        "title": "I'll look around first",
+        "desc": "Browse initiatives, territories and opportunities, without signing up."
+      }
+    },
+    "storyShort": "In Belgium, a shared farm grew into a network of 50 places and over 200 users, carried by Trois-Tiers: a network of practitioners, then an academy, then a public contract won by the collective.",
+    "storyCta": "Discover Trois-Tiers",
+    "coopTitle": "A platform owned by those who bring it to life",
+    "coopDesc": "ChangeTheGame is a cooperative carried by Poiethic. Its governance opens up through colleges — users, operators, funders — at the community's pace.",
+    "coopVision": "Vision & purpose",
+    "coopTeam": "Team & ecosystem"
   }
 }

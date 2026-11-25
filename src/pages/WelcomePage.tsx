@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Sparkles, Target, Blend, Compass,
@@ -8,6 +8,7 @@ import logoImg from "@/assets/logo.png";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { LandingLanguageSwitcher } from "@/components/LandingLanguageSwitcher";
+import { setPosture } from "@/lib/posture";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
@@ -18,6 +19,8 @@ const fadeUp = {
     transition: { delay: 0.15 + i * 0.1, duration: 0.55, ease: "easeOut" as const },
   }),
 };
+
+const CONTRIBUTOR_KEYS = ["creative", "impact", "hybrid", "mission"];
 
 export default function WelcomePage() {
   const navigate = useNavigate();
@@ -142,16 +145,16 @@ export default function WelcomePage() {
             </p>
           </motion.div>
 
-          {/* ─── Persona cards ─── */}
+          {/* ─── Persona cards (contributors) ─── */}
           <div className="grid gap-4 sm:grid-cols-2">
-            {personas.map((p, i) => (
+            {personas.filter((p) => CONTRIBUTOR_KEYS.includes(p.key)).map((p, i) => (
               <motion.button
                 key={p.key}
                 custom={i}
                 variants={fadeUp}
                 initial="hidden"
                 animate="show"
-                onClick={() => navigate(p.path)}
+                onClick={() => { setPosture("contributor"); navigate(p.path); }}
                 className={`group relative text-left rounded-2xl border border-border bg-card p-6 transition-all duration-300 ${p.borderHover} hover:shadow-lg hover:-translate-y-0.5 cursor-pointer`}
               >
                 {/* Gradient shimmer */}
@@ -186,6 +189,9 @@ export default function WelcomePage() {
           >
             {t("landing.welcome.changeLater")}
           </motion.p>
+          <p className="text-center text-sm mt-4">
+            <Link to="/home" className="text-primary hover:underline">{t("landing.welcome.otherPostures")}</Link>
+          </p>
         </div>
       </section>
 

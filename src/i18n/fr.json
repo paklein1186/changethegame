@@ -412,9 +412,10 @@
     "explorePlatform": "Explorer la plateforme",
     "welcome": {
       "tagline": "Porté par l'humain · Augmenté par l'IA · Qui change la donne",
-      "question": "Qu'est-ce qui vous amène ici ?",
-      "sub": "Choisissez votre chemin — nous adapterons votre expérience.",
+      "question": "Comment voulez-vous contribuer ?",
+      "sub": "Choisissez votre profil — nous adapterons votre expérience.",
       "changeLater": "Vous pouvez toujours changer de chemin plus tard dans vos paramètres.",
+      "otherPostures": "Vous portez une initiative, animez un territoire ou engagez une organisation ? Revenir à l'accueil",
       "discover": "Découvrir",
       "login": "Se connecter",
       "personas": {
@@ -424,7 +425,7 @@
           "tagline": "Lancez des créations, rejoignez des cercles, partagez vos savoir-faire"
         },
         "impact": {
-          "title": "Je bâtis l'impact",
+          "title": "Je mets mes compétences au service des projets",
           "subtitle": "Consultant·e, facilitateur·rice, praticien·ne, bâtisseur·se d'écosystème",
           "tagline": "Lancez des missions, rejoignez des guildes, proposez des services"
         },
@@ -4654,5 +4655,41 @@
     "urgent": "Maintenant",
     "add": "Ajouter",
     "dismiss": "Écarter"
+  },
+  "metaHome": {
+    "badge": "Écosystème coopératif des territoires vivants",
+    "title": "Les projets qui prennent soin des humains et du vivant grandissent mieux ensemble.",
+    "sub": "ChangeTheGame met en commun les personnes, les lieux, les savoir-faire et les moyens pour que ces projets naissent et se déploient, au plus près du terrain.",
+    "question": "Qu'est-ce qui vous amène ?",
+    "doors": {
+      "initiative": {
+        "title": "Je porte une initiative",
+        "desc": "Amplifier son impact, trouver de nouvelles ressources, rendre visibles ses modes d'action.",
+        "cta": "Faire grandir mon initiative"
+      },
+      "territory": {
+        "title": "J'anime un territoire ou un réseau",
+        "desc": "Voir son écosystème d'un coup d'œil, relier ses acteurs, faire vivre une communauté.",
+        "cta": "Relier mon territoire"
+      },
+      "contributor": {
+        "title": "Je veux contribuer",
+        "desc": "Créatif·ve, consultant·e, facilitateur·rice, en quête de missions : mettre ses talents au service des projets."
+      },
+      "organization": {
+        "title": "J'engage une organisation ou un financement",
+        "desc": "Collectivité, entreprise, fondation : soutenir des actions concrètes et en rendre compte."
+      },
+      "explorer": {
+        "title": "Je regarde d'abord",
+        "desc": "Parcourir les initiatives, les territoires et les opportunités, sans m'inscrire."
+      }
+    },
+    "storyShort": "En Belgique, une ferme partagée est devenue un réseau de 50 lieux et plus de 200 usagers, porté par Trois-Tiers : un réseau de praticiens, puis une académie, puis un marché public remporté par le collectif.",
+    "storyCta": "Découvrir Trois-Tiers",
+    "coopTitle": "Une plateforme qui appartient à celles et ceux qui la font vivre",
+    "coopDesc": "ChangeTheGame est une coopérative portée par Poiethic. Sa gouvernance s'ouvre par collèges — utilisateurs, opérateurs, financeurs — au rythme de la communauté.",
+    "coopVision": "Vision & raison d'être",
+    "coopTeam": "Équipe & écosystème"
   }
 }
