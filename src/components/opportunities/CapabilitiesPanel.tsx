@@ -93,7 +93,9 @@ export function CapabilitiesPanel({ ownerType, ownerId, canManage }: {
 
   const confirmed = caps.filter((c) => c.status === "confirmed");
   const toReview = caps.filter((c) => c.status === "inferred");
-  if (!canManage && !confirmed.length) return null;
+  // Visiteurs : les compétences confirmées, puis celles que la plateforme suggère à partir de l'activité publique.
+  const suggested = canManage ? [] : toReview.filter((c) => c.evidence?.some((e) => e.kind !== "cv"));
+  if (!canManage && !confirmed.length && !suggested.length) return null;
 
   return (
     <section className="rounded-2xl border border-border bg-card p-4 sm:p-5">
@@ -137,6 +139,19 @@ export function CapabilitiesPanel({ ownerType, ownerId, canManage }: {
                 </Badge>
                 );
               })}
+            </div>
+          )}
+
+          {suggested.length > 0 && (
+            <div>
+              <p className="text-[11px] text-muted-foreground mb-1.5" title={t("matchOpportunities.suggestedHint")}>{t("capabilities.suggestedByPlatform")}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {suggested.map((c) => (
+                  <Badge key={c.id} variant="outline" className="text-xs py-1 border-dashed text-muted-foreground" title={c.evidence?.filter((e) => e.kind !== "cv").slice(0, 2).map((e) => e.title).join(" · ")}>
+                    {c.label}
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
 

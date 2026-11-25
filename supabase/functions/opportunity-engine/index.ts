@@ -181,7 +181,7 @@ serve(async (req) => {
       guildMembers, companyMembers, topics, userTopics, guildTopics, questTopics, territories, userTerr, guildTerr,
       questTerr, closure, questNeeds, inputs, runs,
     ] = await Promise.all([
-      fetchAll((a, b) => sb.from("profiles").select("user_id, name, headline, bio, location, website_url, linkedin_url").range(a, b)),
+      fetchAll((a, b) => sb.from("profiles").select("user_id, name, headline, bio, location, website_url, linkedin_url, preferred_language").range(a, b)),
       fetchAll((a, b) => sb.from("guilds").select("id, name, description, is_physical_place, is_approved, public_visibility, website_url").eq("is_deleted", false).range(a, b)),
       fetchAll((a, b) => sb.from("companies").select("id, name, description, mission_statement, sector, collaboration_interests, website_url").eq("is_deleted", false).range(a, b)),
       fetchAll((a, b) => sb.from("quests").select("id, title, description, status, created_by_user_id, guild_id, public_visibility, is_draft, updated_at").eq("is_deleted", false).range(a, b)),
@@ -333,7 +333,8 @@ serve(async (req) => {
           const key = label.toLowerCase();
           keep.add(key);
           const evidence = (c.evidence ?? []).map((n: number) => ev[n - 1]).filter(Boolean).slice(0, 6)
-            .map((e: Ev) => ({ kind: e.kind, title: clip(e.title, 200), url: e.url ?? null }));
+            // Le texte du CV sert à l'analyse mais n'est jamais stocké : la preuve peut devenir visible.
+            .map((e: Ev) => ({ kind: e.kind, title: e.kind === "cv" ? "CV / LinkedIn" : clip(e.title, 200), url: e.url ?? null }));
           const fields = {
             category: c.category, description: clip(c.description ?? "", 400) || null, evidence,
             confidence: Math.max(0, Math.min(1, Number(c.confidence) || 0.5)),
@@ -624,6 +625,42 @@ serve(async (req) => {
       const stale = existingMatches.filter((m: any) => !keptPairs.has(`${m.need_id}:${m.capability_id}`) && !withFeedback.has(m.id)).map((m: any) => m.id);
       for (let i = 0; i < stale.length; i += 200) await sb.from("opportunity_matches").delete().in("id", stale.slice(i, i + 200));
       report.matches_removed = stale.length;
+    }
+    // ── 5. relance : « des projets pourraient avoir besoin de vous » ─────────────────────────────
+    // Une fois par semaine au plus, pour qui a des capacités suggérées (non confirmées) déjà rapprochées
+    // de besoins : l'inviter à les confirmer et à en faire des services réservables.
+    if (mode === "all" && timeLeft() > 5_000) {
+      try {
+        const rows = await fetchAll((a, b) => sb.from("opportunity_matches")
+          .select("id, capability_id, capabilities!inner(owner_type, owner_id, status)")
+          .eq("capabilities.owner_type", "profile").eq("capabilities.status", "inferred").range(a, b));
+        const perUser = new Map<string, number>();
+        for (const r of rows) { const uid = (r as any).capabilities.owner_id; perUser.set(uid, (perUser.get(uid) ?? 0) + 1); }
+        const weekAgo = Date.now() - 7 * 86400_000;
+        const { data: lastNudges } = await sb.from("capability_runs").select("owner_id, inferred_at").eq("owner_type", "nudge");
+        const nudgedAt = new Map<string, number>((lastNudges ?? []).map((n: any) => [n.owner_id, new Date(n.inferred_at).getTime()]));
+        let sent = 0;
+        for (const [uid, count] of perUser) {
+          if ((nudgedAt.get(uid) ?? 0) > weekAgo) continue;
+          const fr = !String(profiles.find((p: any) => p.user_id === uid)?.preferred_language ?? "fr").startsWith("en");
+          await sb.from("notifications").insert({
+            user_id: uid,
+            type: "CAPABILITY_CONFIRM",
+            title: fr
+              ? `${count} projet${count > 1 ? "s pourraient" : " pourrait"} avoir besoin de vous`
+              : `${count} project${count > 1 ? "s" : ""} could use your help`,
+            body: fr
+              ? "La plateforme a repéré ce que vous savez faire. Confirmez-le sur votre profil, et faites-en un service pour être réservable."
+              : "The platform spotted what you can do. Confirm it on your profile, and turn it into a service so people can book you.",
+            deep_link_url: `/users/${uid}`,
+            related_entity_type: "profile",
+            related_entity_id: uid,
+          });
+          await sb.from("capability_runs").upsert({ owner_type: "nudge", owner_id: uid, evidence_hash: String(count), inferred_at: new Date().toISOString() });
+          sent++;
+        }
+        report.nudges_sent = sent;
+      } catch (e) { fail("relances", e); }
     }
   } catch (e) {
     fail("moteur", e);

@@ -2,13 +2,16 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, CalendarCheck } from "lucide-react";
+import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, CalendarCheck, Send, Check, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +37,9 @@ export interface Opportunity {
   /** Service the matched capability is backed by: the quest holder can book it directly. */
   capability_service_url?: string | null;
   capability_service_title?: string | null;
+  capability_id?: string;
+  /** A help request has already been sent by me for this opportunity. */
+  request_sent?: boolean;
 }
 
 type Scope = "me" | "guilds" | "all";
@@ -56,6 +62,10 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
 }) {
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
+  const currentUser = useCurrentUser();
+  const [asking, setAsking] = useState<Opportunity | null>(null);
+  const [askText, setAskText] = useState("");
+  const [sending, setSending] = useState(false);
   const fr = i18n.language?.startsWith("fr");
   const [scope, setScope] = useState<Scope>(questId ? "all" : defaultScope);
   const [category, setCategory] = useState("all");
@@ -96,6 +106,49 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
     },
     onError: () => toast.error(t("matchOpportunities.feedbackFailed")),
   });
+
+  // « Demander » : message direct, prérempli et modifiable, à la personne (ou aux admins de la guilde).
+  const openAsk = (o: Opportunity) => {
+    const origin = window.location.origin;
+    setAskText(t("matchOpportunities.askTemplate", {
+      name: o.helper_name ?? "",
+      quest: o.quest_title,
+      need: o.need_label,
+      what: o.capability_label,
+      profileUrl: `${origin}${helperUrl(o)}`,
+      questUrl: `${origin}/quests/${o.quest_id}`,
+    }));
+    setAsking(o);
+  };
+  const sendAsk = async () => {
+    if (!asking) return;
+    setSending(true);
+    try {
+      const { data, error } = await (supabase as any).rpc("request_opportunity_help", { p_match_id: asking.match_id, p_message: askText });
+      if (error) throw error;
+      // Notification et e-mail, comme pour tout message direct.
+      await Promise.all(((data ?? []) as { conversation_id: string; message_id: string }[]).map((r) =>
+        supabase.functions.invoke("send-dm-notification", {
+          body: { messageId: r.message_id, conversationId: r.conversation_id, senderId: currentUser.id, content: askText },
+        }).catch((): null => null)));
+      toast.success(t("matchOpportunities.askSent"));
+      setAsking(null);
+      qc.invalidateQueries({ queryKey: ["opportunities"] });
+    } catch {
+      toast.error(t("matchOpportunities.askFailed"));
+    } finally {
+      setSending(false);
+    }
+  };
+  // Confirmer une compétence suggérée par la plateforme : elle devient visible comme confirmée.
+  const confirmOffer = async (o: Opportunity) => {
+    if (!o.capability_id) return;
+    const { error } = await (supabase as any).from("capabilities").update({ status: "confirmed" }).eq("id", o.capability_id);
+    if (error) { toast.error(t("matchOpportunities.feedbackFailed")); return; }
+    toast.success(t("matchOpportunities.offerConfirmed"));
+    qc.invalidateQueries({ queryKey: ["opportunities"] });
+    qc.invalidateQueries({ queryKey: ["capabilities"] });
+  };
 
   const sentence = (o: Opportunity) => {
     const quest = <Link to={`/quests/${o.quest_id}`} className="font-semibold text-foreground hover:text-primary">{o.quest_title}</Link>;
@@ -179,8 +232,10 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                   <div className="flex flex-wrap items-center gap-1.5 mt-2">
                     <Badge variant="outline" className="text-[10px]">{t(`matchOpportunities.category.${o.need_category}`, o.need_category)}</Badge>
                     {o.need_kind === "implied" && <Badge variant="secondary" className="text-[10px]">{t("matchOpportunities.implied")}</Badge>}
-                    {o.capability_status !== "confirmed" && o.direction === "you_can_help" && (
-                      <Badge variant="secondary" className="text-[10px]">{t("matchOpportunities.unconfirmedOffer")}</Badge>
+                    {o.capability_status !== "confirmed" && (
+                      <Badge variant="secondary" className="text-[10px]" title={t("matchOpportunities.suggestedHint")}>
+                        {o.direction === "you_can_help" ? t("matchOpportunities.unconfirmedOffer") : t("matchOpportunities.suggested")}
+                      </Badge>
                     )}
                     {(o.territory_names ?? []).slice(0, 2).map((p) => (
                       <span key={p} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground"><MapPin className="h-3 w-3" />{p}</span>
@@ -191,6 +246,11 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                           <span className="text-xs text-primary font-medium">{t("matchOpportunities.helpOffered")}</span>
                         ) : (
                           <>
+                            {o.capability_status !== "confirmed" && o.helper_type === "profile" && (
+                              <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => confirmOffer(o)} title={t("matchOpportunities.confirmOfferHint")}>
+                                <Check className="h-3.5 w-3.5" /> {t("matchOpportunities.confirmOffer")}
+                              </Button>
+                            )}
                             <Button size="sm" className="h-7 text-xs gap-1" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: o.match_id, verdict: "help" })}>
                               <HandHeart className="h-3.5 w-3.5" /> {t("matchOpportunities.iCanHelp")}
                             </Button>
@@ -201,6 +261,15 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                         )
                       ) : (
                         <>
+                          {o.direction === "help_for_you" && !o.capability_service_url && (
+                            o.request_sent ? (
+                              <span className="text-xs text-primary font-medium">{t("matchOpportunities.requestSent")}</span>
+                            ) : (
+                              <Button size="sm" className="h-7 text-xs gap-1" onClick={() => openAsk(o)}>
+                                <Send className="h-3.5 w-3.5" /> {t("matchOpportunities.ask")}
+                              </Button>
+                            )
+                          )}
                           {o.capability_service_url && (
                             <Button size="sm" className="h-7 text-xs gap-1" asChild>
                               <Link
@@ -227,6 +296,22 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
           })}
         </ul>
       )}
+
+      <Dialog open={!!asking} onOpenChange={(open) => { if (!open) setAsking(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="pr-6">{t("matchOpportunities.askTitle", { name: asking?.helper_name ?? "" })}</DialogTitle>
+            <DialogDescription>{t("matchOpportunities.askHint")}</DialogDescription>
+          </DialogHeader>
+          <Textarea value={askText} onChange={(e) => setAskText(e.target.value)} rows={10} maxLength={2000} className="text-sm" />
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setAsking(null)}>{t("matchOpportunities.cancel")}</Button>
+            <Button onClick={sendAsk} disabled={sending || askText.trim().length < 10} className="gap-1.5">
+              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} {t("matchOpportunities.askSend")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {filtered.length > initialCount && (
         <Button variant="link" size="sm" className="mt-2 h-auto p-0 text-xs" onClick={() => setExpanded((v) => !v)}>
