@@ -104,9 +104,12 @@ export default function WelcomePage() {
       {/* ─── Minimal nav ─── */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
         <div className="container flex h-14 items-center justify-between">
-          <div className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+          <a
+            href="/"
+            className="flex items-center gap-2 font-display text-lg font-bold tracking-tight transition-opacity hover:opacity-80"
+          >
             <img src={logoImg} alt="changethegame" className="h-6 w-6" /> changethegame
-          </div>
+          </a>
           <nav className="flex items-center gap-2">
             <LandingLanguageSwitcher />
             <button
