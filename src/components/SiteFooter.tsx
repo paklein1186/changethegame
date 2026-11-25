@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const FOOTER_LINKS = [
   { labelKey: "footer.vision", href: "/vision" },
+  { labelKey: "teamHub.footerLabel", href: "/team" },
   { labelKey: "footer.ecosystem", href: "/ecosystem" },
   { labelKey: "footer.legal", href: "/legal" },
   { labelKey: "footer.about", href: "/about" },

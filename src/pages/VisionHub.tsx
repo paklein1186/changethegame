@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 
+const PurposePage = lazy(() => import("@/pages/PurposePage"));
 const ManifestoPage = lazy(() => import("@/pages/ManifestoPage"));
 const CooperativeVenturePage = lazy(() => import("@/pages/CooperativeVenturePage"));
 const WhatComesNextPage = lazy(() => import("@/pages/WhatComesNextPage"));
@@ -11,6 +12,7 @@ const UseCasesPage = lazy(() => import("@/pages/UseCasesPage"));
 const ProductVisionPage = lazy(() => import("@/pages/ProductVisionPage"));
 
 const TABS = [
+  { value: "purpose", labelKey: "purposePage.tab" },
   { value: "manifesto", labelKey: "hubs.tabs.manifesto" },
   { value: "cooperative", labelKey: "hubs.tabs.cooperative" },
   { value: "what-comes-next", labelKey: "hubs.tabs.whatComesNext" },
@@ -20,7 +22,7 @@ const TABS = [
 
 export default function VisionHub() {
   const [params, setParams] = useSearchParams();
-  const tab = params.get("tab") || "manifesto";
+  const tab = params.get("tab") || "purpose";
   const { t } = useTranslation();
 
   return (
@@ -37,6 +39,7 @@ export default function VisionHub() {
             ))}
           </TabsList>
           <Suspense fallback={<div className="py-12 text-center text-muted-foreground text-sm">{t("common.loading")}</div>}>
+            <TabsContent value="purpose"><PurposePage embedded /></TabsContent>
             <TabsContent value="manifesto"><ManifestoPage embedded /></TabsContent>
             <TabsContent value="cooperative"><CooperativeVenturePage embedded /></TabsContent>
             <TabsContent value="what-comes-next"><WhatComesNextPage embedded /></TabsContent>

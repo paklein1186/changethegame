@@ -21,6 +21,7 @@ import { HarvestWindowBanner } from "@/components/ctg/HarvestWindowBanner";
 import { FrenchTextOverlay } from "@/components/onboarding/FrenchTextOverlay";
 import { RequireAuth, RedirectIfAuthed } from "@/components/AuthGuard";
 import Index from "./pages/Index";
+import TeamHub from "./pages/TeamHub";
 import Onboarding from "./pages/Onboarding";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -292,6 +293,7 @@ const App = () => (
                 <Route path="/features" element={<Navigate to="/vision?tab=features" replace />} />
                 <Route path="/vision" element={<VisionHub />} />
                 <Route path="/ecosystem" element={<EcosystemHub />} />
+                <Route path="/team" element={<TeamHub />} />
                 <Route path="/legal" element={<LegalHub />} />
                 <Route path="/terms" element={<Navigate to="/legal?tab=terms" replace />} />
                 <Route path="/privacy" element={<Navigate to="/legal?tab=privacy" replace />} />
