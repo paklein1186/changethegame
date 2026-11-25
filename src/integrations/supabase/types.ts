@@ -6678,6 +6678,44 @@ export type Database = {
           },
         ]
       }
+      opportunity_requests: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          id: string
+          match_id: string
+          message_id: string | null
+          recipient_id: string
+          requester_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          match_id: string
+          message_id?: string | null
+          recipient_id: string
+          requester_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          match_id?: string
+          message_id?: string | null
+          recipient_id?: string
+          requester_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_requests_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partnerships: {
         Row: {
           created_at: string
@@ -11569,6 +11607,10 @@ export type Database = {
         Args: { _owner_id: string; _owner_type: string; _uid: string }
         Returns: boolean
       }
+      capability_has_public_evidence: {
+        Args: { _evidence: Json }
+        Returns: boolean
+      }
       check_agent_billing: {
         Args: { _agent_id: string; _user_id: string }
         Returns: Json
@@ -11778,7 +11820,9 @@ export type Database = {
       get_opportunities: {
         Args: { p_guild_id?: string; p_limit?: number; p_scope?: string }
         Returns: {
+          capability_id: string
           capability_label: string
+          capability_service_title: string
           capability_service_url: string
           capability_status: string
           direction: string
@@ -11795,6 +11839,7 @@ export type Database = {
           quest_title: string
           reason_en: string
           reason_fr: string
+          request_sent: boolean
           score: number
           territory_ids: string[]
           territory_names: string[]
@@ -11943,6 +11988,10 @@ export type Database = {
         Args: { _guild_id: string; _user_id: string }
         Returns: boolean
       }
+      is_quest_holder: {
+        Args: { _quest_id: string; _uid: string }
+        Returns: boolean
+      }
       is_quest_manager: {
         Args: { _quest_id: string; _uid: string }
         Returns: boolean
@@ -12072,6 +12121,14 @@ export type Database = {
         Returns: {
           total_released: number
           users_processed: number
+        }[]
+      }
+      request_opportunity_help: {
+        Args: { p_match_id: string; p_message: string }
+        Returns: {
+          conversation_id: string
+          message_id: string
+          recipient_id: string
         }[]
       }
       room_allows: {

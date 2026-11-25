@@ -85,6 +85,20 @@
       "when": 1795639131540,
       "tag": "0011_opportunities_services",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795641934685,
+      "tag": "0012_opportunities_live_services",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795641987752,
+      "tag": "0013_opportunities_requests",
+      "breakpoints": true
     }
   ]
 }
