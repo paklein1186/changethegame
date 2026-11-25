@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight, Sparkles, Map, Database, FileText, Eye, Network, HandHeart,
   Quote, ShieldCheck, GitBranch, Mail, Users, MapPin, Coins, Compass,
-  Sprout, Landmark, Building2,
+  Sprout, Landmark, Building2, TrendingUp, Search, Share2,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import heroCollective from "@/assets/home-collective.png.asset.json";
@@ -61,6 +62,8 @@ export default function HomeLanding() {
   useDocumentTitle(t("pageTitles.landing"));
   const k = (s: string) => t(`landing.home.${s}`);
   const v = (s: string) => t(`landingV2.${s}`);
+  const [mode, setMode] = useState<"initiative" | "territory">("initiative");
+  const h = (s: string) => v(`hero.${mode === "initiative" ? "initiative." : ""}${s}`);
 
   const failures = [
     { icon: Map, t: k("problem.c1t"), d: k("problem.c1d") },
@@ -85,6 +88,12 @@ export default function HomeLanding() {
     t: k(`story.s${i}t`),
     d: k(`story.s${i}d`),
   }));
+
+  const initiativeBenefits = [
+    { icon: TrendingUp, n: "01", key: "b1" },
+    { icon: Search, n: "02", key: "b2" },
+    { icon: Share2, n: "03", key: "b3" },
+  ];
 
   const doors = [
     { icon: Sprout, key: "d1", to: "/welcome" },
@@ -119,9 +128,31 @@ export default function HomeLanding() {
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
           <div className="container relative z-10 px-5 sm:px-6 lg:px-8 py-16 md:py-28 text-center">
             <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-6">
-                <Sparkles className="h-3 w-3" /> {v("hero.badge")}
-              </span>
+              <div
+                role="group"
+                aria-label={v("mode.label")}
+                className="inline-flex flex-wrap justify-center gap-1 rounded-full border border-border bg-card p-1 mb-6"
+              >
+                {(["initiative", "territory"] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    aria-pressed={mode === m}
+                    onClick={() => setMode(m)}
+                    className={
+                      "rounded-full px-4 py-2 text-sm font-medium transition-colors min-h-[40px] " +
+                      (mode === m ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground")
+                    }
+                  >
+                    {v(`mode.${m}`)}
+                  </button>
+                ))}
+              </div>
+              <div>
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-6">
+                  <Sparkles className="h-3 w-3" /> {v("hero.badge")}
+                </span>
+              </div>
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
@@ -129,8 +160,8 @@ export default function HomeLanding() {
               transition={{ delay: 0.1, duration: 0.6 }}
               className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.08] max-w-4xl mx-auto"
             >
-              {v("hero.title1")}{" "}
-              <span className="text-primary">{v("hero.title2")}</span>
+              {h("title1")}{" "}
+              <span className="text-primary">{h("title2")}</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}
@@ -138,7 +169,7 @@ export default function HomeLanding() {
               transition={{ delay: 0.25, duration: 0.6 }}
               className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
             >
-              {v("hero.sub")}
+              {h("sub")}
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -147,12 +178,16 @@ export default function HomeLanding() {
               className="mt-9 flex flex-col sm:flex-row gap-3 justify-center"
             >
               <Button size="lg" className="gap-2" asChild>
-                <Link to="/explore">
-                  {v("hero.cta1")} <ArrowRight className="h-4 w-4" />
+                <Link to={mode === "initiative" ? "/welcome" : "/explore"}>
+                  {h("cta1")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <a href="#co-experimentation">{v("hero.cta2")}</a>
+                {mode === "initiative" ? (
+                  <Link to="/opportunities">{h("cta2")}</Link>
+                ) : (
+                  <a href="#co-experimentation">{h("cta2")}</a>
+                )}
               </Button>
             </motion.div>
             <motion.div
@@ -163,7 +198,7 @@ export default function HomeLanding() {
             >
               <img
                 src={heroCollective.url}
-                alt={v("hero.title1") + " " + v("hero.title2")}
+                alt={h("title1") + " " + h("title2")}
                 loading="lazy"
                 className="w-full rounded-2xl border border-border shadow-lg"
               />
@@ -227,7 +262,7 @@ export default function HomeLanding() {
             </div>
 
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center mt-10">
-              <LandingEntityConstellation />
+              <LandingEntityConstellation center={mode} />
 
               <div className="grid gap-4 sm:grid-cols-2">
                 {entityGroups.map((g, i) => (
@@ -249,6 +284,48 @@ export default function HomeLanding() {
                   </motion.div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── For impact initiatives ─── */}
+        <section id="initiatives" className="border-b border-border bg-primary/5">
+          <div className="container px-5 sm:px-6 lg:px-8 py-14 md:py-20">
+            <div className="max-w-3xl">
+              <SectionLabel>{v("initiatives.label")}</SectionLabel>
+              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight leading-tight">{v("initiatives.title")}</h2>
+              <p className="mt-5 text-muted-foreground leading-relaxed">{v("initiatives.lead")}</p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3 mt-10">
+              {initiativeBenefits.map((b, i) => (
+                <motion.div
+                  key={b.key}
+                  custom={i}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: "-40px" }}
+                  className="rounded-2xl border border-border bg-card p-6"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                      <b.icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">{b.n}</span>
+                  </div>
+                  <h3 className="font-display text-lg font-bold">{v(`initiatives.${b.key}t`)}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-2">{v(`initiatives.${b.key}d`)}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-8">
+              <Button size="lg" className="gap-2" asChild>
+                <Link to="/welcome">
+                  {v("initiatives.cta")} <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           </div>
         </section>

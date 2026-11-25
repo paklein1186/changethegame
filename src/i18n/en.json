@@ -4419,7 +4419,14 @@
       "title2": "Connect them.",
       "sub": "ChangeTheGame pools people, places, know-how and means so that projects caring for people and the living world can emerge and grow, close to the ground.",
       "cta1": "Explore a territory",
-      "cta2": "Start a co-experiment"
+      "cta2": "Start a co-experiment",
+      "initiative": {
+        "title1": "Your initiative does good for its territory.",
+        "title2": "Amplify its impact.",
+        "sub": "Find new resources — places, skills, funding, partners — and make your ways of doing visible so they can spread elsewhere.",
+        "cta1": "Showcase my initiative",
+        "cta2": "Explore opportunities"
+      }
     },
     "entities": {
       "label": "The entities",
@@ -4459,6 +4466,10 @@
           "title": "Needs",
           "desc": "What is missing here and now. The starting point of every connection."
         }
+      },
+      "initiative": {
+        "center": "Your initiative",
+        "figureLabel": "Your initiative at the centre, connected to the individuals, organizations, collectives, consortiums, places, methodologies, resources, opportunities and needs of its territory."
       }
     },
     "how": {
@@ -4475,9 +4486,9 @@
     "doors": {
       "label": "For whom",
       "title": "Where to start?",
-      "d1t": "I run a project or a place",
-      "d1d": "Be seen, find allies and means, reuse what worked elsewhere.",
-      "d1cta": "Create my profile",
+      "d1t": "I run an impact initiative",
+      "d1d": "Amplify its impact, find new resources, make its ways of acting visible.",
+      "d1cta": "Showcase my initiative",
       "d2t": "I lead a territory, a local authority or a network",
       "d2d": "See your ecosystem at a glance, spot overlaps and complementarities, keep a community alive.",
       "d2cta": "Open a territory space",
@@ -4497,6 +4508,23 @@
     "final": {
       "title": "Do you lead a territory or a network? Let's co-experiment.",
       "sub": "Not software to buy: a pilot to build together."
+    },
+    "mode": {
+      "label": "I am",
+      "initiative": "I run an initiative",
+      "territory": "I lead a territory or a network"
+    },
+    "initiatives": {
+      "label": "For impact initiatives",
+      "title": "Grow what you have started",
+      "lead": "Farm, third place, purpose-driven company, association: your initiative creates value for its territory. ChangeTheGame helps it go further.",
+      "b1t": "Amplify your impact",
+      "b1d": "Connect with projects working on the same issues, build alliances and consortiums, and get recognition for the value you create for the territory and the living world.",
+      "b2t": "Find new resources",
+      "b2d": "Publish your needs: places, skills, equipment, funding. Agents spot who can meet them, in your territory and beyond.",
+      "b3t": "Make your ways of acting visible",
+      "b3d": "Document your methods and successes. Others reuse them, adapt them and credit you: your ways of doing spread.",
+      "cta": "Showcase my initiative"
     }
   },
   "purposePage": {
