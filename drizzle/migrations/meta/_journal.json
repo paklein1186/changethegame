@@ -71,6 +71,20 @@
       "when": 1795452188146,
       "tag": "0009_decision_polls_access",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795639090292,
+      "tag": "0010_opportunities",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795639131540,
+      "tag": "0011_opportunities_services",
+      "breakpoints": true
     }
   ]
 }

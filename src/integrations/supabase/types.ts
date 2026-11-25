@@ -1538,6 +1538,96 @@ export type Database = {
           },
         ]
       }
+      capabilities: {
+        Row: {
+          category: string
+          confidence: number
+          created_at: string
+          description: string | null
+          embedded_hash: string | null
+          embedding: string | null
+          evidence: Json
+          id: string
+          label: string
+          owner_id: string
+          owner_type: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          confidence?: number
+          created_at?: string
+          description?: string | null
+          embedded_hash?: string | null
+          embedding?: string | null
+          evidence?: Json
+          id?: string
+          label: string
+          owner_id: string
+          owner_type: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          confidence?: number
+          created_at?: string
+          description?: string | null
+          embedded_hash?: string | null
+          embedding?: string | null
+          evidence?: Json
+          id?: string
+          label?: string
+          owner_id?: string
+          owner_type?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      capability_inputs: {
+        Row: {
+          cv_text: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cv_text?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cv_text?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      capability_runs: {
+        Row: {
+          evidence_hash: string
+          inferred_at: string
+          owner_id: string
+          owner_type: string
+        }
+        Insert: {
+          evidence_hash: string
+          inferred_at?: string
+          owner_id: string
+          owner_type: string
+        }
+        Update: {
+          evidence_hash?: string
+          inferred_at?: string
+          owner_id?: string
+          owner_type?: string
+        }
+        Relationships: []
+      }
       coin_transactions: {
         Row: {
           amount: number
@@ -6211,6 +6301,63 @@ export type Database = {
           },
         ]
       }
+      need_suggestions: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          priority: number
+          quest_id: string
+          quest_need_id: string | null
+          reason: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          label: string
+          priority?: number
+          quest_id: string
+          quest_need_id?: string | null
+          reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          priority?: number
+          quest_id?: string
+          quest_need_id?: string | null
+          reason?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "need_suggestions_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "need_suggestions_quest_need_id_fkey"
+            columns: ["quest_need_id"]
+            isOneToOne: false
+            referencedRelation: "quest_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           channel_email_enabled: boolean
@@ -6390,6 +6537,146 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      opportunity_feedback: {
+        Row: {
+          created_at: string
+          match_id: string
+          user_id: string
+          verdict: string
+        }
+        Insert: {
+          created_at?: string
+          match_id: string
+          user_id: string
+          verdict: string
+        }
+        Update: {
+          created_at?: string
+          match_id?: string
+          user_id?: string
+          verdict?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_feedback_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_matches: {
+        Row: {
+          capability_id: string
+          created_at: string
+          id: string
+          need_id: string
+          quest_id: string
+          reason_en: string | null
+          reason_fr: string | null
+          score: number
+          similarity: number
+          updated_at: string
+        }
+        Insert: {
+          capability_id: string
+          created_at?: string
+          id?: string
+          need_id: string
+          quest_id: string
+          reason_en?: string | null
+          reason_fr?: string | null
+          score: number
+          similarity: number
+          updated_at?: string
+        }
+        Update: {
+          capability_id?: string
+          created_at?: string
+          id?: string
+          need_id?: string
+          quest_id?: string
+          reason_en?: string | null
+          reason_fr?: string | null
+          score?: number
+          similarity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_matches_capability_id_fkey"
+            columns: ["capability_id"]
+            isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_matches_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_matches_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_needs: {
+        Row: {
+          category: string
+          content_hash: string
+          embedding: string | null
+          id: string
+          kind: string
+          label: string
+          matched_at: string | null
+          quest_id: string
+          source: string
+          source_id: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          content_hash: string
+          embedding?: string | null
+          id?: string
+          kind?: string
+          label: string
+          matched_at?: string | null
+          quest_id: string
+          source: string
+          source_id: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content_hash?: string
+          embedding?: string | null
+          id?: string
+          kind?: string
+          label?: string
+          matched_at?: string | null
+          quest_id?: string
+          source?: string
+          source_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_needs_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partnerships: {
         Row: {
@@ -11231,6 +11518,10 @@ export type Database = {
       }
     }
     Functions: {
+      accept_need_suggestion: {
+        Args: { _suggestion_id: string }
+        Returns: string
+      }
       admin_deduct_ctg: {
         Args: {
           p_admin_id: string
@@ -11272,6 +11563,10 @@ export type Database = {
       }
       can_manage_agent: {
         Args: { _agent_id: string; _user_id: string }
+        Returns: boolean
+      }
+      can_manage_capability_owner: {
+        Args: { _owner_id: string; _owner_type: string; _uid: string }
         Returns: boolean
       }
       check_agent_billing: {
@@ -11480,6 +11775,33 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_opportunities: {
+        Args: { p_guild_id?: string; p_limit?: number; p_scope?: string }
+        Returns: {
+          capability_label: string
+          capability_service_url: string
+          capability_status: string
+          direction: string
+          helper_avatar: string
+          helper_id: string
+          helper_name: string
+          helper_type: string
+          match_id: string
+          my_verdict: string
+          need_category: string
+          need_kind: string
+          need_label: string
+          quest_id: string
+          quest_title: string
+          reason_en: string
+          reason_fr: string
+          score: number
+          territory_ids: string[]
+          territory_names: string[]
+          topic_ids: string[]
+          updated_at: string
+        }[]
+      }
       get_profile_emails: {
         Args: { _user_ids: string[] }
         Returns: {
@@ -11621,6 +11943,10 @@ export type Database = {
         Args: { _guild_id: string; _user_id: string }
         Returns: boolean
       }
+      is_quest_manager: {
+        Args: { _quest_id: string; _uid: string }
+        Returns: boolean
+      }
       is_quest_member: {
         Args: { _quest_id: string; _uid: string }
         Returns: boolean
@@ -11639,6 +11965,21 @@ export type Database = {
           eco_region_code: string
           eco_region_name: string
           eco_region_scheme: string
+        }[]
+      }
+      match_capabilities: {
+        Args: { p_count?: number; p_embedding: string }
+        Returns: {
+          category: string
+          confidence: number
+          description: string
+          evidence: Json
+          id: string
+          label: string
+          owner_id: string
+          owner_type: string
+          similarity: number
+          status: string
         }[]
       }
       match_guild_agent_documents: {
@@ -11759,6 +12100,10 @@ export type Database = {
       set_ctg_exchange_rate: {
         Args: { p_admin_id: string; p_new_rate: number; p_reason?: string }
         Returns: Json
+      }
+      set_opportunity_feedback: {
+        Args: { p_match_id: string; p_verdict: string }
+        Returns: undefined
       }
       set_user_role:
         | {
