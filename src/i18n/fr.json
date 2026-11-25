@@ -4405,7 +4405,14 @@
       "title2": "Reliez-les.",
       "sub": "ChangeTheGame met en commun les personnes, les lieux, les savoir-faire et les moyens pour que naissent et grandissent, au plus près du terrain, des projets qui prennent soin des humains et du vivant.",
       "cta1": "Explorer un territoire",
-      "cta2": "Lancer une co-expérimentation"
+      "cta2": "Lancer une co-expérimentation",
+      "initiative": {
+        "title1": "Votre initiative fait du bien à son territoire.",
+        "title2": "Amplifiez son impact.",
+        "sub": "Trouvez de nouvelles ressources — lieux, compétences, financements, partenaires — et rendez visibles vos manières de faire pour qu'elles essaiment ailleurs.",
+        "cta1": "Faire connaître mon initiative",
+        "cta2": "Explorer les opportunités"
+      }
     },
     "entities": {
       "label": "Les entités",
@@ -4445,6 +4452,10 @@
           "title": "Besoins",
           "desc": "Ce qui manque ici et maintenant. Le point de départ de chaque mise en relation."
         }
+      },
+      "initiative": {
+        "center": "Votre initiative",
+        "figureLabel": "Votre initiative au centre, reliée aux individus, organisations, collectifs, consortiums, lieux, méthodologies, ressources, opportunités et besoins de son territoire."
       }
     },
     "how": {
@@ -4461,9 +4472,9 @@
     "doors": {
       "label": "Pour qui",
       "title": "Par où entrer ?",
-      "d1t": "Je porte un projet ou un lieu",
-      "d1d": "Être vu, trouver des alliés et des moyens, reprendre ce qui a marché ailleurs.",
-      "d1cta": "Créer ma fiche",
+      "d1t": "Je porte une initiative à impact",
+      "d1d": "Amplifier son impact, trouver de nouvelles ressources, rendre visibles ses modes d'action.",
+      "d1cta": "Faire connaître mon initiative",
       "d2t": "J'anime un territoire, une collectivité ou un réseau",
       "d2d": "Voir son écosystème d'un coup d'œil, repérer doublons et complémentarités, faire vivre une communauté.",
       "d2cta": "Ouvrir un espace territoire",
@@ -4483,6 +4494,23 @@
     "final": {
       "title": "Vous animez un territoire ou un réseau ? Co-expérimentons ensemble.",
       "sub": "Pas un logiciel à acheter : un pilote à co-construire."
+    },
+    "mode": {
+      "label": "Je suis",
+      "initiative": "Je porte une initiative",
+      "territory": "J'anime un territoire ou un réseau"
+    },
+    "initiatives": {
+      "label": "Pour les initiatives à impact",
+      "title": "Faites grandir ce que vous avez commencé",
+      "lead": "Ferme, tiers-lieu, entreprise engagée, association : votre initiative crée de la valeur pour son territoire. ChangeTheGame l'aide à aller plus loin.",
+      "b1t": "Amplifier votre impact",
+      "b1d": "Reliez-vous aux projets qui agissent sur les mêmes enjeux, montez des alliances et des consortiums, faites reconnaître la valeur que vous créez pour le territoire et le vivant.",
+      "b2t": "Trouver de nouvelles ressources",
+      "b2d": "Publiez vos besoins : lieux, compétences, matériel, financements. Les agents repèrent qui peut y répondre, sur votre territoire et au-delà.",
+      "b3t": "Rendre visibles vos modes d'action",
+      "b3d": "Documentez vos méthodes et vos réussites. D'autres les reprennent, les adaptent et vous citent : vos manières de faire essaiment.",
+      "cta": "Faire connaître mon initiative"
     }
   },
   "purposePage": {

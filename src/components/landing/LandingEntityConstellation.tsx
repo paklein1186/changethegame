@@ -50,16 +50,20 @@ function Chip({ node, className }: { node: EntityNode; className?: string }) {
   return <span className={base}>{label}</span>;
 }
 
-/** "Your territory" at the centre, linked to the nine kinds of entities the platform holds. */
-export function LandingEntityConstellation() {
+/**
+ * "Your territory" (or "Your initiative") at the centre, linked to the nine
+ * kinds of entities the platform holds.
+ */
+export function LandingEntityConstellation({ center = "territory" }: { center?: "territory" | "initiative" }) {
   const { t } = useTranslation();
+  const prefix = center === "initiative" ? "landingV2.entities.initiative." : "landingV2.entities.";
 
   return (
-    <figure aria-label={t("landingV2.entities.figureLabel")} className="m-0">
+    <figure aria-label={t(`${prefix}figureLabel`)} className="m-0">
       {/* Mobile: simple wrap list */}
       <div className="sm:hidden flex flex-col items-center gap-4">
         <div className="rounded-full bg-foreground text-background font-display font-bold px-5 py-3 text-base">
-          {t("landingV2.entities.center")}
+          {t(`${prefix}center`)}
         </div>
         <div className="flex flex-wrap justify-center gap-2">
           {NODES.map((n) => (
@@ -86,7 +90,7 @@ export function LandingEntityConstellation() {
           ))}
         </svg>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[30%] aspect-square rounded-full bg-foreground text-background flex items-center justify-center text-center font-display font-bold text-base lg:text-lg leading-tight p-2">
-          {t("landingV2.entities.center")}
+          {t(`${prefix}center`)}
         </div>
         {NODES.map((n, i) => (
           <motion.div
