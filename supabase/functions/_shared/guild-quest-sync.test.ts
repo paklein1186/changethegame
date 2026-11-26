@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertRejects, assertThrows } from "jsr:@std/assert@1";
-import { createQuest, questFields, sameKey, SyncError, updateQuest } from "./guild-quest-sync.ts";
+import { createQuest, questFields, sameKey, SyncError, updateQuest, withdrawQuest } from "./guild-quest-sync.ts";
 import { fakeAdmin } from "./fake-admin.test-helper.ts";
 
 const G = "4964c699-4684-43a9-b508-cee21c77e24e";
@@ -51,4 +51,16 @@ Deno.test("clé du site : comparaison stricte", () => {
   assert(sameKey("a".repeat(40), "a".repeat(40)));
   assert(!sameKey("a".repeat(40), "a".repeat(39) + "b"));
   assert(!sameKey("", ""));
+});
+
+Deno.test("retrait : brouillon privé, sans rien écrire d'autre ; une face publique la remet en ligne", async () => {
+  const a = base();
+  const { quest_id } = await createQuest(a, G, "u-coord", P, questFields(face(), ORIG));
+  await withdrawQuest(a, G, P, quest_id);
+  let { data: q } = await a.from("quests").select("*").eq("id", quest_id).maybeSingle();
+  assertEquals([q.is_draft, q.public_visibility, q.title], [true, "private", "Journée de clôture"]);
+  await updateQuest(a, G, P, quest_id, questFields(face(), ORIG));
+  ({ data: q } = await a.from("quests").select("*").eq("id", quest_id).maybeSingle());
+  assertEquals([q.is_draft, q.public_visibility], [false, "public"]);
+  await assertRejects(() => withdrawQuest(a, G, P, "autre"), SyncError);
 });

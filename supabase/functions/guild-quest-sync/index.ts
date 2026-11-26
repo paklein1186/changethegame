@@ -3,14 +3,14 @@
 //   POST /functions/v1/guild-quest-sync
 //   X-Site-Key: <clé du site>                                (toujours)
 //   Authorization: Bearer <jeton CTG de la personne>         (création seulement : admin de la guilde)
-//   { "action": "create" | "update", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … } }
+//   { "action": "create" | "update" | "withdraw", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … } }
 //
 // Création : au nom de la personne de la coordination qui clique « Publier ». Mises à jour : par la clé du site seule,
 // et seulement sur une quête que cette fonction a reliée au projet (quest_external_links), dans la guilde.
 // Fermée tant que SITE_SYNC_KEY, SITE_SYNC_GUILD_ID et SITE_SYNC_ORIGINS ne sont pas posés.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-import { createQuest, questFields, sameKey, SyncError, updateQuest } from "../_shared/guild-quest-sync.ts";
+import { createQuest, questFields, sameKey, SyncError, updateQuest, withdrawQuest } from "../_shared/guild-quest-sync.ts";
 import { isGuildAdmin } from "../_shared/guild-quests.ts";
 
 const json = (body: unknown, status = 200) =>
@@ -31,6 +31,11 @@ serve(async (req) => {
     const body = await req.json().catch(() => null);
     const projetId = String(body?.projet_id ?? "");
     if (!UUID.test(projetId)) return json({ error: "invalid projet_id" }, 400);
+    if (body?.action === "withdraw") {
+      const questId = String(body?.quest_id ?? "");
+      if (!UUID.test(questId)) return json({ error: "invalid quest_id" }, 400);
+      return json(await withdrawQuest(admin, guildId, projetId, questId));
+    }
     const fields = questFields(body?.face ?? {}, origins);
 
     if (body?.action === "create") {

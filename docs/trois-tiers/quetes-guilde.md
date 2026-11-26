@@ -28,6 +28,8 @@ Le site publie la face publique d'un projet en quête de la guilde, puis la tien
   Champs touchés : titre, description (résumé validé + besoins publics), nature, statut, adresse de la fiche,
   étiquettes, visibilité (une face qui n'est plus publique retire la quête des sites). Jamais budget, personnes,
   récompenses ni autre réglage.
+- **Retrait** : clé du site seule ; si la face du projet n'est plus publique, la quête repasse en brouillon privé, sans
+  qu'aucun contenu du projet soit envoyé. Une face redevenue publique la remet en ligne.
 
 **Fermée par défaut.** Elle ne s'ouvre qu'avec trois secrets Supabase (à poser après la convention
 Trois-Tiers × ChangeTheGame) :

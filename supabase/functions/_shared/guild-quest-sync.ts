@@ -80,11 +80,27 @@ export async function updateQuest(admin: any, guildId: string, projetId: string,
   const { data: quest } = await admin.from("quests").select("id, guild_id, is_deleted").eq("id", questId).maybeSingle();
   if (!quest || quest.is_deleted) throw new SyncError("gone", "quête supprimée", 410);
   if (quest.guild_id !== guildId) throw new SyncError("forbidden", "quête hors de la guilde", 403);
-  const { error } = await admin.from("quests").update({ ...fields, updated_at: new Date().toISOString() }).eq("id", questId);
+  // Une face publique remet la quête en ligne si elle avait été retirée.
+  const republish = fields.public_visibility === "public" ? { is_draft: false } : {};
+  const { error } = await admin.from("quests").update({ ...fields, ...republish, updated_at: new Date().toISOString() }).eq("id", questId);
   if (error) throw new SyncError("db", error.message ?? "update failed", 500);
   await admin.from("quest_external_links").update({ updated_at: new Date().toISOString() })
     .eq("quest_id", questId).eq("source", SOURCE);
   return { quest_id: questId, updated: true };
+}
+
+/** Retire la quête des vues publiques (brouillon, privée) sans rien y écrire d'autre : utilisé quand la face du
+ *  projet n'est plus publique (projet devenu sensible, résumé retiré…). Rien du projet n'est envoyé. */
+export async function withdrawQuest(admin: any, guildId: string, projetId: string, questId: string) {
+  const linked = await linkedQuest(admin, projetId);
+  if (linked !== questId) throw new SyncError("not_linked", "quête non reliée à ce projet", 409);
+  const { data: quest } = await admin.from("quests").select("id, guild_id, is_deleted").eq("id", questId).maybeSingle();
+  if (!quest || quest.is_deleted) return { quest_id: questId, withdrawn: true };
+  if (quest.guild_id !== guildId) throw new SyncError("forbidden", "quête hors de la guilde", 403);
+  const { error } = await admin.from("quests")
+    .update({ is_draft: true, public_visibility: "private", updated_at: new Date().toISOString() }).eq("id", questId);
+  if (error) throw new SyncError("db", error.message ?? "update failed", 500);
+  return { quest_id: questId, withdrawn: true };
 }
 
 /** Comparaison en temps constant de la clé du site. */
