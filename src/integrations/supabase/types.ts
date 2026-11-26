@@ -6678,6 +6678,76 @@ export type Database = {
           },
         ]
       }
+      opportunity_outcomes: {
+        Row: {
+          capability_id: string | null
+          capability_label: string | null
+          created_at: string
+          helper_id: string
+          helper_type: string
+          id: string
+          marked_by: string
+          match_id: string | null
+          need_category: string | null
+          need_label: string
+          note: string | null
+          quest_id: string
+          trust_given: boolean
+        }
+        Insert: {
+          capability_id?: string | null
+          capability_label?: string | null
+          created_at?: string
+          helper_id: string
+          helper_type: string
+          id?: string
+          marked_by: string
+          match_id?: string | null
+          need_category?: string | null
+          need_label: string
+          note?: string | null
+          quest_id: string
+          trust_given?: boolean
+        }
+        Update: {
+          capability_id?: string | null
+          capability_label?: string | null
+          created_at?: string
+          helper_id?: string
+          helper_type?: string
+          id?: string
+          marked_by?: string
+          match_id?: string | null
+          need_category?: string | null
+          need_label?: string
+          note?: string | null
+          quest_id?: string
+          trust_given?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_outcomes_capability_id_fkey"
+            columns: ["capability_id"]
+            isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_outcomes_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_outcomes_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunity_requests: {
         Row: {
           conversation_id: string | null
@@ -11607,6 +11677,10 @@ export type Database = {
         Args: { _owner_id: string; _owner_type: string; _uid: string }
         Returns: boolean
       }
+      can_mark_opportunity_done: {
+        Args: { _quest_id: string; _uid: string }
+        Returns: boolean
+      }
       capability_has_public_evidence: {
         Args: { _evidence: Json }
         Returns: boolean
@@ -11820,12 +11894,14 @@ export type Database = {
       get_opportunities: {
         Args: { p_guild_id?: string; p_limit?: number; p_scope?: string }
         Returns: {
+          can_mark_done: boolean
           capability_id: string
           capability_label: string
           capability_service_title: string
           capability_service_url: string
           capability_status: string
           direction: string
+          done: boolean
           helper_avatar: string
           helper_id: string
           helper_name: string
@@ -11835,6 +11911,7 @@ export type Database = {
           need_category: string
           need_kind: string
           need_label: string
+          outcome_id: string
           quest_id: string
           quest_title: string
           reason_en: string
@@ -11844,6 +11921,7 @@ export type Database = {
           territory_ids: string[]
           territory_names: string[]
           topic_ids: string[]
+          trust_given: boolean
           updated_at: string
         }[]
       }
@@ -12016,6 +12094,10 @@ export type Database = {
           eco_region_scheme: string
         }[]
       }
+      mark_opportunity_done: {
+        Args: { p_match_id: string; p_note?: string }
+        Returns: string
+      }
       match_capabilities: {
         Args: { p_count?: number; p_embedding: string }
         Returns: {
@@ -12160,6 +12242,10 @@ export type Database = {
       }
       set_opportunity_feedback: {
         Args: { p_match_id: string; p_verdict: string }
+        Returns: undefined
+      }
+      set_opportunity_trust_given: {
+        Args: { p_outcome_id: string }
         Returns: undefined
       }
       set_user_role:
