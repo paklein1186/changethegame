@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, CalendarCheck, Send, Check, Loader2 } from "lucide-react";
+import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, CalendarCheck, Send, Check, Loader2, CircleCheckBig, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CreateTrustEdgeDialog } from "@/components/CreateTrustEdgeDialog";
+import { TrustNodeType } from "@/types/enums";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +43,15 @@ export interface Opportunity {
   capability_id?: string;
   /** A help request has already been sent by me for this opportunity. */
   request_sent?: boolean;
+  /** I take part in the quest: I can say the help was actually delivered. */
+  can_mark_done?: boolean;
+  done?: boolean;
+  outcome_id?: string | null;
+  trust_given?: boolean;
 }
+
+const trustNodeType = (o: Opportunity) =>
+  o.helper_type === "profile" ? TrustNodeType.PROFILE : o.helper_type === "guild" ? TrustNodeType.GUILD : TrustNodeType.PARTNER_ENTITY;
 
 type Scope = "me" | "guilds" | "all";
 
@@ -66,6 +77,11 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   const [asking, setAsking] = useState<Opportunity | null>(null);
   const [askText, setAskText] = useState("");
   const [sending, setSending] = useState(false);
+  const [marking, setMarking] = useState<Opportunity | null>(null);
+  const [doneNote, setDoneNote] = useState("");
+  const [alsoTrust, setAlsoTrust] = useState(true);
+  const [savingDone, setSavingDone] = useState(false);
+  const [trustFor, setTrustFor] = useState<{ o: Opportunity; outcomeId: string } | null>(null);
   const fr = i18n.language?.startsWith("fr");
   const [scope, setScope] = useState<Scope>(questId ? "all" : defaultScope);
   const [category, setCategory] = useState("all");
@@ -140,6 +156,30 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
       setSending(false);
     }
   };
+  // « C'est réalisé » : l'aide a bien eu lieu. Puis, si coché, accorder sa confiance (Give trust).
+  const markDone = async () => {
+    if (!marking) return;
+    setSavingDone(true);
+    try {
+      const { data, error } = await (supabase as any).rpc("mark_opportunity_done", { p_match_id: marking.match_id, p_note: doneNote || null });
+      if (error) throw error;
+      toast.success(t("matchOpportunities.doneSaved", { name: marking.helper_name ?? "" }));
+      qc.invalidateQueries({ queryKey: ["opportunities"] });
+      qc.invalidateQueries({ queryKey: ["quest-needs", marking.quest_id] });
+      if (alsoTrust && data) setTrustFor({ o: marking, outcomeId: data as string });
+      setMarking(null);
+    } catch {
+      toast.error(t("matchOpportunities.feedbackFailed"));
+    } finally {
+      setSavingDone(false);
+    }
+  };
+  const trustGiven = async () => {
+    if (!trustFor) return;
+    await (supabase as any).rpc("set_opportunity_trust_given", { p_outcome_id: trustFor.outcomeId });
+    qc.invalidateQueries({ queryKey: ["opportunities"] });
+  };
+
   // Confirmer une compétence suggérée par la plateforme : elle devient visible comme confirmée.
   const confirmOffer = async (o: Opportunity) => {
     if (!o.capability_id) return;
@@ -237,11 +277,22 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                         {o.direction === "you_can_help" ? t("matchOpportunities.unconfirmedOffer") : t("matchOpportunities.suggested")}
                       </Badge>
                     )}
+                    {o.done && (
+                      <Badge className="text-[10px] gap-1 bg-emerald-600 hover:bg-emerald-600"><CircleCheckBig className="h-3 w-3" /> {t("matchOpportunities.done")}</Badge>
+                    )}
                     {(o.territory_names ?? []).slice(0, 2).map((p) => (
                       <span key={p} className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground"><MapPin className="h-3 w-3" />{p}</span>
                     ))}
                     <div className="ml-auto flex flex-wrap items-center justify-end gap-1 max-w-full">
-                      {o.direction === "you_can_help" ? (
+                      {o.done ? (
+                        o.can_mark_done && !o.trust_given && o.outcome_id ? (
+                          <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setTrustFor({ o, outcomeId: o.outcome_id! })}>
+                            <Shield className="h-3.5 w-3.5" /> {t("matchOpportunities.giveTrust")}
+                          </Button>
+                        ) : o.trust_given ? (
+                          <span className="text-xs text-muted-foreground">{t("matchOpportunities.trustGiven")}</span>
+                        ) : null
+                      ) : o.direction === "you_can_help" ? (
                         o.my_verdict === "help" ? (
                           <span className="text-xs text-primary font-medium">{t("matchOpportunities.helpOffered")}</span>
                         ) : (
@@ -285,6 +336,11 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                           </Button>
                         </>
                       )}
+                      {!o.done && o.can_mark_done && (
+                        <Button size="sm" variant="ghost" className="h-7 text-xs gap-1 text-emerald-700 dark:text-emerald-400" onClick={() => { setDoneNote(""); setAlsoTrust(true); setMarking(o); }} title={t("matchOpportunities.markDoneHint")}>
+                          <CircleCheckBig className="h-3.5 w-3.5" /> {t("matchOpportunities.markDone")}
+                        </Button>
+                      )}
                       <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: o.match_id, verdict: "not_relevant" })} title={t("matchOpportunities.notRelevant")} aria-label={t("matchOpportunities.notRelevant")}>
                         <X className="h-3.5 w-3.5" />
                       </Button>
@@ -312,6 +368,40 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!marking} onOpenChange={(open) => { if (!open) setMarking(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="pr-6">{t("matchOpportunities.markDoneTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("matchOpportunities.markDoneDesc", { name: marking?.helper_name ?? "", need: marking?.need_label ?? "", quest: marking?.quest_title ?? "" })}
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea value={doneNote} onChange={(e) => setDoneNote(e.target.value)} rows={3} maxLength={1000} placeholder={t("matchOpportunities.donePlaceholder")} className="text-sm" />
+          <label className="flex items-center gap-2 text-sm">
+            <Checkbox checked={alsoTrust} onCheckedChange={(v) => setAlsoTrust(v === true)} />
+            {t("matchOpportunities.alsoTrust", { name: marking?.helper_name ?? "" })}
+          </label>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setMarking(null)}>{t("matchOpportunities.cancel")}</Button>
+            <Button onClick={markDone} disabled={savingDone} className="gap-1.5">
+              {savingDone ? <Loader2 className="h-4 w-4 animate-spin" /> : <CircleCheckBig className="h-4 w-4" />} {t("matchOpportunities.markDoneConfirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {trustFor && (
+        <CreateTrustEdgeDialog
+          open={!!trustFor}
+          onOpenChange={(open) => { if (!open) setTrustFor(null); }}
+          targetNodeType={trustNodeType(trustFor.o)}
+          targetNodeId={trustFor.o.helper_id}
+          targetName={trustFor.o.helper_name ?? undefined}
+          contextQuestId={trustFor.o.quest_id}
+          onCreated={trustGiven}
+        />
+      )}
 
       {filtered.length > initialCount && (
         <Button variant="link" size="sm" className="mt-2 h-auto p-0 text-xs" onClick={() => setExpanded((v) => !v)}>

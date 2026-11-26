@@ -103,7 +103,8 @@ Rules:
 - Only capabilities supported by the evidence. Cite the evidence numbers.
 - Concrete and specific labels (3–7 words), e.g. "Organic market gardening", "Grant writing for EU funds",
   "Event hall for 80 people" — never vague ones like "Passionate", "Teamwork".
-- confidence: 0.9 when proven by completed tasks, logged contributions, services, courses or peer attestations;
+- confidence: 0.95 when proven by help actually delivered to a project (outcome); 0.9 when proven by completed tasks,
+  logged contributions, services, courses or peer attestations;
   0.6 for projects they led; 0.4 when only self-declared (bio, CV, interests).
 - Write label and description in the language the evidence is mostly written in.
 - At most 8 capabilities. Return an empty list if the evidence is too thin.`;
@@ -179,7 +180,7 @@ serve(async (req) => {
     const [
       profiles, guilds, companies, quests, participants, subtasks, contributions, services, courses, trust,
       guildMembers, companyMembers, topics, userTopics, guildTopics, questTopics, territories, userTerr, guildTerr,
-      questTerr, closure, questNeeds, inputs, runs,
+      questTerr, closure, questNeeds, inputs, runs, outcomes,
     ] = await Promise.all([
       fetchAll((a, b) => sb.from("profiles").select("user_id, name, headline, bio, location, website_url, linkedin_url, preferred_language").range(a, b)),
       fetchAll((a, b) => sb.from("guilds").select("id, name, description, is_physical_place, is_approved, public_visibility, website_url").eq("is_deleted", false).range(a, b)),
@@ -205,6 +206,8 @@ serve(async (req) => {
       fetchAll((a, b) => sb.from("quest_needs").select("id, quest_id, title, description, category, status").range(a, b)),
       fetchAll((a, b) => sb.from("capability_inputs").select("user_id, cv_text").range(a, b)),
       fetchAll((a, b) => sb.from("capability_runs").select("owner_type, owner_id, evidence_hash").range(a, b)),
+      // Aides réalisées, confirmées par l'équipe d'une quête : la preuve la plus forte. (Table absente = aucune.)
+      fetchAll((a, b) => sb.from("opportunity_outcomes").select("quest_id, need_label, helper_type, helper_id, note").range(a, b)).catch((): any[] => []),
     ]);
 
     const topicName = new Map<any, any>(topics.map((t: any) => [t.id, t.name]));
@@ -233,6 +236,12 @@ serve(async (req) => {
 
     // ── 1. capacités ────────────────────────────────────────────────────────────────────────────
     type Ev = { kind: string; title: string; url?: string; weight: number };
+    const outcomesOf = groupBy(outcomes, (o: any) => `${o.helper_type}:${o.helper_id}`);
+    const addOutcomes = (add: (kind: string, title: string, weight: number, url?: string) => void, type: string, id: string) => {
+      for (const o of outcomesOf.get(`${type}:${id}`) ?? []) {
+        add("outcome", `Actually helped the project "${questById.get(o.quest_id)?.title ?? "?"}" with "${o.need_label}" — confirmed by the project team${o.note ? `: ${o.note}` : ""}`, 3, `/quests/${o.quest_id}`);
+      }
+    };
     const evidenceFor = (ownerType: string, id: string): Ev[] => {
       const ev: Ev[] = [];
       const add = (kind: string, title: string, weight: number, url?: string) => { if (title.trim()) ev.push({ kind, title: clip(title, 420), weight, url }); };
@@ -242,6 +251,7 @@ serve(async (req) => {
         if (p.headline || p.bio) add("self", `Self-description: ${p.headline ?? ""} — ${p.bio ?? ""}`, 1, `/users/${id}`);
         const cv = cvByUser.get(id);
         if (cv) add("cv", `CV / LinkedIn provided by the person: ${clip(cv, 3000)}`, 2);
+        addOutcomes(add, "profile", id);
         for (const s of byUser.services.get(id) ?? []) add("service", `Offers the service "${s.title}": ${s.description ?? ""}`, 3, `/services/${s.id}`);
         for (const c of byUser.courses.get(id) ?? []) add("course", `Teaches the course "${c.title}": ${c.description ?? ""}`, 3, `/courses/${c.id}`);
         for (const t of byUser.tasks.get(id) ?? []) add("task", `Completed the task "${t.title}" in the project "${questById.get(t.quest_id)?.title ?? "?"}"${t.description ? `: ${t.description}` : ""}`, 3, `/quests/${t.quest_id}`);
@@ -260,6 +270,7 @@ serve(async (req) => {
         if (!g) return ev;
         if (g.description) add("self", `About the guild: ${g.description}`, 1, `/guilds/${id}`);
         if (g.is_physical_place) add("place", `The guild runs a physical place (third place / venue)`, 3, `/guilds/${id}`);
+        addOutcomes(add, "guild", id);
         for (const s of services.filter((s: any) => s.provider_guild_id === id || ((s.owner_type ?? "").toUpperCase() === "GUILD" && s.owner_id === id))) add("service", `Offers the service "${s.title}": ${s.description ?? ""}`, 3, `/services/${s.id}`);
         for (const c of courses.filter((c: any) => c.owner_guild_id === id)) add("course", `Teaches the course "${c.title}": ${c.description ?? ""}`, 3, `/courses/${c.id}`);
         for (const q of quests.filter((q: any) => q.guild_id === id && !q.is_draft)) add("project", `Project of the guild "${q.title}" (${q.status}): ${q.description ?? ""}`, String(q.status).toUpperCase() === "COMPLETED" ? 3 : 2, `/quests/${q.id}`);
@@ -272,6 +283,7 @@ serve(async (req) => {
         const c = companies.find((x: any) => x.id === id);
         if (!c) return ev;
         if (c.description || c.mission_statement) add("self", `About the organisation (${c.sector ?? "sector unknown"}): ${c.mission_statement ?? ""} ${c.description ?? ""}`, 1, `/companies/${id}`);
+        addOutcomes(add, "company", id);
         if (c.collaboration_interests) add("interests", `Open to collaborate on: ${typeof c.collaboration_interests === "string" ? c.collaboration_interests : JSON.stringify(c.collaboration_interests)}`, 2);
         for (const s of services.filter((s: any) => (s.owner_type ?? "").toUpperCase() === "COMPANY" && s.owner_id === id)) add("service", `Offers the service "${s.title}": ${s.description ?? ""}`, 3, `/services/${s.id}`);
         for (const co of courses.filter((x: any) => x.owner_company_id === id)) add("course", `Teaches the course "${co.title}": ${co.description ?? ""}`, 3, `/courses/${co.id}`);

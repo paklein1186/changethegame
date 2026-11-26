@@ -4577,6 +4577,17 @@
     }
   },
   "matchOpportunities": {
+    "markDone": "C'est réalisé",
+    "markDoneHint": "L'aide a bien eu lieu",
+    "markDoneTitle": "L'aide a bien eu lieu ?",
+    "markDoneDesc": "Confirmez que {{name}} a bien aidé « {{quest}} » pour « {{need}} ». Le besoin sera marqué comme satisfait, {{name}} sera prévenu·e, et cela comptera comme preuve de ce qu'il ou elle peut offrir.",
+    "donePlaceholder": "Un mot sur la façon dont ça s'est passé (facultatif, transmis à la personne)",
+    "alsoTrust": "Ensuite, accorder ma confiance à {{name}}",
+    "markDoneConfirm": "Confirmer",
+    "doneSaved": "Merci ! {{name}} a été prévenu·e.",
+    "done": "Réalisé",
+    "giveTrust": "Accorder ma confiance",
+    "trustGiven": "Confiance accordée",
     "suggested": "Suggéré par la plateforme",
     "suggestedHint": "Déduit de l'activité publique de ce membre, pas encore confirmé par lui.",
     "confirmOffer": "Confirmer",

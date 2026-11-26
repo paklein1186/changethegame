@@ -4591,6 +4591,17 @@
     }
   },
   "matchOpportunities": {
+    "markDone": "It happened",
+    "markDoneHint": "The help was actually delivered",
+    "markDoneTitle": "The help was delivered?",
+    "markDoneDesc": "Confirm that {{name}} actually helped “{{quest}}” with “{{need}}”. The need will be marked as met, {{name}} will be notified, and this will count as proof of what they can offer.",
+    "donePlaceholder": "A word about how it went (optional, shared with them)",
+    "alsoTrust": "Then give my trust to {{name}}",
+    "markDoneConfirm": "Confirm",
+    "doneSaved": "Thank you! {{name}} has been notified.",
+    "done": "Delivered",
+    "giveTrust": "Give trust",
+    "trustGiven": "Trust given",
     "suggested": "Suggested by the platform",
     "suggestedHint": "Inferred from this member's public activity, not yet confirmed by them.",
     "confirmOffer": "Confirm",
