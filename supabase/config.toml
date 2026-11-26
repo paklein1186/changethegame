@@ -152,3 +152,6 @@ verify_jwt = false
 
 [functions.opportunity-engine]
 verify_jwt = false
+
+[functions.guild-quests]
+verify_jwt = false
