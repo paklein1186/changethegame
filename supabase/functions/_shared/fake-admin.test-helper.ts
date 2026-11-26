@@ -35,14 +35,20 @@ export function fakeAdmin(tables: Record<string, Row[]>, uniques: Record<string,
       }
       const list = Array.isArray(patch) ? patch : [patch];
       const keys = op === "upsert" ? String(opts.onConflict).split(",") : uniques[name];
+      const written: Row[] = [];
       for (const p of list) {
         const same = keys && rows.find((r) => keys.every((k) => r[k] === p[k]));
         if (same) {
           if (op === "insert") return { data: null, error: { code: "23505" } };
           if (!opts.ignoreDuplicates) Object.assign(same, p);
-        } else rows.push({ id: crypto.randomUUID(), ...p });
+          written.push(same);
+        } else {
+          const row = { id: crypto.randomUUID(), ...p };
+          rows.push(row);
+          written.push(row);
+        }
       }
-      return { data: null, error: null };
+      return { data: returning ? written.map((r) => ({ ...r })) : null, error: null };
     }
     return q;
   }
