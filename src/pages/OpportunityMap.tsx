@@ -148,7 +148,7 @@ export default function OpportunityMap() {
           {visibleLinks.map((link) => <Polyline key={link.id} positions={[[link.from.lat, link.from.lng], [link.to.lat, link.to.lng]]} pathOptions={{ color: colors.projects, weight: 1.5, opacity: 0.4 }} />)}
           {visibleNodes.map((node) => {
             const related = links.filter((link) => link.from.key === node.key || link.to.key === node.key);
-            return <CircleMarker key={node.key} center={[node.lat, node.lng]} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}><Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong><p className="text-xs">{node.territory}</p>{related.slice(0, 2).map((link) => <p key={link.id} className="text-xs"><b>{link.need}</b>{link.reason ? ` — ${link.reason}` : ""}</p>)}<Button size="sm" asChild><Link to={node.url}>Voir la fiche</Link></Button></div></Popup></CircleMarker>;
+            return <CircleMarker key={node.key} center={[node.lat, node.lng]} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}><Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong><p className="text-xs">{node.territory}</p>{related.slice(0, 2).map((link) => <p key={link.id} className="text-xs"><b>{link.need}</b>{link.reason ? ` — ${link.reason}` : ""}</p>)}<Button size="sm" asChild><Link to={node.url} className="!text-primary-foreground hover:!text-primary-foreground">Voir la fiche</Link></Button></div></Popup></CircleMarker>;
           })}
         </MapContainer>}
     </div>
