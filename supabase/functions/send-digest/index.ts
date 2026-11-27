@@ -83,6 +83,10 @@ serve(async (req) => {
 
         if (!profile?.name) continue;
 
+        const { data: demoRows } = await supabase.from("demo_seed_registry").select("table_name,row_id").eq("seed_key", "feve-2026-12");
+        const demoIds = new Set((demoRows ?? []).map((r: any) => `${r.table_name}:${r.row_id}`));
+        const isDemoRow = (table: string, row: any, key = "id") => demoIds.has(`${table}:${row?.[key]}`);
+
         // ── Gather NETWORK-FOCUSED data ──
 
         // 1. Follows — what entities/people does this user follow?
@@ -139,7 +143,7 @@ serve(async (req) => {
             .gte("created_at", since)
             .order("upvote_count", { ascending: false })
             .limit(15);
-          networkPosts = posts ?? [];
+          networkPosts = (posts ?? []).filter((p: any) => !isDemoRow("feed_posts", p));
         }
 
         // 5. New quests from guilds/followed entities
@@ -153,7 +157,7 @@ serve(async (req) => {
             .eq("is_deleted", false)
             .order("created_at", { ascending: false })
             .limit(8);
-          newQuests = quests ?? [];
+          newQuests = (quests ?? []).filter((q: any) => !isDemoRow("quests", q));
         }
 
         // 6. New events from guilds
@@ -167,7 +171,7 @@ serve(async (req) => {
             .eq("is_cancelled", false)
             .order("start_at", { ascending: true })
             .limit(5);
-          newEvents = events ?? [];
+          newEvents = (events ?? []).filter((e: any) => !isDemoRow("guild_events", e));
         }
 
 

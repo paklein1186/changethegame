@@ -11768,6 +11768,32 @@ export type Database = {
         Returns: boolean
       }
       demo_feve_snapshot: { Args: never; Returns: Json }
+      demo_feve_upsert_membership: {
+        Args: {
+          p_id: string
+          p_owner_id: string
+          p_role: string
+          p_table: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      demo_feve_upsert_owned_row: {
+        Args: { p_actor_user_id: string; p_table: string; p_values: Json }
+        Returns: string
+      }
+      demo_feve_upsert_post: {
+        Args: {
+          p_author_user_id: string
+          p_content: string
+          p_context_id: string
+          p_context_type: string
+          p_id: string
+          p_posted_as_label: string
+          p_visibility: string
+        }
+        Returns: string
+      }
       distribute_commons_pulse: {
         Args: { p_triggered_by?: string }
         Returns: Json

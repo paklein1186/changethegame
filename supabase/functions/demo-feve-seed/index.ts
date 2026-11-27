@@ -54,9 +54,31 @@ serve(async (req) => {
 
     async function row(table: string, key: string, values: Record<string, unknown>, conflict = "id") {
       const rowId = await did(key);
-      const payload = conflict === "id" ? { id: rowId, ...values } : { [conflict]: rowId, ...values };
-      const { error } = await admin.from(table).upsert(payload, { onConflict: conflict });
-      if (error) throw new Error(`${table}/${key}: ${error.message}`);
+      const payload = conflict === "user_id" ? { user_id: rowId, ...values } : { id: rowId, ...values };
+      if (table === "feed_posts") {
+        const { error } = await admin.rpc("demo_feve_upsert_post", {
+          p_id: rowId, p_author_user_id: values.author_user_id, p_context_type: values.context_type,
+          p_context_id: values.context_id, p_content: values.content, p_visibility: values.visibility,
+          p_posted_as_label: values.posted_as_label,
+        });
+        if (error) throw new Error(`${table}/${key}: ${error.message}`);
+      } else if (table === "company_members" || table === "guild_members") {
+        const { error } = await admin.rpc("demo_feve_upsert_membership", {
+          p_table: table, p_id: rowId,
+          p_owner_id: table === "company_members" ? values.company_id : values.guild_id,
+          p_user_id: values.user_id, p_role: values.role,
+        });
+        if (error) throw new Error(`${table}/${key}: ${error.message}`);
+      } else if (table === "services" || table === "guild_events") {
+        const { error } = await admin.rpc("demo_feve_upsert_owned_row", {
+          p_table: table, p_values: payload,
+          p_actor_user_id: table === "services" ? values.provider_user_id : values.created_by_user_id,
+        });
+        if (error) throw new Error(`${table}/${key}: ${error.message}`);
+      } else {
+        const { error } = await admin.from(table).upsert(payload, { onConflict: conflict });
+        if (error) throw new Error(`${table}/${key}: ${error.message}`);
+      }
       const { error: registryError } = await admin.from("demo_seed_registry").upsert({
         table_name: table, row_id: rowId, seed_key: SEED,
       }, { onConflict: "seed_key,table_name,row_id" });
@@ -176,11 +198,11 @@ serve(async (req) => {
         location_text: "Bresse", health_index: 68, resilience_index: 61, regenerative_potential: 82,
         stress_signals: [{ signal: "sécheresses estivales", severity: "modéré" }], tags: TAGS,
       });
-      await row("natural_system_links", "natural-link:seille-bresse", { natural_system_id: naturalSystemId, linked_type: "territory", linked_id: bresse, linked_via: "demo-feve" });
+      await row("natural_system_links", "natural-link:seille-bresse", { natural_system_id: naturalSystemId, linked_type: "territory", linked_id: bresse, linked_via: "demo-feve" }, "natural_system_id,linked_type,linked_id");
       await row("natural_system_indicators", "indicator:water", { natural_system_id: naturalSystemId, indicator: "qualité de l’eau", value: 78 });
       await row("natural_system_indicators", "indicator:hedges", { natural_system_id: naturalSystemId, indicator: "linéaire de haies", value: 120 });
 
-      async function quest(key: string, ownerId: string, title: string, description: string, territoryId: string, nature = "ONGOING_PROJECT") {
+      async function quest(key: string, ownerId: string, title: string, description: string, territoryId: string, nature = "PROJECT") {
         const questId = await row("quests", `quest:${key}`, {
           title, description, created_by_user_id: ownerId, owner_type: "USER", owner_id: ownerId,
           quest_nature: nature, status: "OPEN", monetization_type: "FREE", is_draft: false, is_deleted: false,
@@ -292,13 +314,13 @@ serve(async (req) => {
       const projects = [
         { key: "couple-dijon", title: "Un lieu pour une ferme collective autour de Dijon", description: "Un couple formé aux fermes collectives cherche un lieu autour de Dijon depuis plus de 15 mois.", territory: "Côte-d'Or (Dijon)", need: "Lieu et associés pour installer une ferme collective", cap: "Installation en ferme collective", nature: "IDEA" },
         { key: "ecovillage-30", title: "Écovillage agricole — 30 à 45 ha recherchés", description: "Un projet d’écovillage cherche 30 à 45 ha entre Allier, Saône-et-Loire et Nièvre.", territory: "Saône-et-Loire", need: "Foncier de 30 à 45 ha et porteurs de projets", cap: "Projet d’écovillage agricole", nature: "IDEA" },
-        { key: "gaec-associes", title: "Trois GAEC cherchent des associés en Saône-et-Loire", description: "Trois GAEC de Saône-et-Loire souhaitent transmettre et accueillir de nouveaux associés.", territory: "Saône-et-Loire", need: "Associés pour trois GAEC", cap: "Transmission et association en GAEC", nature: "ONGOING_PROJECT" },
-        { key: "paysans-90", title: "Paysans-boulangers cherchent un éleveur pour 90 ha", description: "Une ferme de 90 ha conduite par des paysans-boulangers cherche un éleveur.", territory: "Hautes-Pyrénées", need: "Éleveur pour une ferme de 90 ha", cap: "Paysannerie-boulangerie sur 90 ha", nature: "ONGOING_PROJECT" },
+        { key: "gaec-associes", title: "Trois GAEC cherchent des associés en Saône-et-Loire", description: "Trois GAEC de Saône-et-Loire souhaitent transmettre et accueillir de nouveaux associés.", territory: "Saône-et-Loire", need: "Associés pour trois GAEC", cap: "Transmission et association en GAEC", nature: "PROJECT" },
+        { key: "paysans-90", title: "Paysans-boulangers cherchent un éleveur pour 90 ha", description: "Une ferme de 90 ha conduite par des paysans-boulangers cherche un éleveur.", territory: "Hautes-Pyrénées", need: "Éleveur pour une ferme de 90 ha", cap: "Paysannerie-boulangerie sur 90 ha", nature: "PROJECT" },
         { key: "foncier-groupe", title: "Acheter du foncier à plusieurs", description: "Une personne souhaite acheter du foncier à plusieurs dans le Gers, les Landes ou les Hautes-Pyrénées.", territory: "Hautes-Pyrénées", need: "Projet collectif d’achat de foncier", cap: "Achat collectif de foncier", nature: "IDEA" },
-        { key: "fournil-experimente", title: "Paysan-boulanger expérimenté cherche un fournil", description: "Un paysan-boulanger expérimenté cherche un lieu avec fournil pour porter son activité.", territory: "Ariège", need: "Fournil et lieu d’installation", cap: "Paysannerie-boulangerie expérimentée", nature: "ONGOING_PROJECT" },
-        { key: "fournil-vaucluse", title: "Un lieu cherche un paysan-boulanger en Vaucluse", description: "Un lieu disposant d’un fournil cherche un paysan-boulanger.", territory: "Vaucluse", need: "Paysan-boulanger pour le fournil", cap: "Fournil disponible en Vaucluse", nature: "ONGOING_PROJECT" },
-        { key: "fournil-ariege", title: "Un lieu cherche un paysan-boulanger en Ariège", description: "Un lieu collectif cherche un paysan-boulanger pour animer son fournil.", territory: "Ariège", need: "Paysan-boulanger pour le fournil", cap: "Fournil disponible en Ariège", nature: "ONGOING_PROJECT" },
-        { key: "ecovillage-ariege", title: "Écovillage ariégeois — 45 ha de prairies bio", description: "45 ha de prairies bio cherchent des porteurs de projets; appel republié un an après sans réponse.", territory: "Ariège", need: "Éleveur et paysan-boulanger sur 45 ha de prairies bio", cap: "Accueil de projets sur 45 ha bio", nature: "ONGOING_PROJECT" },
+        { key: "fournil-experimente", title: "Paysan-boulanger expérimenté cherche un fournil", description: "Un paysan-boulanger expérimenté cherche un lieu avec fournil pour porter son activité.", territory: "Ariège", need: "Fournil et lieu d’installation", cap: "Paysannerie-boulangerie expérimentée", nature: "PROJECT" },
+        { key: "fournil-vaucluse", title: "Un lieu cherche un paysan-boulanger en Vaucluse", description: "Un lieu disposant d’un fournil cherche un paysan-boulanger.", territory: "Vaucluse", need: "Paysan-boulanger pour le fournil", cap: "Fournil disponible en Vaucluse", nature: "PROJECT" },
+        { key: "fournil-ariege", title: "Un lieu cherche un paysan-boulanger en Ariège", description: "Un lieu collectif cherche un paysan-boulanger pour animer son fournil.", territory: "Ariège", need: "Paysan-boulanger pour le fournil", cap: "Fournil disponible en Ariège", nature: "PROJECT" },
+        { key: "ecovillage-ariege", title: "Écovillage ariégeois — 45 ha de prairies bio", description: "45 ha de prairies bio cherchent des porteurs de projets; appel republié un an après sans réponse.", territory: "Ariège", need: "Éleveur et paysan-boulanger sur 45 ha de prairies bio", cap: "Accueil de projets sur 45 ha bio", nature: "PROJECT" },
       ];
       const projectRefs: Record<string, any> = {};
       for (const p of projects) {
@@ -341,7 +363,7 @@ serve(async (req) => {
           org_type: "lieu hybride nourricier", contact_user_id: contact.userId, is_deleted: false,
           universe_visibility: "both", public_visibility: "private", web_tags: TAGS,
         });
-        await row("company_members", `company-member:${p.key}`, { company_id, user_id: contact.userId, role: "ADMIN" });
+        await row("company_members", `company-member:${p.key}`, { company_id: companyId, user_id: contact.userId, role: "ADMIN" });
         await row("company_territories", `company-territory:${p.key}`, { company_id: companyId, territory_id: territories[p.territory], relation_type: "primary", is_primary: true });
         const serviceId = await row("services", `service:${p.key}`, {
           title: p.service, description: `${p.service} proposée par un lieu fictif du réseau.`, provider_user_id: contact.userId,
@@ -367,6 +389,10 @@ serve(async (req) => {
     return json(report);
   } catch (error) {
     console.error("[DEMO-FEVE]", error);
-    return json({ error: error instanceof Error ? error.message : "Échec de la démo FEVE" }, 500);
+    return json({
+      error: error instanceof Error ? error.message : "Échec de la démo FEVE",
+      details: typeof error === "object" && error && "details" in error ? String(error.details) : undefined,
+      hint: typeof error === "object" && error && "hint" in error ? String(error.hint) : undefined,
+    }, 500);
   }
 });

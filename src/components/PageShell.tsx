@@ -4,6 +4,7 @@ import { OnboardingReminderBanner } from "./OnboardingReminderBanner";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePiPanel } from "@/hooks/usePiPanel";
+import { DemoFeveBanner } from "./demo/DemoFeveBanner";
 
 interface PageShellProps {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ export function PageShell({ children, bare }: PageShellProps) {
       style={{ marginLeft: panelOffset ? `${piWidth}px` : undefined }}
     >
       <AppNav />
+      <DemoFeveBanner />
       <OnboardingReminderBanner />
       <main className={`flex-1 container py-4 sm:py-8 px-3 sm:px-4 ${hasBottomBar ? "pb-20" : ""}`}>{children}</main>
       <SiteFooter />

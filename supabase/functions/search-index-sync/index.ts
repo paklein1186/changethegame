@@ -227,10 +227,13 @@ serve(async (req) => {
 
   const report: Record<string, any> = { indexed: 0, unchanged: 0, removed: 0, remaining: 0, errors: [] as string[], byType: {} as Record<string, number> };
   const startedAt = Date.now();
+  const { data: demoRows } = await sb.from("demo_seed_registry").select("table_name,row_id").eq("seed_key", "feve-2026-12");
+  const demoTableByType: Record<string, string> = { guild: "guilds", quest: "quests", company: "companies", service: "services", territory: "territories", profile: "profiles" };
+  const demoIds = new Set((demoRows ?? []).map((r: any) => `${r.table_name}:${r.row_id}`));
 
   for (const type of wanted) {
     try {
-      const docs = await collectors[type](sb);
+      const docs = (await collectors[type](sb)).filter((d) => !demoIds.has(`${demoTableByType[type]}:${d.entity_id}`));
       for (const d of docs) d.content_hash = await sha256(JSON.stringify([d.title, d.body, d.url, d.audience, d.topics, d.territories]));
 
       const existing = await fetchAll((a, b) => sb.from("search_index").select("entity_id, content_hash, embedding").eq("entity_type", type).order("entity_id").range(a, b));

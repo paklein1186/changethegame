@@ -141,6 +141,48 @@
       "when": 1795784541776,
       "tag": "0019_demo_feve_security_registry",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1795784833289,
+      "tag": "0020_demo_feve_territory_closure_delete_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795784915838,
+      "tag": "0021_demo_feve_seed_posts",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1795784944881,
+      "tag": "0022_demo_feve_seed_memberships",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1795784980092,
+      "tag": "0023_demo_feve_seed_owned_rows",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1795785008933,
+      "tag": "0024_demo_feve_seed_owned_row_defaults",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1795785033146,
+      "tag": "0025_demo_feve_seed_owned_row_keys",
+      "breakpoints": true
     }
   ]
 }

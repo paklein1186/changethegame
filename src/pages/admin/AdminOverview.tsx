@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, parseISO } from "date-fns";
 import { AnalyticsTab } from "./tabs/AnalyticsTab";
+import { DemoFeveAdminCard } from "@/components/admin/DemoFeveAdminCard";
 
 const SYSTEM_TYPES = [
   "SYSTEM_NEW_USER", "SYSTEM_BUG_REPORT", "SYSTEM_SHARE_PURCHASE",
@@ -48,6 +49,7 @@ export default function AdminOverview() {
 
   return (
     <div className="space-y-8">
+      <DemoFeveAdminCard />
       {/* Recent critical notifications */}
       {systemNotifications.length > 0 && (
         <div>

@@ -210,6 +210,10 @@ serve(async (req) => {
       fetchAll((a, b) => sb.from("opportunity_outcomes").select("quest_id, need_label, helper_type, helper_id, note").range(a, b)).catch((): any[] => []),
     ]);
 
+    const { data: demoRows } = await sb.from("demo_seed_registry").select("table_name,row_id").eq("seed_key", "feve-2026-12");
+    const demoIds = new Set((demoRows ?? []).map((r: any) => `${r.table_name}:${r.row_id}`));
+    const isDemoRow = (table: string, row: any, key = "id") => demoIds.has(`${table}:${row?.[key]}`);
+
     const topicName = new Map<any, any>(topics.map((t: any) => [t.id, t.name]));
     const terrById = new Map<any, any>(territories.map((t: any) => [t.id, t]));
     const questById = new Map<any, any>(quests.map((q: any) => [q.id, q]));
@@ -297,9 +301,9 @@ serve(async (req) => {
       : mode === "quest"
         ? []
         : [
-            ...profiles.map((p: any) => ({ type: "profile", id: p.user_id })),
-            ...guilds.filter((g: any) => g.is_approved !== false).map((g: any) => ({ type: "guild", id: g.id })),
-            ...companies.map((c: any) => ({ type: "company", id: c.id })),
+            ...profiles.filter((p: any) => !isDemoRow("profiles", p, "user_id")).map((p: any) => ({ type: "profile", id: p.user_id })),
+            ...guilds.filter((g: any) => g.is_approved !== false && !isDemoRow("guilds", g)).map((g: any) => ({ type: "guild", id: g.id })),
+            ...companies.filter((c: any) => !isDemoRow("companies", c)).map((c: any) => ({ type: "company", id: c.id })),
           ];
     let ownersDone = 0;
     for (const o of owners) {
@@ -396,7 +400,7 @@ serve(async (req) => {
     } catch (e) { fail("vecteurs des capacités", e); }
 
     // ── 2. besoins des quêtes ───────────────────────────────────────────────────────────────────
-    const liveQuests = quests.filter((q: any) => !q.is_draft && OPEN_QUEST.has(String(q.status ?? "").toUpperCase()));
+    const liveQuests = quests.filter((q: any) => !q.is_draft && !isDemoRow("quests", q) && OPEN_QUEST.has(String(q.status ?? "").toUpperCase()));
     const needsByQuest = groupBy(questNeeds, (n: any) => n.quest_id);
     const tasksByQuest = groupBy(subtasks, (t: any) => t.quest_id);
     const questTargets = target.questId
@@ -490,7 +494,8 @@ serve(async (req) => {
       ...suggestions.filter((s: any) => liveIds.has(s.quest_id))
         .map((s: any) => ({ source: "suggestion", source_id: s.id, quest_id: s.quest_id, label: s.label, category: s.category, kind: s.kind, text: `${s.label}. ${s.reason ?? ""}` })),
     ];
-    const known = await fetchAll((a, b) => sb.from("opportunity_needs").select("id, source, source_id, content_hash, embedding").range(a, b));
+    const known = (await fetchAll((a, b) => sb.from("opportunity_needs").select("id, source, source_id, content_hash, embedding").range(a, b)))
+      .filter((n: any) => !isDemoRow("opportunity_needs", n));
     const knownByKey = new Map<any, any>(known.map((n: any) => [`${n.source}:${n.source_id}`, n]));
     const wantedKeys = new Set(wanted.map((n) => `${n.source}:${n.source_id}`));
     const gone = known.filter((n: any) => !wantedKeys.has(`${n.source}:${n.source_id}`)).map((n: any) => n.id);
@@ -543,9 +548,11 @@ serve(async (req) => {
       ...(q.guild_id ? [`guild:${q.guild_id}`] : []),
     ]);
 
-    const needs = await fetchAll((a, b) => sb.from("opportunity_needs").select("id, quest_id, label, category, kind, embedding").not("embedding", "is", null).range(a, b));
+    const needs = (await fetchAll((a, b) => sb.from("opportunity_needs").select("id, quest_id, label, category, kind, embedding").not("embedding", "is", null).range(a, b)))
+      .filter((n: any) => !isDemoRow("opportunity_needs", n));
     report.needs_active = needs.length;
-    const existingMatches = await fetchAll((a, b) => sb.from("opportunity_matches").select("id, need_id, capability_id").range(a, b));
+    const existingMatches = (await fetchAll((a, b) => sb.from("opportunity_matches").select("id, need_id, capability_id").range(a, b)))
+      .filter((m: any) => !isDemoRow("opportunity_matches", m));
     const matchByPair = new Map<any, any>(existingMatches.map((m: any) => [`${m.need_id}:${m.capability_id}`, m.id]));
     const withFeedback = new Set((await fetchAll((a, b) => sb.from("opportunity_feedback").select("match_id").range(a, b))).map((f: any) => f.match_id));
 
