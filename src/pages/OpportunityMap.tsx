@@ -74,6 +74,7 @@ function FitOpportunityBounds({ nodes }: { nodes: MapNode[] }): null {
 export default function OpportunityMap() {
   const currentUser = useCurrentUser();
   const [scope, setScope] = useState<Scope>("me");
+  const [direction, setDirection] = useState<"all" | "help_for_you" | "you_can_help">("all");
   const [layers, setLayers] = useState<Record<Layer, boolean>>({ projects: true, resources: true });
   const { data = [], isLoading, error } = useQuery<OpportunityMapRow[]>({
     queryKey: ["opportunity-map", currentUser.id, scope],
@@ -121,9 +122,11 @@ export default function OpportunityMap() {
     return { nodes: [...nodes.values()], links, unlocated: Math.max(0, data.length - links.length) };
   }, [data]);
 
-  const visibleNodes = nodes.filter((node) => layers[node.kind]);
+  const dirLinks = direction === "all" ? links : links.filter((l) => l.direction === direction);
+  const dirKeys = new Set(dirLinks.flatMap((l) => [l.from.key, l.to.key]));
+  const visibleNodes = nodes.filter((node) => layers[node.kind] && (direction === "all" || dirKeys.has(node.key)));
   const visibleKeys = new Set(visibleNodes.map((node) => node.key));
-  const visibleLinks = links.filter((link) => visibleKeys.has(link.from.key) && visibleKeys.has(link.to.key));
+  const visibleLinks = dirLinks.filter((link) => visibleKeys.has(link.from.key) && visibleKeys.has(link.to.key));
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [leafletMap, setLeafletMap] = useState<LeafletMap | null>(null);
@@ -168,6 +171,9 @@ export default function OpportunityMap() {
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3">
       <div className="inline-flex rounded-lg border border-border bg-background p-0.5" role="tablist" aria-label="Portée des rapprochements">
         {([["me", "Pour moi"], ["guilds", "Mes guildes"], ["all", "Partout"]] as [Scope, string][]).map(([value, label]) => <button key={value} type="button" role="tab" aria-selected={scope === value} onClick={() => setScope(value)} className={`rounded-md px-3 py-1.5 text-xs transition-colors ${scope === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>{label}</button>)}
+      </div>
+      <div className="inline-flex rounded-lg border border-border bg-background p-0.5" role="tablist" aria-label="Sens du rapprochement">
+        {([["all", "Tous"], ["help_for_you", "Aide vers moi"], ["you_can_help", "Je peux contribuer"]] as const).map(([value, label]) => <button key={value} type="button" role="tab" aria-selected={direction === value} onClick={() => setDirection(value)} className={`rounded-md px-3 py-1.5 text-xs transition-colors ${direction === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>{label}</button>)}
       </div>
       <div className="flex flex-wrap gap-4">{labels.map(([key, label]) => <label key={key} className="flex items-center gap-2 text-sm"><Checkbox checked={layers[key]} onCheckedChange={(value) => setLayers((old) => ({ ...old, [key]: value === true }))} />{label}</label>)}</div>
       <p className="text-xs text-muted-foreground">{data.length} rapprochement{data.length > 1 ? "s" : ""} · {links.length} localisé{links.length > 1 ? "s" : ""}</p>
