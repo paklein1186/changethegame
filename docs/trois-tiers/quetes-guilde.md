@@ -71,3 +71,12 @@ Trois-Tiers × ChangeTheGame) :
 - Test du contrat (quatre personnes lisent la même quête dans la base) : `supabase/tests/quest_access_levels.sql`,
   dans une transaction annulée :
   `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/quest_access_levels.sql`.
+
+## Nouvelles de quête depuis le site (palier 2, B3)
+
+`guild-quest-sync` `{ "action": "news", "projet_id", "quest_id", "nouvelle": { "id", "titre", "texte" }, "auteur"? }`,
+clé du site seule : publie une nouvelle (`quest_updates`, `posted_as_label` « Trois-Tiers ») sur une quête reliée au
+projet. Une même nouvelle du site (`id`) n'est publiée qu'une fois (`quest_update_external_links`). Auteur : la personne
+qui l'a validée sur le site si elle est membre de la guilde, sinon la personne qui a créé la quête. La nouvelle suit les
+règles d'accès de la quête (contenu à l'équipe pour une quête réservée). Typiquement : un changement d'étape du projet,
+dont le référent a validé le texte sur le site.
