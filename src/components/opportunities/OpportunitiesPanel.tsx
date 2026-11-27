@@ -111,6 +111,25 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   const filtered = rows.filter((o) =>
     (category === "all" || o.need_category === category) && (place === "all" || (o.territory_names ?? []).includes(place)));
   const shown = expanded ? filtered : filtered.slice(0, initialCount);
+  const digestGroups = asDigest ? Object.values(filtered.reduce<Record<string, {
+    questId: string;
+    questTitle: string;
+    territoryNames: string[];
+    matches: Opportunity[];
+  }>>((groups, opportunity) => {
+    if (!groups[opportunity.quest_id]) {
+      groups[opportunity.quest_id] = {
+        questId: opportunity.quest_id,
+        questTitle: opportunity.quest_title,
+        territoryNames: opportunity.territory_names ?? [],
+        matches: [],
+      };
+    }
+    groups[opportunity.quest_id].matches.push(opportunity);
+    return groups;
+  }, {})) : [];
+  const digestShown = expanded ? digestGroups : digestGroups.slice(0, initialCount);
+  const resultCount = asDigest ? digestGroups.length : filtered.length;
 
   const feedback = useMutation({
     mutationFn: async ({ id, verdict }: { id: string; verdict: "help" | "not_relevant" | "later" }) => {
@@ -254,6 +273,35 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
 
       {isLoading ? (
         <div className="space-y-2"><Skeleton className="h-14 w-full" /><Skeleton className="h-14 w-full" /></div>
+      ) : asDigest && filtered.length > 0 ? (
+        <ul className="space-y-3">
+          {digestShown.map((group) => (
+            <li key={group.questId} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+              <Link to={`/quests/${group.questId}`} className="text-sm font-semibold text-foreground hover:text-primary">
+                {group.questTitle}
+              </Link>
+              {group.territoryNames.length > 0 && (
+                <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                  <MapPin className="h-3 w-3 shrink-0" /> {group.territoryNames.slice(0, 2).join(" · ")}
+                </p>
+              )}
+              <div className="mt-3 space-y-2.5">
+                {group.matches.slice(0, 3).map((opportunity) => {
+                  const reason = (fr ? opportunity.reason_fr : opportunity.reason_en) || opportunity.reason_fr || opportunity.reason_en;
+                  return (
+                    <p key={opportunity.match_id} className="text-sm leading-relaxed text-foreground/90">
+                      <strong className="font-semibold text-foreground">{opportunity.need_label}</strong>
+                      {reason && <> — <span className="text-muted-foreground">{reason}</span></>}
+                    </p>
+                  );
+                })}
+              </div>
+              <Button size="sm" className="mt-4" asChild>
+                <Link to={`/quests/${group.questId}`}>{t("matchOpportunities.viewQuest")}</Link>
+              </Button>
+            </li>
+          ))}
+        </ul>
       ) : filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground py-3">
           {t(questId ? "matchOpportunities.emptyQuest" : "matchOpportunities.empty")}{" "}
@@ -408,9 +456,9 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
         />
       )}
 
-      {filtered.length > initialCount && (
+      {resultCount > initialCount && (
         <Button variant="link" size="sm" className="mt-2 h-auto p-0 text-xs" onClick={() => setExpanded((v) => !v)}>
-          {expanded ? t("matchOpportunities.showLess") : t("matchOpportunities.showAll", { count: filtered.length })}
+          {expanded ? t("matchOpportunities.showLess") : t("matchOpportunities.showAll", { count: resultCount })}
         </Button>
       )}
     </section>
