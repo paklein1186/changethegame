@@ -3080,15 +3080,42 @@
     "verify": "Verify",
     "footerNote": "All contributions are attributed under CC-BY-SA. 🟩 Coins are distributed proportionally via the OCU pie. 🌱 $CTG is emitted per contribution to the commons.",
     "types": {
-      "TIME": { "label": "Time", "desc": "Half-days of work" },
-      "EXPENSES": { "label": "Expenses", "desc": "Out-of-pocket costs" },
-      "SUPPLIES": { "label": "Supplies", "desc": "Materials consumed" },
-      "EQUIPMENT": { "label": "Equipment", "desc": "Equipment use value" },
-      "FACILITIES": { "label": "Facilities", "desc": "Space or server rental" },
-      "SALES": { "label": "Sales", "desc": "Revenue generated" },
-      "ROYALTY": { "label": "Royalty", "desc": "IP or licensing value" },
-      "FINDERS_FEE": { "label": "Finder's Fee", "desc": "Referral or introduction" },
-      "OTHER": { "label": "Other", "desc": "Other agreed value" }
+      "TIME": {
+        "label": "Time",
+        "desc": "Half-days of work"
+      },
+      "EXPENSES": {
+        "label": "Expenses",
+        "desc": "Out-of-pocket costs"
+      },
+      "SUPPLIES": {
+        "label": "Supplies",
+        "desc": "Materials consumed"
+      },
+      "EQUIPMENT": {
+        "label": "Equipment",
+        "desc": "Equipment use value"
+      },
+      "FACILITIES": {
+        "label": "Facilities",
+        "desc": "Space or server rental"
+      },
+      "SALES": {
+        "label": "Sales",
+        "desc": "Revenue generated"
+      },
+      "ROYALTY": {
+        "label": "Royalty",
+        "desc": "IP or licensing value"
+      },
+      "FINDERS_FEE": {
+        "label": "Finder's Fee",
+        "desc": "Referral or introduction"
+      },
+      "OTHER": {
+        "label": "Other",
+        "desc": "Other agreed value"
+      }
     },
     "legacyTypes": {
       "subtask_completed": "Subtask",
@@ -3186,10 +3213,22 @@
     "descNormal": "Process a contributor exit from this quest.",
     "exitTypeLabel": "Exit type",
     "types": {
-      "voluntary": { "label": "Voluntary", "desc": "Contributor chose to leave" },
-      "graceful_withdrawal": { "label": "Graceful Withdrawal", "desc": "Leaves with a formal handover commitment" },
-      "involuntary_cause": { "label": "Involuntary (for cause)", "desc": "Removed due to misconduct or contract breach" },
-      "involuntary_no_cause": { "label": "Involuntary (no cause)", "desc": "Removed for operational reasons, no fault" }
+      "voluntary": {
+        "label": "Voluntary",
+        "desc": "Contributor chose to leave"
+      },
+      "graceful_withdrawal": {
+        "label": "Graceful Withdrawal",
+        "desc": "Leaves with a formal handover commitment"
+      },
+      "involuntary_cause": {
+        "label": "Involuntary (for cause)",
+        "desc": "Removed due to misconduct or contract breach"
+      },
+      "involuntary_no_cause": {
+        "label": "Involuntary (no cause)",
+        "desc": "Removed for operational reasons, no fault"
+      }
     },
     "handoverCommitment": "Handover commitment *",
     "handoverPlaceholder": "What the contributor agrees to hand over or complete…",
@@ -3322,11 +3361,26 @@
       }
     },
     "sections": {
-      "portal": { "title": "Portal Customization", "description": "Edit description, cover images and tags" },
-      "members": { "title": "Member Management", "description": "View and manage members in this territory" },
-      "quests": { "title": "Quest Curation", "description": "Feature and pin quests in the portal" },
-      "stewards": { "title": "Steward Delegation", "description": "Assign co-stewards and manage roles" },
-      "economy": { "title": "Economy Tools", "description": "Grant XP to contributors and manage CTG flows" }
+      "portal": {
+        "title": "Portal Customization",
+        "description": "Edit description, cover images and tags"
+      },
+      "members": {
+        "title": "Member Management",
+        "description": "View and manage members in this territory"
+      },
+      "quests": {
+        "title": "Quest Curation",
+        "description": "Feature and pin quests in the portal"
+      },
+      "stewards": {
+        "title": "Steward Delegation",
+        "description": "Assign co-stewards and manage roles"
+      },
+      "economy": {
+        "title": "Economy Tools",
+        "description": "Grant XP to contributors and manage CTG flows"
+      }
     },
     "header": {
       "title": "Steward Admin — {{name}}",
@@ -3419,16 +3473,30 @@
     "whatAreTopics": "What are Topics?",
     "topicsDesc": "Topics are thematic domains (creativity, impact, craft, regeneration, learning…).",
     "togetherShape": "Together They Shape",
-    "shapeItems": ["Your identity", "Your suggested collaborators", "Your explore filters", "Your AI recommendations"],
+    "shapeItems": [
+      "Your identity",
+      "Your suggested collaborators",
+      "Your explore filters",
+      "Your AI recommendations"
+    ],
     "exploreTopics": "Explore topics",
     "explorePeople": "Explore people"
   },
   "livingDashboard": {
     "header": "Living Systems & Ecosystems",
     "matchLevel": {
-      "strict": { "label": "Strict Match", "fallback": "Exact granularity only" },
-      "perimeter": { "label": "Perimeter Match", "fallback": "Fallback to broader levels" },
-      "bioregional": { "label": "Bioregional Match", "fallback": "Ecoregion + territorial fallback" }
+      "strict": {
+        "label": "Strict Match",
+        "fallback": "Exact granularity only"
+      },
+      "perimeter": {
+        "label": "Perimeter Match",
+        "fallback": "Fallback to broader levels"
+      },
+      "bioregional": {
+        "label": "Bioregional Match",
+        "fallback": "Ecoregion + territorial fallback"
+      }
     },
     "settingsButton": "⚙️ Settings",
     "refreshData": "Refresh data",
@@ -3665,10 +3733,22 @@
   },
   "logContribution": {
     "difficulty": {
-      "standard": { "label": "Standard", "desc": "Regular tasks" },
-      "enhanced": { "label": "Enhanced", "desc": "Above-average complexity" },
-      "complex": { "label": "Complex", "desc": "Specialist-level work" },
-      "critical": { "label": "Critical", "desc": "Mission-critical delivery" }
+      "standard": {
+        "label": "Standard",
+        "desc": "Regular tasks"
+      },
+      "enhanced": {
+        "label": "Enhanced",
+        "desc": "Above-average complexity"
+      },
+      "complex": {
+        "label": "Complex",
+        "desc": "Specialist-level work"
+      },
+      "critical": {
+        "label": "Critical",
+        "desc": "Mission-critical delivery"
+      }
     },
     "dialogTitle": "Log Contribution",
     "titleLabel": "Title *",
@@ -3954,11 +4034,27 @@
     "title": "Decisions",
     "newDecision": "New Decision",
     "createDecision": "Create Decision",
-    "tabs": { "open": "Open", "closed": "Closed", "drafts": "Drafts", "all": "All" },
+    "tabs": {
+      "open": "Open",
+      "closed": "Closed",
+      "drafts": "Drafts",
+      "all": "All"
+    },
     "emptyOpen": "No open decisions right now.",
     "emptyAll": "No decisions to show.",
-    "types": { "poll": "Poll", "voteSimple": "Simple Vote", "multiOption": "Multi-Option", "consent": "Consent" },
-    "statuses": { "draft": "DRAFT", "open": "OPEN", "closed": "CLOSED", "archived": "ARCHIVED", "ended": "ENDED" },
+    "types": {
+      "poll": "Poll",
+      "voteSimple": "Simple Vote",
+      "multiOption": "Multi-Option",
+      "consent": "Consent"
+    },
+    "statuses": {
+      "draft": "DRAFT",
+      "open": "OPEN",
+      "closed": "CLOSED",
+      "archived": "ARCHIVED",
+      "ended": "ENDED"
+    },
     "toast": {
       "savedDraft": "Decision saved as draft",
       "createdOpened": "Decision created & opened",
@@ -4209,7 +4305,11 @@
     "freeForMembers": "All members of {{unit}}",
     "freeForNote": "Set by the agent's owner; can be changed later from the agent's card.",
     "skillsPlaceholder": "copywriting, strategy, analysis",
-    "unit": {"guild": "this guild", "pod": "this pod", "quest": "this quest"},
+    "unit": {
+      "guild": "this guild",
+      "pod": "this pod",
+      "quest": "this quest"
+    },
     "importBridged": "Matched to changethegame: {{list}}.",
     "saved": "Agent updated",
     "saveFailed": "Couldn't save the agent",
@@ -4366,9 +4466,18 @@
     "objectsUnsupported": "Third Spaces items found, but the agent does not accept them yet (PUT /ctg/objects).",
     "objectsPreview": "{{count}} Third Spaces items shared with the agent",
     "objectsPreviewDry": "{{count}} Third Spaces items would be shared with the agent",
-    "kinds": {"lieu": "Places", "organisation": "Organisations", "quete": "Quests", "entite": "Entities", "post": "Posts"},
+    "kinds": {
+      "lieu": "Places",
+      "organisation": "Organisations",
+      "quete": "Quests",
+      "entite": "Entities",
+      "post": "Posts"
+    },
     "skipped": "Not shared",
-    "skip": {"private": "private guild — tick \"Physical place\" to share it", "unapproved": "awaiting moderation"}
+    "skip": {
+      "private": "private guild — tick \"Physical place\" to share it",
+      "unapproved": "awaiting moderation"
+    }
   },
   "territoryMap": {
     "view": "View territory →",
@@ -4721,7 +4830,13 @@
     "emptyQuest": "No match yet. Confirm the needs detected above to widen the search.",
     "completeOffer": "Complete what I can offer",
     "helpSent": "The quest's team has been notified that you can help.",
-    "feedbackFailed": "Could not save your answer. Try again."
+    "feedbackFailed": "Could not save your answer. Try again.",
+    "direction": {
+      "label": "Direction",
+      "all": "All",
+      "help_for_you": "Help for me",
+      "you_can_help": "I can contribute"
+    }
   },
   "capabilities": {
     "suggestedByPlatform": "Suggested by the platform from their activity (not yet confirmed)",
@@ -13639,5 +13754,29 @@
     "levelFor": "Level given by {{name}}",
     "whoSees": "A quest set to {{level}}: its card is visible from {{level}} up (here: {{list}}, plus admins); its content stays with the quest team and admins. Everyone gets the highest level among their roles and plans.",
     "nobodyExtra": "no role or plan"
+  },
+  "matchmakerHub": {
+    "target": "Search for",
+    "me": "Me",
+    "guild": "Guild",
+    "quest": "Quest",
+    "aiTitle": "AI suggestions",
+    "aiHint": "Alongside computed matches, AI suggests leads based on the selected profile.",
+    "intro": "Introduce two people",
+    "introHint": "Create a three-way conversation with an introduction message.",
+    "introTitle": "Introduce two people",
+    "personA": "First person",
+    "personB": "Second person",
+    "searchPeople": "Search a member…",
+    "introMessage": "Introduction message",
+    "introTemplate": "Hi {{a}} and {{b}},\n\nI think you two should talk: ",
+    "introSend": "Create conversation",
+    "introSent": "Conversation created.",
+    "introFailed": "The introduction could not be sent.",
+    "follow": "My connections",
+    "followEmpty": "No requests or introductions yet.",
+    "sentTo": "Request sent to {{name}}",
+    "receivedFrom": "Request from {{name}}",
+    "open": "Open"
   }
 }

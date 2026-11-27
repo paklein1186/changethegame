@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTabOrder } from "@/hooks/useTabOrder";
 import { SortableTabsList, type TabDefinition } from "@/components/SortableTabsList";
 import { PageShell } from "@/components/PageShell";
-import { MatchmakerPanel } from "@/components/MatchmakerPanel";
+import { ExploreMatchmaker } from "@/components/explore/ExploreMatchmaker";
 import { TerritoryExplorer } from "@/components/explore/TerritoryExplorer";
 import { TerritoryBrowseSection } from "@/components/explore/TerritoryBrowseSection";
 import { EntityCreationWizard } from "@/components/EntityCreationWizard";
@@ -226,7 +226,7 @@ export default function ExploreHub() {
         </TabsContent>
         {currentUser.id && (
           <TabsContent value="matchmaker">
-            <MatchmakerPanel matchType="user" userId={currentUser.id} />
+            <ExploreMatchmaker userId={currentUser.id} />
           </TabsContent>
         )}
       </ExploreTabsInner>

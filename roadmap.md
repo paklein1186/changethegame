@@ -9,3 +9,9 @@
 - [x] Ajouter une carte générale des rapprochements réels, indépendante de la Démo FEVE.
 - [x] Vérifier le digest, la carte et l’isolation de la démo avec un compte réel.
 - [x] Varier les cartes du digest et ajouter le masquage personnel « Ne plus voir ».
+
+# Matchmaker Explorer
+
+- [x] Rapprochements réels par cible (moi / guilde / quête) avec filtre de sens.
+- [x] Suggestions IA par cible.
+- [x] Présenter deux personnes et suivi des mises en relation.

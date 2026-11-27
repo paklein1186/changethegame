@@ -181,7 +181,7 @@ export default function InboxPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const [activeConvId, setActiveConvId] = useState<string | null>(null);
+  const [activeConvId, setActiveConvId] = useState<string | null>(() => new URLSearchParams(window.location.search).get("c"));
   const [messageText, setMessageText] = useState("");
   const [showNewDialog, setShowNewDialog] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<{ id: string; name: string }[]>([]);

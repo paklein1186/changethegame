@@ -91,6 +91,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   const [scope, setScope] = useState<Scope>(questId ? "all" : defaultScope);
   const [category, setCategory] = useState("all");
   const [place, setPlace] = useState("all");
+  const [dir, setDir] = useState<"all" | "help_for_you" | "you_can_help">("all");
   const [expanded, setExpanded] = useState(false);
   const [selectionSeed, setSelectionSeed] = useState(() => Math.floor(Math.random() * 4294967296));
 
@@ -114,7 +115,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   const categories = useMemo(() => [...new Set(rows.map((o) => o.need_category))].sort(), [rows]);
   const places = useMemo(() => [...new Set(rows.flatMap((o) => o.territory_names ?? []))].sort(), [rows]);
   const filtered = orderedRows.filter((o) =>
-    (category === "all" || o.need_category === category) && (place === "all" || (o.territory_names ?? []).includes(place)));
+    (dir === "all" || o.direction === dir) && (category === "all" || o.need_category === category) && (place === "all" || (o.territory_names ?? []).includes(place)));
   const shown = expanded ? filtered : filtered.slice(0, initialCount);
 
   const feedback = useMutation({
@@ -246,6 +247,16 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                   className={cn("px-2.5 py-1 text-xs rounded-md transition-colors", scope === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
                 >
                   {t(`matchOpportunities.scope.${s}`)}
+                </button>
+              ))}
+            </div>
+          )}
+          {!asDigest && !questId && (
+            <div className="inline-flex rounded-lg border border-border bg-background p-0.5" role="tablist" aria-label={t("matchOpportunities.direction.label")}>
+              {(["all", "help_for_you", "you_can_help"] as const).map((d) => (
+                <button key={d} role="tab" aria-selected={dir === d} onClick={() => setDir(d)}
+                  className={cn("px-2.5 py-1 text-xs rounded-md transition-colors", dir === d ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+                  {t(`matchOpportunities.direction.${d}`)}
                 </button>
               ))}
             </div>

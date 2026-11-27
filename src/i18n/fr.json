@@ -3080,15 +3080,42 @@
     "verify": "Vérifier",
     "footerNote": "Toutes les contributions sont attribuées sous licence CC-BY-SA. Les 🟩 Coins sont distribués proportionnellement via le pie OCU. Le 🌱 $CTG est émis pour chaque contribution au commun.",
     "types": {
-      "TIME": { "label": "Temps", "desc": "Demi-journées de travail" },
-      "EXPENSES": { "label": "Dépenses", "desc": "Frais engagés" },
-      "SUPPLIES": { "label": "Fournitures", "desc": "Matériel consommé" },
-      "EQUIPMENT": { "label": "Équipement", "desc": "Valeur d'usage de l'équipement" },
-      "FACILITIES": { "label": "Locaux", "desc": "Location d'espace ou de serveur" },
-      "SALES": { "label": "Ventes", "desc": "Revenu généré" },
-      "ROYALTY": { "label": "Royalties", "desc": "Valeur de PI ou de licence" },
-      "FINDERS_FEE": { "label": "Commission d'apport", "desc": "Référencement ou mise en relation" },
-      "OTHER": { "label": "Autre", "desc": "Autre valeur convenue" }
+      "TIME": {
+        "label": "Temps",
+        "desc": "Demi-journées de travail"
+      },
+      "EXPENSES": {
+        "label": "Dépenses",
+        "desc": "Frais engagés"
+      },
+      "SUPPLIES": {
+        "label": "Fournitures",
+        "desc": "Matériel consommé"
+      },
+      "EQUIPMENT": {
+        "label": "Équipement",
+        "desc": "Valeur d'usage de l'équipement"
+      },
+      "FACILITIES": {
+        "label": "Locaux",
+        "desc": "Location d'espace ou de serveur"
+      },
+      "SALES": {
+        "label": "Ventes",
+        "desc": "Revenu généré"
+      },
+      "ROYALTY": {
+        "label": "Royalties",
+        "desc": "Valeur de PI ou de licence"
+      },
+      "FINDERS_FEE": {
+        "label": "Commission d'apport",
+        "desc": "Référencement ou mise en relation"
+      },
+      "OTHER": {
+        "label": "Autre",
+        "desc": "Autre valeur convenue"
+      }
     },
     "legacyTypes": {
       "subtask_completed": "Sous-tâche",
@@ -3186,10 +3213,22 @@
     "descNormal": "Traiter la sortie d'un contributeur de cette quête.",
     "exitTypeLabel": "Type de sortie",
     "types": {
-      "voluntary": { "label": "Volontaire", "desc": "Le contributeur a choisi de partir" },
-      "graceful_withdrawal": { "label": "Retrait en douceur", "desc": "Part avec un engagement formel de passation" },
-      "involuntary_cause": { "label": "Involontaire (avec motif)", "desc": "Exclu pour faute ou rupture de contrat" },
-      "involuntary_no_cause": { "label": "Involontaire (sans motif)", "desc": "Exclu pour raisons opérationnelles, sans faute" }
+      "voluntary": {
+        "label": "Volontaire",
+        "desc": "Le contributeur a choisi de partir"
+      },
+      "graceful_withdrawal": {
+        "label": "Retrait en douceur",
+        "desc": "Part avec un engagement formel de passation"
+      },
+      "involuntary_cause": {
+        "label": "Involontaire (avec motif)",
+        "desc": "Exclu pour faute ou rupture de contrat"
+      },
+      "involuntary_no_cause": {
+        "label": "Involontaire (sans motif)",
+        "desc": "Exclu pour raisons opérationnelles, sans faute"
+      }
     },
     "handoverCommitment": "Engagement de passation *",
     "handoverPlaceholder": "Ce que le contributeur s'engage à transmettre ou terminer…",
@@ -3322,11 +3361,26 @@
       }
     },
     "sections": {
-      "portal": { "title": "Personnalisation du portail", "description": "Modifier la description, les images de couverture et les tags" },
-      "members": { "title": "Gestion des membres", "description": "Voir et gérer les membres de ce territoire" },
-      "quests": { "title": "Curation des quêtes", "description": "Mettre en avant et épingler des quêtes dans le portail" },
-      "stewards": { "title": "Délégation de stewardship", "description": "Assigner des co-stewards et gérer les rôles" },
-      "economy": { "title": "Outils économiques", "description": "Octroyer de l'XP aux contributeurs et gérer les flux $CTG" }
+      "portal": {
+        "title": "Personnalisation du portail",
+        "description": "Modifier la description, les images de couverture et les tags"
+      },
+      "members": {
+        "title": "Gestion des membres",
+        "description": "Voir et gérer les membres de ce territoire"
+      },
+      "quests": {
+        "title": "Curation des quêtes",
+        "description": "Mettre en avant et épingler des quêtes dans le portail"
+      },
+      "stewards": {
+        "title": "Délégation de stewardship",
+        "description": "Assigner des co-stewards et gérer les rôles"
+      },
+      "economy": {
+        "title": "Outils économiques",
+        "description": "Octroyer de l'XP aux contributeurs et gérer les flux $CTG"
+      }
     },
     "header": {
       "title": "Administration du territoire — {{name}}",
@@ -3419,16 +3473,30 @@
     "whatAreTopics": "Que sont les Topics ?",
     "topicsDesc": "Les topics sont des domaines thématiques (créativité, impact, artisanat, régénération, apprentissage…).",
     "togetherShape": "Ensemble, ils façonnent",
-    "shapeItems": ["Votre identité", "Vos collaborateurs suggérés", "Vos filtres d'exploration", "Vos recommandations IA"],
+    "shapeItems": [
+      "Votre identité",
+      "Vos collaborateurs suggérés",
+      "Vos filtres d'exploration",
+      "Vos recommandations IA"
+    ],
     "exploreTopics": "Explorer les topics",
     "explorePeople": "Explorer les personnes"
   },
   "livingDashboard": {
     "header": "Systèmes vivants & écosystèmes",
     "matchLevel": {
-      "strict": { "label": "Correspondance stricte", "fallback": "Granularité exacte uniquement" },
-      "perimeter": { "label": "Correspondance de périmètre", "fallback": "Repli sur des niveaux plus larges" },
-      "bioregional": { "label": "Correspondance bioregionale", "fallback": "Écorégion + repli territorial" }
+      "strict": {
+        "label": "Correspondance stricte",
+        "fallback": "Granularité exacte uniquement"
+      },
+      "perimeter": {
+        "label": "Correspondance de périmètre",
+        "fallback": "Repli sur des niveaux plus larges"
+      },
+      "bioregional": {
+        "label": "Correspondance bioregionale",
+        "fallback": "Écorégion + repli territorial"
+      }
     },
     "settingsButton": "⚙️ Réglages",
     "refreshData": "Actualiser les données",
@@ -3665,10 +3733,22 @@
   },
   "logContribution": {
     "difficulty": {
-      "standard": { "label": "Standard", "desc": "Tâches habituelles" },
-      "enhanced": { "label": "Renforcé", "desc": "Complexité au-dessus de la moyenne" },
-      "complex": { "label": "Complexe", "desc": "Travail de niveau spécialiste" },
-      "critical": { "label": "Critique", "desc": "Livraison critique pour la mission" }
+      "standard": {
+        "label": "Standard",
+        "desc": "Tâches habituelles"
+      },
+      "enhanced": {
+        "label": "Renforcé",
+        "desc": "Complexité au-dessus de la moyenne"
+      },
+      "complex": {
+        "label": "Complexe",
+        "desc": "Travail de niveau spécialiste"
+      },
+      "critical": {
+        "label": "Critique",
+        "desc": "Livraison critique pour la mission"
+      }
     },
     "dialogTitle": "Enregistrer une contribution",
     "titleLabel": "Titre *",
@@ -3954,11 +4034,27 @@
     "title": "Décisions",
     "newDecision": "Nouvelle décision",
     "createDecision": "Créer une décision",
-    "tabs": { "open": "Ouvertes", "closed": "Clôturées", "drafts": "Brouillons", "all": "Toutes" },
+    "tabs": {
+      "open": "Ouvertes",
+      "closed": "Clôturées",
+      "drafts": "Brouillons",
+      "all": "Toutes"
+    },
     "emptyOpen": "Aucune décision ouverte pour le moment.",
     "emptyAll": "Aucune décision à afficher.",
-    "types": { "poll": "Sondage", "voteSimple": "Vote simple", "multiOption": "Choix multiple", "consent": "Consentement" },
-    "statuses": { "draft": "BROUILLON", "open": "OUVERTE", "closed": "CLÔTURÉE", "archived": "ARCHIVÉE", "ended": "TERMINÉE" },
+    "types": {
+      "poll": "Sondage",
+      "voteSimple": "Vote simple",
+      "multiOption": "Choix multiple",
+      "consent": "Consentement"
+    },
+    "statuses": {
+      "draft": "BROUILLON",
+      "open": "OUVERTE",
+      "closed": "CLÔTURÉE",
+      "archived": "ARCHIVÉE",
+      "ended": "TERMINÉE"
+    },
     "toast": {
       "savedDraft": "Décision enregistrée comme brouillon",
       "createdOpened": "Décision créée et ouverte",
@@ -4209,7 +4305,11 @@
     "freeForMembers": "Tous les membres de {{unit}}",
     "freeForNote": "Réglé par le propriétaire de l'agent ; modifiable plus tard depuis la carte de l'agent.",
     "skillsPlaceholder": "rédaction, stratégie, analyse",
-    "unit": {"guild": "cette guilde", "pod": "ce pod", "quest": "cette quête"},
+    "unit": {
+      "guild": "cette guilde",
+      "pod": "ce pod",
+      "quest": "cette quête"
+    },
     "importBridged": "Rapproché de changethegame : {{list}}.",
     "saved": "Agent mis à jour",
     "saveFailed": "Impossible d'enregistrer l'agent",
@@ -4366,9 +4466,18 @@
     "objectsUnsupported": "Éléments Third Spaces trouvés, mais l'agent ne les accepte pas encore (PUT /ctg/objects).",
     "objectsPreview": "{{count}} éléments Third Spaces partagés avec l'agent",
     "objectsPreviewDry": "{{count}} éléments Third Spaces seraient partagés avec l'agent",
-    "kinds": {"lieu": "Lieux", "organisation": "Organisations", "quete": "Quêtes", "entite": "Entités", "post": "Posts"},
+    "kinds": {
+      "lieu": "Lieux",
+      "organisation": "Organisations",
+      "quete": "Quêtes",
+      "entite": "Entités",
+      "post": "Posts"
+    },
     "skipped": "Non partagées",
-    "skip": {"private": "guilde privée — cochez « Lieu physique » pour la partager", "unapproved": "en attente de modération"}
+    "skip": {
+      "private": "guilde privée — cochez « Lieu physique » pour la partager",
+      "unapproved": "en attente de modération"
+    }
   },
   "territoryMap": {
     "view": "Voir le territoire →",
@@ -4721,7 +4830,13 @@
     "emptyQuest": "Pas encore de correspondance. Validez les besoins détectés ci-dessus pour élargir la recherche.",
     "completeOffer": "Compléter ce que je peux offrir",
     "helpSent": "L'équipe de la quête est prévenue que vous pouvez aider.",
-    "feedbackFailed": "Votre réponse n'a pas été enregistrée. Réessayez."
+    "feedbackFailed": "Votre réponse n'a pas été enregistrée. Réessayez.",
+    "direction": {
+      "label": "Sens",
+      "all": "Tous",
+      "help_for_you": "Aide vers moi",
+      "you_can_help": "Je peux contribuer"
+    }
   },
   "capabilities": {
     "suggestedByPlatform": "Suggéré par la plateforme d'après son activité (pas encore confirmé)",
@@ -13639,5 +13754,29 @@
     "levelFor": "Niveau donné par {{name}}",
     "whoSees": "Une quête réglée sur {{level}} : sa fiche est visible à partir de {{level}} (ici : {{list}}, plus les admins) ; son contenu reste réservé à l'équipe de la quête et aux admins. Chacun a le niveau le plus haut de ses rôles et formules.",
     "nobodyExtra": "aucun rôle ni formule"
+  },
+  "matchmakerHub": {
+    "target": "Chercher pour",
+    "me": "Moi",
+    "guild": "Guilde",
+    "quest": "Quête",
+    "aiTitle": "Suggestions IA",
+    "aiHint": "En complément des rapprochements calculés, l’IA propose des pistes à partir du profil choisi.",
+    "intro": "Présenter deux personnes",
+    "introHint": "Créez une conversation à trois avec un message d’introduction.",
+    "introTitle": "Présenter deux personnes",
+    "personA": "Première personne",
+    "personB": "Deuxième personne",
+    "searchPeople": "Rechercher un membre…",
+    "introMessage": "Message d’introduction",
+    "introTemplate": "Bonjour {{a}} et {{b}},\n\nJe pense que vous auriez intérêt à vous parler : ",
+    "introSend": "Créer la conversation",
+    "introSent": "Conversation créée.",
+    "introFailed": "La présentation n’a pas pu être envoyée.",
+    "follow": "Mes mises en relation",
+    "followEmpty": "Aucune demande ni introduction pour l’instant.",
+    "sentTo": "Demande envoyée à {{name}}",
+    "receivedFrom": "Demande reçue de {{name}}",
+    "open": "Ouvrir"
   }
 }
