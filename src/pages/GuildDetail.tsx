@@ -83,6 +83,7 @@ import { TrustTab } from "@/components/trust/TrustTab";
 import { GraphView } from "@/components/graph/GraphView";
 import { LivingTab } from "@/components/living/LivingTab";
 import { PendingAffiliationRequests } from "@/components/entity/PendingAffiliationRequests";
+import { PendingSiteQuests } from "@/components/guild/PendingSiteQuests";
 import { Leaf, Network } from "lucide-react";
 import { SectionBanner, HintTooltip, EmptyHint, HINTS } from "@/components/onboarding/ContextualHint";
 import { usePersona } from "@/hooks/usePersona";
@@ -795,6 +796,7 @@ export default function GuildDetail() {
                 </div>
               )}
             </div>
+            <PendingSiteQuests guildId={guild.id} isAdmin={isAdmin} />
             <PendingAffiliationRequests entityType="GUILD" entityId={guild.id} isAdmin={isAdmin} />
             {!isLoggedIn && quests.some((q: any) => q.pinned_at) && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-300 mb-3">

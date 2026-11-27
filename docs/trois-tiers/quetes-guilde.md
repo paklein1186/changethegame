@@ -118,3 +118,25 @@ tout le monde, même pour une quête réservée).
 (brouillons compris, champs d'administration) avec `projet_id`, le projet du site auquel chacune est reliée par la
 publication automatique. Le site range les autres dans sa file « à classer » : la coordination les relie à un projet,
 les accueille comme projet ou les écarte. Rien n'est adopté sans décision, et aucune quête n'est jamais recréée.
+
+## Création automatique des projets transparents (décision de PA du 28/11, option C)
+
+`guild-quest-sync` `{ "action": "create_auto", "projet_id", "face", "visibilite": { "mode": "public" }, "auteur"? }`,
+clé du site seule : crée la quête d'un projet **transparent** dont le résumé est validé, sans clic de la coordination.
+Refusé (422 `public_only`) pour toute face qui n'est pas publique : une quête réservée aux membres passe toujours par
+`create`, avec le jeton d'un·e admin de la guilde. Auteur : `auteur` s'il administre la guilde, sinon la personne qui a
+créé la guilde. Jamais de doublon (même lien `quest_external_links` que `create`).
+
+## Salle d'attente des missions semi-sensibles (décisions de PA du 28/11)
+
+Les missions semi-sensibles existantes sont considérées comme validées par la coordination (PA), avec retour en arrière
+possible. Une NOUVELLE mission semi-sensible du site :
+- arrive par `create_auto` avec `visibilite: { mode: "membres", … }` et `en_attente: true` : la quête est créée en
+  **brouillon**, réservée aux membres selon son niveau, marquée `pending_validation` (`quest_external_links`) ; les admins
+  de la guilde reçoivent une notification « Mission à valider » ;
+- apparaît dans l'onglet **Travail** de la guilde, section « Missions en attente de validation » (admins seulement,
+  `guild_pending_site_quests`), avec Valider (la quête est publiée) ou Garder privée (`decide_site_quest`) ;
+- peut aussi être décidée sur troistiers.space : `update` avec `validee: true` (publiée, sortie de l'attente) ou
+  `withdraw` avec `prive: true` (reste brouillon, sortie de l'attente). Le site relit la décision prise ici
+  (`guild_quests` renvoie `en_attente` et `decision`).
+Une quête en attente n'est jamais republiée par une mise à jour du site tant qu'elle n'est pas validée.
