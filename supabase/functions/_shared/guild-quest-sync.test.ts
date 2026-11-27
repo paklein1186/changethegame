@@ -1,5 +1,5 @@
 import { assert, assertEquals, assertRejects, assertThrows } from "jsr:@std/assert@1";
-import { createQuest, questFields, sameKey, SyncError, updateQuest, withdrawQuest } from "./guild-quest-sync.ts";
+import { accessEnforced, createQuest, questFields, sameKey, SyncError, updateQuest, visibilityFields, withdrawQuest } from "./guild-quest-sync.ts";
 import { fakeAdmin } from "./fake-admin.test-helper.ts";
 
 const G = "4964c699-4684-43a9-b508-cee21c77e24e";
@@ -63,4 +63,31 @@ Deno.test("retrait : brouillon privé, sans rien écrire d'autre ; une face publ
   ({ data: q } = await a.from("quests").select("*").eq("id", quest_id).maybeSingle());
   assertEquals([q.is_draft, q.public_visibility], [false, "public"]);
   await assertRejects(() => withdrawQuest(a, G, P, "autre"), SyncError);
+});
+
+Deno.test("visibilité : public, membres N2 / N3 ; tout le reste refusé ; absente = ancien format", () => {
+  assertEquals(visibilityFields({ mode: "public" }), { access_mode: "public", public_visibility: "public" });
+  assertEquals(visibilityFields({ mode: "membres", niveau_minimum: "N3" }),
+    { access_mode: "members", access_min_level: "N3", public_visibility: "private" });
+  assertThrows(() => visibilityFields({ mode: "membres" }), SyncError);
+  assertThrows(() => visibilityFields({ mode: "membres", niveau_minimum: "N4" }), SyncError);
+  assertThrows(() => visibilityFields({ mode: "cache" }), SyncError);
+  assertEquals(visibilityFields(undefined), null);
+});
+
+Deno.test("protection mesurée : vrai seulement si la base le confirme", async () => {
+  assertEquals(await accessEnforced({ rpc: async () => ({ data: true, error: null }) }), true);
+  assertEquals(await accessEnforced({ rpc: async () => ({ data: null, error: { message: "function does not exist" } }) }), false);
+  assertEquals(await accessEnforced({ rpc: async () => { throw new Error("réseau"); } }), false);
+  assertEquals(await accessEnforced({}), false);
+});
+
+Deno.test("mise à jour « membres » : remet en ligne une quête retirée, sans l'exposer sur le web", async () => {
+  const a = base();
+  const fields = { ...questFields(face(), ORIG), ...visibilityFields({ mode: "membres", niveau_minimum: "N2" })! };
+  const { quest_id } = await createQuest(a, G, "u-coord", P, { ...questFields(face(), ORIG), access_mode: "public" });
+  await withdrawQuest(a, G, P, quest_id);
+  await updateQuest(a, G, P, quest_id, fields);
+  const q = a.tables.quests.find((x: any) => x.id === quest_id);
+  assertEquals([q.is_draft, q.public_visibility, q.access_mode, q.access_min_level], [false, "private", "members", "N2"]);
 });

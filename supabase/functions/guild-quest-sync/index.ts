@@ -3,14 +3,18 @@
 //   POST /functions/v1/guild-quest-sync
 //   X-Site-Key: <clé du site>                                (toujours)
 //   Authorization: Bearer <jeton CTG de la personne>         (création seulement : admin de la guilde)
-//   { "action": "create" | "update" | "withdraw", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … } }
+//   { "action": "create" | "update" | "withdraw" | "status", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
+//     "visibilite"?: { "mode": "public" } | { "mode": "membres", "niveau_minimum": "N2" | "N3" } }
+//
+// Chaque réponse porte "visibilite_appliquee_par_la_base" : vrai seulement si la base empêche vraiment la lecture
+// des quêtes réservées (mesuré à chaque appel). Tant qu'il est faux, une visibilité « membres » est refusée (422).
 //
 // Création : au nom de la personne de la coordination qui clique « Publier ». Mises à jour : par la clé du site seule,
 // et seulement sur une quête que cette fonction a reliée au projet (quest_external_links), dans la guilde.
 // Fermée tant que SITE_SYNC_KEY, SITE_SYNC_GUILD_ID et SITE_SYNC_ORIGINS ne sont pas posés.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-import { createQuest, questFields, sameKey, SyncError, updateQuest, withdrawQuest } from "../_shared/guild-quest-sync.ts";
+import { accessEnforced, createQuest, questFields, sameKey, SyncError, updateQuest, visibilityFields, withdrawQuest } from "../_shared/guild-quest-sync.ts";
 import { isGuildAdmin } from "../_shared/guild-quests.ts";
 
 const json = (body: unknown, status = 200) =>
@@ -27,36 +31,47 @@ serve(async (req) => {
 
   const url = Deno.env.get("SUPABASE_URL") ?? "";
   const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "", { auth: { persistSession: false } });
+  const enforced = await accessEnforced(admin);
+  const reply = (body: Record<string, unknown>, status = 200) => json({ ...body, visibilite_appliquee_par_la_base: enforced }, status);
   try {
     const body = await req.json().catch(() => null);
+    // Lire seulement l'état de la protection, sans rien publier.
+    if (body?.action === "status") return reply({ ok: true });
     const projetId = String(body?.projet_id ?? "");
-    if (!UUID.test(projetId)) return json({ error: "invalid projet_id" }, 400);
+    if (!UUID.test(projetId)) return reply({ error: "invalid projet_id" }, 400);
     if (body?.action === "withdraw") {
       const questId = String(body?.quest_id ?? "");
-      if (!UUID.test(questId)) return json({ error: "invalid quest_id" }, 400);
-      return json(await withdrawQuest(admin, guildId, projetId, questId));
+      if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
+      return reply(await withdrawQuest(admin, guildId, projetId, questId));
     }
-    const fields = questFields(body?.face ?? {}, origins);
+    const visibility = visibilityFields(body?.visibilite);
+    // Une quête réservée aux membres n'est publiée que si la base en empêche vraiment la lecture.
+    if (visibility?.access_mode === "members" && !enforced) {
+      return reply({ error: "visibility_not_enforced", detail: "la base ne protège pas encore les quêtes réservées" }, 422);
+    }
+    const fields = { ...questFields(body?.face ?? {}, origins), ...(visibility ?? {}) };
 
     if (body?.action === "create") {
       const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
       const anon = createClient(url, Deno.env.get("SUPABASE_ANON_KEY") ?? "", { auth: { persistSession: false } });
       const { data } = token ? await anon.auth.getUser(token) : { data: null };
       const user = data?.user;
-      if (!user) return json({ error: "Not authenticated" }, 401);
-      if (!(await isGuildAdmin(admin, guildId, user.id))) return json({ error: "guild admin only" }, 403);
-      if (fields.public_visibility !== "public") return json({ error: "only a public face can be published" }, 422);
-      return json(await createQuest(admin, guildId, user.id, projetId, fields));
+      if (!user) return reply({ error: "Not authenticated" }, 401);
+      if (!(await isGuildAdmin(admin, guildId, user.id))) return reply({ error: "guild admin only" }, 403);
+      if (fields.public_visibility !== "public" && fields.access_mode !== "members") {
+        return reply({ error: "only a public or members-only face can be published" }, 422);
+      }
+      return reply(await createQuest(admin, guildId, user.id, projetId, fields));
     }
     if (body?.action === "update") {
       const questId = String(body?.quest_id ?? "");
-      if (!UUID.test(questId)) return json({ error: "invalid quest_id" }, 400);
-      return json(await updateQuest(admin, guildId, projetId, questId, fields));
+      if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
+      return reply(await updateQuest(admin, guildId, projetId, questId, fields));
     }
-    return json({ error: "unknown action" }, 400);
+    return reply({ error: "unknown action" }, 400);
   } catch (e) {
-    if (e instanceof SyncError) return json({ error: e.code, detail: e.message }, e.status);
+    if (e instanceof SyncError) return reply({ error: e.code, detail: e.message }, e.status);
     console.log(`[GUILD-QUEST-SYNC] ERROR - ${e instanceof Error ? e.message : String(e)}`);
-    return json({ error: "sync failed" }, 500);
+    return reply({ error: "sync failed" }, 500);
   }
 });

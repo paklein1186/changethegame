@@ -5,8 +5,10 @@
 //   Authorization: Bearer <jeton d'accès de la personne>   (jeton OAuth ou de session)
 //
 // Ne renvoie que ce qui concerne la personne elle-même : identité, appartenance à la
-// guilde, adhésion payée et badges (rôles de guilde à code, avec date de fin et portée).
-// Le site client décide ensuite des accès à partir de sa propre configuration.
+// guilde, adhésion payée, badges (rôles de guilde à code, avec date de fin et portée) et
+// accès propres aux quêtes reliées aux projets du site (acces_quetes : lecture = accès
+// personnel, equipe = participant, admin = co-admin de la quête ; donnés et retirés sur
+// ChangeTheGame, recopiés par le site). Le site décide ensuite des accès selon sa configuration.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
@@ -57,6 +59,14 @@ serve(async (req) => {
     ]);
     if (!guild) return json({ error: "Guild not found" }, 404);
 
+    // Source des liens quête ↔ projet du site (quest_external_links) ; « trois-tiers » par défaut.
+    const source = new URL(req.url).searchParams.get("source") ?? "trois-tiers";
+    if (!/^[a-z0-9_-]{2,40}$/.test(source)) return json({ error: "Invalid source" }, 400);
+    const { data: questAccess, error: qaError } = await admin.rpc("external_quest_access", {
+      p_user_id: user.id, p_guild_id: guildId, p_source: source,
+    });
+    if (qaError) console.log(`[GUILD-MEMBER-PROFILE] acces_quetes indisponible - ${qaError.message}`);
+
     const now = Date.now();
     const end = membership?.current_period_end ?? membership?.membership_expires_at ?? null;
     const membershipActive =
@@ -94,6 +104,14 @@ serve(async (req) => {
           }
         : null,
       badges,
+      // null : indisponible (base pas encore à jour) ; [] : aucun accès propre.
+      acces_quetes: qaError ? null : ((questAccess as any[]) ?? []).map((a) => ({
+        quest_id: a.quest_id as string,
+        niveau: a.niveau as "lecture" | "equipe" | "admin",
+        accorde_par: (a.accorde_par as string | null) ?? null,
+        accorde_le: (a.accorde_le as string | null) ?? null,
+        expire_le: (a.expire_le as string | null) ?? null,
+      })),
     });
   } catch (error) {
     console.log(`[GUILD-MEMBER-PROFILE] ERROR - ${error instanceof Error ? error.message : String(error)}`);

@@ -4889,26 +4889,23 @@
   },
   "questAccess": {
     "whoSees": "Who sees this quest",
-    "whoSeesHint": "Its admins, its participants and the people you give access to always see everything.",
+    "whoSeesHint": "The quest team (participants, personal access) and its admins always see everything.",
     "mode": {
       "inherit": "Same as the guild",
       "public": "Fully transparent",
       "members": "Guild members",
-      "selected": "Chosen plans or roles",
       "hidden": "Hidden"
     },
     "modeHint": {
       "public": "Everyone sees everything, even without an account.",
-      "members": "Members in good standing (fees paid) see everything. Outside the guild and followers: nothing.",
-      "membersNoGuild": "Members of the organisation that runs it see everything. Others: nothing.",
-      "selected": "Members with these plans or roles see everything. Other members in good standing see the summary and can request access. Outside the guild: nothing.",
+      "members": "From the chosen level, members see the summary (title, summary, stakes) and can ask to join. The content belongs to the quest team. Outside the guild and followers: nothing.",
+      "membersNoGuild": "Members of the organisation that runs it see the summary; the content belongs to the quest team.",
       "hidden": "Invisible to everyone except its admins and superadmins."
     },
     "inheritCurrently": "Currently: {{label}}",
     "noMembranes": "This guild has no membership plan or role yet.",
     "plans": "Membership plans",
     "roles": "Guild roles",
-    "pickOne": "Choose at least one plan or role.",
     "save": "Save",
     "saved": "Access saved.",
     "saveFailed": "Couldn't save",
@@ -4927,12 +4924,12 @@
     "revoked": "Access removed: the person has been notified.",
     "addPerson": "Give access to someone (name)…",
     "give": "Give access",
-    "teaserExplain": "This quest's content (needs, discussions, files, members) is reserved to some guild members. Request access: its admins are notified and can grant it.",
+    "teaserExplain": "This quest's content (needs, discussions, files, members) is reserved to its team. Ask to join: its admins are notified and can give you access.",
     "pending": "Request sent, waiting for an answer",
     "editRequest": "Edit my request",
     "cancelRequest": "Cancel",
-    "request": "Request access",
-    "requestTitle": "Request access",
+    "request": "Ask to join",
+    "requestTitle": "Ask to join",
     "requestDesc": "Say in a few words why \"{{quest}}\" interests you. The quest admins will be notified.",
     "requestPlaceholder": "What you'd like to bring or follow…",
     "cancel": "Cancel",
@@ -4952,6 +4949,21 @@
     },
     "remove": "Remove",
     "addEntity": "Add a guild or organisation (name)…",
-    "add": "Add"
+    "add": "Add",
+    "minLevel": "Summary visible from",
+    "level": {
+      "N2": "N2 · active membership",
+      "N3": "N3 · membrane roles or plans"
+    },
+    "levelHint": {
+      "N2": "Anyone whose membership fee is up to date.",
+      "N3": "In this guild: {{list}}.",
+      "N3empty": "The guild's N3 table is empty: only the team and admins will see the quest."
+    },
+    "until": "until {{date}}",
+    "untilLabel": "Until (optional)",
+    "n3Title": "Guild level N3",
+    "n3Hint": "The roles and plans that make up level N3 (membranes). Every quest set to N3 follows this table.",
+    "saveN3": "Save level N3"
   }
 }

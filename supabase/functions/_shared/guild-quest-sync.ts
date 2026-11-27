@@ -16,6 +16,36 @@ export interface Face {
   etiquettes?: unknown; lien_retour?: unknown; audience?: unknown;
 }
 
+/**
+ * Visibilité envoyée par le site (contrat commun, docs/quetes/visibilite.md du site) :
+ *   { "mode": "public" }                              → quête ouverte à tous, exposée sur le web ;
+ *   { "mode": "membres", "niveau_minimum": "N2"|"N3" } → fiche visible des membres à partir de ce niveau, contenu à
+ *                                                        l'équipe ; jamais exposée sur les pages publiques.
+ * Le site n'envoie jamais « caché » : une mission devenue sensible est retirée (withdraw).
+ * Sans `visibilite` (ancien format), l'accès n'est pas touché et seule `face.audience` compte.
+ */
+export function visibilityFields(v: unknown): Row | null {
+  if (v === undefined || v === null) return null;
+  const mode = (v as Row)?.mode;
+  if (mode === "public") return { access_mode: "public", public_visibility: "public" };
+  if (mode === "membres") {
+    const niveau = (v as Row)?.niveau_minimum;
+    if (niveau !== "N2" && niveau !== "N3") throw new SyncError("invalid_visibility", "niveau_minimum : N2 ou N3");
+    return { access_mode: "members", access_min_level: niveau, public_visibility: "private" };
+  }
+  throw new SyncError("invalid_visibility", "mode : public ou membres");
+}
+
+/** La base applique-t-elle vraiment l'accès aux quêtes ? Mesuré par la base elle-même ; faux si on ne sait pas. */
+export async function accessEnforced(admin: any): Promise<boolean> {
+  try {
+    const { data, error } = await admin.rpc("quest_access_enforced");
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
+
 /** Traduit la face envoyée par le site en champs de quête, en refusant tout ce qui sort du cadre. */
 export function questFields(face: Face, origins: string[]): Row {
   const titre = typeof face.titre === "string" ? face.titre.trim() : "";
@@ -80,8 +110,8 @@ export async function updateQuest(admin: any, guildId: string, projetId: string,
   const { data: quest } = await admin.from("quests").select("id, guild_id, is_deleted").eq("id", questId).maybeSingle();
   if (!quest || quest.is_deleted) throw new SyncError("gone", "quête supprimée", 410);
   if (quest.guild_id !== guildId) throw new SyncError("forbidden", "quête hors de la guilde", 403);
-  // Une face publique remet la quête en ligne si elle avait été retirée.
-  const republish = fields.public_visibility === "public" ? { is_draft: false } : {};
+  // Une face publique, ou réservée aux membres, remet la quête en ligne si elle avait été retirée.
+  const republish = fields.public_visibility === "public" || fields.access_mode === "members" ? { is_draft: false } : {};
   const { error } = await admin.from("quests").update({ ...fields, ...republish, updated_at: new Date().toISOString() }).eq("id", questId);
   if (error) throw new SyncError("db", error.message ?? "update failed", 500);
   await admin.from("quest_external_links").update({ updated_at: new Date().toISOString() })

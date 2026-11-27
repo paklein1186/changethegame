@@ -4875,26 +4875,23 @@
   },
   "questAccess": {
     "whoSees": "Qui voit cette quête",
-    "whoSeesHint": "Ses admins, ses participants et les personnes à qui vous donnez un accès voient toujours tout.",
+    "whoSeesHint": "L'équipe de la quête (participants, accès personnels) et ses admins voient toujours tout.",
     "mode": {
       "inherit": "Comme la guilde",
       "public": "Transparence complète",
       "members": "Membres de la guilde",
-      "selected": "Formules ou rôles choisis",
       "hidden": "Cachée"
     },
     "modeHint": {
       "public": "Tout le monde voit tout, même sans compte.",
-      "members": "Les membres en règle (cotisation à jour) voient tout. Hors guilde et simples abonnés : rien.",
-      "membersNoGuild": "Les membres de l'organisation porteuse voient tout. Les autres : rien.",
-      "selected": "Les membres qui ont ces formules ou ces rôles voient tout. Les autres membres en règle voient la fiche et peuvent demander l'accès. Hors guilde : rien.",
+      "members": "À partir du niveau choisi, les membres voient la fiche (titre, résumé, enjeux) et peuvent demander à rejoindre. Le contenu est à l'équipe de la quête. Hors guilde et simples suiveurs : rien.",
+      "membersNoGuild": "Les membres de l'organisation porteuse voient la fiche ; le contenu est à l'équipe de la quête.",
       "hidden": "Invisible pour tous, sauf ses admins et les superadmins."
     },
     "inheritCurrently": "Actuellement : {{label}}",
     "noMembranes": "Cette guilde n'a encore ni formule d'adhésion ni rôle.",
     "plans": "Formules d'adhésion",
     "roles": "Rôles de la guilde",
-    "pickOne": "Choisissez au moins une formule ou un rôle.",
     "save": "Enregistrer",
     "saved": "Accès enregistré.",
     "saveFailed": "Impossible d'enregistrer",
@@ -4913,12 +4910,12 @@
     "revoked": "Accès retiré : la personne est prévenue.",
     "addPerson": "Donner l'accès à quelqu'un (nom)…",
     "give": "Donner l'accès",
-    "teaserExplain": "Le contenu de cette quête (besoins, discussions, fichiers, membres) est réservé à certains membres de la guilde. Demandez l'accès : ses admins sont prévenus et peuvent vous l'accorder.",
+    "teaserExplain": "Le contenu de cette quête (besoins, discussions, fichiers, membres) est réservé à son équipe. Demandez à la rejoindre : ses admins sont prévenus et peuvent vous donner l'accès.",
     "pending": "Demande envoyée, en attente d'une réponse",
     "editRequest": "Modifier ma demande",
     "cancelRequest": "Annuler",
-    "request": "Demander l'accès",
-    "requestTitle": "Demander l'accès",
+    "request": "Demander à rejoindre",
+    "requestTitle": "Demander à rejoindre",
     "requestDesc": "Dites en quelques mots pourquoi « {{quest}} » vous intéresse. Les admins de la quête sont prévenus.",
     "requestPlaceholder": "Ce que vous aimeriez y apporter ou y suivre…",
     "cancel": "Annuler",
@@ -4938,6 +4935,21 @@
     },
     "remove": "Retirer",
     "addEntity": "Ajouter une guilde ou une organisation (nom)…",
-    "add": "Ajouter"
+    "add": "Ajouter",
+    "minLevel": "Fiche visible à partir de",
+    "level": {
+      "N2": "N2 · adhésion active",
+      "N3": "N3 · rôles ou formules de membrane"
+    },
+    "levelHint": {
+      "N2": "Toute personne dont la cotisation est en ordre.",
+      "N3": "Dans cette guilde : {{list}}.",
+      "N3empty": "La table N3 de la guilde est vide : seuls l'équipe et les admins verront la quête."
+    },
+    "until": "jusqu'au {{date}}",
+    "untilLabel": "Jusqu'au (facultatif)",
+    "n3Title": "Niveau N3 de la guilde",
+    "n3Hint": "Les rôles et formules qui forment le niveau N3 (membranes). Toutes les quêtes réglées sur N3 suivent cette table.",
+    "saveN3": "Enregistrer le niveau N3"
   }
 }

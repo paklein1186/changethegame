@@ -9,9 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { AccessModePicker, type AccessValue } from "./AccessModePicker";
-import { useMyQuestAccess, type AccessMode } from "./questAccess";
+import { useGuildN3, useMyQuestAccess, type AccessMode, type MinLevel } from "./questAccess";
 
-interface Person { id: string; user_id: string; name: string | null; avatar_url: string | null; message?: string | null; note?: string | null; created_at: string }
+interface Person { id: string; user_id: string; name: string | null; avatar_url: string | null; message?: string | null; note?: string | null; created_at: string; expires_at?: string | null }
 
 /**
  * Onglet « Accès » des paramètres d'une quête : qui la voit (membranes de la guilde), demandes d'accès en
@@ -26,24 +26,27 @@ export function QuestAccessSettings({ questId }: { questId: string }) {
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  // Fin facultative d'un accès donné (jour inclus) ; vide : sans fin.
+  const [until, setUntil] = useState("");
+  const expiresAt = until ? new Date(`${until}T23:59:59`).toISOString() : null;
 
   const guildId = access?.effective?.guild_id ?? null;
   const { data: guildDefault } = useQuery({
     queryKey: ["guild-quest-access-default", guildId],
     enabled: !!guildId,
     queryFn: async () => {
-      const { data } = await (supabase as any).from("guilds").select("name, quest_access_default").eq("id", guildId).maybeSingle();
-      return data as { name: string; quest_access_default: AccessMode } | null;
+      const { data } = await (supabase as any).from("guilds").select("name, quest_access_default, quest_access_min_level").eq("id", guildId).maybeSingle();
+      return data as { name: string; quest_access_default: AccessMode; quest_access_min_level: MinLevel } | null;
     },
   });
 
+  const { summary: n3Summary } = useGuildN3(guildId);
+
   useEffect(() => {
     if (!access || value) return;
-    const mode = (access.access_mode ?? "inherit") as AccessMode;
     setValue({
-      mode,
-      plans: mode === "inherit" ? [] : access.effective?.plans ?? [],
-      roleIds: mode === "inherit" ? [] : access.effective?.role_ids ?? [],
+      mode: (access.access_mode ?? "inherit") as AccessMode,
+      minLevel: (access.effective?.min_level ?? "N2") as MinLevel,
     });
   }, [access, value]);
 
@@ -74,13 +77,9 @@ export function QuestAccessSettings({ questId }: { questId: string }) {
 
   const save = async () => {
     if (!value) return;
-    if (value.mode === "selected" && !value.plans.length && !value.roleIds.length) {
-      toast.error(t("questAccess.pickOne"));
-      return;
-    }
     setSaving(true);
     const { error } = await (supabase as any).rpc("set_quest_access", {
-      p_quest_id: questId, p_mode: value.mode, p_plans: value.plans, p_role_ids: value.roleIds,
+      p_quest_id: questId, p_mode: value.mode, p_min_level: value.minLevel,
     });
     setSaving(false);
     if (error) { toast.error(t("questAccess.saveFailed"), { description: error.message }); return; }
@@ -122,8 +121,9 @@ export function QuestAccessSettings({ questId }: { questId: string }) {
             guildId={guildId}
             allowInherit
             inheritedLabel={guildId && guildDefault
-              ? `${t(`questAccess.mode.${guildDefault.quest_access_default}`)} (${guildDefault.name})`
+              ? `${t(`questAccess.mode.${guildDefault.quest_access_default}`)}${guildDefault.quest_access_default === "members" ? ` ${guildDefault.quest_access_min_level}` : ""} (${guildDefault.name})`
               : t("questAccess.mode.public")}
+            n3Summary={n3Summary}
             disabled={saving}
           />
         )}
@@ -146,7 +146,7 @@ export function QuestAccessSettings({ questId }: { questId: string }) {
                     {r.message && <p className="text-xs text-muted-foreground">« {r.message} »</p>}
                   </div>
                   <div className="flex gap-1.5 shrink-0">
-                    <Button size="sm" disabled={!!busy} onClick={() => run(r.id, () => (supabase as any).rpc("grant_quest_access", { p_quest_id: questId, p_user_id: r.user_id, p_note: null }), t("questAccess.granted"))}>
+                    <Button size="sm" disabled={!!busy} onClick={() => run(r.id, () => (supabase as any).rpc("grant_quest_access", { p_quest_id: questId, p_user_id: r.user_id, p_note: null, p_expires_at: expiresAt }), t("questAccess.granted"))}>
                       {busy === r.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5 mr-1" />}{t("questAccess.accept")}
                     </Button>
                     <Button size="sm" variant="ghost" disabled={!!busy} aria-label={t("questAccess.decline")}
@@ -171,7 +171,10 @@ export function QuestAccessSettings({ questId }: { questId: string }) {
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate">{g.name}</p>
-                    <p className="text-xs text-muted-foreground">{t("questAccess.since", { date: new Date(g.created_at).toLocaleDateString() })}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("questAccess.since", { date: new Date(g.created_at).toLocaleDateString() })}
+                      {g.expires_at && ` · ${t("questAccess.until", { date: new Date(g.expires_at).toLocaleDateString() })}`}
+                    </p>
                   </div>
                   <Button size="sm" variant="outline" disabled={!!busy}
                     onClick={() => run(g.id, () => (supabase as any).rpc("revoke_quest_access", { p_grant_id: g.id }), t("questAccess.revoked"))}>
@@ -182,9 +185,15 @@ export function QuestAccessSettings({ questId }: { questId: string }) {
             ))}
           </ul>
         )}
-        <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("questAccess.addPerson")} className="pl-8" />
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("questAccess.addPerson")} className="pl-8" />
+          </div>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground shrink-0">
+            {t("questAccess.untilLabel")}
+            <Input type="date" value={until} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setUntil(e.target.value)} className="w-40" />
+          </label>
         </div>
         {search.trim().length >= 2 && (
           <ul className="divide-y divide-border">
@@ -193,7 +202,7 @@ export function QuestAccessSettings({ questId }: { questId: string }) {
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm truncate">{p.name}</p>
                   <Button size="sm" variant="secondary" disabled={!!busy}
-                    onClick={() => run(p.user_id, () => (supabase as any).rpc("grant_quest_access", { p_quest_id: questId, p_user_id: p.user_id, p_note: null }), t("questAccess.granted")).then(() => setSearch(""))}>
+                    onClick={() => run(p.user_id, () => (supabase as any).rpc("grant_quest_access", { p_quest_id: questId, p_user_id: p.user_id, p_note: null, p_expires_at: expiresAt }), t("questAccess.granted")).then(() => setSearch(""))}>
                     {busy === p.user_id ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <UserPlus className="h-3.5 w-3.5 mr-1" />}
                     {t("questAccess.give")}
                   </Button>

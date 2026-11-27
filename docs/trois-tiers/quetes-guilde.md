@@ -22,9 +22,12 @@ Authorization: Bearer <jeton de la personne>   (facultatif)
   brouillons et quêtes privées compris, avec leurs réglages de visibilité et d'accès (`access_mode`). Les admins des
   entités qui administrent la guilde sont admins aussi.
 
-Qui voit une quête se règle sur changethegame : Paramètres de la guilde → « Quest Access & Co-admins » (réglage par
-défaut : transparence complète, membres en règle, formules ou rôles choisis — ex. accompagnants —, cachée), et
-Paramètres de la quête → onglet **Access** pour s'en écarter, voir les demandes et donner des accès personnels.
+Qui voit une quête suit le contrat commun avec le site (troistiers-site, `docs/quetes/visibilite.md`) :
+`public` (tout le monde voit tout) ou `members` à partir d'un niveau, **N2** (adhésion active) ou **N3** (rôles ou
+formules de membrane, selon la table N3 de la guilde) : ce niveau voit la **fiche**, le **contenu** reste à l'équipe
+de la quête (participants, accès personnels) et à ses admins. Réglages sur changethegame : Paramètres de la guilde →
+« Quest Access & Co-admins » (réglage par défaut et table N3), Paramètres de la quête → onglet **Access** (s'écarter
+du défaut, demandes, accès personnels avec date de fin facultative).
 
 Pour qu'une quête apparaisse sur le site : Paramètres de la quête → onglet Web → **Public**.
 
@@ -53,3 +56,18 @@ Trois-Tiers × ChangeTheGame) :
 | `SITE_SYNC_KEY` | clé longue (32 caractères au moins), la même que `CTG_SITE_SYNC_KEY` dans le `.env` du site |
 | `SITE_SYNC_GUILD_ID` | `4964c699-4684-43a9-b508-cee21c77e24e` |
 | `SITE_SYNC_ORIGINS` | `https://troistiers.space` (et `http://localhost:4321` pour les essais) |
+
+## Publication et accès propres (`guild-quest-sync`, `guild-member-profile`)
+
+- `guild-quest-sync` accepte `"visibilite": {"mode": "public"}` ou `{"mode": "membres", "niveau_minimum": "N2" | "N3"}`.
+  Chaque réponse porte `visibilite_appliquee_par_la_base`, **mesuré** dans la base à chaque appel (la politique
+  restrictive sur les quêtes existe et est active). Tant qu'il est faux, `membres` est refusé (422
+  `visibility_not_enforced`). `{"action": "status"}` lit cet état sans rien publier.
+- `guild-member-profile` renvoie `acces_quetes` : `[{quest_id, niveau, accorde_par, accorde_le, expire_le}]` pour les
+  quêtes reliées à un projet (`quest_external_links`, source `trois-tiers` par défaut, `?source=` sinon).
+  `lecture` = accès personnel, `equipe` = participant, `admin` = co-admin de la quête (ADMIN, OWNER, HOST, CO_HOST) ;
+  les admins hérités de la guilde n'y figurent pas. `accorde_par` est vide pour l'équipe (non enregistré).
+  `null` si la base n'est pas encore à jour, `[]` si aucun accès.
+- Test du contrat (quatre personnes lisent la même quête dans la base) : `supabase/tests/quest_access_levels.sql`,
+  dans une transaction annulée :
+  `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/quest_access_levels.sql`.
