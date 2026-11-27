@@ -4,6 +4,8 @@
 
 - Work lists use compact company memberships and one-minute query freshness; load drafts only when opened so inactive drafts do not compete with visible lists.
 
+- Home guild shortcuts come from `user_guild_favorites` (max 3, DB trigger); unpinning never unfollows, because heavy users follow many guilds and removing a shortcut must not cost a follow.
+
 - Derive the guild header's membership-aware follow display through `guildFollowState`; keep this presentation rule tested without changing stored follows.
 
 ## Edge functions

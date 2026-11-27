@@ -11145,6 +11145,32 @@ export type Database = {
         }
         Relationships: []
       }
+      user_guild_favorites: {
+        Row: {
+          created_at: string
+          guild_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          guild_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          guild_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_guild_favorites_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_guild_memberships: {
         Row: {
           amount_paid_cents: number | null

@@ -73,3 +73,21 @@ describe("home onboarding recommendations", () => {
     expect(remainingGuildFavorites(8)).toBe(0);
   });
 });
+
+import { canAddGuildFavorite, sortOwnGuildOptions } from "@/lib/homeOnboarding";
+
+describe("guild favorites picker", () => {
+  it("allows at most three favorites", () => {
+    expect(canAddGuildFavorite(2)).toBe(true);
+    expect(canAddGuildFavorite(3)).toBe(false);
+  });
+  it("lists member guilds before followed ones and filters by search", () => {
+    const list = [
+      { id: "a", name: "Zeta", isMember: true },
+      { id: "b", name: "Alpha", isMember: false },
+      { id: "c", name: "Beta", isMember: true },
+    ];
+    expect(sortOwnGuildOptions(list).map((g) => g.id)).toEqual(["c", "a", "b"]);
+    expect(sortOwnGuildOptions(list, "alp").map((g) => g.id)).toEqual(["b"]);
+  });
+});

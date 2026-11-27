@@ -81,3 +81,21 @@ export function rankHomeGuilds<T extends GuildRecommendation>(
 export function remainingGuildFavorites(followedCount: number): number {
   return Math.max(0, HOME_GUILD_FAVORITE_TARGET - Math.max(0, followedCount));
 }
+
+export interface OwnGuildOption {
+  id: string;
+  name: string;
+  isMember: boolean;
+}
+
+/** Guilds a person can pin: members first, then followed, alphabetical, filtered by search. */
+export function sortOwnGuildOptions<T extends OwnGuildOption>(guilds: T[], search = ""): T[] {
+  const query = normalized(search);
+  return guilds
+    .filter((guild) => !query || normalized(guild.name).includes(query))
+    .sort((a, b) => Number(b.isMember) - Number(a.isMember) || a.name.localeCompare(b.name));
+}
+
+export function canAddGuildFavorite(favoriteCount: number): boolean {
+  return favoriteCount < HOME_GUILD_FAVORITE_TARGET;
+}

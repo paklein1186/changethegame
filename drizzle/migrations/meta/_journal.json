@@ -344,6 +344,13 @@
       "when": 1795817493076,
       "tag": "0048_plan_categories_follow_plans",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1795819968464,
+      "tag": "0049_user_guild_favorites",
+      "breakpoints": true
     }
   ]
 }
