@@ -122,9 +122,11 @@ export default function OpportunityMap() {
     return { nodes: [...nodes.values()], links, unlocated: Math.max(0, data.length - links.length) };
   }, [data]);
 
-  const dirLinks = direction === "all" ? links : links.filter((l) => l.direction === direction);
-  const dirKeys = new Set(dirLinks.flatMap((l) => [l.from.key, l.to.key]));
-  const visibleNodes = nodes.filter((node) => layers[node.kind] && (direction === "all" || dirKeys.has(node.key)));
+  const dirLinks = useMemo(() => direction === "all" ? links : links.filter((l) => l.direction === direction), [links, direction]);
+  const visibleNodes = useMemo(() => {
+    const dirKeys = new Set(dirLinks.flatMap((l) => [l.from.key, l.to.key]));
+    return nodes.filter((node) => layers[node.kind] && (direction === "all" || dirKeys.has(node.key)));
+  }, [nodes, layers, direction, dirLinks]);
   const visibleKeys = new Set(visibleNodes.map((node) => node.key));
   const visibleLinks = dirLinks.filter((link) => visibleKeys.has(link.from.key) && visibleKeys.has(link.to.key));
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
