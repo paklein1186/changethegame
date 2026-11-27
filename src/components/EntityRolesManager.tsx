@@ -8,6 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useEntityRoles } from "@/hooks/useEntityRoles";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { duesState, type DuesState } from "@/lib/guildDues";
 
 const PRESET_COLORS = [
   "#6366f1", "#ec4899", "#f59e0b", "#10b981", "#3b82f6",
@@ -36,6 +40,22 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
+
+  // État de cotisation de chaque membre (guildes seulement), lu dans ses formules.
+  const { data: duesByUser } = useQuery({
+    queryKey: ["guild-member-dues", entityId],
+    enabled: entityType === "guild",
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("user_guild_plans")
+        .select("user_id, status, current_period_end, membership_expires_at").eq("guild_id", entityId);
+      const byUser = new Map<string, any[]>();
+      for (const p of data ?? []) byUser.set(p.user_id, [...(byUser.get(p.user_id) ?? []), p]);
+      return byUser;
+    },
+  });
+  const duesFor = (userId: string): DuesState | null =>
+    entityType === "guild" ? duesState(duesByUser?.get(userId) ?? []) : null;
+  const fmt = (d: string) => new Date(d).toLocaleDateString();
 
   useEffect(() => {
     ensureSourceRole();
@@ -142,6 +162,7 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
           <div className="space-y-3">
             {members.map((m) => {
               const userRoles = getRolesForUser(m.user_id);
+              const dues = duesFor(m.user_id);
               return (
                 <div key={m.id} className="p-3 rounded-lg border border-border bg-card">
                   <div className="flex items-center gap-2 mb-2">
@@ -150,10 +171,17 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
                       <AvatarFallback className="text-xs">{m.user?.name?.[0]}</AvatarFallback>
                     </Avatar>
                     <span className="text-sm font-medium">{m.user?.name || t("uiEntityRolesManager.unknown")}</span>
+                    {dues && (
+                      <span className={`text-[11px] ${dues.ok ? "text-emerald-400" : "text-muted-foreground"}`}>
+                        {dues.kind === "until" ? t("roleDues.until", { date: fmt(dues.date!) })
+                          : dues.kind === "lapsed" ? t("roleDues.lapsed", { date: fmt(dues.date!) })
+                          : dues.kind === "open" ? t("roleDues.until", { date: "∞" }) : t("roleDues.none")}
+                      </span>
+                    )}
                     <div className="flex flex-wrap gap-1 ml-auto">
                       {userRoles.map((r) => (
-                        <Badge key={r.id} className="text-[10px] h-5 text-white border-0" style={{ backgroundColor: r.color }}>
-                          {r.name}
+                        <Badge key={r.id} className={`text-[10px] h-5 text-white border-0 ${(r as any).requires_dues && dues && !dues.ok ? "opacity-50" : ""}`} style={{ backgroundColor: r.color }}>
+                          {r.name}{(r as any).requires_dues && dues && !dues.ok ? ` · ${t("roleDues.suspended")}` : ""}
                         </Badge>
                       ))}
                     </div>
@@ -161,13 +189,20 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
                   <div className="flex flex-wrap gap-2">
                     {roles.map((role) => {
                       const hasRole = userRoles.some((r) => r.id === role.id);
-                      return (
-                        <label key={role.id} className="flex items-center gap-1.5 cursor-pointer text-xs">
+                      const blocked = !hasRole && !!(role as any).requires_dues && !!dues && !dues.ok;
+                      const item = (
+                        <label key={role.id} className={`flex items-center gap-1.5 text-xs ${blocked ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}`}>
                           <Checkbox
                             checked={hasRole}
+                            disabled={blocked}
                             onCheckedChange={(checked) => {
-                              if (checked) assignRole(role.id, m.user_id);
-                              else removeRoleAssignment(role.id, m.user_id);
+                              if (!checked) { removeRoleAssignment(role.id, m.user_id); return; }
+                              if ((role as any).code === "actif") {
+                                // « Actif » : le temps d'une mission, date de fin obligatoire.
+                                const d = window.prompt(t("roleDues.actifEnd"), "");
+                                if (!d || Number.isNaN(Date.parse(d))) return;
+                                assignRole(role.id, m.user_id, new Date(d).toISOString());
+                              } else assignRole(role.id, m.user_id);
                             }}
                           />
                           <span className="inline-flex items-center gap-1">
@@ -176,6 +211,12 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
                           </span>
                         </label>
                       );
+                      return blocked ? (
+                        <Tooltip key={role.id}>
+                          <TooltipTrigger asChild><span>{item}</span></TooltipTrigger>
+                          <TooltipContent>{t("roleDues.required")}</TooltipContent>
+                        </Tooltip>
+                      ) : item;
                     })}
                   </div>
                 </div>

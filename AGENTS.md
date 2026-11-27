@@ -30,3 +30,8 @@
 
 - A person's guild level is `guild_member_level` (highest of admin/creator 5, unexpired guild-wide roles, active plans, member 2, follower 1); quest access and N2/N3 helpers read only it, never `guilds.quest_access_levels` (deprecated).
 - Plans are cumulative in `user_guild_plans` (one row per plan); `user_guild_memberships` is a DB-maintained summary of the highest active plan. Server code writes plan state to `user_guild_plans` (webhooks, reminders); database triggers keep the two in sync, so never compute membership status from the summary alone.
+
+## Guild role catalogue
+
+- Guild roles follow troistiers.space badge codes (catalogue in `ensure_guild_default_roles`); `entity_roles.requires_dues` categories count only while `guild_dues_in_order` is true, and the DB refuses manual assignment otherwise: troistiers.space mirrors these badges, so access must match paid-up status.
+- Plan categories (`guild_membership_plans.badge_codes`) are synced by the `user_guild_plans` trigger; never expire or grant them by hand in functions.

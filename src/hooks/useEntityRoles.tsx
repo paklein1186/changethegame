@@ -117,12 +117,14 @@ export function useEntityRoles(entityType: string, entityId: string | undefined)
     toast({ title: t("uiUseEntityRoles.roleDeleted") });
   };
 
-  const assignRole = async (roleId: string, userId: string) => {
+  const assignRole = async (roleId: string, userId: string, expiresAt?: string | null) => {
     const { error } = await supabase.from("entity_member_roles").insert({
       entity_role_id: roleId,
       user_id: userId,
+      ...(expiresAt ? { expires_at: expiresAt } : {}),
     } as any);
-    if (error && error.code !== "23505") { toast({ title: t("uiUseEntityRoles.failedToAssignRole"), variant: "destructive" }); return; }
+    // La base refuse une catégorie à cotisation requise sans cotisation en ordre : on montre son message.
+    if (error && error.code !== "23505") { toast({ title: t("uiUseEntityRoles.failedToAssignRole"), description: error.code === "23514" ? error.message : undefined, variant: "destructive" }); return; }
     invalidate();
 
     // Fire-and-forget: notify the user about the new role

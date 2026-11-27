@@ -13753,7 +13753,8 @@
     "symbolic": "Symbolique",
     "levelFor": "Niveau donné par {{name}}",
     "whoSees": "Une quête réglée sur {{level}} : sa fiche est visible à partir de {{level}} (ici : {{list}}, plus les admins) ; son contenu reste réservé à l'équipe de la quête et aux admins. Chacun a le niveau le plus haut de ses rôles et formules.",
-    "nobodyExtra": "aucun rôle ni formule"
+    "nobodyExtra": "aucun rôle ni formule",
+    "requiresDues": "cotisation requise"
   },
   "matchmakerHub": {
     "target": "Chercher pour",
@@ -13789,5 +13790,13 @@
     "validated": "Mission validée : la quête est publiée pour les membres.",
     "keptPrivate": "Mission gardée privée : elle reste en brouillon.",
     "error": "Décision impossible"
+  },
+  "roleDues": {
+    "until": "En ordre jusqu’au {{date}}",
+    "lapsed": "Échue le {{date}}",
+    "none": "Aucune cotisation",
+    "required": "Cotisation requise",
+    "suspended": "suspendue",
+    "actifEnd": "Date de fin de la mission (AAAA-MM-JJ)"
   }
 }

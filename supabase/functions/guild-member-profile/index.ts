@@ -52,7 +52,7 @@ serve(async (req) => {
       admin.from("profiles").select("name").eq("user_id", user.id).maybeSingle(),
       admin
         .from("entity_member_roles")
-        .select("expires_at, scope_type, scope_id, entity_roles!inner(code, level, entity_type, entity_id)")
+        .select("expires_at, scope_type, scope_id, entity_roles!inner(code, level, requires_dues, entity_type, entity_id)")
         .eq("user_id", user.id)
         .eq("entity_roles.entity_type", "guild")
         .eq("entity_roles.entity_id", guildId),
@@ -90,19 +90,25 @@ serve(async (req) => {
     const isAdmin = guild.created_by_user_id === user.id || roster?.role === "ADMIN" ||
       (await admin.rpc("is_guild_admin", { _guild_id: guildId, _user_id: user.id })).data === true;
 
+    // Une catégorie à cotisation requise ne compte que si la cotisation est en ordre.
+    const { data: duesOk } = await admin.rpc("guild_dues_in_order", { _guild_id: guildId, _user_id: user.id });
+    const counts = (r: any) => !r.entity_roles?.requires_dues || duesOk === true;
+
     const badges = ((roles as any[]) ?? [])
       .filter((r) => r.entity_roles?.code)
       .filter((r) => !r.expires_at || new Date(r.expires_at).getTime() > now)
+      .filter(counts)
       .map((r) => ({
         code: r.entity_roles.code as string,
         expires_at: r.expires_at as string | null,
         scope: r.scope_type && r.scope_id ? { type: r.scope_type as string, id: r.scope_id as string } : null,
       }));
 
-    // Rôles à code non expirés (fondateur, Source, actif, effectif…), recopiés par le site.
+    // Rôles à code non expirés (Source, catégories du catalogue…) qui comptent, recopiés par le site.
     const rolesOut = ((roles as any[]) ?? [])
       .filter((r) => r.entity_roles?.code)
       .filter((r) => !r.expires_at || new Date(r.expires_at).getTime() > now)
+      .filter(counts)
       .map((r) => ({
         code: r.entity_roles.code as string,
         level: (r.entity_roles.level as number | null) ?? null,

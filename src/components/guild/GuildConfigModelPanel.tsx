@@ -11,9 +11,9 @@ type Model = "open" | "membranes" | "cooperative" | "custom";
 const MODELS: Model[] = ["open", "membranes", "cooperative", "custom"];
 // Radix Select refuse une valeur vide : « aucun niveau » a sa propre valeur.
 const NONE = "none";
-const SYMBOLIC = new Set(["fondateur"]);
+const SYMBOLIC = new Set(["source"]);
 
-interface RoleRow { id: string; code: string | null; name: string; level: number | null; is_default: boolean }
+interface RoleRow { id: string; code: string | null; name: string; level: number | null; is_default: boolean; requires_dues: boolean }
 interface PlanRow { id: string; code: string; label: string; level: number | null }
 
 /**
@@ -34,7 +34,7 @@ export function GuildConfigModelPanel({ guild }: { guild: any }) {
     queryKey: ["guild-config-levels", guild.id],
     queryFn: async () => {
       const [roles, plans] = await Promise.all([
-        (supabase as any).from("entity_roles").select("id, code, name, level, is_default, sort_order")
+        (supabase as any).from("entity_roles").select("id, code, name, level, is_default, requires_dues, sort_order")
           .eq("entity_type", "guild").eq("entity_id", guild.id).order("sort_order"),
         (supabase as any).from("guild_membership_plans").select("id, code, label, level, sort_order")
           .eq("guild_id", guild.id).order("sort_order"),
@@ -73,6 +73,14 @@ export function GuildConfigModelPanel({ guild }: { guild: any }) {
     setBusyId(id);
     const level = v === NONE ? null : Number(v);
     const { error } = await (supabase as any).from(table).update({ level }).eq("id", id);
+    setBusyId(null);
+    if (error) { toast.error(t("guildModel.levelFailed"), { description: error.message }); return; }
+    refreshAll();
+  };
+
+  const setDues = async (id: string, v: boolean) => {
+    setBusyId(id);
+    const { error } = await (supabase as any).from("entity_roles").update({ requires_dues: v }).eq("id", id);
     setBusyId(null);
     if (error) { toast.error(t("guildModel.levelFailed"), { description: error.message }); return; }
     refreshAll();
@@ -119,6 +127,13 @@ export function GuildConfigModelPanel({ guild }: { guild: any }) {
           {roles.map((r) => (
             <div key={r.id} className="flex items-center justify-between gap-2 text-sm">
               <span className="min-w-0 truncate">{r.name}</span>
+              {!(r.is_default || (r.code && SYMBOLIC.has(r.code))) && (
+                <label className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0 ml-auto">
+                  <input type="checkbox" checked={r.requires_dues} disabled={!!r.code || busyId === r.id}
+                    onChange={(e) => setDues(r.id, e.target.checked)} />
+                  {t("guildModel.requiresDues")}
+                </label>
+              )}
               {r.is_default || (r.code && SYMBOLIC.has(r.code))
                 ? <span className="text-xs text-muted-foreground">{t("guildModel.symbolic")}</span>
                 : levelPicker("entity_roles", r.id, r.level, r.name)}

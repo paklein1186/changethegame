@@ -3,11 +3,15 @@
 // Idempotent : rejouer la même activation ne change rien de plus.
 
 const BADGE_LABELS: Record<string, string> = {
-  adherent: "Adhérent",
+  observateur: "Observateur",
+  citoyen_soutenant: "Citoyen soutenant",
+  membre_sympathisant: "Membre sympathisant",
+  membre_lieu: "Membre lieu",
+  accompagnant: "Accompagnant",
+  allie: "Allié",
+  partenaire_territorial: "Partenaire territorial",
   actif: "Actif",
   effectif: "Effectif",
-  equipe: "Équipe",
-  administrateur: "Administrateur",
 };
 
 /** Fin de période d'un abonnement (champ déplacé sur les lignes dans les versions récentes de l'API). */

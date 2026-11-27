@@ -3987,6 +3987,45 @@ export type Database = {
           },
         ]
       }
+      entity_member_roles_archive: {
+        Row: {
+          archive_id: string
+          archive_reason: string | null
+          archived_at: string
+          created_at: string | null
+          entity_role_id: string | null
+          expires_at: string | null
+          id: string
+          scope_id: string | null
+          scope_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          archive_id?: string
+          archive_reason?: string | null
+          archived_at?: string
+          created_at?: string | null
+          entity_role_id?: string | null
+          expires_at?: string | null
+          id: string
+          scope_id?: string | null
+          scope_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          archive_id?: string
+          archive_reason?: string | null
+          archived_at?: string
+          created_at?: string | null
+          entity_role_id?: string | null
+          expires_at?: string | null
+          id?: string
+          scope_id?: string | null
+          scope_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       entity_roles: {
         Row: {
           code: string | null
@@ -3998,6 +4037,7 @@ export type Database = {
           is_default: boolean
           level: number | null
           name: string
+          requires_dues: boolean
           sort_order: number
         }
         Insert: {
@@ -4010,6 +4050,7 @@ export type Database = {
           is_default?: boolean
           level?: number | null
           name: string
+          requires_dues?: boolean
           sort_order?: number
         }
         Update: {
@@ -4022,7 +4063,59 @@ export type Database = {
           is_default?: boolean
           level?: number | null
           name?: string
+          requires_dues?: boolean
           sort_order?: number
+        }
+        Relationships: []
+      }
+      entity_roles_archive: {
+        Row: {
+          archive_id: string
+          archive_reason: string | null
+          archived_at: string
+          code: string | null
+          color: string | null
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          is_default: boolean | null
+          level: number | null
+          name: string | null
+          requires_dues: boolean | null
+          sort_order: number | null
+        }
+        Insert: {
+          archive_id?: string
+          archive_reason?: string | null
+          archived_at?: string
+          code?: string | null
+          color?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id: string
+          is_default?: boolean | null
+          level?: number | null
+          name?: string | null
+          requires_dues?: boolean | null
+          sort_order?: number | null
+        }
+        Update: {
+          archive_id?: string
+          archive_reason?: string | null
+          archived_at?: string
+          code?: string | null
+          color?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          is_default?: boolean | null
+          level?: number | null
+          name?: string | null
+          requires_dues?: boolean | null
+          sort_order?: number | null
         }
         Relationships: []
       }
@@ -12657,6 +12750,10 @@ export type Database = {
           p_role_ids: string[]
           p_user_id: string
         }
+        Returns: boolean
+      }
+      guild_dues_in_order: {
+        Args: { _guild_id: string; _user_id: string }
         Returns: boolean
       }
       guild_member_level: {

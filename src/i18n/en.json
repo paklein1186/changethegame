@@ -13753,7 +13753,8 @@
     "symbolic": "Symbolic",
     "levelFor": "Level given by {{name}}",
     "whoSees": "A quest set to {{level}}: its card is visible from {{level}} up (here: {{list}}, plus admins); its content stays with the quest team and admins. Everyone gets the highest level among their roles and plans.",
-    "nobodyExtra": "no role or plan"
+    "nobodyExtra": "no role or plan",
+    "requiresDues": "dues required"
   },
   "matchmakerHub": {
     "target": "Search for",
@@ -13789,5 +13790,13 @@
     "validated": "Mission validated: the quest is published to members.",
     "keptPrivate": "Mission kept private: it stays a draft.",
     "error": "Could not decide"
+  },
+  "roleDues": {
+    "until": "Paid up until {{date}}",
+    "lapsed": "Lapsed on {{date}}",
+    "none": "No dues",
+    "required": "Dues required",
+    "suspended": "suspended",
+    "actifEnd": "Mission end date (YYYY-MM-DD)"
   }
 }

@@ -13,9 +13,9 @@ function base() {
     {
       guilds: [{ id: GUILD, name: "Trois-Tiers", stripe_account_ref: "GUILD", created_by_user_id: "user-admin" }],
       guild_membership_plans: [
-        { guild_id: GUILD, code: "partenaire_beneficiaire", badge_codes: ["adherent"], small_place_plan_code: "lieu_moins_20", large_place_plan_code: "lieu_20_et_plus" },
-        { guild_id: GUILD, code: "lieu_moins_20", badge_codes: ["adherent"] },
-        { guild_id: GUILD, code: "lieu_20_et_plus", badge_codes: ["adherent"] },
+        { guild_id: GUILD, code: "partenaire_beneficiaire", badge_codes: ["membre_lieu"], small_place_plan_code: "lieu_moins_20", large_place_plan_code: "lieu_20_et_plus" },
+        { guild_id: GUILD, code: "lieu_moins_20", badge_codes: ["membre_lieu"] },
+        { guild_id: GUILD, code: "lieu_20_et_plus", badge_codes: ["membre_lieu"] },
       ],
       entity_roles: [],
       entity_member_roles: [],
