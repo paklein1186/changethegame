@@ -12352,7 +12352,9 @@
     "free": "Gratuit",
     "explore": "Explorer",
     "pods2": "Pods (",
-    "organizations2": "Organisations ("
+    "organizations2": "Organisations (",
+    "pulseReminder": "Pulse peut compléter votre titre, votre bio et vos sujets à partir de votre LinkedIn, d'un CV ou de quelques lignes. Vous validez chaque suggestion.",
+    "enrichWithPulse": "Enrichir avec Pulse"
   },
   "uiWebhookSpecPage": {
     "enterAWebhookUrl": "Saisissez l'adresse d'un webhook",

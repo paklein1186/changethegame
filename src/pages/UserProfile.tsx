@@ -1,4 +1,5 @@
 import i18n from "@/i18n/config";
+import { isProfileSparse } from "@/lib/homeOnboarding";
 import { useParams, Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useMemo } from "react";
@@ -642,15 +643,15 @@ function UserProfileInner() {
             )}
 
             {/* Enrichment CTA for own profile with no topics */}
-            {isOwnProfile && topics.length === 0 && (
+            {isOwnProfile && isProfileSparse({ headline: profile.headline, bio: profile.bio, topicCount: topics.length }) && (
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 flex items-center gap-3">
                 <Sparkles className="h-5 w-5 text-primary shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">{t("uiUserProfile.yourProfileLooksABitEmpty")}</p>
-                  <p className="text-xs text-muted-foreground">{t("uiUserProfile.addTopicsHousesAndTerritoriesTo")}</p>
+                  <p className="text-xs text-muted-foreground">{t("uiUserProfile.pulseReminder")}</p>
                 </div>
                 <Button size="sm" variant="default" asChild>
-                  <Link to="/profile/enrich">{t("uiUserProfile.enrichProfile")}</Link>
+                  <Link to="/profile/enrich">{t("uiUserProfile.enrichWithPulse")}</Link>
                 </Button>
               </div>
             )}

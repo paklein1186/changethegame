@@ -99,3 +99,14 @@ export function sortOwnGuildOptions<T extends OwnGuildOption>(guilds: T[], searc
 export function canAddGuildFavorite(favoriteCount: number): boolean {
   return favoriteCount < HOME_GUILD_FAVORITE_TARGET;
 }
+
+export interface ProfileFillState {
+  headline?: string | null;
+  bio?: string | null;
+  topicCount: number;
+}
+
+/** A profile is sparse — and gets the Pulse reminder — without a headline, a bio over 100 characters, or any topic. */
+export function isProfileSparse(profile: ProfileFillState): boolean {
+  return !profile.headline?.trim() || (profile.bio?.trim().length ?? 0) <= 100 || profile.topicCount === 0;
+}

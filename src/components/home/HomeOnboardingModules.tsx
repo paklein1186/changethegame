@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, Check, Loader2, MapPin, Plus, Sparkles, Star, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTerritoryLeaderboard } from "@/hooks/useNetworkLeaderboardData";
-import { canAddGuildFavorite, rankHomeGuilds, rankHomeTerritories, remainingGuildFavorites, sortOwnGuildOptions } from "@/lib/homeOnboarding";
+import { canAddGuildFavorite, isProfileSparse, rankHomeGuilds, rankHomeTerritories, remainingGuildFavorites, sortOwnGuildOptions } from "@/lib/homeOnboarding";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -71,9 +71,11 @@ export function HomeOnboardingModules({ userId }: Props) {
       }
 
       return {
-        profileComplete: Boolean(
-          profileResult.data?.headline?.trim() && (profileResult.data.bio?.trim().length ?? 0) > 100,
-        ),
+        profileComplete: !isProfileSparse({
+          headline: profileResult.data?.headline,
+          bio: profileResult.data?.bio,
+          topicCount: (topicResult.data ?? []).length,
+        }),
         territoryIds: (territoryResult.data ?? []).map((row) => row.territory_id),
         location: profileResult.data?.location ?? "",
         topicIds: (topicResult.data ?? []).map((row) => row.topic_id),

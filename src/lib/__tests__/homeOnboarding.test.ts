@@ -91,3 +91,15 @@ describe("guild favorites picker", () => {
     expect(sortOwnGuildOptions(list, "alp").map((g) => g.id)).toEqual(["b"]);
   });
 });
+
+import { isProfileSparse } from "@/lib/homeOnboarding";
+
+describe("Pulse reminder", () => {
+  const full = { headline: "Designer", bio: "x".repeat(101), topicCount: 2 };
+  it("hides for a filled profile", () => expect(isProfileSparse(full)).toBe(false));
+  it("shows without headline, short bio or topics", () => {
+    expect(isProfileSparse({ ...full, headline: "" })).toBe(true);
+    expect(isProfileSparse({ ...full, bio: "court" })).toBe(true);
+    expect(isProfileSparse({ ...full, topicCount: 0 })).toBe(true);
+  });
+});

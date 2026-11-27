@@ -12352,7 +12352,9 @@
     "free": "Free",
     "explore": "Explore",
     "pods2": "Pods (",
-    "organizations2": "Organizations ("
+    "organizations2": "Organizations (",
+    "pulseReminder": "Pulse can fill in your headline, bio and topics from LinkedIn, a resume or a few lines. You approve every suggestion.",
+    "enrichWithPulse": "Enrich with Pulse"
   },
   "uiWebhookSpecPage": {
     "enterAWebhookUrl": "Enter a webhook URL",
