@@ -46,7 +46,7 @@ async function loadSections(uid: string): Promise<Section[]> {
     { id: "agenda", label: "Agenda", icon: CalendarDays, items: [
       ...(events.data ?? []).map((e: any) => ({ key: `evt:${e.id}`, title: e.title, sub: `Événement · ${day(e.start_at)}`, href: `/guilds/${e.guild_id}`, date: e.start_at })),
       ...(rituals.data ?? []).map((r: any) => ({ key: `rit:${r.id}:${r.next_occurrence}`, title: r.title, sub: `Rituel · ${day(r.next_occurrence)}`, href: `/guilds/${r.guild_id}`, date: r.next_occurrence })),
-      ...(bookings.data ?? []).map((b: any) => ({ key: `bk:${b.id}`, title: "Réservation à confirmer", sub: day(b.start_date_time ?? b.requested_date_time ?? b.created_at), href: `/me?tab=bookings`, date: b.created_at })),
+      ...(bookings.data ?? []).map((b: any) => ({ key: `bk:${b.id}`, title: "Réservation à confirmer", sub: day(b.start_date_time ?? b.requested_date_time ?? b.created_at), href: `/me/bookings`, date: b.created_at })),
     ] },
     { id: "decisions", label: "Décisions à rendre", icon: Vote, items: [
       ...(polls.data ?? []).map((p: any) => ({ key: `poll:${p.id}`, title: p.question, sub: p.closes_at ? `Sondage · clôture ${day(p.closes_at)}` : "Sondage ouvert", href: `/guilds/${p.entity_id}`, date: p.created_at })),
