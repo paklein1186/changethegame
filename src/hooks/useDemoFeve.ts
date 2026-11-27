@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { isDemoFeveEmail } from "@/lib/demoFeve";
+import { canViewDemoFeveShowcase, isDemoFeveEmail } from "@/lib/demoFeve";
 
 export type DemoFeveSnapshot = {
   registry_count: number;
@@ -48,10 +48,10 @@ export function useDemoFeveAccess() {
 }
 
 export function useDemoFeveSnapshot() {
-  const { access, loading } = useDemoFeveAccess();
+  const { loading, user } = useDemoFeveAccess();
   return useQuery<DemoFeveSnapshot>({
     queryKey: ["demo-feve-snapshot"],
-    enabled: !loading && access,
+    enabled: !loading && canViewDemoFeveShowcase(user?.id),
     queryFn: async () => {
       const { data, error } = await (supabase as any).rpc("demo_feve_snapshot");
       if (error) throw error;

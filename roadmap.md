@@ -4,3 +4,5 @@
 - [x] Créer la fonction admin de seed/purge idempotente et les données fictives.
 - [x] Ajouter la carte admin, le bandeau, le digest Maurice et les écrans carte/matchmaker.
 - [x] Vérifier les parcours réel/démo, la purge/réinstallation, les tests et la compilation.
+- [x] Ouvrir le digest, la carte et le matchmaker fictifs à tous les comptes connectés.
+- [x] Vérifier le parcours avec un compte réel et documenter les fonctionnalités à consulter.

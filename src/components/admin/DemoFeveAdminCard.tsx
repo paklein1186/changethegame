@@ -39,7 +39,7 @@ export function DemoFeveAdminCard() {
   return <Card>
     <CardHeader>
       <CardTitle className="flex items-center gap-2"><FlaskConical className="h-5 w-5 text-primary" /> Démo FEVE</CardTitle>
-      <CardDescription>Données fictives isolées des comptes réels. {count} lignes actuellement inventoriées.</CardDescription>
+      <CardDescription>Données fictives séparées des activités réelles ; leur présentation est accessible aux comptes connectés. {count} lignes actuellement inventoriées.</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-wrap gap-2">
       <Button disabled={!!action} onClick={() => run("seed")}>{action === "seed" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />} Charger</Button>

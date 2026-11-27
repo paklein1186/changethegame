@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 import { Loader2, MapPinned } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { DemoFeveGate } from "@/components/demo/DemoFeveGate";
-import { useDemoFeveSnapshot } from "@/hooks/useDemoFeve";
+import { useDemoFeveAccess, useDemoFeveSnapshot } from "@/hooks/useDemoFeve";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
@@ -29,6 +29,7 @@ function FitDemoBounds({ nodes }: { nodes: Node[] }): null {
 
 export default function DemoFeveMap() {
   const { data, isLoading } = useDemoFeveSnapshot();
+  const { isDemoAccount } = useDemoFeveAccess();
   const [layers, setLayers] = useState<Record<Layer, boolean>>({ projects: true, resources: true, places: true, river: true });
   const { nodes, links, riverPath } = useMemo(() => {
     if (!data) return { nodes: [] as Node[], links: [] as { from: Node; to: Node; reason: string }[], riverPath: [] as [number, number][] };
@@ -86,7 +87,7 @@ export default function DemoFeveMap() {
   const visibleLinks = links.filter((l) => nodeIds.has(l.from.id) && nodeIds.has(l.to.id));
   const labels: [Layer, string][] = [["projects", "Porteurs de projets"], ["resources", "Ressources et services"], ["places", "Lieux du réseau"], ["river", "Rivière démo"]];
   return <PageShell><DemoFeveGate><div className="space-y-4">
-    <div><h1 className="flex items-center gap-2 font-display text-2xl font-bold"><MapPinned className="h-7 w-7 text-primary" /> Carte des rapprochements</h1><p className="mt-1 text-sm text-muted-foreground">Chaque trait relie un besoin à une ressource proposée. Clique sur un point pour comprendre le rapprochement.</p></div>
+    <div><h1 className="flex items-center gap-2 font-display text-2xl font-bold"><MapPinned className="h-7 w-7 text-primary" /> Carte des rapprochements</h1><p className="mt-1 text-sm text-muted-foreground">Démo FEVE — données entièrement fictives. Chaque trait relie un besoin à une ressource proposée. Clique sur un point pour comprendre le rapprochement.</p></div>
     <div className="flex flex-wrap gap-4 rounded-xl border border-border bg-card p-3">{labels.map(([key, label]) => <label key={key} className="flex items-center gap-2 text-sm"><Checkbox checked={layers[key]} onCheckedChange={(value) => setLayers((old) => ({ ...old, [key]: value === true }))} />{label}</label>)}</div>
     <div className="h-[65vh] min-h-[480px] overflow-hidden rounded-2xl border border-border bg-card">
       {isLoading ? <div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div> : <MapContainer center={[47.2, 4.5]} zoom={6} style={{ height: "100%", width: "100%" }}>
@@ -96,7 +97,7 @@ export default function DemoFeveMap() {
         {visibleLinks.map((link, index) => <Polyline key={`${link.from.id}-${link.to.id}-${index}`} positions={[[link.from.lat, link.from.lng], [link.to.lat, link.to.lng]]} pathOptions={{ color: colors.projects, weight: 1.5, opacity: 0.35 }} />)}
         {visibleNodes.map((node) => {
           const reason = links.find((l) => l.from.id === node.id || l.to.id === node.id)?.reason;
-          return <CircleMarker key={`${node.kind}-${node.id}`} center={[node.lat, node.lng]} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}><Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong>{node.description && <p className="text-xs">{node.description}</p>}{reason && <p className="text-xs"><b>Pourquoi ce rapprochement :</b> {reason}</p>}<Button size="sm" asChild><Link to={node.kind === "resources" ? "/opportunities" : node.url}>{node.kind === "resources" ? "Voir l’opportunité" : "Voir la fiche"}</Link></Button></div></Popup></CircleMarker>;
+          return <CircleMarker key={`${node.kind}-${node.id}`} center={[node.lat, node.lng]} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}><Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong>{node.description && <p className="text-xs">{node.description}</p>}{reason && <p className="text-xs"><b>Pourquoi ce rapprochement :</b> {reason}</p>}{isDemoAccount && <Button size="sm" asChild><Link to={node.kind === "resources" ? "/opportunities" : node.url}>{node.kind === "resources" ? "Voir l’opportunité" : "Voir la fiche"}</Link></Button>}</div></Popup></CircleMarker>;
         })}
       </MapContainer>}
     </div>

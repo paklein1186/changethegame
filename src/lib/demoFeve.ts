@@ -23,3 +23,5 @@ export const isDemoFeveEmail = (email: string | null | undefined) => {
   const value = email?.toLowerCase() ?? "";
   return value.startsWith("demo+") && value.endsWith("@changethegame.xyz");
 };
+
+export const canViewDemoFeveShowcase = (userId: string | null | undefined) => Boolean(userId);

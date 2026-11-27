@@ -514,7 +514,8 @@ export default function HomeFeed() {
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
               <OpportunitiesPanel className="mb-5" />
-              {isDemoMaurice ? <DemoFeveDigest /> : <>
+              <DemoFeveDigest />
+              {!isDemoMaurice && <>
                 <div className="flex items-center gap-2 mb-3">
                   <h2 className="text-base font-semibold text-foreground">My Task Board</h2>
                   <HintTooltip {...HINTS.tooltips.taskBoard} />
@@ -633,7 +634,8 @@ export default function HomeFeed() {
           <div className="max-w-[960px] mx-auto px-3 sm:px-4 pb-8 space-y-5 sm:space-y-6">
               <PathwayCards persona={persona} progress={progress} steps={steps} />
               <OpportunitiesPanel />
-              {isDemoMaurice ? <DemoFeveDigest /> : <div>
+              <DemoFeveDigest />
+              {!isDemoMaurice && <div>
                 <div className="flex items-center gap-2 mb-3">
                   <h2 className="text-base font-semibold text-foreground">My Task Board</h2>
                   <HintTooltip {...HINTS.tooltips.taskBoard} />
