@@ -32,6 +32,7 @@ import { useOnboardingProgress } from "@/hooks/useOnboardingProgress";
 import { MilestoneJourney } from "@/components/home/MilestoneJourney";
 import { ModelOverviewSection } from "@/components/home/ModelOverviewSection";
 import { OpportunitiesPanel } from "@/components/opportunities/OpportunitiesPanel";
+import { HomeOnboardingModules } from "@/components/home/HomeOnboardingModules";
 
 
 /* ───────── Persona-specific config ───────── */
@@ -494,6 +495,7 @@ export default function HomeFeed() {
   };
 
   const isTerritory = result?.actionType === "TERRITORY_INTENT";
+  const showLegacyPathways = progress.enrichedProfile && progress.contributedTerritory && progress.joinedGuild;
 
   return (
     <PageShell>
@@ -503,10 +505,12 @@ export default function HomeFeed() {
         <BauhausShape />
       </BauhausPausedContext.Provider>
 
+      {currentUser.id && <HomeOnboardingModules userId={currentUser.id} />}
+
       {/* When Pi is open, show tasks at the top with no hero spacing */}
       {isPiOpen ? (
         <div className="max-w-[960px] mx-auto px-3 sm:px-4 pt-4 pb-8 space-y-5 sm:space-y-6">
-          <PathwayCards persona={persona} progress={progress} steps={steps} />
+          {showLegacyPathways && <PathwayCards persona={persona} progress={progress} steps={steps} />}
           {currentUser.id && (
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -633,7 +637,7 @@ export default function HomeFeed() {
           {/* Task Board — below the AI section */}
           {currentUser.id &&
           <div className="max-w-[960px] mx-auto px-3 sm:px-4 pb-8 space-y-5 sm:space-y-6">
-              <PathwayCards persona={persona} progress={progress} steps={steps} />
+              {showLegacyPathways && <PathwayCards persona={persona} progress={progress} steps={steps} />}
               <OpportunitiesPanel asDigest showMapLink initialCount={3} />
               <DigestSections userId={currentUser.id} />
               <OpportunitiesPanel varySelection />

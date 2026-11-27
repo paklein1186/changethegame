@@ -55,15 +55,17 @@ function generateTopicSynthesis(t: Omit<TopicLeaderboardItem, "synthesis">): str
   return text.length > 120 ? text.slice(0, 117) + "…" : text;
 }
 
-export function useTerritoryLeaderboard() {
+export function useTerritoryLeaderboard(enabled = true) {
   return useQuery<TerritoryLeaderboardItem[]>({
     queryKey: ["territory-leaderboard"],
+    enabled,
     staleTime: 120_000,
     queryFn: async () => {
       // Fetch all territories
       const { data: territories, error } = await supabase
         .from("territories")
-        .select("id, name, level, parent_id, stats, logo_url");
+        .select("id, name, level, parent_id, stats, logo_url")
+        .eq("is_deleted", false);
       if (error) throw error;
       if (!territories || territories.length === 0) return [];
 

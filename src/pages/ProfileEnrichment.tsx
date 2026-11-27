@@ -1,21 +1,24 @@
 import { useTranslation } from "react-i18next";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import { PageShell } from "@/components/PageShell";
+import { useTerritories, useTopics } from "@/hooks/useSupabaseData";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Upload, Link2, MessageSquareText, Sparkles, Check, X,
   ChevronRight, Leaf, Building2, Target, MapPin, Lightbulb,
-  Loader2, FileText,
+  Loader2, FileText, Plus,
 } from "lucide-react";
 
 /* ─── Types ─── */
@@ -33,35 +36,90 @@ interface EnrichmentResult {
 
 type Step = "welcome" | "input" | "processing" | "review" | "done";
 
+interface CatalogItem {
+  id: string;
+  name: string;
+}
+
+interface ExistingProfileDetails {
+  name: string;
+  bio: string;
+  headline: string;
+  topics: string[];
+  territories: string[];
+}
+
+function normalizeName(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLocaleLowerCase();
+}
+
+function catalogIdForName(name: string, catalog: CatalogItem[]): string | null {
+  const normalized = normalizeName(name);
+  const exact = catalog.find((item) => normalizeName(item.name) === normalized);
+  if (exact) return exact.id;
+  const closeMatches = catalog.filter((item) => {
+    const candidate = normalizeName(item.name);
+    return candidate.startsWith(normalized) || normalized.startsWith(candidate);
+  });
+  return closeMatches.length === 1 ? closeMatches[0].id : null;
+}
+
+function catalogIdsForNames(names: string[], catalog: CatalogItem[]) {
+  return names.map((name) => catalogIdForName(name, catalog)).filter(Boolean) as string[];
+}
+
 /* ─── Component ─── */
 export default function ProfileEnrichment() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, refreshProfile } = useAuth();
+  const queryClient = useQueryClient();
+  const { data: topicCatalog = [] } = useTopics();
+  const { data: territoryCatalog = [] } = useTerritories();
   const [step, setStep] = useState<Step>("welcome");
 
   // Input state
   const [resumeText, setResumeText] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [linkedinPrefilled, setLinkedinPrefilled] = useState(false);
+  const [existingProfile, setExistingProfile] = useState<ExistingProfileDetails>({
+    name: "", bio: "", headline: "", topics: [], territories: [],
+  });
 
-  // Pre-fill LinkedIn URL from profile
+  // Pre-fill from the real profile so enrichment complements it instead of replacing it blindly.
   useEffect(() => {
     if (!user?.id) return;
-    supabase.from("profiles").select("linkedin_url").eq("user_id", user.id).maybeSingle()
-      .then(({ data }) => {
-        if (data?.linkedin_url) {
-          setLinkedinUrl(data.linkedin_url);
-          setLinkedinPrefilled(true);
-        }
+    let cancelled = false;
+    (async () => {
+      const [profileResult, topicsResult, territoriesResult] = await Promise.all([
+        supabase.from("profiles").select("name, bio, headline, linkedin_url").eq("user_id", user.id).maybeSingle(),
+        supabase.from("user_topics").select("topics(name)").eq("user_id", user.id),
+        supabase.from("user_territories").select("territories(name)").eq("user_id", user.id),
+      ]);
+      if (cancelled) return;
+      const profile = profileResult.data;
+      if (profile?.linkedin_url) {
+        setLinkedinUrl(profile.linkedin_url);
+        setLinkedinPrefilled(true);
+      }
+      setExistingProfile({
+        name: profile?.name || user.name,
+        bio: profile?.bio || "",
+        headline: profile?.headline || "",
+        topics: (topicsResult.data ?? []).map((row) => (row.topics as any)?.name).filter(Boolean),
+        territories: (territoriesResult.data ?? []).map((row) => (row.territories as any)?.name).filter(Boolean),
       });
-  }, [user?.id]);
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id, user?.name]);
   const [pastedDescription, setPastedDescription] = useState("");
   const [resumeFileName, setResumeFileName] = useState("");
 
   // Result state
   const [result, setResult] = useState<EnrichmentResult | null>(null);
   const [selectedBioVariant, setSelectedBioVariant] = useState<"short" | "medium" | "narrative">("medium");
+  const [editedHeadline, setEditedHeadline] = useState("");
+  const [editedBio, setEditedBio] = useState("");
   const [acceptedTopics, setAcceptedTopics] = useState<Set<string>>(new Set());
   const [acceptedTerritories, setAcceptedTerritories] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -111,18 +169,35 @@ export default function ProfileEnrichment() {
           resumeText: resumeText || undefined,
           linkedinUrl: linkedinUrl || undefined,
           pastedDescription: pastedDescription || undefined,
-          existingProfile: user
-            ? { name: user.name, bio: "", headline: "", topics: [], territories: [] }
-            : undefined,
+          existingProfile: user ? existingProfile : undefined,
         },
       });
 
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      setResult(data);
-      setAcceptedTopics(new Set(data.suggestedTopics || []));
-      setAcceptedTerritories(new Set(data.suggestedTerritories || []));
+      const normalizedResult: EnrichmentResult = {
+        bioVariants: {
+          short: data.bioVariants?.short || "",
+          medium: data.bioVariants?.medium || data.bioVariants?.short || "",
+          narrative: data.bioVariants?.narrative || data.bioVariants?.medium || "",
+        },
+        headline: data.headline || "",
+        suggestedTopics: Array.isArray(data.suggestedTopics) ? data.suggestedTopics : [],
+        suggestedTerritories: Array.isArray(data.suggestedTerritories) ? data.suggestedTerritories : [],
+        detectedOrganizations: Array.isArray(data.detectedOrganizations) ? data.detectedOrganizations : [],
+        suggestedCompletedQuests: Array.isArray(data.suggestedCompletedQuests) ? data.suggestedCompletedQuests : [],
+        suggestedOpenQuests: Array.isArray(data.suggestedOpenQuests) ? data.suggestedOpenQuests : [],
+        skills: Array.isArray(data.skills) ? data.skills : [],
+        pulseMessage: data.pulseMessage || "",
+      };
+
+      setResult(normalizedResult);
+      setSelectedBioVariant("medium");
+      setEditedHeadline(normalizedResult.headline);
+      setEditedBio(normalizedResult.bioVariants.medium);
+      setAcceptedTopics(new Set(catalogIdsForNames(normalizedResult.suggestedTopics, topicCatalog)));
+      setAcceptedTerritories(new Set(catalogIdsForNames(normalizedResult.suggestedTerritories, territoryCatalog)));
       setStep("review");
     } catch (err: any) {
       console.error("Enrichment error:", err);
@@ -131,32 +206,69 @@ export default function ProfileEnrichment() {
     } finally {
       setLoading(false);
     }
-  }, [resumeText, linkedinUrl, pastedDescription, user, inputCount]);
+  }, [resumeText, linkedinUrl, pastedDescription, user, inputCount, existingProfile, topicCatalog, territoryCatalog, t]);
 
   /* ─── Apply changes ─── */
   const handleApply = useCallback(async () => {
     if (!result || !user) return;
+    if (!editedHeadline.trim() || !editedBio.trim()) {
+      toast.error(t("uiProfileEnrichment.completeRequiredFields"));
+      return;
+    }
     setLoading(true);
     try {
-      const bio = result.bioVariants[selectedBioVariant];
-      const { error } = await supabase
+      const { data: updatedProfile, error: profileError } = await supabase
         .from("profiles")
         .update({
-          bio,
-          headline: result.headline,
+          bio: editedBio.trim(),
+          headline: editedHeadline.trim(),
+          ...(linkedinUrl.trim() ? { linkedin_url: linkedinUrl.trim() } : {}),
         })
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .select("user_id")
+        .maybeSingle();
 
-      if (error) throw error;
+      if (profileError) throw profileError;
+      if (!updatedProfile) throw new Error(t("uiProfileEnrichment.failedToUpdateProfile"));
+
+      const relationResults = await Promise.all([
+        acceptedTopics.size > 0
+          ? supabase.from("user_topics").upsert(
+              [...acceptedTopics].map((topicId) => ({ user_id: user.id, topic_id: topicId })),
+              { onConflict: "user_id,topic_id", ignoreDuplicates: true },
+            )
+          : Promise.resolve({ error: null }),
+        acceptedTerritories.size > 0
+          ? supabase.from("user_territories").upsert(
+              [...acceptedTerritories].map((territoryId) => ({
+                user_id: user.id,
+                territory_id: territoryId,
+                attachment_type: "CARE_FOR",
+              })),
+              { onConflict: "user_id,territory_id", ignoreDuplicates: true },
+            )
+          : Promise.resolve({ error: null }),
+      ]);
+      const relationError = relationResults.find((relationResult) => relationResult.error)?.error;
+      if (relationError) throw relationError;
+
       await refreshProfile();
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["onboarding-profile", user.id] }),
+        queryClient.invalidateQueries({ queryKey: ["onboarding-counts", user.id] }),
+        queryClient.invalidateQueries({ queryKey: ["home-onboarding", user.id] }),
+        queryClient.invalidateQueries({ queryKey: ["network-topics", user.id] }),
+        queryClient.invalidateQueries({ queryKey: ["network-territories", user.id] }),
+      ]);
       toast.success(t("uiProfileEnrichment.profileEnrichedSuccessfully"));
       setStep("done");
     } catch (err: any) {
+      console.error("Failed to apply profile enrichment:", err);
       toast.error(err?.message || t("uiProfileEnrichment.failedToUpdateProfile"));
     } finally {
       setLoading(false);
     }
-  }, [result, user, selectedBioVariant, refreshProfile]);
+  }, [result, user, editedHeadline, editedBio, linkedinUrl, acceptedTopics, acceptedTerritories, refreshProfile, queryClient, t]);
 
   const toggleItem = (set: Set<string>, setFn: React.Dispatch<React.SetStateAction<Set<string>>>, item: string) => {
     const next = new Set(set);
@@ -164,6 +276,27 @@ export default function ProfileEnrichment() {
     else next.add(item);
     setFn(next);
   };
+
+  const suggestedTopicIds = useMemo(
+    () => result ? [...new Set(catalogIdsForNames(result.suggestedTopics, topicCatalog))] : [],
+    [result, topicCatalog],
+  );
+  const suggestedTerritoryIds = useMemo(
+    () => result ? [...new Set(catalogIdsForNames(result.suggestedTerritories, territoryCatalog))] : [],
+    [result, territoryCatalog],
+  );
+  const visibleTopicIds = useMemo(
+    () => [...new Set([...suggestedTopicIds, ...acceptedTopics])],
+    [suggestedTopicIds, acceptedTopics],
+  );
+  const visibleTerritoryIds = useMemo(
+    () => [...new Set([...suggestedTerritoryIds, ...acceptedTerritories])],
+    [suggestedTerritoryIds, acceptedTerritories],
+  );
+  const topicNamesById = useMemo(() => new Map(topicCatalog.map((topic) => [topic.id, topic.name])), [topicCatalog]);
+  const territoryNamesById = useMemo(() => new Map(territoryCatalog.map((territory) => [territory.id, territory.name])), [territoryCatalog]);
+  const hasUnmatchedTopics = !!result && result.suggestedTopics.some((name) => !catalogIdForName(name, topicCatalog));
+  const hasUnmatchedTerritories = !!result && result.suggestedTerritories.some((name) => !catalogIdForName(name, territoryCatalog));
 
   /* ─── Render steps ─── */
   return (
@@ -366,7 +499,15 @@ export default function ProfileEnrichment() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm font-medium">{result.headline}</p>
+                  <label className="text-xs text-muted-foreground block mb-1.5" htmlFor="enrichment-headline">
+                    {t("uiProfileEnrichment.editHeadline")}
+                  </label>
+                  <Input
+                    id="enrichment-headline"
+                    value={editedHeadline}
+                    onChange={(event) => setEditedHeadline(event.target.value)}
+                    maxLength={160}
+                  />
                 </CardContent>
               </Card>
 
@@ -379,7 +520,10 @@ export default function ProfileEnrichment() {
                   {(["short", "medium", "narrative"] as const).map((variant) => (
                     <button
                       key={variant}
-                      onClick={() => setSelectedBioVariant(variant)}
+                      onClick={() => {
+                        setSelectedBioVariant(variant);
+                        setEditedBio(result.bioVariants[variant]);
+                      }}
                       className={`w-full text-left p-3 rounded-lg border transition-colors text-sm ${
                         selectedBioVariant === variant
                           ? "border-primary bg-primary/5"
@@ -392,60 +536,114 @@ export default function ProfileEnrichment() {
                       <p className="text-foreground leading-relaxed">{result.bioVariants[variant]}</p>
                     </button>
                   ))}
+                  <div>
+                    <label className="text-xs text-muted-foreground block mb-1.5" htmlFor="enrichment-bio">
+                      {t("uiProfileEnrichment.editBio")}
+                    </label>
+                    <Textarea
+                      id="enrichment-bio"
+                      value={editedBio}
+                      onChange={(event) => setEditedBio(event.target.value)}
+                      rows={6}
+                      maxLength={3000}
+                    />
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Topics */}
-              {result.suggestedTopics.length > 0 && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Target className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedTopics")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+              {/* Topics: AI suggestions plus manual additions */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Target className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedTopics")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {visibleTopicIds.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {result.suggestedTopics.map((topic) => (
+                      {visibleTopicIds.map((topicId) => (
                         <Badge
-                          key={topic}
-                          variant={acceptedTopics.has(topic) ? "default" : "outline"}
+                          key={topicId}
+                          variant={acceptedTopics.has(topicId) ? "default" : "outline"}
                           className="cursor-pointer"
-                          onClick={() => toggleItem(acceptedTopics, setAcceptedTopics, topic)}
+                          onClick={() => toggleItem(acceptedTopics, setAcceptedTopics, topicId)}
                         >
-                          {acceptedTopics.has(topic) ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
-                          {topic}
+                          {acceptedTopics.has(topicId) ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
+                          {topicNamesById.get(topicId) || topicId}
                         </Badge>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                  )}
+                  {hasUnmatchedTopics && <p className="text-xs text-muted-foreground">{t("uiProfileEnrichment.someSuggestionsUnavailable")}</p>}
+                  <div>
+                    <label className="text-xs text-muted-foreground block mb-1.5">{t("uiProfileEnrichment.addTopicManually")}</label>
+                    <Select
+                      value="none"
+                      onValueChange={(topicId) => {
+                        if (topicId === "none") return;
+                        setAcceptedTopics((current) => new Set(current).add(topicId));
+                      }}
+                    >
+                      <SelectTrigger aria-label={t("uiProfileEnrichment.addTopicManually")}>
+                        <Plus className="h-3.5 w-3.5 mr-1.5" /><SelectValue placeholder={t("uiProfileEnrichment.chooseTopic")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none" disabled>{t("uiProfileEnrichment.chooseTopic")}</SelectItem>
+                        {topicCatalog.filter((topic) => !acceptedTopics.has(topic.id)).map((topic) => (
+                          <SelectItem key={topic.id} value={topic.id}>{topic.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
 
-              {/* Territories */}
-              {result.suggestedTerritories.length > 0 && (
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <MapPin className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedTerritories")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+              {/* Territories: AI suggestions plus manual additions */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <MapPin className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedTerritories")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {visibleTerritoryIds.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {result.suggestedTerritories.map((t) => (
+                      {visibleTerritoryIds.map((territoryId) => (
                         <Badge
-                          key={t}
-                          variant={acceptedTerritories.has(t) ? "default" : "outline"}
+                          key={territoryId}
+                          variant={acceptedTerritories.has(territoryId) ? "default" : "outline"}
                           className="cursor-pointer"
-                          onClick={() => toggleItem(acceptedTerritories, setAcceptedTerritories, t)}
+                          onClick={() => toggleItem(acceptedTerritories, setAcceptedTerritories, territoryId)}
                         >
-                          {acceptedTerritories.has(t) ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
-                          {t}
+                          {acceptedTerritories.has(territoryId) ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
+                          {territoryNamesById.get(territoryId) || territoryId}
                         </Badge>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                  )}
+                  {hasUnmatchedTerritories && <p className="text-xs text-muted-foreground">{t("uiProfileEnrichment.someSuggestionsUnavailable")}</p>}
+                  <div>
+                    <label className="text-xs text-muted-foreground block mb-1.5">{t("uiProfileEnrichment.addTerritoryManually")}</label>
+                    <Select
+                      value="none"
+                      onValueChange={(territoryId) => {
+                        if (territoryId === "none") return;
+                        setAcceptedTerritories((current) => new Set(current).add(territoryId));
+                      }}
+                    >
+                      <SelectTrigger aria-label={t("uiProfileEnrichment.addTerritoryManually")}>
+                        <Plus className="h-3.5 w-3.5 mr-1.5" /><SelectValue placeholder={t("uiProfileEnrichment.chooseTerritory")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none" disabled>{t("uiProfileEnrichment.chooseTerritory")}</SelectItem>
+                        {territoryCatalog.filter((territory) => !acceptedTerritories.has(territory.id)).map((territory) => (
+                          <SelectItem key={territory.id} value={territory.id}>{territory.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
 
               {/* Organizations detected */}
               {result.detectedOrganizations.length > 0 && (

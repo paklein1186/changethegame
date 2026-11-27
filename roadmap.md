@@ -15,3 +15,12 @@
 - [x] Rapprochements réels par cible (moi / guilde / quête) avec filtre de sens.
 - [x] Suggestions IA par cible.
 - [x] Présenter deux personnes et suivi des mises en relation.
+
+# Onboarding des profils nouveaux ou presque vides
+
+- [x] Placer l’enrichissement du profil en premier sur l’accueil et fiabiliser son enregistrement.
+- [x] Permettre de modifier et compléter manuellement les suggestions de Pulse.
+- [x] Proposer 3 à 6 territoires pertinents en vignettes.
+- [x] Faire suivre 3 guildes et conserver leurs raccourcis sur l’accueil.
+- [x] Tester les règles de sélection, les traductions et la compilation.
+- [ ] Vérifier le parcours connecté (bloqué par l’indisponibilité du service de compte temporaire).
