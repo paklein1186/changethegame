@@ -11791,6 +11791,7 @@ export type Database = {
           match_owner_name: string
           match_owner_type: string
           match_score: number
+          my_proposal_pending: boolean
           need_id: string
           owner_id: string
           owner_name: string
@@ -12235,6 +12236,17 @@ export type Database = {
       }
       process_trust_renewal: {
         Args: { p_edge_id: string; p_user_id: string }
+        Returns: Json
+      }
+      propose_need_contribution: {
+        Args: {
+          p_currency?: string
+          p_description?: string
+          p_need_id: string
+          p_requested_credits?: number
+          p_requested_fiat?: number
+          p_title: string
+        }
         Returns: Json
       }
       rebuild_territory_closure: { Args: never; Returns: undefined }

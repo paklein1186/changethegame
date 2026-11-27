@@ -93,7 +93,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
                  WHERE gt.guild_id = k.guild_id AND t.is_deleted = false
                  ORDER BY gt.is_primary DESC NULLS LAST, t.name LIMIT 3)),
          round(k.sim, 3), k.match_label, k.match_owner_type, k.match_owner_name, coalesce(k.is_mine, false),
-         EXISTS (SELECT 1 FROM public.quest_proposals qp, me WHERE qp.need_id = k.id AND qp.proposer_id = me.uid
+         EXISTS (SELECT 1 FROM public.quest_proposals qp, me WHERE qp.need_id = k.id AND qp.proposer_id = me.uid::text
                    AND qp.proposer_type = 'USER' AND qp.status = 'PENDING'),
          count(*) OVER ()
   FROM kept k
@@ -289,7 +289,7 @@ BEGIN
                  WHERE h.quest_id = v_quest.id AND upper(h.entity_type::text) = 'GUILD' LIMIT 1));
 
   SELECT id INTO v_id FROM quest_proposals
-   WHERE need_id = p_need_id AND proposer_id = v_uid AND proposer_type = 'USER' AND status = 'PENDING' LIMIT 1;
+   WHERE need_id = p_need_id AND proposer_id = v_uid::text AND proposer_type = 'USER' AND status = 'PENDING' LIMIT 1;
   IF v_id IS NOT NULL THEN
     UPDATE quest_proposals
        SET title = btrim(p_title), description = nullif(btrim(coalesce(p_description, '')), ''),
@@ -303,7 +303,7 @@ BEGIN
 
   INSERT INTO quest_proposals (quest_id, proposer_type, proposer_id, title, description, requested_currency,
                                requested_credits, requested_fiat, need_id, status)
-  VALUES (v_quest.id, 'USER', v_uid, btrim(p_title), nullif(btrim(coalesce(p_description, '')), ''), p_currency,
+  VALUES (v_quest.id, 'USER', v_uid::text, btrim(p_title), nullif(btrim(coalesce(p_description, '')), ''), p_currency,
           CASE WHEN p_currency <> 'FIAT' THEN coalesce(p_requested_credits, 0) ELSE 0 END,
           CASE WHEN p_currency <> 'CREDITS' THEN coalesce(p_requested_fiat, 0) ELSE 0 END,
           p_need_id, 'PENDING')
