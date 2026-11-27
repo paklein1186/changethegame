@@ -183,6 +183,13 @@
       "when": 1795785033146,
       "tag": "0025_demo_feve_seed_owned_row_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1795789598053,
+      "tag": "0026_demo_feve_quest_hosts_isolation",
+      "breakpoints": true
     }
   ]
 }

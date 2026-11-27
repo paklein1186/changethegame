@@ -146,7 +146,7 @@ serve(async (req) => {
       }
       const order = ["opportunity_matches", "opportunity_needs", "capabilities", "natural_system_indicators", "natural_system_links",
         "feed_posts", "guild_events", "service_territories", "quest_territories", "company_territories", "guild_territories", "user_territories",
-        "services", "quest_needs", "quest_participants", "company_members", "guild_members", "quests", "services", "natural_systems",
+        "quest_hosts", "services", "quest_needs", "quest_participants", "company_members", "guild_members", "quests", "services", "natural_systems",
         "companies", "guilds", "territories", "profiles"];
       for (const table of [...new Set(order)]) {
         for (const rowId of idsFor(table)) {
@@ -378,9 +378,56 @@ serve(async (req) => {
         await post(`place-${p.key}`, contact.userId, "COMPANY", companyId, `${p.name} ouvre une offre : ${p.service}.`);
       }
 
+      // Guilde « Ferme en Vie » : relie Maurice, les projets La Grange, citoyens et investisseurs.
+      const animatrice = await profile("ferme-en-vie", "Claire — animatrice Ferme en Vie", { location: "Bresse", headline: "Animatrice du réseau Ferme en Vie", bio: "Compte fictif : anime la guilde qui relie les projets de fermes." });
+      accountEmails["ferme-en-vie"] = animatrice.email;
+      const fermeGuild = await row("guilds", "guild:ferme-en-vie", {
+        name: "Ferme en Vie", description: "Réseau qui relie porteurs de projets agricoles, citoyens et investisseurs solidaires autour de l’installation de fermes vivantes. Structure fictive de démonstration.",
+        type: "NETWORK", created_by_user_id: animatrice.userId, is_approved: true, is_draft: false, is_deleted: false, join_policy: "APPROVAL_REQUIRED",
+        universe_visibility: "both", public_visibility: "private", web_tags: TAGS,
+      });
+      await row("guild_members", "guild-member:ferme-en-vie", { guild_id: fermeGuild, user_id: animatrice.userId, role: "ADMIN" });
+      await row("guild_territories", "guild-territory:ferme-en-vie", { guild_id: fermeGuild, territory_id: bresse, relation_type: "primary", is_primary: true });
+      const porteurs = [["maurice", maurice.userId], ...Object.entries(projectRefs).map(([k, r]) => [k, r.contact.userId])] as [string, string][];
+      for (const [k, uid] of porteurs) await row("guild_members", `guild-member:ferme-en-vie:${k}`, { guild_id: fermeGuild, user_id: uid, role: "MEMBER" });
+      const supporters = [
+        { key: "citoyenne-lea", name: "Léa — citoyenne mangeuse", headline: "Citoyenne : achète local et donne des coups de main" },
+        { key: "citoyen-karim", name: "Karim — citoyen bénévole", headline: "Citoyen : chantiers participatifs le week-end" },
+        { key: "citoyenne-odile", name: "Odile — citoyenne retraitée", headline: "Citoyenne : accueil et transmission de savoir-faire" },
+        { key: "investisseur-paul", name: "Paul — investisseur solidaire", headline: "Investisseur : épargne solidaire dans les fermes" },
+        { key: "investisseuse-ines", name: "Inès — investisseuse citoyenne", headline: "Investisseuse : prise de parts dans le foncier agricole" },
+      ];
+      for (const s of supporters) {
+        const u = await profile(s.key, s.name, { location: "Bresse", headline: s.headline, bio: `Compte fictif de démonstration — ${s.headline}.` });
+        accountEmails[s.key] = u.email;
+        await row("guild_members", `guild-member:ferme-en-vie:${s.key}`, { guild_id: fermeGuild, user_id: u.userId, role: "MEMBER" });
+        await row("quest_participants", `quest-participant:maurice:${s.key}`, { quest_id: mauriceQuest, user_id: u.userId, role: "MEMBER", status: "APPROVED" });
+      }
+
+      // Banque coopérative fictive en soutien de chaque projet de ferme.
+      const banquier = await profile("banque-cooperative", "Contact — Banque Coopérative du Bocage", { location: "Bresse", headline: "Chargé de financement solidaire", bio: "Contact fictif d’une banque coopérative de démonstration." });
+      accountEmails["banque-cooperative"] = banquier.email;
+      const bank = await row("companies", "company:banque-cooperative", {
+        name: "Banque Coopérative du Bocage (fictif)", description: "Banque coopérative qui soutient les installations agricoles : prêts solidaires, garanties et épargne citoyenne fléchée. Structure fictive de démonstration.",
+        org_type: "banque coopérative", contact_user_id: banquier.userId, is_deleted: false, universe_visibility: "both", public_visibility: "private", web_tags: TAGS,
+      });
+      await row("company_members", "company-member:banque-cooperative", { company_id: bank, user_id: banquier.userId, role: "ADMIN" });
+      await row("company_territories", "company-territory:banque-cooperative", { company_id: bank, territory_id: bresse, relation_type: "primary", is_primary: true });
+      const bankCap = await capability("banque-cooperative", "company", bank, "Prêt solidaire et garantie pour l’installation agricole");
+      await match("maurice-banque-cooperative", mauriceNeeds.financement.opportunityNeedId, bankCap, mauriceQuest, 0.87, "La banque coopérative finance les installations agricoles avec prêt solidaire et épargne citoyenne fléchée.");
+      await post("banque-cooperative", banquier.userId, "COMPANY", bank, "Banque Coopérative du Bocage : nous soutenons chaque projet de ferme du réseau Ferme en Vie.");
+      await post("ferme-en-vie", animatrice.userId, "GUILD", fermeGuild, "Bienvenue dans Ferme en Vie : porteurs de projets, citoyens et investisseurs, réunis pour installer des fermes vivantes.");
+      const farmQuests = [["maurice", mauriceQuest, maurice.userId], ...Object.entries(projectRefs).map(([k, r]) => [k, r.questId, r.contact.userId])] as [string, string, string][];
+      for (const [k, questId, ownerId] of farmQuests) {
+        await row("quest_hosts", `quest-host:guild:${k}`, { quest_id: questId, entity_type: "GUILD", entity_id: fermeGuild, role: "CO_HOST", created_by_user_id: ownerId });
+        await row("quest_hosts", `quest-host:bank:${k}`, { quest_id: questId, entity_type: "COMPANY", entity_id: bank, role: "CO_HOST", created_by_user_id: ownerId });
+      }
+      const { error: guildLinkError } = await admin.from("quests").update({ guild_id: fermeGuild }).in("id", farmQuests.map((q) => q[1]));
+      if (guildLinkError) throw new Error(`quests/guild: ${guildLinkError.message}`);
+
       const { count, error: countError } = await admin.from("demo_seed_registry").select("id", { count: "exact", head: true }).eq("seed_key", SEED);
       if (countError) throw countError;
-      return { seeded: true, registry_count: count ?? 0, maurice_quest_id: mauriceQuest, accounts: accountEmails, demo_matches: 20 };
+      return { seeded: true, registry_count: count ?? 0, maurice_quest_id: mauriceQuest, accounts: accountEmails, demo_matches: 21 };
     }
 
     const report = parsed.data.action === "purge" ? await purge()
