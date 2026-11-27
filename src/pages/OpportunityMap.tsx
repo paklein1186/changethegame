@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CircleMarker, MapContainer, Polyline, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
-import { LatLngBounds } from "leaflet";
+import { CircleMarker, MapContainer, Polyline, Popup, TileLayer, Tooltip, useMap, useMapEvents } from "react-leaflet";
+import { LatLngBounds, type Map as LeafletMap } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { ArrowLeft, Loader2, MapPinned, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,6 +54,11 @@ const validCoordinate = (value: number | null) => value !== null && Number.isFin
 const helperUrl = (row: OpportunityMapRow) => row.helper_type === "profile"
   ? `/users/${row.helper_id}`
   : row.helper_type === "guild" ? `/guilds/${row.helper_id}` : `/companies/${row.helper_id}`;
+
+function ZoomWatcher({ onZoom }: { onZoom: (z: number) => void }): null {
+  useMapEvents({ zoomend: (e) => onZoom(e.target.getZoom()) });
+  return null;
+}
 
 function FitOpportunityBounds({ nodes }: { nodes: MapNode[] }): null {
   const map = useMap();
@@ -121,12 +126,29 @@ export default function OpportunityMap() {
   const visibleLinks = links.filter((link) => visibleKeys.has(link.from.key) && visibleKeys.has(link.to.key));
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const stackCount = useMemo(() => {
-    const m = new Map<string, number>();
-    visibleNodes.forEach((n) => { const k = `${n.lat.toFixed(4)},${n.lng.toFixed(4)}`; m.set(k, (m.get(k) ?? 0) + 1); });
-    return m;
-  }, [visibleNodes]);
-  const stackSeen = new Set<string>();
+  const [leafletMap, setLeafletMap] = useState<LeafletMap | null>(null);
+  const [zoom, setZoom] = useState(5);
+  // Points au même endroit : disposés en constellation autour du centre, à distance constante à l'écran.
+  const layout = useMemo(() => {
+    const groups = new Map<string, MapNode[]>();
+    visibleNodes.forEach((n) => { const k = `${n.lat.toFixed(4)},${n.lng.toFixed(4)}`; groups.set(k, [...(groups.get(k) ?? []), n]); });
+    const pos = new Map<string, [number, number]>();
+    const hubs: { key: string; center: [number, number]; count: number }[] = [];
+    groups.forEach((members, k) => {
+      const center: [number, number] = [members[0].lat, members[0].lng];
+      if (members.length === 1 || !leafletMap) { members.forEach((m) => pos.set(m.key, center)); return; }
+      hubs.push({ key: k, center, count: members.length });
+      const origin = leafletMap.project(center, zoom);
+      const radius = Math.max(26, (members.length * 20) / (2 * Math.PI));
+      members.forEach((m, i) => {
+        const a = (2 * Math.PI * i) / members.length - Math.PI / 2;
+        const ll = leafletMap.unproject([origin.x + radius * Math.cos(a), origin.y + radius * Math.sin(a)], zoom);
+        pos.set(m.key, [ll.lat, ll.lng]);
+      });
+    });
+    return { pos, hubs };
+  }, [visibleNodes, leafletMap, zoom]);
+  const at = (n: MapNode): [number, number] => layout.pos.get(n.key) ?? [n.lat, n.lng];
   const listedLinks = useMemo(() => {
     const q = search.trim().toLowerCase();
     return [...visibleLinks].filter((l) => !q || [l.from.name, l.to.name, l.need, l.reason, l.from.territory, l.to.territory].some((v) => v?.toLowerCase().includes(q))).sort((a, b) => b.score - a.score);
@@ -157,17 +179,16 @@ export default function OpportunityMap() {
       {isLoading ? <div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
         : error ? <div className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">La carte n’a pas pu être chargée. Réessayez dans un instant.</div>
         : visibleNodes.length === 0 ? <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center"><MapPinned className="h-8 w-8 text-muted-foreground" /><p className="max-w-md text-sm text-muted-foreground">Aucun rapprochement localisé dans cette vue. Complétez votre profil et les territoires de vos quêtes, ou consultez la vue « Partout ».</p><Button size="sm" variant="outline" onClick={() => setScope("all")}>Voir tous les rapprochements</Button></div>
-        : <MapContainer center={[46.6, 2.4]} zoom={5} style={{ height: "100%", width: "100%" }}>
+        : <MapContainer ref={setLeafletMap} center={[46.6, 2.4]} zoom={5} style={{ height: "100%", width: "100%" }}>
           <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <FitOpportunityBounds nodes={visibleNodes} />
-          {visibleLinks.map((link) => <Polyline key={link.id} positions={[[link.from.lat, link.from.lng], [link.to.lat, link.to.lng]]} pathOptions={{ color: colors.projects, weight: selectedLink === link.id ? 5 : 1.5, opacity: selectedLink ? (selectedLink === link.id ? 1 : 0.15) : 0.4 }} eventHandlers={{ click: () => setSelectedLink(link.id) }} />)}
+          <ZoomWatcher onZoom={setZoom} />
+          {layout.hubs.flatMap((h) => visibleNodes.filter((n) => `${n.lat.toFixed(4)},${n.lng.toFixed(4)}` === h.key).map((n) => <Polyline key={`spoke-${n.key}`} positions={[h.center, at(n)]} pathOptions={{ color: "hsl(var(--muted-foreground))", weight: 1, opacity: 0.5, dashArray: "2 3" }} />))}
+          {layout.hubs.map((h) => <CircleMarker key={`hub-${h.key}`} center={h.center} radius={4} pathOptions={{ color: "hsl(var(--foreground))", fillColor: "hsl(var(--background))", fillOpacity: 1, weight: 1.5 }}><Tooltip direction="top">{h.count} au même endroit</Tooltip></CircleMarker>)}
+          {visibleLinks.map((link) => <Polyline key={link.id} positions={[at(link.from), at(link.to)]} pathOptions={{ color: colors.projects, weight: selectedLink === link.id ? 5 : 1.5, opacity: selectedLink ? (selectedLink === link.id ? 1 : 0.15) : 0.4 }} eventHandlers={{ click: () => setSelectedLink(link.id) }} />)}
           {visibleNodes.map((node) => {
             const related = links.filter((link) => link.from.key === node.key || link.to.key === node.key);
-            const sk = `${node.lat.toFixed(4)},${node.lng.toFixed(4)}`;
-            const stacked = stackCount.get(sk) ?? 1;
-            const showCount = stacked > 1 && !stackSeen.has(sk);
-            stackSeen.add(sk);
-            return <CircleMarker key={node.key} center={[node.lat, node.lng]} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}>{showCount && <Tooltip permanent direction="center" className="!bg-background !text-foreground !border-border !px-1.5 !py-0 !text-[11px] !font-bold !shadow-none">{stacked}</Tooltip>}<Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong><p className="text-xs">{node.territory}</p>{related.slice(0, 2).map((link) => <p key={link.id} className="text-xs"><b>{link.need}</b>{link.reason ? ` — ${link.reason}` : ""}</p>)}<Button size="sm" asChild><Link to={node.url} className="!text-primary-foreground hover:!text-primary-foreground">Voir la fiche</Link></Button></div></Popup></CircleMarker>;
+            return <CircleMarker key={node.key} center={at(node)} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}><Tooltip direction="top">{node.name}</Tooltip><Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong><p className="text-xs">{node.territory}</p>{related.slice(0, 2).map((link) => <p key={link.id} className="text-xs"><b>{link.need}</b>{link.reason ? ` — ${link.reason}` : ""}</p>)}<Button size="sm" asChild><Link to={node.url} className="!text-primary-foreground hover:!text-primary-foreground">Voir la fiche</Link></Button></div></Popup></CircleMarker>;
           })}
         </MapContainer>}
       {!isLoading && !error && visibleNodes.length > 0 && <div className="pointer-events-none absolute bottom-3 left-3 z-[500] space-y-1 rounded-lg border border-border bg-background/90 px-3 py-2 text-xs shadow">
@@ -175,7 +196,7 @@ export default function OpportunityMap() {
         <p className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full" style={{ background: colors.projects }} /> Projet avec un besoin</p>
         <p className="flex items-center gap-2"><span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-muted-foreground bg-background" /> Personne, guilde ou ressource</p>
         <p className="flex items-center gap-2"><span className="inline-block h-0.5 w-4" style={{ background: colors.projects }} /> Rapprochement (plus foncé = plusieurs)</p>
-        <p className="flex items-center gap-2"><span className="rounded border border-border px-1 text-[10px] font-bold">3</span> Points empilés au même endroit</p>
+        <p className="flex items-center gap-2"><span className="inline-block h-2 w-2 rounded-full border border-foreground bg-background" /> Centre d'un groupe au même endroit (constellation)</p>
       </div>}
     </div>
 
