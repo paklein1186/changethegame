@@ -3425,6 +3425,24 @@ export type Database = {
         }
         Relationships: []
       }
+      digest_read_items: {
+        Row: {
+          item_key: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          item_key: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          item_key?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       direct_messages: {
         Row: {
           attachment_name: string | null

@@ -1,3 +1,4 @@
+import { DigestSections } from "@/components/home/DigestSections";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -512,6 +513,7 @@ export default function HomeFeed() {
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
               <OpportunitiesPanel asDigest showMapLink initialCount={3} className="mb-5" />
+              <DigestSections userId={currentUser.id} />
               <OpportunitiesPanel className="mb-5" />
               <div>
                 <div className="flex items-center gap-2 mb-3">
@@ -632,6 +634,7 @@ export default function HomeFeed() {
           <div className="max-w-[960px] mx-auto px-3 sm:px-4 pb-8 space-y-5 sm:space-y-6">
               <PathwayCards persona={persona} progress={progress} steps={steps} />
               <OpportunitiesPanel asDigest showMapLink initialCount={3} />
+              <DigestSections userId={currentUser.id} />
               <OpportunitiesPanel />
               <div>
                 <div className="flex items-center gap-2 mb-3">
