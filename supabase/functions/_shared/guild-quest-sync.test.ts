@@ -111,3 +111,19 @@ Deno.test("nouvelle (B3) : publiée une seule fois sur la quête reliée, auteur
   await assertRejects(() => publishNews(a, G, P, "autre", n), SyncError);
   await assertRejects(() => publishNews(a, G, P, quest_id, { id: "", titre: "x" }), SyncError);
 });
+
+Deno.test("quêtes de la guilde pour la file à classer (B5) : toutes, brouillons compris, avec le projet relié", async () => {
+  const { guildQuestsForSite } = await import("./guild-quest-sync.ts");
+  const a = fakeAdmin({
+    quests: [
+      { id: "q1", guild_id: G, is_deleted: false, is_draft: true, title: "Idée née sur CTG", updated_at: "2026-11-28" },
+      { id: "q2", guild_id: G, is_deleted: false, is_draft: false, title: "Reliée", updated_at: "2026-11-27" },
+      { id: "q3", guild_id: G, is_deleted: true, title: "Supprimée" },
+      { id: "q4", guild_id: "autre", is_deleted: false, title: "Autre guilde" },
+    ],
+    quest_affiliations: [],
+    quest_external_links: [{ quest_id: "q2", source: "trois-tiers", external_id: P }],
+  });
+  const r = await guildQuestsForSite(a, G);
+  assertEquals(r.quests.map((q: any) => [q.id, q.projet_id, q.is_draft]), [["q1", null, true], ["q2", P, false]]);
+});

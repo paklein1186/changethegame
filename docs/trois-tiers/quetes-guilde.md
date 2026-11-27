@@ -111,3 +111,10 @@ le site le lit en direct et poste au nom de la personne ; il ne garde rien. Les 
 Migration `20261128170000_quest_comments_access.sql` : les commentaires d'une quête, de ses actualités et de ses
 propositions demandent désormais l'accès complet à la quête, en lecture comme en écriture (ils étaient lisibles par
 tout le monde, même pour une quête réservée).
+
+## Quêtes nées sur ChangeTheGame : file « à classer » du site (palier 2, B5)
+
+`guild-quest-sync` `{ "action": "guild_quests" }`, clé du site seule, lecture seule : toutes les quêtes de la guilde
+(brouillons compris, champs d'administration) avec `projet_id`, le projet du site auquel chacune est reliée par la
+publication automatique. Le site range les autres dans sa file « à classer » : la coordination les relie à un projet,
+les accueille comme projet ou les écarte. Rien n'est adopté sans décision, et aucune quête n'est jamais recréée.

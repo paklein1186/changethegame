@@ -2,6 +2,8 @@
 // Utilisé par guild-quest-sync. Le site reste maître du contenu ; CTG n'en reçoit que la face publique, et la
 // fonction n'écrit que des champs de présentation sur des quêtes de la guilde qu'elle a reliées elle-même.
 
+import { guildQuests } from "./guild-quests.ts";
+
 type Row = Record<string, any>;
 export const SOURCE = "trois-tiers";
 const NATURES = new Set(["IDEA", "PROJECT", "MISSION"]);
@@ -172,6 +174,20 @@ export async function publishNews(admin: any, guildId: string, projetId: string,
     throw new SyncError("db", e2.message ?? "link failed", 500);
   }
   return { quest_id: questId, update_id: upd.id, created: true };
+}
+
+/**
+ * Toutes les quêtes de la guilde (brouillons compris, champs d'administration), avec le projet du site auquel chacune
+ * est reliée par cette fonction (quest_external_links) : le site range les autres dans sa file « à classer » (B5).
+ */
+export async function guildQuestsForSite(admin: any, guildId: string) {
+  const quests = await guildQuests(admin, guildId, true);
+  const ids = quests.map((q: Row) => q.id);
+  const { data: links } = ids.length
+    ? await admin.from("quest_external_links").select("quest_id, external_id").eq("source", SOURCE).in("quest_id", ids)
+    : { data: [] };
+  const projet = new Map((links ?? []).map((l: Row) => [l.quest_id, l.external_id]));
+  return { guild_id: guildId, quests: quests.map((q: Row) => ({ ...q, projet_id: projet.get(q.id) ?? null })) };
 }
 
 /** Comparaison en temps constant de la clé du site. */
