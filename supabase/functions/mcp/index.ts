@@ -282,13 +282,47 @@ var update_personal_task_default = defineTool8({
   }
 });
 
+// src/lib/mcp/tools/get-guild-activity.ts
+import { defineTool as defineTool9 } from "npm:@lovable.dev/mcp-js@0.24.0";
+import { z as z8 } from "npm:zod@^3.25.76";
+var get_guild_activity_default = defineTool9({
+  name: "get_guild_activity",
+  title: "Guild activity since a date",
+  description: "Everything that happened in one of your guilds since a date, in one call: messages (rooms, guild discussion, its quests' discussions) and replies, decisions (vote tally and outcome), quests created or updated, quest news, needs, proposed contributions, events, new members. Only what you are allowed to see; never private messages. Get the guild id with list_my_guilds. Pass `next_since` from the answer as `since` next time; if `truncated` is true, call again from the last item you processed.",
+  inputSchema: {
+    guild_id: z8.string().uuid().describe("The guild id (from list_my_guilds)."),
+    since: z8.string().datetime({ offset: true }).optional().describe("ISO date-time. Default: 48 hours ago."),
+    until: z8.string().datetime({ offset: true }).optional().describe("ISO date-time. Default: now."),
+    max_per_section: z8.number().int().min(1).max(200).optional().describe("Cap per section (default 100).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ guild_id, since, until, max_per_section }, ctx) => {
+    if (!ctx.getUserId()) return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    const supabase = supabaseForToken(ctx.getToken() ?? "");
+    const now = Date.now();
+    const s0 = since ? new Date(since).toISOString() : new Date(now - 48 * 36e5).toISOString();
+    const u0 = until ? new Date(until).toISOString() : new Date(now).toISOString();
+    const { data, error } = await supabase.rpc("guild_activity", {
+      p_guild_id: guild_id,
+      p_since: s0,
+      p_until: u0,
+      p_cap: max_per_section ?? 100
+    });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { activity: data }
+    };
+  }
+});
+
 // src/lib/mcp/index.ts
 var projectRef = "anzeimppqytonfxrnqxp";
 var mcp_default = defineMcp({
   name: "changethegame",
   title: "changethegame",
   version: "0.1.0",
-  instructions: "Tools for changethegame, a regenerative collaboration platform of quests, guilds and territories. Every call acts as the signed-in human: use `whoami` for their profile and balances, `list_my_quests` / `list_my_guilds` / `list_my_tasks` for their commitments, `search_quests` and `get_quest` to explore work, and the personal-task tools to manage their to-do list. All data is scoped by the platform's access rules \u2014 only what this user may see is returned.",
+  instructions: "Tools for changethegame, a regenerative collaboration platform of quests, guilds and territories. Every call acts as the signed-in human: use `whoami` for their profile and balances, `list_my_quests` / `list_my_guilds` / `list_my_tasks` for their commitments, `search_quests` and `get_quest` to explore work, the personal-task tools to manage their to-do list, and `get_guild_activity` to follow everything new in one of their guilds since a date. All data is scoped by the platform's access rules \u2014 only what this user may see is returned.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated"
@@ -301,7 +335,8 @@ var mcp_default = defineMcp({
     list_my_guilds_default,
     list_my_tasks_default,
     create_personal_task_default,
-    update_personal_task_default
+    update_personal_task_default,
+    get_guild_activity_default
   ]
 });
 

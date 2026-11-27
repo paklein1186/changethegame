@@ -7,6 +7,7 @@ import listMyGuilds from "./tools/list-my-guilds";
 import listMyTasks from "./tools/list-my-tasks";
 import createPersonalTask from "./tools/create-personal-task";
 import updatePersonalTask from "./tools/update-personal-task";
+import getGuildActivity from "./tools/get-guild-activity";
 
 // The OAuth issuer must be the direct Supabase host, built from the project ref
 // (inlined by Vite at build time) so this module stays import-safe.
@@ -17,7 +18,7 @@ export default defineMcp({
   title: "changethegame",
   version: "0.1.0",
   instructions:
-    "Tools for changethegame, a regenerative collaboration platform of quests, guilds and territories. Every call acts as the signed-in human: use `whoami` for their profile and balances, `list_my_quests` / `list_my_guilds` / `list_my_tasks` for their commitments, `search_quests` and `get_quest` to explore work, and the personal-task tools to manage their to-do list. All data is scoped by the platform's access rules — only what this user may see is returned.",
+    "Tools for changethegame, a regenerative collaboration platform of quests, guilds and territories. Every call acts as the signed-in human: use `whoami` for their profile and balances, `list_my_quests` / `list_my_guilds` / `list_my_tasks` for their commitments, `search_quests` and `get_quest` to explore work, the personal-task tools to manage their to-do list, and `get_guild_activity` to follow everything new in one of their guilds since a date. All data is scoped by the platform's access rules — only what this user may see is returned.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
@@ -31,5 +32,6 @@ export default defineMcp({
     listMyTasks,
     createPersonalTask,
     updatePersonalTask,
+    getGuildActivity,
   ],
 });
