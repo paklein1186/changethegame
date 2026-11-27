@@ -493,10 +493,10 @@ function UserProfileInner() {
 
       {/* ═══ Identity Banner ═══ */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-border bg-card p-4 sm:p-6 mb-6">
+        className="border-b border-border pb-5 mb-5">
         <div className="flex flex-col gap-4">
           {/* Row 1: Avatar + Name + Actions */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
               <Avatar className="h-14 w-14 sm:h-20 sm:w-20 shrink-0">
                 <AvatarImage src={profile.avatarUrl || undefined} />
@@ -504,7 +504,7 @@ function UserProfileInner() {
               </Avatar>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold truncate">{profile.name}</h1>
+                  <h1 className="min-w-0 break-words font-display text-2xl sm:text-3xl font-bold">{profile.name}</h1>
                   <AdminBadge userId={profile.userId} />
                 </div>
                 {profile.headline && (
@@ -533,10 +533,10 @@ function UserProfileInner() {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
+            <div className="flex min-w-0 flex-col items-start gap-3">
               <SocialRow profile={profile} />
               {isOwnProfile ? (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
                   <Button size="sm" variant="outline" asChild>
                     <Link to="/me"><Pencil className="h-4 w-4 mr-1" /> Edit profile</Link>
                   </Button>
@@ -549,10 +549,10 @@ function UserProfileInner() {
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
                   <Button
                     size="sm"
-                    variant="outline"
+                    variant="default"
                     disabled={chatPending}
                     onClick={() => requireAuth(() => openChat({ id: profile.userId, name: profile.name, avatarUrl: profile.avatarUrl || undefined }), "message this user")}
                   >
@@ -575,7 +575,7 @@ function UserProfileInner() {
           </div>
 
           {/* Row 2: XP + Topics + Territories — full width, aligned under name */}
-          <div className="space-y-2 pl-0 sm:pl-24">
+          <div className="space-y-3 border-t border-border pt-4">
             <div className="flex items-center gap-3 flex-wrap">
               <XpWidget xp={profile.xp} xpRecent12m={profile.xpRecent12m} level={profile.xpLevel} userId={profile.userId} />
               <ProfileCTGStats userId={profile.userId} isOwnProfile={isOwnProfile} />
@@ -656,7 +656,7 @@ function UserProfileInner() {
 
       {/* ═══ Tab Navigation ═══ */}
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="mb-6 flex-wrap">
+        <TabsList className="mb-5 h-auto w-full justify-start flex-wrap gap-1 rounded-lg p-1">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="wall">Wall</TabsTrigger>
           <TabsTrigger value="quests">Quests</TabsTrigger>
