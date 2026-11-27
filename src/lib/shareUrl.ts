@@ -32,10 +32,14 @@ const PREVIEW_HOSTS = [
   "gptengineer.run",
 ];
 
-/** True for Lovable editor/preview addresses, which outsiders cannot open. */
-export function isPreviewHost(hostname: string): boolean {
+/** Machines running the app locally — nobody else can follow these addresses. */
+const LOCAL_HOSTS = ["localhost", "127.0.0.1", "::1", "[::1]", "0.0.0.0"];
+
+/** True for editor/preview and local addresses, which outsiders cannot open. */
+export function isPrivateHost(hostname: string): boolean {
   const host = hostname.toLowerCase();
   return (
+    LOCAL_HOSTS.includes(host) ||
     host.startsWith("id-preview--") ||
     PREVIEW_HOSTS.some((domain) => host === domain || host.endsWith("." + domain))
   );
@@ -43,12 +47,13 @@ export function isPreviewHost(hostname: string): boolean {
 
 /**
  * Origin to use in anything sent to another person (messages, e-mails,
- * copied links). In the editor preview this returns the published site
- * address, so the recipient gets a link they can actually open.
+ * copied links). In the editor preview or on a machine running the app
+ * locally this returns the published site address, so the recipient gets a
+ * link they can actually open.
  */
 export function publicOrigin(): string {
   if (typeof window === "undefined") return PRODUCTION_DOMAIN;
-  return isPreviewHost(window.location.hostname)
+  return isPrivateHost(window.location.hostname)
     ? PRODUCTION_DOMAIN
     : window.location.origin;
 }
