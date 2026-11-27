@@ -239,6 +239,13 @@
       "when": 1795794933499,
       "tag": "0033_quest_access_rpcs",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1795798639234,
+      "tag": "0034_guild_opportunities_relevance",
+      "breakpoints": true
     }
   ]
 }
