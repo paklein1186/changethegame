@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { LogIn, UserPlus, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ export function PublicExploreCTA({
   className = "",
   onSignupClick,
 }: Props) {
+  const { t } = useTranslation();
   const location = useLocation();
   const redirectParam = `?redirect=${encodeURIComponent(location.pathname + location.search)}`;
 
@@ -31,10 +33,10 @@ export function PublicExploreCTA({
         <Lock className="h-3.5 w-3.5 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">{message}</span>
         <Button size="sm" variant="outline" asChild>
-          <Link to={`/login${redirectParam}`}><LogIn className="h-3.5 w-3.5 mr-1" /> Log in</Link>
+          <Link to={`/login${redirectParam}`}><LogIn className="h-3.5 w-3.5 mr-1" /> {t("uiPublicExploreCTA.logIn")}</Link>
         </Button>
         <Button size="sm" onClick={onSignupClick}>
-          <UserPlus className="h-3.5 w-3.5 mr-1" /> Sign up
+          <UserPlus className="h-3.5 w-3.5 mr-1" /> {t("uiPublicExploreCTA.signUp")}
         </Button>
       </div>
     );
@@ -46,10 +48,10 @@ export function PublicExploreCTA({
       <p className="text-sm text-foreground mb-4">{message}</p>
       <div className="flex justify-center gap-3">
         <Button variant="outline" asChild>
-          <Link to={`/login${redirectParam}`}><LogIn className="h-4 w-4 mr-1" /> Log in</Link>
+          <Link to={`/login${redirectParam}`}><LogIn className="h-4 w-4 mr-1" /> {t("uiPublicExploreCTA.logIn")}</Link>
         </Button>
         <Button onClick={onSignupClick}>
-          <UserPlus className="h-4 w-4 mr-1" /> Create an account
+          <UserPlus className="h-4 w-4 mr-1" /> {t("uiPublicExploreCTA.createAnAccount")}
         </Button>
       </div>
     </div>

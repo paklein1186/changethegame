@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -27,6 +28,7 @@ interface TrustRenewalEdge {
 }
 
 export function TrustRenewalWidget() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -111,7 +113,7 @@ export function TrustRenewalWidget() {
     });
     setActing(null);
     if (error) {
-      toast({ title: "Renewal failed", description: error.message, variant: "destructive" });
+      toast({ title: t("uiTrustRenewalWidget.renewalFailed"), description: error.message, variant: "destructive" });
     } else {
       toast({ title: "✅ Trust renewed!", description: `+2 credits earned. Your attestation for ${(result as any)?.target_name ?? "this entity"} is now fresh.` });
       qc.invalidateQueries({ queryKey: ["trust-renewal-edges"] });
@@ -149,7 +151,7 @@ export function TrustRenewalWidget() {
         {renewalCount > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-              <Clock className="h-3 w-3" /> Ready for renewal ({renewalCount})
+              <Clock className="h-3 w-3" /> {t("uiTrustRenewalWidget.readyForRenewal")}{renewalCount})
             </p>
             {data!.renewal.map((edge) => (
               <RenewalEdgeRow

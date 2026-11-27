@@ -5,11 +5,11 @@ export default function SecurityPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.security.title")} subtitle={t("pages.security.subtitle")}>
-      <ContentSection title="Our Commitment">
-        <p>Security is foundational to changethegame. We implement industry-standard protections across all layers of the platform.</p>
+      <ContentSection title={t("uiSecurityPage.ourCommitment")}>
+        <p>{t("uiSecurityPage.securityIsFoundationalToChangethegameWe")}</p>
       </ContentSection>
 
-      <ContentSection title="Measures in Place">
+      <ContentSection title={t("uiSecurityPage.measuresInPlace")}>
         <ContentList items={[
           "Encryption in transit (TLS) and at rest",
           "Row-level security on all database tables",
@@ -22,7 +22,7 @@ export default function SecurityPage() {
       </ContentSection>
 
       <ContentSection title="Responsible Disclosure">
-        <p>If you discover a vulnerability, please report it to <a href="mailto:security@changethegame.xyz" className="text-primary hover:underline">security@changethegame.xyz</a>. We take all reports seriously and respond promptly.</p>
+        <p>{t("uiSecurityPage.ifYouDiscoverAVulnerabilityPlease")} <a href="mailto:security@changethegame.xyz" className="text-primary hover:underline">security@changethegame.xyz</a>{t("uiSecurityPage.weTakeAllReportsSeriouslyAnd")}</p>
       </ContentSection>
     </ContentPageShell>
   );

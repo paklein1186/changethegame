@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,14 +21,14 @@ const PROVIDERS = [
     id: "google" as const,
     name: "Google Calendar",
     icon: "📅",
-    description: "Sync events from your Google Calendar to block availability and push new bookings.",
+    get description() { return i18n.t("uiCalendarSyncTab.syncEventsFromYourGoogleCalendar"); },
     color: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
   },
   {
     id: "outlook" as const,
     name: "Microsoft Outlook",
     icon: "📧",
-    description: "Sync events from your Outlook calendar to block availability and push new bookings.",
+    get description() { return i18n.t("uiCalendarSyncTab.syncEventsFromYourOutlookCalendar"); },
     color: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
   },
 ];
@@ -47,6 +49,7 @@ interface SubCalendar {
 }
 
 export function CalendarSyncTab() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -103,7 +106,7 @@ export function CalendarSyncTab() {
         setSubCalendars(prev => ({ ...prev, [connectionId]: data.calendars }));
       }
     } catch (err: any) {
-      toast({ title: "Failed to load subcalendars", description: err.message, variant: "destructive" });
+      toast({ title: t("uiCalendarSyncTab.failedToLoadSubcalendars"), description: err.message, variant: "destructive" });
     } finally {
       setLoadingSubCals(prev => { const n = new Set(prev); n.delete(connectionId); return n; });
     }
@@ -149,7 +152,7 @@ export function CalendarSyncTab() {
           updated_at: new Date().toISOString(),
         }, { onConflict: "user_id,connection_id,source_calendar_id" });
     } catch (err: any) {
-      toast({ title: "Failed to update preference", variant: "destructive" });
+      toast({ title: t("uiCalendarSyncTab.failedToUpdatePreference"), variant: "destructive" });
       // Revert
       setSubCalendars(prev => ({
         ...prev,
@@ -167,7 +170,7 @@ export function CalendarSyncTab() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        toast({ title: "Please log in first", variant: "destructive" });
+        toast({ title: t("uiCalendarSyncTab.pleaseLogInFirst"), variant: "destructive" });
         return;
       }
       const redirectUri = `${window.location.origin}/me?tab=calendar`;
@@ -180,12 +183,12 @@ export function CalendarSyncTab() {
       });
       const data = await response.json();
       if (data.error) {
-        toast({ title: "Connection failed", description: data.error, variant: "destructive" });
+        toast({ title: t("uiCalendarSyncTab.connectionFailed"), description: data.error, variant: "destructive" });
         return;
       }
       window.location.href = data.url;
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiCalendarSyncTab.error"), description: err.message, variant: "destructive" });
     } finally {
       setConnecting(null);
     }
@@ -209,7 +212,7 @@ export function CalendarSyncTab() {
       qc.invalidateQueries({ queryKey: ["calendar-busy-count"] });
       toast({ title: `${provider === "google" ? "Google Calendar" : "Outlook"} disconnected` });
     } catch (err: any) {
-      toast({ title: "Error disconnecting", description: err.message, variant: "destructive" });
+      toast({ title: t("uiCalendarSyncTab.errorDisconnecting"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -234,7 +237,7 @@ export function CalendarSyncTab() {
       qc.invalidateQueries({ queryKey: ["my-external-calendar-events"] });
       toast({ title: "Calendar synced", description: `${data.synced || 0} events imported (only from enabled subcalendars)` });
     } catch (err: any) {
-      toast({ title: "Sync failed", description: err.message, variant: "destructive" });
+      toast({ title: t("uiCalendarSyncTab.syncFailed"), description: err.message, variant: "destructive" });
     } finally {
       setSyncing(false);
     }
@@ -260,14 +263,13 @@ export function CalendarSyncTab() {
             Calendar Sync
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Connect your external calendars to automatically block busy times in your service availability
-            and push new bookings to your calendar.
+            {t("uiCalendarSyncTab.connectYourExternalCalendarsToAutomatically")}
           </p>
         </div>
         {hasAnyConnection && (
           <Button variant="outline" size="sm" onClick={handleSync} disabled={syncing} className="shrink-0">
             {syncing ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <RefreshCw className="h-4 w-4 mr-1.5" />}
-            Sync now
+            {t("uiCalendarSyncTab.syncNow")}
           </Button>
         )}
       </div>
@@ -281,7 +283,7 @@ export function CalendarSyncTab() {
           </div>
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span>{busyCount} upcoming event{busyCount !== 1 ? "s" : ""} blocking slots</span>
+            <span>{busyCount} {t("uiCalendarSyncTab.upcomingEvent")}{busyCount !== 1 ? "s" : ""} blocking slots</span>
           </div>
         </div>
       )}
@@ -362,7 +364,7 @@ export function CalendarSyncTab() {
                     className="flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
                   >
                     {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-                    Choose which subcalendars to sync
+                    {t("uiCalendarSyncTab.chooseWhichSubcalendarsToSync")}
                   </button>
 
                   {isExpanded && (
@@ -377,11 +379,11 @@ export function CalendarSyncTab() {
                           ))}
                         </div>
                       ) : subs.length === 0 ? (
-                        <p className="text-xs text-muted-foreground">No subcalendars found.</p>
+                        <p className="text-xs text-muted-foreground">{t("uiCalendarSyncTab.noSubcalendarsFound")}</p>
                       ) : (
                         <>
                           <p className="text-[11px] text-muted-foreground mb-1">
-                            Only enabled subcalendars will block your service availability and appear on your Work calendar.
+                            {t("uiCalendarSyncTab.onlyEnabledSubcalendarsWillBlockYour")}
                           </p>
                           {subs.map(sub => {
                             const key = `${conn.id}::${sub.id}`;
@@ -397,7 +399,7 @@ export function CalendarSyncTab() {
                             );
                           })}
                           <p className="text-[10px] text-muted-foreground mt-2">
-                            Changes take effect on next sync. Click "Sync now" to apply immediately.
+                            {t("uiCalendarSyncTab.changesTakeEffectOnNextSync")}
                           </p>
                         </>
                       )}
@@ -416,11 +418,11 @@ export function CalendarSyncTab() {
       <div className="rounded-xl bg-muted/50 p-4 space-y-2">
         <h4 className="text-sm font-medium">How Calendar Sync works</h4>
         <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
-          <li><strong>Read:</strong> External busy events from enabled subcalendars are imported and automatically block matching time slots in your service availability.</li>
-          <li><strong>Write:</strong> When a booking is confirmed for one of your services, it's automatically pushed to your connected calendar.</li>
-          <li>You can choose which subcalendars to sync — only enabled ones will block your availability.</li>
-          <li>Events are synced for the next 30 days and refreshed each time you sync.</li>
-          <li>Your calendar data is securely stored and never shared with other users.</li>
+          <li><strong>Read:</strong> {t("uiCalendarSyncTab.externalBusyEventsFromEnabledSubcalendars")}</li>
+          <li><strong>Write:</strong> {t("uiCalendarSyncTab.whenABookingIsConfirmedFor")}</li>
+          <li>{t("uiCalendarSyncTab.youCanChooseWhichSubcalendarsTo")}</li>
+          <li>{t("uiCalendarSyncTab.eventsAreSyncedForTheNext")}</li>
+          <li>{t("uiCalendarSyncTab.yourCalendarDataIsSecurelyStored")}</li>
         </ul>
       </div>
     </div>

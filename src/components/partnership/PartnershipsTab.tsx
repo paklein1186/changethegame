@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Handshake, Send, Inbox, CheckCircle, XCircle, Clock, ExternalLink, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
+  const { t } = useTranslation();
   const { data: partnerships, isLoading } = usePartnershipsForEntity(entityType, entityId);
   const { data: entityMap } = usePartnerEntities(partnerships);
   const updateStatus = useUpdatePartnershipStatus();
@@ -50,7 +52,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
   const handleAction = async (id: string, status: "ACCEPTED" | "DECLINED" | "CANCELLED") => {
     try {
       await updateStatus.mutateAsync({ id, status });
-      toast({ title: status === "ACCEPTED" ? "Partnership accepted!" : status === "DECLINED" ? "Partnership declined" : "Request withdrawn" });
+      toast({ title: status === "ACCEPTED" ? "Partnership accepted!" : status === "DECLINED" ? "Partnership declined" : t("uiPartnershipsTab.requestWithdrawn") });
 
       // Notify requesting entity admins when accepted
       if (status === "ACCEPTED") {
@@ -89,7 +91,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
         }
       }
     } catch {
-      toast({ title: "Action failed", variant: "destructive" });
+      toast({ title: t("uiPartnershipsTab.actionFailed"), variant: "destructive" });
     }
   };
 
@@ -148,7 +150,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
     );
   };
 
-  if (isLoading) return <p className="text-sm text-muted-foreground py-4">Loading partnerships…</p>;
+  if (isLoading) return <p className="text-sm text-muted-foreground py-4">{t("uiPartnershipsTab.loadingPartnerships")}</p>;
 
   return (
     <div className="space-y-6">
@@ -159,7 +161,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
         </h3>
         {isAdmin && (
           <Button size="sm" onClick={() => setProposeOpen(true)}>
-            <Send className="h-4 w-4 mr-1" /> Propose a partnership
+            <Send className="h-4 w-4 mr-1" /> {t("uiPartnershipsTab.proposeAPartnership")}
           </Button>
         )}
       </div>
@@ -180,7 +182,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
       {isAdmin && outgoing.length > 0 && (
         <div>
           <h4 className="text-sm font-medium flex items-center gap-1.5 mb-2">
-            <Clock className="h-4 w-4" /> Pending outgoing ({outgoing.length})
+            <Clock className="h-4 w-4" /> {t("uiPartnershipsTab.pendingOutgoing")}{outgoing.length})
           </h4>
           <div className="space-y-2">
             {outgoing.map((p: any) => <PartnerCard key={p.id} p={p} showActions="outgoing" />)}
@@ -191,7 +193,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
       {/* Active partners */}
       <div>
         <h4 className="text-sm font-medium flex items-center gap-1.5 mb-2">
-          <CheckCircle className="h-4 w-4 text-primary" /> Active partners ({accepted.length})
+          <CheckCircle className="h-4 w-4 text-primary" /> {t("uiPartnershipsTab.activePartners")}{accepted.length})
         </h4>
         {accepted.length > 0 ? (
           <div className="space-y-2">
@@ -200,8 +202,8 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
         ) : (
           <p className="text-sm text-muted-foreground py-4">
             {isAdmin
-              ? "You don't have partners yet. Start by proposing a partnership."
-              : "No partners yet."}
+              ? t("uiPartnershipsTab.youDonTHavePartnersYet")
+              : t("uiPartnershipsTab.noPartnersYet")}
           </p>
         )}
       </div>

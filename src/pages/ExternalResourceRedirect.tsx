@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ExternalLink, ShieldAlert, Link as LinkIcon, FileX } from "lucide-react";
@@ -15,6 +16,7 @@ function isValidHttpUrl(value: string | null): value is string {
 }
 
 export default function ExternalResourceRedirect() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const rawUrl = searchParams.get("url");
   const label = searchParams.get("label") || "External resource";
@@ -53,7 +55,7 @@ export default function ExternalResourceRedirect() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-muted-foreground">
         <FileX className="h-10 w-10" />
-        <p className="text-sm">This external resource link is invalid.</p>
+        <p className="text-sm">{t("uiExternalResourceRedirect.thisExternalResourceLinkIsInvalid")}</p>
       </div>
     );
   }
@@ -80,7 +82,7 @@ export default function ExternalResourceRedirect() {
           <Button asChild size="sm" className="shrink-0">
             <a href={resourceUrl} target="_top" rel="noopener noreferrer">
               <ExternalLink className="mr-2 h-4 w-4" />
-              Open resource
+              {t("uiExternalResourceRedirect.openResource")}
             </a>
           </Button>
         </div>
@@ -90,13 +92,11 @@ export default function ExternalResourceRedirect() {
           <p>
             {autoRedirectFailed ? (
               <>
-                If the page didn't load, your browser's privacy shield (e.g.
-                Brave Shields) may be blocking the destination. Click
-                <strong> Open resource </strong> to retry, or temporarily
-                disable shields for this site.
+                {t("uiExternalResourceRedirect.ifThePageDidnTLoad")}
+                <strong> {t("uiExternalResourceRedirect.openResource")} </strong> {t("uiExternalResourceRedirect.toRetryOrTemporarilyDisableShields")}
               </>
             ) : (
-              <>Redirecting you to {hostname}…</>
+              <>{t("uiExternalResourceRedirect.redirectingYouTo")} {hostname}…</>
             )}
           </p>
         </div>

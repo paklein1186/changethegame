@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Sprout } from "lucide-react";
@@ -9,6 +10,7 @@ import { getStewardTier } from "@/lib/xpCreditsConfig";
  * Calculates estimated $CTG from emission rules.
  */
 export function CTGEstimateBlock({ subtaskCount }: { subtaskCount: number }) {
+  const { t } = useTranslation();
   const { data: estimate } = useQuery({
     queryKey: ["ctg-quest-estimate", subtaskCount],
     queryFn: async () => {
@@ -35,7 +37,7 @@ export function CTGEstimateBlock({ subtaskCount }: { subtaskCount: number }) {
         <Sprout className="h-4 w-4" />
         ~{estimate} $CTG
       </p>
-      <p className="text-[10px] text-muted-foreground">Earned on verified completion</p>
+      <p className="text-[10px] text-muted-foreground">{t("uiCTGIntegrationWidgets.earnedOnVerifiedCompletion")}</p>
     </div>
   );
 }

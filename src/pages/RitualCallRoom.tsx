@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
@@ -54,6 +55,7 @@ function JitsiEmbed({
   avatarUrl?: string;
   onError: () => void;
 }) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<any>(null);
   const [loaded, setLoaded] = useState(false);
@@ -139,13 +141,13 @@ function JitsiEmbed({
     return (
       <div className="flex flex-col items-center justify-center h-full bg-muted/30 rounded-xl p-8 text-center">
         <AlertTriangle className="h-12 w-12 text-warning mb-4" />
-        <h3 className="font-display text-lg font-semibold mb-2">Couldn't load the call</h3>
+        <h3 className="font-display text-lg font-semibold mb-2">{t("uiRitualCallRoom.couldnTLoadTheCall")}</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          The video call couldn't be initialized. Try joining directly:
+          {t("uiRitualCallRoom.theVideoCallCouldnTBe")}
         </p>
         <Button asChild>
           <a href={jitsiUrl} target="_blank" rel="noopener noreferrer">
-            <Video className="h-4 w-4 mr-2" /> Open call room <ExternalLink className="h-3.5 w-3.5 ml-1" />
+            <Video className="h-4 w-4 mr-2" /> {t("uiRitualCallRoom.openCallRoom")} <ExternalLink className="h-3.5 w-3.5 ml-1" />
           </a>
         </Button>
       </div>
@@ -156,7 +158,7 @@ function JitsiEmbed({
     <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden bg-black/5">
       {!loaded && (
         <div className="flex items-center justify-center h-full">
-          <p className="text-muted-foreground text-sm animate-pulse">Loading call…</p>
+          <p className="text-muted-foreground text-sm animate-pulse">{t("uiRitualCallRoom.loadingCall")}</p>
         </div>
       )}
     </div>
@@ -196,6 +198,7 @@ function downloadRitualIcs(title: string, scheduledAt: string, durationMinutes: 
 // ─── Main Component ────────────────────────────────────────────
 
 export default function RitualCallRoom() {
+  const { t } = useTranslation();
   const { occurrenceId } = useParams<{ occurrenceId: string }>();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
@@ -293,7 +296,7 @@ export default function RitualCallRoom() {
       } as any);
     }
     qc.invalidateQueries({ queryKey: ["ritual-call-attendees", occurrenceId] });
-    toast({ title: status === "attending" ? "You're attending!" : "Declined" });
+    toast({ title: status === "attending" ? t("uiRitualCallRoom.youReAttending") : "Declined" });
   };
 
   // Jitsi room name
@@ -316,10 +319,10 @@ export default function RitualCallRoom() {
     try {
       await navigator.clipboard.writeText(jitsiShareUrl);
       setShareCopied(true);
-      toast({ title: "Call link copied!", description: "Anyone with this link can join — no account needed." });
+      toast({ title: t("uiRitualCallRoom.callLinkCopied"), description: t("uiRitualCallRoom.anyoneWithThisLinkCanJoin") });
       setTimeout(() => setShareCopied(false), 2000);
     } catch {
-      toast({ title: "Failed to copy", variant: "destructive" });
+      toast({ title: t("uiRitualCallRoom.failedToCopy"), variant: "destructive" });
     }
   };
 
@@ -334,7 +337,7 @@ export default function RitualCallRoom() {
   if (isLoading) {
     return (
       <PageShell>
-        <p className="text-muted-foreground py-24 text-center">Loading ritual call…</p>
+        <p className="text-muted-foreground py-24 text-center">{t("uiRitualCallRoom.loadingRitualCall")}</p>
       </PageShell>
     );
   }
@@ -344,10 +347,10 @@ export default function RitualCallRoom() {
       <PageShell>
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <FileQuestion className="h-16 w-16 text-muted-foreground mb-4" />
-          <h1 className="font-display text-2xl font-bold mb-2">Ritual not found</h1>
-          <p className="text-muted-foreground mb-6">This ritual occurrence doesn't exist or has been removed.</p>
+          <h1 className="font-display text-2xl font-bold mb-2">{t("uiRitualCallRoom.ritualNotFound")}</h1>
+          <p className="text-muted-foreground mb-6">{t("uiRitualCallRoom.thisRitualOccurrenceDoesnTExist")}</p>
           <Button variant="outline" asChild>
-            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Link>
+            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiRitualCallRoom.back")}</Link>
           </Button>
         </div>
       </PageShell>
@@ -361,7 +364,7 @@ export default function RitualCallRoom() {
       {/* Breadcrumb bar */}
       <div className="border-b border-border bg-card px-4 py-2 flex items-center gap-2 text-sm">
         <Link to={backUrl} className="text-muted-foreground hover:text-foreground transition-colors">
-          {ritual?.guild_id ? "Guild" : ritual?.quest_id ? "Quest" : "Work"}
+          {ritual?.guild_id ? t("uiRitualCallRoom.guild") : ritual?.quest_id ? t("uiRitualCallRoom.quest") : "Work"}
         </Link>
         <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
         <span className="text-muted-foreground">Rituals</span>
@@ -371,15 +374,15 @@ export default function RitualCallRoom() {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="sm">
-                <Share2 className="h-3.5 w-3.5 mr-1" /> Share Call
+                <Share2 className="h-3.5 w-3.5 mr-1" /> {t("uiRitualCallRoom.shareCall")}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
               <div className="space-y-3">
                 <div>
-                  <p className="text-sm font-medium mb-1">Share call link</p>
+                  <p className="text-sm font-medium mb-1">{t("uiRitualCallRoom.shareCallLink")}</p>
                   <p className="text-xs text-muted-foreground">
-                    Anyone with this link can join the call — no account needed.
+                    {t("uiRitualCallRoom.anyoneWithThisLinkCanJoin2")}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -396,7 +399,7 @@ export default function RitualCallRoom() {
             {occurrence.status === "scheduled" ? "Scheduled" : occurrence.status}
           </Badge>
           <Button variant="ghost" size="sm" asChild>
-            <Link to={backUrl}><ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back</Link>
+            <Link to={backUrl}><ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t("uiRitualCallRoom.back")}</Link>
           </Button>
         </div>
       </div>
@@ -450,12 +453,12 @@ export default function RitualCallRoom() {
                 occurrence.visio_link,
               )}
             >
-              <CalendarPlus className="h-3.5 w-3.5 mr-1" /> Add to Calendar
+              <CalendarPlus className="h-3.5 w-3.5 mr-1" /> {t("uiRitualCallRoom.addToCalendar")}
             </Button>
 
             {/* RSVP */}
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground">Your RSVP</h3>
+              <h3 className="text-xs font-semibold uppercase text-muted-foreground">{t("uiRitualCallRoom.yourRsvp")}</h3>
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -495,14 +498,14 @@ export default function RitualCallRoom() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{profile?.name || "Member"}</p>
+                        <p className="text-sm font-medium truncate">{profile?.name || t("uiRitualCallRoom.member")}</p>
                         <p className="text-xs text-muted-foreground capitalize">{a.role}</p>
                       </div>
                     </Link>
                   );
                 })}
                 {attending.length === 0 && (
-                  <p className="text-xs text-muted-foreground py-2">No participants yet.</p>
+                  <p className="text-xs text-muted-foreground py-2">{t("uiRitualCallRoom.noParticipantsYet")}</p>
                 )}
               </div>
             </div>
@@ -537,7 +540,7 @@ export default function RitualCallRoom() {
               <Textarea
                 value={notes}
                 onChange={(e) => handleNotesChange(e.target.value)}
-                placeholder="Take notes during the session…"
+                placeholder={t("uiRitualCallRoom.takeNotesDuringTheSession")}
                 className="min-h-[120px] resize-none text-sm"
                 maxLength={5000}
               />

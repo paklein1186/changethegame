@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -79,16 +80,16 @@ function getContextualPages(messages: Msg[], agentCategory: string, agentSkills:
     pages.push({ label: "Compétences", path: "/explore?tab=users", icon: <Users className="h-3.5 w-3.5" /> });
   }
   if (kw(["topic", "sujet", "thématique", "thème", "domaine"])) {
-    pages.push({ label: "Topics", path: "/explore?tab=entities", icon: <Tag className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.topics"); }, path: "/explore?tab=entities", icon: <Tag className="h-3.5 w-3.5" /> });
   }
   if (kw(["utilisateur", "user", "profil", "membre", "personne", "contact"])) {
     pages.push({ label: "Utilisateurs", path: "/explore?tab=users", icon: <Users className="h-3.5 w-3.5" /> });
   }
   if (kw(["quest", "mission", "projet", "défi", "challenge"])) {
-    pages.push({ label: "Quests", path: "/quests", icon: <Sparkles className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.quests"); }, path: "/quests", icon: <Sparkles className="h-3.5 w-3.5" /> });
   }
   if (kw(["guild", "guilde", "équipe", "groupe", "communauté"])) {
-    pages.push({ label: "Guilds", path: "/guilds", icon: <Users className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.guilds"); }, path: "/guilds", icon: <Users className="h-3.5 w-3.5" /> });
   }
   if (kw(["service", "prestation", "offre", "booking"])) {
     pages.push({ label: "Services", path: "/services", icon: <Briefcase className="h-3.5 w-3.5" /> });
@@ -151,13 +152,13 @@ export default function AgentDetail() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Agent hired! You can now chat.");
+      toast.success(t("uiAgentDetail.agentHiredYouCanNowChat"));
       setHireConfirmOpen(false);
       qc.invalidateQueries({ queryKey: ["agent-hire"] });
       qc.invalidateQueries({ queryKey: ["my-agent-hires"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
     },
-    onError: (e: any) => toast.error(e.message || "Failed to hire agent"),
+    onError: (e: any) => toast.error(e.message || t("uiAgentDetail.failedToHireAgent")),
   });
 
   const { data: spaces = [] } = useAgentSpaces(id, user?.id);
@@ -167,18 +168,18 @@ export default function AgentDetail() {
   const canManage = isOwner || isAdmin;
 
   if (isLoading) return <PageShell><Skeleton className="h-64" /></PageShell>;
-  if (!agent) return <PageShell><p>Agent not found</p></PageShell>;
+  if (!agent) return <PageShell><p>{t("uiAgentDetail.agentNotFound")}</p></PageShell>;
 
   return (
     <PageShell>
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiAgentDetail.back")}
       </Button>
 
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="flex-wrap">
           <TabsTrigger value="overview" className="flex items-center gap-1">
-            <Eye className="h-3.5 w-3.5" /> Overview
+            <Eye className="h-3.5 w-3.5" /> {t("uiAgentDetail.overview")}
           </TabsTrigger>
           <TabsTrigger value="chat" className="flex items-center gap-1">
             <MessageSquare className="h-3.5 w-3.5" /> Chat
@@ -192,7 +193,7 @@ export default function AgentDetail() {
             <CreditCard className="h-3.5 w-3.5" /> Billing
           </TabsTrigger>
           <TabsTrigger value="activity" className="flex items-center gap-1">
-            <Activity className="h-3.5 w-3.5" /> Activity
+            <Activity className="h-3.5 w-3.5" /> {t("uiAgentDetail.activity")}
           </TabsTrigger>
           <TabsTrigger value="trust" className="flex items-center gap-1">
             <Star className="h-3.5 w-3.5" /> Trust
@@ -254,7 +255,7 @@ export default function AgentDetail() {
                     size="lg"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
-                    {hireMut.isPending ? "Hiring..." : Number((agent as any).hire_price ?? 0) > 0 ? `Hire for ${(agent as any).hire_price} credits` : "Hire this Agent (Free)"}
+                    {hireMut.isPending ? "Hiring..." : Number((agent as any).hire_price ?? 0) > 0 ? `Hire for ${(agent as any).hire_price} credits` : t("uiAgentDetail.hireThisAgentFree")}
                   </Button>
 
                   {/* Hire confirmation dialog */}
@@ -262,16 +263,15 @@ export default function AgentDetail() {
                     <Dialog open={hireConfirmOpen} onOpenChange={setHireConfirmOpen}>
                       <DialogContent className="max-w-sm">
                         <DialogHeader>
-                          <DialogTitle>Confirm Hiring</DialogTitle>
+                          <DialogTitle>{t("uiAgentDetail.confirmHiring")}</DialogTitle>
                         </DialogHeader>
                         <p className="text-sm text-muted-foreground">
-                          Hiring <strong>{agent.name}</strong> costs <strong>{(agent as any).hire_price} credits</strong>.
-                          Plan credits are used first, then coins.
+                          Hiring <strong>{agent.name}</strong> costs <strong>{(agent as any).hire_price} credits</strong>{t("uiAgentDetail.planCreditsAreUsedFirstThen")}
                         </p>
                         <div className="flex gap-2 justify-end mt-2">
-                          <Button variant="outline" size="sm" onClick={() => setHireConfirmOpen(false)}>Cancel</Button>
+                          <Button variant="outline" size="sm" onClick={() => setHireConfirmOpen(false)}>{t("uiAgentDetail.cancel")}</Button>
                           <Button size="sm" disabled={hireMut.isPending} onClick={() => hireMut.mutate()}>
-                            {hireMut.isPending ? "Processing..." : "Confirm & Pay"}
+                            {hireMut.isPending ? "Processing..." : t("uiAgentDetail.confirmPay")}
                           </Button>
                         </div>
                       </DialogContent>
@@ -281,7 +281,7 @@ export default function AgentDetail() {
               )}
               {isHired && (
                 <div className="flex items-center gap-2 text-sm text-primary">
-                  <CheckCircle className="h-4 w-4" /> You've hired this agent
+                  <CheckCircle className="h-4 w-4" /> {t("uiAgentDetail.youVeHiredThisAgent")}
                 </div>
               )}
               {!isHired && hasSpaceAccess && (
@@ -289,7 +289,7 @@ export default function AgentDetail() {
                   <CheckCircle className="h-4 w-4" /> {t("agentAccess.available", { space: spaces.map((s) => s.unitName).join(", ") })}
                 </div>
               )}
-              {!user && <Button onClick={() => navigate("/login")} className="w-full">Log in to hire</Button>}
+              {!user && <Button onClick={() => navigate("/login")} className="w-full">{t("uiAgentDetail.logInToHire")}</Button>}
             </div>
 
             <div className="lg:col-span-2">
@@ -300,8 +300,8 @@ export default function AgentDetail() {
               ) : (
                 <Card className="p-12 text-center">
                   <Bot className="h-16 w-16 mx-auto mb-4 text-muted-foreground/30" />
-                  <h3 className="text-lg font-semibold mb-2">Hire to start chatting</h3>
-                  <p className="text-sm text-muted-foreground">Hire this agent to begin a conversation and get personalized assistance.</p>
+                  <h3 className="text-lg font-semibold mb-2">{t("uiAgentDetail.hireToStartChatting")}</h3>
+                  <p className="text-sm text-muted-foreground">{t("uiAgentDetail.hireThisAgentToBeginA")}</p>
                 </Card>
               )}
             </div>
@@ -331,6 +331,7 @@ export default function AgentDetail() {
 }
 
 function AgentChat({ agentId, agentName, costPerUse, billingCurrency, userId, agentCategory, agentSkills }: { agentId: string; agentName: string; costPerUse: number; billingCurrency: string; userId: string; agentCategory: string; agentSkills: string[] }) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
@@ -430,7 +431,7 @@ function AgentChat({ agentId, agentName, costPerUse, billingCurrency, userId, ag
         }
       }
     } catch (e: any) {
-      toast.error(e.message || "Chat error");
+      toast.error(e.message || t("uiAgentDetail.chatError"));
       setMessages(prev => prev.filter(m => m !== userMsg));
     } finally {
       setStreaming(false);
@@ -456,9 +457,9 @@ function AgentChat({ agentId, agentName, costPerUse, billingCurrency, userId, ag
           <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
             <Info className="h-3.5 w-3.5 shrink-0" />
             {agentQuota.remaining > 0 ? (
-              <span>You have <span className="font-medium text-foreground">{agentQuota.remaining}</span> free interactions remaining this month.{billingCurrency !== "credits" && ` Premium agents cost ${costPerUse} ${billingCurrency} each.`}</span>
+              <span>{t("uiAgentDetail.youHave")} <span className="font-medium text-foreground">{agentQuota.remaining}</span> {t("uiAgentDetail.freeInteractionsRemainingThisMonth")}{billingCurrency !== "credits" && ` Premium agents cost ${costPerUse} ${billingCurrency} each.`}</span>
             ) : (
-              <span>Free interactions used up. Next message costs <span className="font-medium text-foreground">{costPerUse} {billingCurrency}</span>.</span>
+              <span>{t("uiAgentDetail.freeInteractionsUsedUpNextMessage")} <span className="font-medium text-foreground">{costPerUse} {billingCurrency}</span>.</span>
             )}
           </div>
         )}

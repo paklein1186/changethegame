@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,7 @@ function TextBlockSection({ section }: { section: Section }) {
 
 /* ─── CTA ─── */
 function CTASection({ section }: { section: Section }) {
+  const { t } = useTranslation();
   return (
     <section className="py-10 px-6 md:px-12 rounded-2xl bg-muted/50 border border-border text-center">
       {section.title && (
@@ -97,7 +99,7 @@ function CTASection({ section }: { section: Section }) {
         </div>
       )}
       <Button size="lg" className="gap-2">
-        Get in touch <ArrowRight className="h-4 w-4" />
+        {t("uiSectionRenderer.getInTouch")} <ArrowRight className="h-4 w-4" />
       </Button>
     </section>
   );
@@ -105,6 +107,7 @@ function CTASection({ section }: { section: Section }) {
 
 /* ─── List Section (services, quests, guilds, projects) ─── */
 function ListSection({ section }: { section: Section }) {
+  const { t } = useTranslation();
   const items = section.items || [];
   const isGrid = section.layout !== "list";
 
@@ -122,7 +125,7 @@ function ListSection({ section }: { section: Section }) {
         <h2 className="text-2xl font-bold text-foreground mb-6">{section.title}</h2>
       )}
       {items.length === 0 ? (
-        <p className="text-muted-foreground text-sm py-4">No {entityType}s to display yet.</p>
+        <p className="text-muted-foreground text-sm py-4">{t("uiSectionRenderer.no")} {entityType}{t("uiSectionRenderer.sToDisplayYet")}</p>
       ) : isGrid ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
@@ -142,6 +145,7 @@ function ListSection({ section }: { section: Section }) {
 
 /* ─── Cards ─── */
 function ItemCard({ item, entityType }: { item: SectionItem; entityType: string }) {
+  const { t } = useTranslation();
   const link = entityLink(entityType, item.id);
   return (
     <div className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3 hover:border-primary/40 transition-colors">
@@ -162,13 +166,14 @@ function ItemCard({ item, entityType }: { item: SectionItem; entityType: string 
         rel="noopener noreferrer"
         className="mt-auto text-sm text-primary hover:underline flex items-center gap-1"
       >
-        View on changethegame <ExternalLink className="h-3 w-3" />
+        {t("uiSectionRenderer.viewOnChangethegame")} <ExternalLink className="h-3 w-3" />
       </a>
     </div>
   );
 }
 
 function ItemRow({ item, entityType }: { item: SectionItem; entityType: string }) {
+  const { t } = useTranslation();
   const link = entityLink(entityType, item.id);
   return (
     <div className="flex items-center gap-4 rounded-lg border border-border bg-card px-5 py-4 hover:border-primary/40 transition-colors">
@@ -191,7 +196,7 @@ function ItemRow({ item, entityType }: { item: SectionItem; entityType: string }
         rel="noopener noreferrer"
         className="text-sm text-primary hover:underline flex items-center gap-1 shrink-0"
       >
-        View <ExternalLink className="h-3 w-3" />
+        {t("uiSectionRenderer.view")} <ExternalLink className="h-3 w-3" />
       </a>
     </div>
   );

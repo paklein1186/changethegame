@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,18 +30,18 @@ const PERMISSION_GROUPS = [
     label: "READ",
     icon: Eye,
     items: [
-      { key: "view_public", label: "View Public Content", threshold: 0 },
-      { key: "view_restricted", label: "View Restricted Content", threshold: 60, note: "Needs trust ≥60" },
-      { key: "view_private", label: "View Private Dashboards", threshold: 75, note: "Needs trust ≥75 & guild approval" },
+      { key: "view_public", get label() { return i18n.t("uiAgentPermissionsTab.viewPublicContent"); }, threshold: 0 },
+      { key: "view_restricted", get label() { return i18n.t("uiAgentPermissionsTab.viewRestrictedContent"); }, threshold: 60, note: "Needs trust ≥60" },
+      { key: "view_private", get label() { return i18n.t("uiAgentPermissionsTab.viewPrivateDashboards"); }, threshold: 75, note: "Needs trust ≥75 & guild approval" },
     ],
   },
   {
     label: "WRITE",
     icon: Pencil,
     items: [
-      { key: "propose_quests", label: "Propose Quests (limited: 5/day)", threshold: 20 },
-      { key: "create_posts", label: "Create Posts", threshold: 40 },
-      { key: "create_entities", label: "Create Entities (Natural Systems, Items)", threshold: 60 },
+      { key: "propose_quests", get label() { return i18n.t("uiAgentPermissionsTab.proposeQuestsLimited5Day"); }, threshold: 20 },
+      { key: "create_posts", get label() { return i18n.t("uiAgentPermissionsTab.createPosts"); }, threshold: 40 },
+      { key: "create_entities", get label() { return i18n.t("uiAgentPermissionsTab.createEntitiesNaturalSystemsItems"); }, threshold: 60 },
       { key: "modify_data", label: "Modify Data", threshold: 80 },
     ],
   },
@@ -47,16 +49,16 @@ const PERMISSION_GROUPS = [
     label: "DATA INGESTION",
     icon: Database,
     items: [
-      { key: "crawl_public", label: "Crawl Public Pages (2 credits/page)", threshold: 0 },
+      { key: "crawl_public", get label() { return i18n.t("uiAgentPermissionsTab.crawlPublicPages2CreditsPage"); }, threshold: 0 },
       { key: "crawl_restricted", label: "Crawl Restricted Pages", threshold: 70, note: "Needs trust ≥70" },
-      { key: "chat_ingestion", label: "Connect to Slack/Discord for Chat Ingestion", threshold: 60 },
+      { key: "chat_ingestion", get label() { return i18n.t("uiAgentPermissionsTab.connectToSlackDiscordForChat"); }, threshold: 60 },
     ],
   },
   {
     label: "DELEGATION",
     icon: Users,
     items: [
-      { key: "act_on_behalf", label: "Act on Behalf of Owner", threshold: 80, note: "Needs review" },
+      { key: "act_on_behalf", get label() { return i18n.t("uiAgentPermissionsTab.actOnBehalfOfOwner"); }, threshold: 80, note: "Needs review" },
     ],
   },
 ];
@@ -64,12 +66,13 @@ const PERMISSION_GROUPS = [
 const TRUST_RATE_MULTIPLIERS = [
   { range: "0–20", multiplier: "×1.5", label: "Untrusted" },
   { range: "20–40", multiplier: "×1.2", label: "Guest Agent" },
-  { range: "40–60", multiplier: "×1.0", label: "Member Agent" },
+  { range: "40–60", multiplier: "×1.0", get label() { return i18n.t("uiAgentPermissionsTab.memberAgent"); } },
   { range: "60–80", multiplier: "×0.8", label: "Trusted Agent" },
   { range: "80–100", multiplier: "×0.5", label: "Autonomous" },
 ];
 
 export default function AgentPermissionsTab({ agent }: Props) {
+  const { t } = useTranslation();
   const { data: trustScore } = useQuery({
     queryKey: ["agent-trust-score", agent.id],
     queryFn: async () => {
@@ -131,7 +134,7 @@ export default function AgentPermissionsTab({ agent }: Props) {
           <CardContent>
             <p className="text-3xl font-bold text-primary">{trust.toFixed(0)}</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Higher trust unlocks more permissions and reduces action costs.
+              {t("uiAgentPermissionsTab.higherTrustUnlocksMorePermissionsAnd")}
             </p>
           </CardContent>
         </Card>
@@ -164,10 +167,10 @@ export default function AgentPermissionsTab({ agent }: Props) {
           </CardHeader>
           <CardContent>
             <div className="space-y-1.5 text-xs">
-              <div className="flex justify-between"><span className="text-destructive">0–20</span><span>Only public crawl, no write</span></div>
-              <div className="flex justify-between"><span className="text-orange-500">20–40</span><span>Draft quests, limited crawl</span></div>
+              <div className="flex justify-between"><span className="text-destructive">0–20</span><span>{t("uiAgentPermissionsTab.onlyPublicCrawlNoWrite")}</span></div>
+              <div className="flex justify-between"><span className="text-orange-500">20–40</span><span>{t("uiAgentPermissionsTab.draftQuestsLimitedCrawl")}</span></div>
               <div className="flex justify-between"><span className="text-yellow-600">40–60</span><span>Restricted content, suggest</span></div>
-              <div className="flex justify-between"><span className="text-primary">60–80</span><span>Private data, create under review</span></div>
+              <div className="flex justify-between"><span className="text-primary">60–80</span><span>{t("uiAgentPermissionsTab.privateDataCreateUnderReview")}</span></div>
               <div className="flex justify-between"><span className="text-emerald-500">80–100</span><span>Semi-autonomous, modify data</span></div>
             </div>
           </CardContent>

@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Users, Shield, Building2, Landmark, Crown } from "lucide-react";
@@ -18,12 +19,12 @@ interface SegmentOption {
 }
 
 const SEGMENTS: SegmentOption[] = [
-  { value: "all", label: "All users", icon: <Users className="h-4 w-4" />, description: "Every registered user" },
-  { value: "guild_admins", label: "Guild admins", icon: <Shield className="h-4 w-4" />, description: "Users with admin role in any guild" },
-  { value: "company_admins", label: "Company admins", icon: <Building2 className="h-4 w-4" />, description: "Users with admin role in any company" },
-  { value: "org_reps", label: "Organization reps", icon: <Landmark className="h-4 w-4" />, description: "Contact persons of traditional organizations" },
-  { value: "shareholders_a", label: "Shareholders — Class A", icon: <Crown className="h-4 w-4" />, description: "Cooperative members with Class A shares" },
-  { value: "shareholders_b", label: "Shareholders — Class B", icon: <Crown className="h-4 w-4" />, description: "Cooperative members with Class B shares" },
+  { value: "all", get label() { return i18n.t("uiBroadcastAudiencePicker.allUsers"); }, icon: <Users className="h-4 w-4" />, description: "Every registered user" },
+  { value: "guild_admins", get label() { return i18n.t("uiBroadcastAudiencePicker.guildAdmins"); }, icon: <Shield className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.usersWithAdminRoleInAny"); } },
+  { value: "company_admins", label: "Company admins", icon: <Building2 className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.usersWithAdminRoleInAny2"); } },
+  { value: "org_reps", label: "Organization reps", icon: <Landmark className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.contactPersonsOfTraditionalOrganizations"); } },
+  { value: "shareholders_a", get label() { return i18n.t("uiBroadcastAudiencePicker.shareholdersClassA"); }, icon: <Crown className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.cooperativeMembersWithClassAShares"); } },
+  { value: "shareholders_b", label: "Shareholders — Class B", icon: <Crown className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.cooperativeMembersWithClassBShares"); } },
 ];
 
 interface Props {

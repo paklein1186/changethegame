@@ -330,7 +330,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
                 <label htmlFor="missionOnly"
                   className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
                   💰 Missions only
-                  <span className="text-xs text-muted-foreground font-normal">(funded quests)</span>
+                  <span className="text-xs text-muted-foreground font-normal">{t("uiExploreFilters.fundedQuests")}</span>
                 </label>
               </div>
             )}
@@ -343,8 +343,8 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
                   className="h-4 w-4 rounded border-border" />
                 <label htmlFor="hasBudget"
                   className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
-                  🎁 Has budget / reward
-                  <span className="text-xs text-muted-foreground font-normal">(credits, $CTG, or fiat)</span>
+                  {t("uiExploreFilters.hasBudgetReward")}
+                  <span className="text-xs text-muted-foreground font-normal">{t("uiExploreFilters.creditsCtgOrFiat")}</span>
                 </label>
               </div>
             )}
@@ -443,7 +443,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
             <div className="space-y-2 pt-2 border-t border-border/40">
               <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                 <Target className="h-3 w-3" />
-                Looking to contribute?
+                {t("uiExploreFilters.lookingToContribute")}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 <button
@@ -455,7 +455,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
                       : 'border-border text-muted-foreground hover:border-teal-400/40 hover:text-foreground'
                   )}
                 >
-                  🟩 Paid in Coins
+                  {t("uiExploreFilters.paidInCoins")}
                 </button>
                 <button
                   onClick={() => set({ hasCtg: !filters.hasCtg })}
@@ -477,7 +477,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
                       : 'border-border text-muted-foreground hover:border-violet-400/40 hover:text-foreground'
                   )}
                 >
-                  🎯 Fundraising active
+                  {t("uiExploreFilters.fundraisingActive")}
                 </button>
                 <button
                   onClick={() => set({ hasOcu: !filters.hasOcu })}
@@ -488,12 +488,12 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
                       : 'border-border text-muted-foreground hover:border-amber-400/40 hover:text-foreground'
                   )}
                 >
-                  🧮 OCU active
+                  {t("uiExploreFilters.ocuActive")}
                 </button>
               </div>
               {(filters.hasCoins || filters.hasCtg || filters.isFundraising || filters.hasOcu) && (
                 <p className="text-[10px] text-muted-foreground italic">
-                  Active filters stack — a quest must match all selected criteria.
+                  {t("uiExploreFilters.activeFiltersStackAQuestMust")}
                 </p>
               )}
             </div>
@@ -683,7 +683,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
           )}
           {filters.hasCoins && (
             <Badge variant="secondary" className="text-[10px] gap-1">
-              🟩 Paid in Coins
+              {t("uiExploreFilters.paidInCoins")}
               <button onClick={() => set({ hasCoins: false })} className="ml-0.5"><X className="h-2.5 w-2.5" /></button>
             </Badge>
           )}
@@ -701,7 +701,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
           )}
           {filters.hasOcu && (
             <Badge variant="secondary" className="text-[10px] gap-1">
-              🧮 OCU active
+              {t("uiExploreFilters.ocuActive")}
               <button onClick={() => set({ hasOcu: false })} className="ml-0.5"><X className="h-2.5 w-2.5" /></button>
             </Badge>
           )}

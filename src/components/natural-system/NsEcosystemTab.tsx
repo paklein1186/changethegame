@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,6 +57,7 @@ function SectionCard({ icon: Icon, label, items, linkPrefix }: {
 }
 
 export function NsEcosystemTab({ naturalSystemId }: Props) {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryKey: ["ns-ecosystem", naturalSystemId],
     enabled: !!naturalSystemId,
@@ -134,8 +136,8 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         <Leaf className="h-8 w-8 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">No connected entities yet</p>
-        <p className="text-xs mt-1">Link territories, quests, guilds, and people to this natural system.</p>
+        <p className="text-sm">{t("uiNsEcosystemTab.noConnectedEntitiesYet")}</p>
+        <p className="text-xs mt-1">{t("uiNsEcosystemTab.linkTerritoriesQuestsGuildsAndPeople")}</p>
       </div>
     );
   }
@@ -150,7 +152,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{galaxy!.length}</Badge>
           </h3>
           <p className="text-xs text-muted-foreground -mt-1">
-            Other natural systems present alongside this one (sharing territories, quests, or stewards).
+            {t("uiNsEcosystemTab.otherNaturalSystemsPresentAlongsideThis")}
           </p>
           <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
             {galaxy!.map((ns) => (
@@ -171,7 +173,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
                           {KINGDOM_LABELS[ns.kingdom as keyof typeof KINGDOM_LABELS] || ns.kingdom}
                         </Badge>
                         <span className="text-[9px] text-muted-foreground">
-                          {ns.shared_links_count} shared link{ns.shared_links_count > 1 ? "s" : ""}
+                          {ns.shared_links_count} {t("uiNsEcosystemTab.sharedLink")}{ns.shared_links_count > 1 ? "s" : ""}
                         </span>
                       </div>
                     </div>
@@ -187,7 +189,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
       {data.territories.length > 0 && (
         <div className="space-y-2">
           <h3 className="font-display text-sm font-semibold flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" /> Territories
+            <MapPin className="h-4 w-4 text-primary" /> {t("uiNsEcosystemTab.territories")}
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{data.territories.length}</Badge>
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -206,7 +208,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
       {/* Quests */}
       <SectionCard
         icon={Compass}
-        label="Quests"
+        label={t("uiNsEcosystemTab.quests")}
         linkPrefix="/quests"
         items={data.quests.map((q: any) => ({ id: q.id, name: q.title, description: q.description }))}
       />
@@ -214,7 +216,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
       {/* Guilds */}
       <SectionCard
         icon={Swords}
-        label="Guilds"
+        label={t("uiNsEcosystemTab.guilds")}
         linkPrefix="/guilds"
         items={data.guilds.map((g: any) => ({ id: g.id, name: g.name, description: g.description, avatar: g.logo_url }))}
       />

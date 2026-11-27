@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { autoFollowEntity } from "@/hooks/useFollow";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function MyCompanies({ bare }: { bare?: boolean }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -68,7 +70,7 @@ export default function MyCompanies({ bare }: { bare?: boolean }) {
       })
       .select()
       .single();
-    if (error) { toast({ title: "Failed to create organization", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiMyCompanies.failedToCreateOrganization"), variant: "destructive" }); return; }
     // Add creator as admin member
     await supabase.from("company_members").insert({ company_id: newCompany.id, user_id: currentUser.id, role: "ADMIN" });
     autoFollowEntity(currentUser.id, "COMPANY", newCompany.id);
@@ -85,32 +87,32 @@ export default function MyCompanies({ bare }: { bare?: boolean }) {
     <PageShell bare={bare}>
       {!bare && (
         <Button variant="ghost" size="sm" asChild className="mb-4">
-          <Link to="/network"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Network</Link>
+          <Link to="/network"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiMyCompanies.backToNetwork")}</Link>
         </Button>
       )}
 
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-2xl font-bold flex items-center gap-2">
-          <Building2 className="h-6 w-6 text-primary" /> My Traditional Organizations
+          <Building2 className="h-6 w-6 text-primary" /> {t("uiMyCompanies.myTraditionalOrganizations")}
         </h1>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-1" /> Create Traditional Organization</Button>
+            <Button><Plus className="h-4 w-4 mr-1" /> {t("uiMyCompanies.createTraditionalOrganization")}</Button>
           </DialogTrigger>
           <DialogContent className="max-h-[85vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Create Traditional Organization</DialogTitle>
+              <DialogTitle>{t("uiMyCompanies.createTraditionalOrganization")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-2">
               <div>
-                <label className="text-sm font-medium mb-1 block">Name *</label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Organization name" maxLength={80} />
+                <label className="text-sm font-medium mb-1 block">{t("uiMyCompanies.name")}</label>
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiMyCompanies.organizationName")} maxLength={80} />
               </div>
               <ImageUpload label="Logo" currentImageUrl={logoUrl} onChange={setLogoUrl} aspectRatio="1/1" description="Square logo, 256×256 recommended" />
               <ImageUpload label="Banner (optional)" currentImageUrl={bannerUrl} onChange={setBannerUrl} aspectRatio="16/9" description="Wide banner, 1200×400 recommended" />
               <div>
-                <label className="text-sm font-medium mb-1 block">Description</label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What does this organization do?" maxLength={500} className="resize-none" />
+                <label className="text-sm font-medium mb-1 block">{t("uiMyCompanies.description")}</label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("uiMyCompanies.whatDoesThisOrganizationDo")} maxLength={500} className="resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -139,7 +141,7 @@ export default function MyCompanies({ bare }: { bare?: boolean }) {
                   else if (key === "instagramUrl") setInstagramUrl(value);
                 }}
               />
-              <Button onClick={handleCreate} disabled={!name.trim()} className="w-full">Create Traditional Organization</Button>
+              <Button onClick={handleCreate} disabled={!name.trim()} className="w-full">{t("uiMyCompanies.createTraditionalOrganization")}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -148,9 +150,9 @@ export default function MyCompanies({ bare }: { bare?: boolean }) {
       {myCompanies.length === 0 ? (
         <div className="text-center py-16">
           <Building2 className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-          <p className="text-muted-foreground mb-4">You don't manage any traditional organizations yet.</p>
+          <p className="text-muted-foreground mb-4">{t("uiMyCompanies.youDonTManageAnyTraditional")}</p>
           <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" /> Create your first traditional organization
+            <Plus className="h-4 w-4 mr-1" /> {t("uiMyCompanies.createYourFirstTraditionalOrganization")}
           </Button>
         </div>
       ) : (

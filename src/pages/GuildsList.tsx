@@ -72,9 +72,9 @@ export default function GuildsList({ bare, hideFilters, externalFilters, externa
       await createGuildMut.mutateAsync({ name: gName, description: gDesc, type: gType, isDraft: gDraft });
       setCreateOpen(false);
       setGName(""); setGDesc(""); setGType(GuildType.GUILD); setGDraft(false);
-      toast({ title: "Guild created!", description: `${gName} is now live.` });
+      toast({ title: t("uiGuildsList.guildCreated"), description: `${gName} is now live.` });
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiGuildsList.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -82,38 +82,38 @@ export default function GuildsList({ bare, hideFilters, externalFilters, externa
     <Dialog open={createOpen} onOpenChange={setCreateOpen}>
       {!hideFilters && (
         <DialogTrigger asChild>
-          <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Create Guild</Button>
+          <Button size="sm"><Plus className="h-4 w-4 mr-1" /> {t("uiGuildsList.createGuild")}</Button>
         </DialogTrigger>
       )}
       <DialogContent>
-        <DialogHeader><DialogTitle>Create a new Guild</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t("uiGuildsList.createANewGuild")}</DialogTitle></DialogHeader>
         <div className="space-y-4 mt-2">
           <div>
-            <label className="text-sm font-medium mb-1 block">Name</label>
-            <Input value={gName} onChange={e => setGName(e.target.value)} placeholder="Guild name" maxLength={80} />
+            <label className="text-sm font-medium mb-1 block">{t("uiGuildsList.name")}</label>
+            <Input value={gName} onChange={e => setGName(e.target.value)} placeholder={t("uiGuildsList.guildName")} maxLength={80} />
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Description</label>
-            <Textarea value={gDesc} onChange={e => setGDesc(e.target.value)} placeholder="What is your guild about?" maxLength={500} className="resize-none" />
+            <label className="text-sm font-medium mb-1 block">{t("uiGuildsList.description")}</label>
+            <Textarea value={gDesc} onChange={e => setGDesc(e.target.value)} placeholder={t("uiGuildsList.whatIsYourGuildAbout")} maxLength={500} className="resize-none" />
           </div>
           <div>
             <label className="text-sm font-medium mb-1 block">Type</label>
             <Select value={gType} onValueChange={v => setGType(v as GuildType)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={GuildType.GUILD}>Guild</SelectItem>
+                <SelectItem value={GuildType.GUILD}>{t("uiGuildsList.guild")}</SelectItem>
                 <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
                 <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Save as draft</label>
+            <label className="text-sm font-medium">{t("uiGuildsList.saveAsDraft")}</label>
             <Switch checked={gDraft} onCheckedChange={setGDraft} />
           </div>
           <Button onClick={handleCreate} disabled={!gName.trim() || createGuildMut.isPending} className="w-full">
             {createGuildMut.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-            Create Guild
+            {t("uiGuildsList.createGuild")}
           </Button>
         </div>
       </DialogContent>
@@ -128,7 +128,7 @@ export default function GuildsList({ bare, hideFilters, externalFilters, externa
         <>
            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
              <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-               <Shield className="h-7 w-7 text-primary" /> Guilds
+               <Shield className="h-7 w-7 text-primary" /> {t("uiGuildsList.guilds")}
              </h1>
              {isLoggedIn && createDialog}
            </div>
@@ -184,7 +184,7 @@ export default function GuildsList({ bare, hideFilters, externalFilters, externa
                   {isLoggedIn ? (
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{guild.description}</p>
                   ) : (
-                    <p className="text-sm text-muted-foreground mb-3 italic">Log in to see details</p>
+                    <p className="text-sm text-muted-foreground mb-3 italic">{t("uiGuildsList.logInToSeeDetails")}</p>
                   )}
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {gTopics.slice(0, 5).map((topic: any) => <Badge key={topic.id} variant="secondary" className="text-xs">{translateTopicName(topic.name, t)}</Badge>)}
@@ -201,10 +201,10 @@ export default function GuildsList({ bare, hideFilters, externalFilters, externa
         })}
         {!isLoading && filtered.length === 0 && (
           <div className="col-span-full text-center py-12">
-            <p className="text-muted-foreground">No guilds match your filters.</p>
+            <p className="text-muted-foreground">{t("uiGuildsList.noGuildsMatchYourFilters")}</p>
             {hf.houseFilterActive && (
               <Button variant="link" size="sm" className="mt-2" onClick={() => hf.setHouseFilterActive(false)}>
-                Try showing all Houses
+                {t("uiGuildsList.tryShowingAllHouses")}
               </Button>
             )}
           </div>

@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
@@ -24,7 +26,7 @@ interface Props {
 }
 
 const VALUE_FACTORS = [
-  { value: "0.5", label: "Open (0.5×)" },
+  { value: "0.5", get label() { return i18n.t("uiEntityMonetizationTab.open05"); } },
   { value: "1", label: "Normal (1×)" },
   { value: "2", label: "High value (2×)" },
   { value: "3", label: "Premium (3×)" },
@@ -39,6 +41,7 @@ export default function EntityMonetizationTab({
   allowSubscription = false,
   canEdit,
 }: Props) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { data: revenue, isLoading } = useEntityRevenueRecords(entityType, entityId);
 
@@ -61,7 +64,7 @@ export default function EntityMonetizationTab({
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Monetization settings updated");
+      toast.success(t("uiEntityMonetizationTab.monetizationSettingsUpdated"));
       qc.invalidateQueries({ queryKey: [tableName] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -73,7 +76,7 @@ export default function EntityMonetizationTab({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <CurrencyIcon currency="credits" className="h-4 w-4" /> Revenue This Month
+            <CurrencyIcon currency="credits" className="h-4 w-4" /> {t("uiEntityMonetizationTab.revenueThisMonth")}
           </div>
           <p className="text-2xl font-bold">{totalEarned.toFixed(1)} <span className="text-sm font-normal text-muted-foreground">credits</span></p>
         </Card>
@@ -94,7 +97,7 @@ export default function EntityMonetizationTab({
       {/* Settings */}
       {canEdit && (
         <Card className="p-4 space-y-4">
-          <h3 className="text-sm font-semibold">Monetization Settings</h3>
+          <h3 className="text-sm font-semibold">{t("uiEntityMonetizationTab.monetizationSettings")}</h3>
 
           <div>
             <label className="text-xs text-muted-foreground">Data Value Factor</label>
@@ -115,30 +118,30 @@ export default function EntityMonetizationTab({
 
           <div className="flex items-center gap-3">
             <Switch checked={subscription} onCheckedChange={setSubscription} />
-            <span className="text-sm">Allow subscription access by agents</span>
+            <span className="text-sm">{t("uiEntityMonetizationTab.allowSubscriptionAccessByAgents")}</span>
           </div>
 
           <Button size="sm" onClick={() => saveMut.mutate()} disabled={saveMut.isPending}>
-            Save Settings
+            {t("uiEntityMonetizationTab.saveSettings")}
           </Button>
         </Card>
       )}
 
       {/* Revenue Log */}
       <Card className="p-4">
-        <h3 className="text-sm font-semibold mb-3">Revenue from Agents</h3>
+        <h3 className="text-sm font-semibold mb-3">{t("uiEntityMonetizationTab.revenueFromAgents")}</h3>
         {isLoading ? (
           <Skeleton className="h-32" />
         ) : !revenue?.length ? (
-          <p className="text-sm text-muted-foreground">No revenue records yet.</p>
+          <p className="text-sm text-muted-foreground">{t("uiEntityMonetizationTab.noRevenueRecordsYet")}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
                   <th className="text-left py-2">Agent</th>
-                  <th className="text-right py-2">Amount</th>
-                  <th className="text-right py-2">Date</th>
+                  <th className="text-right py-2">{t("uiEntityMonetizationTab.amount")}</th>
+                  <th className="text-right py-2">{t("uiEntityMonetizationTab.date")}</th>
                 </tr>
               </thead>
               <tbody>

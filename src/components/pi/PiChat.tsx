@@ -164,7 +164,7 @@ export function PiChat({ className }: PiChatProps) {
         const greetingMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: "assistant",
-          text: data?.message || "Welcome! How can I help you today?",
+          text: data?.message || t("uiPiChat.welcomeHowCanIHelpYou"),
           suggestedActions: suggestedActions.length > 0 ? suggestedActions : undefined,
           nextPrompt: data?.nextPrompt,
         };
@@ -434,7 +434,7 @@ export function PiChat({ className }: PiChatProps) {
                         effortMinutes={action.effortMinutes}
                         xpReward={action.xpReward}
                         trustReward={action.trustReward}
-                        buttonLabel={action.buttonLabel || "Do this"}
+                        buttonLabel={action.buttonLabel || t("uiPiChat.doThis")}
                         status={action.status}
                         unlockCondition={action.unlockCondition}
                         priority={action.priority || "secondary"}

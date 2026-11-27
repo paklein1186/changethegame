@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Share2, Check, Copy } from "lucide-react";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function ShareLinkButton({ entityType, entityId, entityName, size = "sm", variant = "outline" }: Props) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -24,10 +26,10 @@ export function ShareLinkButton({ entityType, entityId, entityName, size = "sm",
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      toast({ title: "Link copied!", description: entityName ? `Share "${entityName}" with anyone.` : "Share this link with anyone." });
+      toast({ title: t("uiShareLinkButton.linkCopied"), description: entityName ? `Share "${entityName}" with anyone.` : t("uiShareLinkButton.shareThisLinkWithAnyone") });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({ title: "Failed to copy", variant: "destructive" });
+      toast({ title: t("uiShareLinkButton.failedToCopy"), variant: "destructive" });
     }
   };
 
@@ -35,15 +37,15 @@ export function ShareLinkButton({ entityType, entityId, entityName, size = "sm",
     <Popover>
       <PopoverTrigger asChild>
         <Button size={size} variant={variant}>
-          <Share2 className="h-4 w-4 mr-1" /> Share
+          <Share2 className="h-4 w-4 mr-1" /> {t("uiShareLinkButton.share")}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="end">
         <div className="space-y-3">
           <div>
-            <p className="text-sm font-medium mb-1">Share link</p>
+            <p className="text-sm font-medium mb-1">{t("uiShareLinkButton.shareLink")}</p>
             <p className="text-xs text-muted-foreground">
-              This link includes a rich preview for social media
+              {t("uiShareLinkButton.thisLinkIncludesARichPreview")}
             </p>
           </div>
           <div className="flex gap-2">

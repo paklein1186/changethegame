@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
@@ -175,6 +176,7 @@ async function loadDashboard(userId: string) {
 }
 
 export function ContributionsDashboard() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const userId = currentUser?.id;
 
@@ -187,7 +189,7 @@ export function ContributionsDashboard() {
 
   if (!userId) return null;
   if (isLoading || !data) {
-    return <p className="text-sm text-muted-foreground p-4">Loading contributions dashboard…</p>;
+    return <p className="text-sm text-muted-foreground p-4">{t("uiContributionsDashboard.loadingContributionsDashboard")}</p>;
   }
 
   return (
@@ -205,12 +207,12 @@ export function ContributionsDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-1.5">
-              <ListChecks className="h-4 w-4 text-primary" /> Recent task contributions
+              <ListChecks className="h-4 w-4 text-primary" /> {t("uiContributionsDashboard.recentTaskContributions")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {data.recent.length === 0 ? (
-              <p className="text-xs text-muted-foreground">No contribution logged yet.</p>
+              <p className="text-xs text-muted-foreground">{t("uiContributionsDashboard.noContributionLoggedYet")}</p>
             ) : (
               <div className="space-y-2">
                 {data.recent.map((c) => (
@@ -220,7 +222,7 @@ export function ContributionsDashboard() {
                       <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                         {c.quest_id && (
                           <Link to={`/quests/${c.quest_id}`} className="text-[10px] text-primary hover:underline truncate">
-                            {c.quest_title ?? "Quest"}
+                            {c.quest_title ?? t("uiContributionsDashboard.quest")}
                           </Link>
                         )}
                         {c.guild_id && (
@@ -258,7 +260,7 @@ export function ContributionsDashboard() {
           </CardHeader>
           <CardContent>
             {data.contracts.length === 0 ? (
-              <p className="text-xs text-muted-foreground">You are not a signatory of any contract yet.</p>
+              <p className="text-xs text-muted-foreground">{t("uiContributionsDashboard.youAreNotASignatoryOf")}</p>
             ) : (
               <div className="space-y-2">
                 {data.contracts.map((c) => (
@@ -267,7 +269,7 @@ export function ContributionsDashboard() {
                       <p className="text-xs font-medium truncate">{c.title}</p>
                       {c.quest_id && (
                         <Link to={`/quests/${c.quest_id}?tab=contract`} className="text-[10px] text-primary hover:underline">
-                          {c.quest_title ?? "Quest"}
+                          {c.quest_title ?? t("uiContributionsDashboard.quest")}
                         </Link>
                       )}
                     </div>
@@ -280,7 +282,7 @@ export function ContributionsDashboard() {
                             : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
                         }`}
                       >
-                        {c.signed_at ? "Signed" : "Pending"}
+                        {c.signed_at ? "Signed" : t("uiContributionsDashboard.pending")}
                       </Badge>
                     </div>
                   </div>
@@ -295,12 +297,12 @@ export function ContributionsDashboard() {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-1.5">
-            <PieIcon className="h-4 w-4 text-primary" /> My share in entity value pies
+            <PieIcon className="h-4 w-4 text-primary" /> {t("uiContributionsDashboard.myShareInEntityValuePies")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {data.shares.length === 0 ? (
-            <p className="text-xs text-muted-foreground">No verified contribution units recorded in your entities yet.</p>
+            <p className="text-xs text-muted-foreground">{t("uiContributionsDashboard.noVerifiedContributionUnitsRecordedIn")}</p>
           ) : (
             <div className="space-y-3">
               {data.shares.map((s) => (

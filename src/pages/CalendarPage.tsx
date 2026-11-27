@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +14,7 @@ import { CalendarDays, List, MapPin, Video, Users, Euro, ChevronLeft, ChevronRig
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isPast } from "date-fns";
 
 export default function CalendarPage() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { label } = usePersona();
   const [view, setView] = useState<"calendar" | "list">("list");
@@ -140,18 +142,18 @@ export default function CalendarPage() {
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
           <CalendarDays className="h-7 w-7 text-primary" /> Calendar
         </h1>
-        <p className="text-muted-foreground mt-1">Events from your {label("guild.label_plural").toLowerCase()} and registrations.</p>
+        <p className="text-muted-foreground mt-1">{t("uiCalendarPage.eventsFromYour")} {label("guild.label_plural").toLowerCase()} {t("uiCalendarPage.andRegistrations")}</p>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <label className="flex items-center gap-2 text-sm">
           <Checkbox checked={showMyGuildEvents} onCheckedChange={(v) => setShowMyGuildEvents(!!v)} />
-          Events from my {label("guild.label_plural").toLowerCase()}
+          {t("uiCalendarPage.eventsFromMy")} {label("guild.label_plural").toLowerCase()}
         </label>
         <label className="flex items-center gap-2 text-sm">
           <Checkbox checked={showRegisteredEvents} onCheckedChange={(v) => setShowRegisteredEvents(!!v)} />
-          Events I'm registered to
+          {t("uiCalendarPage.eventsIMRegisteredTo")}
         </label>
         <div className="ml-auto flex gap-1">
           <Button size="sm" variant={view === "list" ? "default" : "outline"} onClick={() => setView("list")}><List className="h-4 w-4" /></Button>
@@ -159,7 +161,7 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {isLoading && <p className="text-sm text-muted-foreground">Loading events…</p>}
+      {isLoading && <p className="text-sm text-muted-foreground">{t("uiCalendarPage.loadingEvents")}</p>}
 
       {view === "list" ? (
         <div className="space-y-6">
@@ -175,7 +177,7 @@ export default function CalendarPage() {
               <div className="space-y-2">{pastEvents.map(renderEventCard)}</div>
             </div>
           )}
-          {filteredEvents.length === 0 && !isLoading && <p className="text-muted-foreground text-sm">No events found.</p>}
+          {filteredEvents.length === 0 && !isLoading && <p className="text-muted-foreground text-sm">{t("uiCalendarPage.noEventsFound")}</p>}
         </div>
       ) : (
         <div>

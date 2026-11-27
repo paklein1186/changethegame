@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Navigate, Outlet, useLocation, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -31,7 +32,7 @@ interface NavCluster {
 
 const clusters: NavCluster[] = [
   {
-    label: "Overview",
+    get label() { return i18n.t("uiAdminLayout.overview"); },
     icon: BarChart3,
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -42,7 +43,7 @@ const clusters: NavCluster[] = [
     icon: UsersIcon,
     items: [
       { to: "/admin/community/users", label: "Users", icon: UsersIcon },
-      { to: "/admin/community/guilds", label: "Guilds", icon: Shield },
+      { to: "/admin/community/guilds", get label() { return i18n.t("uiAdminLayout.guilds"); }, icon: Shield },
       { to: "/admin/community/pods", label: "Pods", icon: Hash },
       { to: "/admin/community/companies", label: "Trad. Organizations", icon: Building2 },
     ],
@@ -51,8 +52,8 @@ const clusters: NavCluster[] = [
     label: "Content",
     icon: Compass,
     items: [
-      { to: "/admin/content/quests", label: "Quests", icon: Compass },
-      { to: "/admin/content/territory-covers", label: "Territory covers", icon: ImageIcon },
+      { to: "/admin/content/quests", get label() { return i18n.t("uiAdminLayout.quests"); }, icon: Compass },
+      { to: "/admin/content/territory-covers", get label() { return i18n.t("uiAdminLayout.territoryCovers"); }, icon: ImageIcon },
       { to: "/admin/content/courses", label: "Courses", icon: ScrollText },
       { to: "/admin/content/services", label: "Services", icon: ShoppingBag },
       { to: "/admin/content/reports", label: "Reports & Moderation", icon: Flag },
@@ -66,7 +67,7 @@ const clusters: NavCluster[] = [
       { to: "/admin/economy/bookings", label: "Bookings & Sessions", icon: CreditCard },
       { to: "/admin/economy/payments", label: "Payments & Revenue", icon: Zap },
       { to: "/admin/economy/commissions", label: "Commission Rules", icon: CreditCard },
-      { to: "/admin/economy/xp", label: "XP & Achievements", icon: Star },
+      { to: "/admin/economy/xp", get label() { return i18n.t("uiAdminLayout.xpAchievements"); }, icon: Star },
       { to: "/admin/economy/plans", label: "Plans", icon: CreditCard },
       { to: "/admin/economy/notifications", label: "Notifications", icon: Bell },
       { to: "/admin/economy/emails", label: "Emails & Digests", icon: Mail },
@@ -82,11 +83,11 @@ const clusters: NavCluster[] = [
     icon: Settings,
     superadminOnly: true,
     items: [
-      { to: "/admin/system/super-mode", label: "Super Admin Mode", icon: ShieldAlert },
+      { to: "/admin/system/super-mode", get label() { return i18n.t("uiAdminLayout.superAdminMode"); }, icon: ShieldAlert },
       { to: "/admin/system/email-templates", label: "Email Templates", icon: Mail },
       { to: "/admin/system/feature-toggles", label: "Feature Toggles", icon: ToggleLeft },
-      { to: "/admin/system/roles", label: "Users & Roles", icon: UsersIcon },
-      { to: "/admin/system/houses", label: "Topics & Territories", icon: Hash },
+      { to: "/admin/system/roles", get label() { return i18n.t("uiAdminLayout.usersRoles"); }, icon: UsersIcon },
+      { to: "/admin/system/houses", get label() { return i18n.t("uiAdminLayout.topicsTerritories"); }, icon: Hash },
       { to: "/admin/system/stewardship", label: "Stewardship", icon: Shield },
       { to: "/admin/system/governance", label: "Governance", icon: Star },
       { to: "/admin/system/audit", label: "Audit Logs", icon: ScrollText },

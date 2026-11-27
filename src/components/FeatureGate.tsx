@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { type ReactNode } from "react";
 import { useIsFeatureEnabled } from "@/hooks/useFeatureFlags";
 
@@ -16,11 +17,12 @@ export function FeatureGate({ feature, children, fallback = null }: FeatureGateP
 
 /** Page-level fallback when a feature is disabled */
 export function FeatureDisabledPage({ feature }: { feature: string }) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
       <h1 className="text-2xl font-bold mb-2">Feature Unavailable</h1>
       <p className="text-muted-foreground max-w-md">
-        This feature is currently disabled by the platform administrator. Please check back later.
+        {t("uiFeatureGate.thisFeatureIsCurrentlyDisabledBy")}
       </p>
     </div>
   );

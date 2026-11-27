@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
@@ -36,36 +37,34 @@ const SPHERE_COLORS: Record<string, string> = {
 };
 
 export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: XpLadderModalProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[85vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <Leaf className="h-5 w-5 text-[hsl(135,35%,38%)]" />
-            The Regenerative Collaboration Ladder
+            {t("uiXpLadderModal.theRegenerativeCollaborationLadder")}
           </DialogTitle>
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="mt-2">
           <TabsList className="w-full grid grid-cols-4">
-            <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
+            <TabsTrigger value="overview" className="text-xs">{t("uiXpLadderModal.overview")}</TabsTrigger>
             <TabsTrigger value="levels" className="text-xs">Levels</TabsTrigger>
             <TabsTrigger value="governance" className="text-xs">Governance</TabsTrigger>
-            <TabsTrigger value="how" className="text-xs">How XP Works</TabsTrigger>
+            <TabsTrigger value="how" className="text-xs">{t("uiXpLadderModal.howXpWorks")}</TabsTrigger>
           </TabsList>
 
           {/* ─── Overview ─── */}
           <TabsContent value="overview" className="mt-4 space-y-4">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              ⭐ XP is your <strong className="text-foreground">reputation on the platform</strong> — a
-              permanent, cumulative record of your participation. It reflects who you are becoming:
-              your depth of engagement, breadth of collaboration, and degree of trust you've built.
-              XP never decays, can never be purchased, and cannot be transferred.
+              {t("uiXpLadderModal.xpIsYour")} <strong className="text-foreground">{t("uiXpLadderModal.reputationOnThePlatform")}</strong> {t("uiXpLadderModal.aPermanentCumulativeRecordOfYour")}
             </p>
             <div className="rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 p-3 text-xs text-muted-foreground space-y-1">
-              <p><strong className="text-foreground">⭐ XP</strong> — permanent · individual · non-transferable · unlocks governance</p>
+              <p><strong className="text-foreground">{t("uiXpLadderModal.xp")}</strong> — permanent · individual · non-transferable · unlocks governance</p>
               <p><strong className="text-foreground">🌱 $CTG</strong> — circulatory · collective · transferable · fades 1%/month</p>
-              <p className="text-[10px] pt-1 border-t border-border">XP tracks <em>who you are</em>. $CTG tracks <em>what you produce for the commons</em>.</p>
+              <p className="text-[10px] pt-1 border-t border-border">{t("uiXpLadderModal.xpTracks")} <em>{t("uiXpLadderModal.whoYouAre")}</em>. $CTG tracks <em>{t("uiXpLadderModal.whatYouProduceForTheCommons")}</em>.</p>
             </div>
 
             {currentLevel != null && currentXp != null && (
@@ -76,14 +75,14 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                     return <Icon className={`h-5 w-5 ${LEVEL_COLORS[currentLevel] || ""}`} />;
                   })()}
                   <span className="font-semibold">
-                    Level {currentLevel} – {LEVEL_LABELS[currentLevel]}
+                    {t("uiXpLadderModal.level")} {currentLevel} – {LEVEL_LABELS[currentLevel]}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">{LEVEL_DESCRIPTIONS[currentLevel]}</p>
                 {(() => {
                   const next = XP_LEVEL_THRESHOLDS.find(t => t.level === currentLevel + 1);
                   const current = XP_LEVEL_THRESHOLDS.find(t => t.level === currentLevel);
-                  if (!next || !current) return <p className="text-xs text-muted-foreground">🌿 Maximum level reached</p>;
+                  if (!next || !current) return <p className="text-xs text-muted-foreground">{t("uiXpLadderModal.maximumLevelReached")}</p>;
                   const progress = ((currentXp - current.minXp) / (next.minXp - current.minXp)) * 100;
                   return (
                     <div className="space-y-1">
@@ -93,7 +92,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                       </div>
                       <Progress value={Math.min(progress, 100)} className="h-2" />
                       <p className="text-[10px] text-muted-foreground">
-                        {next.minXp - currentXp} XP to {LEVEL_LABELS[next.level]}
+                        {next.minXp - currentXp} {t("uiXpLadderModal.xpTo")} {LEVEL_LABELS[next.level]}
                       </p>
                     </div>
                   );
@@ -127,7 +126,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                           </span>
                           <span className="text-[10px] text-muted-foreground">{minXp.toLocaleString()} XP</span>
                           {isActive && (
-                            <span className="text-[10px] font-medium text-primary">← You</span>
+                            <span className="text-[10px] font-medium text-primary">{t("uiXpLadderModal.you")}</span>
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">{LEVEL_DESCRIPTIONS[level]}</p>
@@ -144,13 +143,13 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
             <ScrollArea className="h-[50vh] pr-2">
               <div className="space-y-4">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Higher levels unlock governance responsibility. Governance is service to the commons, not hierarchy. Rights can be revoked if misused.
+                  {t("uiXpLadderModal.higherLevelsUnlockGovernanceResponsibilityGovernance")}
                 </p>
 
                 {/* Current governance status */}
                 {currentLevel != null && (
                   <div className="rounded-xl border border-border bg-card p-3 space-y-2">
-                    <p className="text-xs font-semibold">Your Governance Status</p>
+                    <p className="text-xs font-semibold">{t("uiXpLadderModal.yourGovernanceStatus")}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {GOVERNANCE_BODIES.map(b => (
                         <Badge key={b.name} variant="outline" className="text-[10px] bg-primary/5">
@@ -206,7 +205,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                         <Badge variant="outline" className={`text-[8px] px-1.5 py-0 h-4 ${SPHERE_COLORS[sphere] || ""}`}>
                           {sphere}
                         </Badge>
-                        <span className="text-muted-foreground">Level {minLvl}+</span>
+                        <span className="text-muted-foreground">{t("uiXpLadderModal.level")} {minLvl}+</span>
                         {currentLevel != null && currentLevel >= minLvl && (
                           <CheckCircle2 className="h-3 w-3 text-primary" />
                         )}
@@ -219,10 +218,10 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                 <div className="rounded-xl border border-border bg-muted/30 p-3">
                   <p className="text-xs font-semibold mb-1">🔒 Anti-Centralization Safeguards</p>
                   <ul className="text-[10px] text-muted-foreground space-y-0.5 list-disc list-inside">
-                    <li>No user can hold more than 1 executive moderation role per sphere</li>
-                    <li>Level 15 actions require co-signature</li>
-                    <li>Voting weight is capped: 1 person = 1 vote</li>
-                    <li>12 months inactivity → governance rights suspended (XP retained)</li>
+                    <li>{t("uiXpLadderModal.noUserCanHoldMoreThan")}</li>
+                    <li>{t("uiXpLadderModal.level15ActionsRequireCoSignature")}</li>
+                    <li>{t("uiXpLadderModal.votingWeightIsCapped1Person")}</li>
+                    <li>{t("uiXpLadderModal.12MonthsInactivityGovernanceRightsSuspended")}</li>
                   </ul>
                 </div>
               </div>
@@ -234,7 +233,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
             <ScrollArea className="h-[50vh] pr-2">
               <div className="space-y-5">
                 <div>
-                  <h4 className="text-sm font-semibold mb-2">🎯 Participation (⭐ XP only)</h4>
+                  <h4 className="text-sm font-semibold mb-2">{t("uiXpLadderModal.participationXpOnly")}</h4>
                   <div className="space-y-1 text-xs text-muted-foreground">
                     {[
                       ["Comment upvoted", "+1 XP"], ["Event registered", "+1 XP"], ["Post created", "+2 XP"],
@@ -252,7 +251,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold mb-2">🛡 Stewardship (⭐ XP + small 🌱 $CTG)</h4>
+                  <h4 className="text-sm font-semibold mb-2">{t("uiXpLadderModal.stewardshipXpSmallCtg")}</h4>
                   <div className="space-y-1 text-xs text-muted-foreground">
                     {[
                       ["Governance vote cast", "+3 XP", "+5 $CTG"], ["Moderation resolved", "+10 XP", "+5 $CTG"],
@@ -268,7 +267,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold mb-2">🌱 Contribution (⭐ XP + 🌱 $CTG, both)</h4>
+                  <h4 className="text-sm font-semibold mb-2">{t("uiXpLadderModal.contributionXpCtgBoth")}</h4>
                   <div className="space-y-1 text-xs text-muted-foreground">
                     {[
                       ["Subtask completed", "+5 XP", "+5 $CTG"], ["Documentation", "+5 XP", "+10 $CTG"],
@@ -288,14 +287,14 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold mb-2">XP is NOT earned through</h4>
+                  <h4 className="text-sm font-semibold mb-2">{t("uiXpLadderModal.xpIsNotEarnedThrough")}</h4>
                   <ul className="text-sm text-muted-foreground space-y-1.5 list-disc list-inside">
                     <li>Payments</li>
                     <li>Donations</li>
                     <li>Shareholding</li>
-                    <li>Buying credits</li>
-                    <li>Purchasing anything — neither XP nor $CTG can ever be bought</li>
-                    <li>$CTG fading (demurrage) does NOT reduce your XP — XP is independent and permanent</li>
+                    <li>{t("uiXpLadderModal.buyingCredits")}</li>
+                    <li>{t("uiXpLadderModal.purchasingAnythingNeitherXpNorCtg")}</li>
+                    <li>{t("uiXpLadderModal.ctgFadingDemurrageDoesNotReduce")}</li>
                   </ul>
                 </div>
 
@@ -303,7 +302,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                 <div>
                   <h4 className="text-sm font-semibold mb-2">🌍 Territorial Impact Multipliers</h4>
                   <p className="text-xs text-muted-foreground mb-2">
-                    Collaboration across territories increases your XP earned. The platform rewards translocal cooperation.
+                    {t("uiXpLadderModal.collaborationAcrossTerritoriesIncreasesYourXp")}
                   </p>
                   <div className="rounded-xl border border-border overflow-hidden">
                     <table className="w-full text-xs">
@@ -314,9 +313,9 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                         </tr>
                       </thead>
                       <tbody className="text-muted-foreground">
-                        <tr className="border-b border-border"><td className="px-3 py-1.5">Same Guild</td><td className="text-right px-3 py-1.5">×1.0</td></tr>
-                        <tr className="border-b border-border"><td className="px-3 py-1.5">Different Guild (same territory)</td><td className="text-right px-3 py-1.5">×1.1</td></tr>
-                        <tr className="border-b border-border"><td className="px-3 py-1.5">Different Territory (same region)</td><td className="text-right px-3 py-1.5">×1.2</td></tr>
+                        <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.sameGuild")}</td><td className="text-right px-3 py-1.5">×1.0</td></tr>
+                        <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.differentGuildSameTerritory")}</td><td className="text-right px-3 py-1.5">×1.1</td></tr>
+                        <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.differentTerritorySameRegion")}</td><td className="text-right px-3 py-1.5">×1.2</td></tr>
                         <tr className="border-b border-border"><td className="px-3 py-1.5">Different Region (same country)</td><td className="text-right px-3 py-1.5">×1.3</td></tr>
                         <tr className="border-b border-border"><td className="px-3 py-1.5">Different Country</td><td className="text-right px-3 py-1.5">×1.5</td></tr>
                         <tr><td className="px-3 py-1.5">Multi-country (3+)</td><td className="text-right px-3 py-1.5">×1.8</td></tr>
@@ -324,25 +323,25 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                     </table>
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-1.5">
-                    +20% bonus when collaborating in a new territory for the first time.
+                    {t("uiXpLadderModal.20BonusWhenCollaboratingInA")}
                   </p>
                 </div>
 
                 {/* Ecosystem separation */}
                 <div className="rounded-xl border border-border bg-card p-4">
-                  <h4 className="text-sm font-semibold mb-2">Understanding the ecosystem</h4>
+                  <h4 className="text-sm font-semibold mb-2">{t("uiXpLadderModal.understandingTheEcosystem")}</h4>
                   <div className="grid grid-cols-3 gap-3 text-xs text-muted-foreground">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">⭐ XP</p>
+                      <p className="font-medium text-foreground">{t("uiXpLadderModal.xp")}</p>
                       <p>Non-monetary reputation · permanent · unlocks governance</p>
                     </div>
                     <div className="space-y-0.5">
                       <p className="font-medium text-foreground">🌱 $CTG</p>
-                      <p>Contribution token · fades 1%/month · transferable · exchangeable to Credits</p>
+                      <p>{t("uiXpLadderModal.contributionTokenFades1MonthTransferable")}</p>
                     </div>
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">🔷 Credits</p>
-                      <p>Platform utility fuel · fades 1%/month · for quotas and features</p>
+                      <p className="font-medium text-foreground">{t("uiXpLadderModal.credits")}</p>
+                      <p>{t("uiXpLadderModal.platformUtilityFuelFades1Month")}</p>
                     </div>
                   </div>
                 </div>

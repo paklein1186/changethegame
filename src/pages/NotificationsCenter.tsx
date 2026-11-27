@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -137,15 +138,15 @@ const ADMIN_TYPES = [
 
 // Category grouping for type filter
 const typeCategories: { label: string; types: NotificationType[] }[] = [
-  { label: "Quests", types: [NotificationType.QUEST_CREATED, NotificationType.QUEST_UPDATED, NotificationType.QUEST_UPDATE, NotificationType.QUEST_COMPLETED, NotificationType.QUEST_COMMENT, NotificationType.QUEST_UPVOTE] },
+  { get label() { return i18n.t("uiNotificationsCenter.quests"); }, types: [NotificationType.QUEST_CREATED, NotificationType.QUEST_UPDATED, NotificationType.QUEST_UPDATE, NotificationType.QUEST_COMPLETED, NotificationType.QUEST_COMMENT, NotificationType.QUEST_UPVOTE] },
   { label: "Comments", types: [NotificationType.COMMENT, NotificationType.UPVOTE] },
-  { label: "Guilds", types: [NotificationType.GUILD_MEMBER_ADDED, NotificationType.GUILD_ROLE_CHANGED, NotificationType.GUILD_QUEST_CREATED, NotificationType.INVITE] },
+  { get label() { return i18n.t("uiNotificationsCenter.guilds"); }, types: [NotificationType.GUILD_MEMBER_ADDED, NotificationType.GUILD_ROLE_CHANGED, NotificationType.GUILD_QUEST_CREATED, NotificationType.INVITE] },
   { label: "Pods", types: [NotificationType.POD_CREATED, NotificationType.POD_MESSAGE] },
   { label: "Bookings", types: [NotificationType.BOOKING, NotificationType.BOOKING_REQUESTED, NotificationType.BOOKING_CONFIRMED, NotificationType.BOOKING_CANCELLED, NotificationType.BOOKING_UPDATED, NotificationType.BOOKING_REQUIRES_PAYMENT] },
   { label: "Social", types: [NotificationType.FOLLOWER_NEW, NotificationType.FOLLOWER_ACTIVITY] },
-  { label: "XP & Achievements", types: [NotificationType.XP_GAINED, NotificationType.ACHIEVEMENT_UNLOCKED] },
+  { get label() { return i18n.t("uiNotificationsCenter.xpAchievements"); }, types: [NotificationType.XP_GAINED, NotificationType.ACHIEVEMENT_UNLOCKED] },
   { label: "System", types: SYSTEM_TYPES },
-  { label: "Admin (Unit)", types: ADMIN_TYPES.filter(t => !SYSTEM_TYPES.includes(t)) },
+  { get label() { return i18n.t("uiNotificationsCenter.adminUnit"); }, types: ADMIN_TYPES.filter(t => !SYSTEM_TYPES.includes(t)) },
 ];
 
 const PAGE_SIZE = 20;
@@ -281,7 +282,7 @@ export default function NotificationsCenter() {
 
           {unreadCount > 0 && (
             <Button variant="outline" size="sm" onClick={markAllAsRead} className="whitespace-nowrap">
-              <CheckCheck className="h-4 w-4 mr-1" /> <span className="hidden sm:inline">{t("notifications.markAllRead")}</span><span className="sm:hidden">Read all</span>
+              <CheckCheck className="h-4 w-4 mr-1" /> <span className="hidden sm:inline">{t("notifications.markAllRead")}</span><span className="sm:hidden">{t("uiNotificationsCenter.readAll")}</span>
             </Button>
           )}
 

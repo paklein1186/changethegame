@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const qc = useQueryClient();
   const { data: billing, isLoading: billingLoading } = useAgentBillingProfile(agentId);
@@ -122,7 +124,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
       }
     },
     onSuccess: () => {
-      toast.success("Billing profile updated");
+      toast.success(t("uiAgentBillingTab.billingProfileUpdated"));
       qc.invalidateQueries({ queryKey: ["agent-billing-profile", agentId] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -149,7 +151,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
                   <p className="text-xl font-bold">{revenueStats.totalAll.toFixed(1)}</p>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><CalendarDays className="h-3 w-3" /> This Month</p>
+                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><CalendarDays className="h-3 w-3" /> {t("uiAgentBillingTab.thisMonth")}</p>
                   <p className="text-xl font-bold">{revenueStats.thisMonth.toFixed(1)}</p>
                 </Card>
                 <Card className="p-4">
@@ -194,10 +196,10 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="border-b border-border text-muted-foreground">
-                          <th className="text-left py-2 pr-2">Date</th>
-                          <th className="text-right py-2 px-2">Amount</th>
+                          <th className="text-left py-2 pr-2">{t("uiAgentBillingTab.date")}</th>
+                          <th className="text-right py-2 px-2">{t("uiAgentBillingTab.amount")}</th>
                           <th className="text-center py-2 px-2">Currency</th>
-                          <th className="text-center py-2 px-2">Share %</th>
+                          <th className="text-center py-2 px-2">{t("uiAgentBillingTab.share")}</th>
                           <th className="text-left py-2 pl-2">Source</th>
                         </tr>
                       </thead>
@@ -221,7 +223,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
                     </table>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No revenue records yet.</p>
+                  <p className="text-sm text-muted-foreground">{t("uiAgentBillingTab.noRevenueRecordsYet")}</p>
                 )}
               </Card>
             </>
@@ -239,7 +241,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <Zap className="h-4 w-4" /> Actions This Month
+            <Zap className="h-4 w-4" /> {t("uiAgentBillingTab.actionsThisMonth")}
           </div>
           <p className="text-2xl font-bold">{monthlyData?.totalActions ?? 0}</p>
         </Card>
@@ -247,7 +249,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
             <Shield className="h-4 w-4" /> Plan
           </div>
-          <p className="text-lg font-semibold">{billing?.agent_plans?.label || "No plan"}</p>
+          <p className="text-lg font-semibold">{billing?.agent_plans?.label || t("uiAgentBillingTab.noPlan")}</p>
         </Card>
       </div>
 
@@ -273,31 +275,31 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
       {isOwner && (
         <Card className="p-4 space-y-4">
           <h3 className="text-sm font-semibold flex items-center gap-2">
-            <CreditCard className="h-4 w-4" /> Billing Settings
+            <CreditCard className="h-4 w-4" /> {t("uiAgentBillingTab.billingSettings")}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs text-muted-foreground">Subscription Plan</label>
               <Select value={selectedPlan || billing?.current_plan_id || "none"} onValueChange={setSelectedPlan}>
-                <SelectTrigger><SelectValue placeholder="No plan" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("uiAgentBillingTab.noPlan")} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No plan</SelectItem>
+                  <SelectItem value="none">{t("uiAgentBillingTab.noPlan")}</SelectItem>
                   {(plans || []).map((p: any) => (
                     <SelectItem key={p.id} value={p.id}>
-                      {p.label} — {p.monthly_price} credits/mo
+                      {p.label} — {p.monthly_price} {t("uiAgentBillingTab.creditsMo")}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-xs text-muted-foreground">Monthly Spend Limit (credits)</label>
+              <label className="text-xs text-muted-foreground">{t("uiAgentBillingTab.monthlySpendLimitCredits")}</label>
               <Input
                 type="number"
                 value={spendLimit || billing?.monthly_spend_limit || ""}
                 onChange={e => setSpendLimit(e.target.value)}
-                placeholder="No limit"
+                placeholder={t("uiAgentBillingTab.noLimit")}
               />
             </div>
           </div>
@@ -311,7 +313,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
           </div>
 
           <Button onClick={() => upsertBilling.mutate()} disabled={upsertBilling.isPending} size="sm">
-            Save Billing Settings
+            {t("uiAgentBillingTab.saveBillingSettings")}
           </Button>
         </Card>
       )}
@@ -322,7 +324,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
         {usageLoading ? (
           <Skeleton className="h-32" />
         ) : !usage?.length ? (
-          <p className="text-sm text-muted-foreground">No usage records yet.</p>
+          <p className="text-sm text-muted-foreground">{t("uiAgentBillingTab.noUsageRecordsYet")}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -334,7 +336,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
                   <th className="text-right py-2 px-2">Sens×</th>
                   <th className="text-right py-2 px-2">Val×</th>
                   <th className="text-right py-2 px-2">Final</th>
-                  <th className="text-right py-2 pl-2">Date</th>
+                  <th className="text-right py-2 pl-2">{t("uiAgentBillingTab.date")}</th>
                 </tr>
               </thead>
               <tbody>

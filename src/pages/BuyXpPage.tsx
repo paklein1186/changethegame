@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Package, ArrowLeft, CheckCircle, Loader2, ArrowRight, Info, RefreshCw } from "lucide-react";
@@ -15,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CREDIT_BUNDLES, CREDIT_COSTS, ECONOMY_LABELS } from "@/lib/xpCreditsConfig";
 
 export default function BuyXpPage() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { userCredits, userXp, plan, refresh } = usePlanLimits();
   const { toast } = useToast();
@@ -69,7 +71,7 @@ export default function BuyXpPage() {
       setExchangeAmount("");
       refresh();
     } catch (err: any) {
-      toast({ title: "Exchange failed", description: err.message, variant: "destructive" });
+      toast({ title: t("uiBuyXpPage.exchangeFailed"), description: err.message, variant: "destructive" });
     } finally {
       setExchangeLoading(false);
     }
@@ -89,11 +91,11 @@ export default function BuyXpPage() {
         setVerified(true);
         refresh();
         if (data?.granted) {
-          toast({ title: "Credits purchased!", description: `${data.creditsAmount} credits added to your account.` });
+          toast({ title: t("uiBuyXpPage.creditsPurchased"), description: `${data.creditsAmount} credits added to your account.` });
         } else if (data?.alreadyGranted) {
-          toast({ title: "Credits already added", description: "This purchase was already processed." });
+          toast({ title: t("uiBuyXpPage.creditsAlreadyAdded"), description: t("uiBuyXpPage.thisPurchaseWasAlreadyProcessed") });
         } else if (error) {
-          toast({ title: "Verification issue", description: "Credits may take a moment to appear. Please refresh.", variant: "destructive" });
+          toast({ title: "Verification issue", description: t("uiBuyXpPage.creditsMayTakeAMomentTo"), variant: "destructive" });
         }
       });
     }
@@ -108,7 +110,7 @@ export default function BuyXpPage() {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiBuyXpPage.error"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(null);
     }
@@ -118,7 +120,7 @@ export default function BuyXpPage() {
     <PageShell>
       <div className="max-w-3xl mx-auto">
         <Button variant="ghost" size="sm" asChild className="mb-4">
-          <Link to="/me"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Me</Link>
+          <Link to="/me"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiBuyXpPage.backToMe")}</Link>
         </Button>
 
         {success && (
@@ -126,19 +128,19 @@ export default function BuyXpPage() {
             {verifying ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <CheckCircle className="h-5 w-5 text-success" />}
             <div>
               <p className="font-medium text-sm">{verifying ? "Verifying payment…" : "Payment successful!"}</p>
-              <p className="text-xs text-muted-foreground">{verifying ? "Please wait while we confirm your purchase." : "Your credits have been added to your account."}</p>
+              <p className="text-xs text-muted-foreground">{verifying ? t("uiBuyXpPage.pleaseWaitWhileWeConfirmYour") : t("uiBuyXpPage.yourCreditsHaveBeenAddedTo")}</p>
             </div>
           </motion.div>
         )}
 
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl font-bold mb-2">Buy Credits</h1>
-          <p className="text-muted-foreground">Credits are platform utility — use them for boosts, extra capacity, and AI features.</p>
+          <h1 className="font-display text-3xl font-bold mb-2">{t("uiBuyXpPage.buyCredits")}</h1>
+          <p className="text-muted-foreground">{t("uiBuyXpPage.creditsArePlatformUtilityUseThem")}</p>
           <div className="mt-4 flex items-center justify-center gap-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2">
               <CurrencyIcon currency="credits" className="h-5 w-5" />
               <span className="text-lg font-bold">{userCredits}</span>
-              <span className="text-sm text-muted-foreground">Credits</span>
+              <span className="text-sm text-muted-foreground">{t("uiBuyXpPage.credits")}</span>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-2">
               <span className="text-sm font-medium">{userXp} XP</span>
@@ -146,7 +148,7 @@ export default function BuyXpPage() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Your plan ({plan.planName}) includes {plan.monthlyIncludedCredits} credits/month
+            {t("uiBuyXpPage.yourPlan")}{plan.planName}) includes {plan.monthlyIncludedCredits} {t("uiBuyXpPage.creditsMonth")}
           </p>
         </div>
 
@@ -161,23 +163,22 @@ export default function BuyXpPage() {
               <CurrencyIcon currency="ctg" className="h-6 w-6" />
               <div>
                 <h3 className="font-display text-lg font-bold flex items-center gap-2">
-                  Exchange your $CTG for Credits
+                  {t("uiBuyXpPage.exchangeYourCtgForCredits")}
                 </h3>
                 <p className="text-xs text-emerald-700 dark:text-emerald-300">
-                  No payment needed
+                  {t("uiBuyXpPage.noPaymentNeeded")}
                 </p>
               </div>
             </div>
 
             <p className="text-sm text-muted-foreground mb-4">
-              You have{" "}
+              {t("uiBuyXpPage.youHave")}{" "}
               <span className="font-bold text-emerald-600 dark:text-emerald-400">
                 {ctgData.ctgBalance.toLocaleString()} $CTG
               </span>{" "}
-              available. Convert contribution earnings into platform Credits.
-              Rate: 1 $CTG = {ctgData.rate} Credits.
+              {t("uiBuyXpPage.availableConvertContributionEarningsIntoPlatform")} {ctgData.rate} {t("uiBuyXpPage.credits2")}
               <span className="text-xs ml-1">
-                ($CTG fades 1%/month — exchanging surplus is always rational)
+                {t("uiBuyXpPage.ctgFades1MonthExchangingSurplus")}
               </span>
             </p>
 
@@ -186,7 +187,7 @@ export default function BuyXpPage() {
                 <CurrencyIcon currency="ctg" className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4" />
                 <Input
                   type="number"
-                  placeholder="Amount to exchange"
+                  placeholder={t("uiBuyXpPage.amountToExchange")}
                   value={exchangeAmount}
                   onChange={(e) => setExchangeAmount(e.target.value)}
                   min={1}
@@ -199,7 +200,7 @@ export default function BuyXpPage() {
                 <p className="text-xl font-bold text-primary">
                   {previewCredits > 0 ? previewCredits.toLocaleString() : "—"}
                 </p>
-                <p className="text-xs text-muted-foreground">Credits</p>
+                <p className="text-xs text-muted-foreground">{t("uiBuyXpPage.credits")}</p>
               </div>
               <Button onClick={handleCtgExchange} disabled={exchangeLoading || !parseFloat(exchangeAmount)}>
                 {exchangeLoading
@@ -209,7 +210,7 @@ export default function BuyXpPage() {
             </div>
 
             <p className="text-[10px] text-muted-foreground mt-3">
-              Max 50% of balance per transaction · Up to 3 exchanges/hour
+              {t("uiBuyXpPage.max50OfBalancePerTransaction")}
             </p>
           </motion.div>
         )}
@@ -230,11 +231,11 @@ export default function BuyXpPage() {
               <h3 className="font-display text-lg font-bold">{bundle.label}</h3>
               <div className="my-3">
                 <span className="text-3xl font-bold text-primary">{bundle.credits}</span>
-                <span className="text-sm text-muted-foreground ml-1">Credits</span>
+                <span className="text-sm text-muted-foreground ml-1">{t("uiBuyXpPage.credits")}</span>
               </div>
               <p className="text-2xl font-bold mb-1">€{bundle.priceEur}</p>
               <p className="text-xs text-muted-foreground mb-4">
-                €{(bundle.priceEur / bundle.credits).toFixed(3)} per credit
+                €{(bundle.priceEur / bundle.credits).toFixed(3)} {t("uiBuyXpPage.perCredit")}
               </p>
               <Button
                 onClick={() => handleBuy(bundle.code)}
@@ -244,7 +245,7 @@ export default function BuyXpPage() {
                 {loading === bundle.code ? (
                   <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Processing…</>
                 ) : (
-                  <><CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> Buy {bundle.credits} Credits</>
+                  <><CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> Buy {bundle.credits} {t("uiBuyXpPage.credits")}</>
                 )}
               </Button>
             </motion.div>
@@ -255,24 +256,24 @@ export default function BuyXpPage() {
         <div className="mt-8 rounded-xl border border-border bg-muted/30 p-5 flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-sm flex items-center gap-2">
-              <Info className="h-4 w-4 text-primary" /> What can you do with credits?
+              <Info className="h-4 w-4 text-primary" /> {t("uiBuyXpPage.whatCanYouDoWithCredits")}
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Boosts, extra capacity, AI sessions, commission reductions & more.
+              {t("uiBuyXpPage.boostsExtraCapacityAiSessionsCommission")}
             </p>
           </div>
           <Link to="/me/credit-shop">
             <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-              Browse Credit Shop <ArrowRight className="h-3.5 w-3.5" />
+              {t("uiBuyXpPage.browseCreditShop")} <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </Link>
         </div>
 
         <div className="mt-6 text-center text-sm text-muted-foreground space-y-1">
-          <p>Credits are non-refundable. Stripe payments and $CTG exchanges are final.</p>
+          <p>{t("uiBuyXpPage.creditsAreNonRefundableStripePayments")}</p>
           <p className="text-xs">{ECONOMY_LABELS.creditsDisclaimer}</p>
           <p className="mt-2">
-            Want more features? <Link to="/plans" className="text-primary hover:underline">See subscription plans →</Link>
+            {t("uiBuyXpPage.wantMoreFeatures")} <Link to="/plans" className="text-primary hover:underline">{t("uiBuyXpPage.seeSubscriptionPlans")}</Link>
           </p>
         </div>
       </div>

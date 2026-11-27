@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -57,8 +59,8 @@ const COMPARISON_OPTIONS = [
 ];
 
 const REWARD_OPTIONS = [
-  { value: "XP", label: "⭐ XP (reputation)", icon: TrendingUp },
-  { value: "CTG", label: "🌱 $CTG (contribution token)", icon: Leaf },
+  { value: "XP", get label() { return i18n.t("uiQuestLivingTab.xpReputation"); }, icon: TrendingUp },
+  { value: "CTG", get label() { return i18n.t("uiQuestLivingTab.ctgContributionToken"); }, icon: Leaf },
   { value: "BADGE", label: "🏅 Badge (milestone)", icon: Trophy },
 ];
 
@@ -67,7 +69,7 @@ const REWARD_LABELS: Record<string, string> = {
 };
 
 const PERIOD_OPTIONS = [
-  { value: "ON_COMPLETE", label: "On quest complete" },
+  { value: "ON_COMPLETE", get label() { return i18n.t("uiQuestLivingTab.onQuestComplete"); } },
   { value: "AFTER_3_MONTHS", label: "After 3 months" },
   { value: "AFTER_1_YEAR", label: "After 1 year" },
 ];
@@ -131,6 +133,7 @@ function QuestNaturalSystemCard({ system }: { system: LinkedNaturalSystem }) {
 
 /* ─── Add Rule Dialog ─── */
 function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems: LinkedNaturalSystem[] }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const currentUser = useCurrentUser();
   const createRule = useCreateEcoImpactRule();
@@ -160,7 +163,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
       toast({ title: "Eco-impact rule created!" });
       setOpen(false);
     } catch {
-      toast({ title: "Failed to create rule", variant: "destructive" });
+      toast({ title: t("uiQuestLivingTab.failedToCreateRule"), variant: "destructive" });
     }
   };
 
@@ -168,19 +171,19 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline" className="text-xs">
-          <Target className="h-3 w-3 mr-1" /> Add Impact Rule
+          <Target className="h-3 w-3 mr-1" /> {t("uiQuestLivingTab.addImpactRule")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-sm">New Eco-Impact Rule</DialogTitle>
+          <DialogTitle className="text-sm">{t("uiQuestLivingTab.newEcoImpactRule")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           {/* Living System */}
           <div>
             <label className="text-xs font-medium">Living System</label>
             <Select value={nsId} onValueChange={setNsId}>
-              <SelectTrigger className="text-xs"><SelectValue placeholder="Select a system" /></SelectTrigger>
+              <SelectTrigger className="text-xs"><SelectValue placeholder={t("uiQuestLivingTab.selectASystem")} /></SelectTrigger>
               <SelectContent>
                 {systems.map((s) => (
                   <SelectItem key={s.id} value={s.id} className="text-xs">{s.name}</SelectItem>
@@ -234,7 +237,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
               </Select>
             </div>
             <div className="w-24">
-              <label className="text-xs font-medium">Amount</label>
+              <label className="text-xs font-medium">{t("uiQuestLivingTab.amount")}</label>
               <Input type="number" value={rewardAmount} onChange={(e) => setRewardAmount(e.target.value)} className="text-xs" />
             </div>
           </div>
@@ -251,7 +254,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
             </Select>
           </div>
           <Button onClick={handleCreate} disabled={createRule.isPending} className="w-full text-xs" size="sm">
-            Create Rule
+            {t("uiQuestLivingTab.createRule")}
           </Button>
         </div>
       </DialogContent>
@@ -268,6 +271,7 @@ interface QuestLivingTabProps {
 }
 
 export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwner }: QuestLivingTabProps) {
+  const { t } = useTranslation();
   const { data: systems, isLoading } = useLinkedNaturalSystems(linkedType, linkedId);
   const { data: rules } = useQuestEcoImpactRules(linkedId);
   const { data: events } = useQuestEcoImpactEvents(linkedId);
@@ -283,7 +287,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
       await evaluateMutation.mutateAsync(linkedId);
       toast({ title: "Eco-impact rules evaluated!" });
     } catch {
-      toast({ title: "Evaluation failed", variant: "destructive" });
+      toast({ title: t("uiQuestLivingTab.evaluationFailed"), variant: "destructive" });
     }
   };
 
@@ -297,7 +301,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
             {systems && <span className="text-muted-foreground font-normal text-sm">({systems.length})</span>}
           </h3>
           <Button size="sm" onClick={() => setModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" /> Link System
+            <Plus className="h-4 w-4 mr-1" /> {t("uiQuestLivingTab.linkSystem")}
           </Button>
         </div>
 
@@ -314,9 +318,9 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
         ) : (
           <div className="rounded-xl border border-dashed border-border p-6 text-center">
             <Leaf className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">No ecosystems linked to this quest yet.</p>
+            <p className="text-sm text-muted-foreground">{t("uiQuestLivingTab.noEcosystemsLinkedToThisQuest")}</p>
             <Button size="sm" variant="outline" className="mt-2" onClick={() => setModalOpen(true)}>
-              <Plus className="h-4 w-4 mr-1" /> Link your first
+              <Plus className="h-4 w-4 mr-1" /> {t("uiQuestLivingTab.linkYourFirst")}
             </Button>
           </div>
         )}
@@ -339,7 +343,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
               )}
               <Button size="sm" variant="outline" className="text-xs" onClick={handleEvaluate} disabled={evaluateMutation.isPending}>
                 <RefreshCw className={cn("h-3 w-3 mr-1", evaluateMutation.isPending && "animate-spin")} />
-                Evaluate Now
+                {t("uiQuestLivingTab.evaluateNow")}
               </Button>
             </div>
           </div>
@@ -369,7 +373,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
                       {rule.is_fulfilled ? (
                         <Badge className="text-[9px] bg-success/15 text-success border-success/30">✅ Fulfilled</Badge>
                       ) : (
-                        <Badge variant="outline" className="text-[9px]">Active</Badge>
+                        <Badge variant="outline" className="text-[9px]">{t("uiQuestLivingTab.active")}</Badge>
                       )}
                       {isOwner && !rule.is_fulfilled && (
                         <Button

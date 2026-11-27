@@ -44,7 +44,7 @@ export default function CoursesExplore({ bare }: { bare?: boolean }) {
           <h1 className="font-display text-3xl font-bold flex items-center gap-2">
             <GraduationCap className="h-7 w-7 text-primary" /> Courses
           </h1>
-          <p className="text-muted-foreground mt-1">Learn from the community's best educators.</p>
+          <p className="text-muted-foreground mt-1">{t("uiCoursesExplore.learnFromTheCommunitySBest")}</p>
         </div>
       )}
 
@@ -74,7 +74,7 @@ export default function CoursesExplore({ bare }: { bare?: boolean }) {
 
       {isLoading && <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}
 
-      {!isLoading && filtered.length === 0 && <p className="text-muted-foreground">No courses match your filters.</p>}
+      {!isLoading && filtered.length === 0 && <p className="text-muted-foreground">{t("uiCoursesExplore.noCoursesMatchYourFilters")}</p>}
 
       <div className={gridClassName}>
         {filtered.map((course, i) => {
@@ -95,7 +95,7 @@ export default function CoursesExplore({ bare }: { bare?: boolean }) {
                   </div>
                   <h3 className="font-display font-semibold line-clamp-2 mb-1">{course.title}</h3>
                   {!isLoggedIn && (
-                    <p className="text-[10px] text-muted-foreground italic">Log in to enroll</p>
+                    <p className="text-[10px] text-muted-foreground italic">{t("uiCoursesExplore.logInToEnroll")}</p>
                   )}
                   {isLoggedIn && (
                     <div className="flex items-center justify-between text-xs text-muted-foreground">

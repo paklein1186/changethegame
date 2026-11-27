@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +12,7 @@ function getDismissed(): string[] {
 }
 
 export function HarvestWindowBanner() {
+  const { t } = useTranslation();
   const [dismissed, setDismissed] = useState<string[]>(getDismissed);
 
   const { data: window } = useQuery({
@@ -66,7 +68,7 @@ export function HarvestWindowBanner() {
       <div className="flex items-center justify-center gap-2 flex-wrap">
         <Sprout className="h-4 w-4 text-emerald-600 dark:text-emerald-400 animate-pulse" />
         <span>
-          🌾 <strong>Harvest Window:</strong> {window.label} — All $CTG contributions earn{" "}
+          🌾 <strong>Harvest Window:</strong> {window.label} {t("uiHarvestWindowBanner.allCtgContributionsEarn")}{" "}
           <strong className="text-emerald-700 dark:text-emerald-300">{window.multiplier}×</strong>
         </span>
         <span className="inline-flex items-center gap-1 bg-amber-200/60 dark:bg-amber-800/40 rounded-full px-2 py-0.5 text-xs font-mono">

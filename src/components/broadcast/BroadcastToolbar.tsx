@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Button } from "@/components/ui/button";
 import { Bold, Italic, Link2, List, ListOrdered, Heading2 } from "lucide-react";
 import { RefObject } from "react";
@@ -49,7 +50,7 @@ function insertPrefix(
 const actions = [
   { icon: Bold, tooltip: "Bold", action: (ta: HTMLTextAreaElement | null, cb: (t: string) => void) => wrapSelection(ta, "**", "**", cb) },
   { icon: Italic, tooltip: "Italic", action: (ta: HTMLTextAreaElement | null, cb: (t: string) => void) => wrapSelection(ta, "_", "_", cb) },
-  { icon: Link2, tooltip: "Link", action: (ta: HTMLTextAreaElement | null, cb: (t: string) => void) => wrapSelection(ta, "[", "](url)", cb) },
+  { icon: Link2, get tooltip() { return i18n.t("uiBroadcastToolbar.link"); }, action: (ta: HTMLTextAreaElement | null, cb: (t: string) => void) => wrapSelection(ta, "[", "](url)", cb) },
   { icon: Heading2, tooltip: "Heading", action: (ta: HTMLTextAreaElement | null, cb: (t: string) => void) => insertPrefix(ta, "## ", cb) },
   { icon: List, tooltip: "Bullet list", action: (ta: HTMLTextAreaElement | null, cb: (t: string) => void) => insertPrefix(ta, "- ", cb) },
   { icon: ListOrdered, tooltip: "Numbered list", action: (ta: HTMLTextAreaElement | null, cb: (t: string) => void) => insertPrefix(ta, "1. ", cb) },

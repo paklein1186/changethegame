@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { UserPlus, Clock, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,7 @@ export function EntityJoinButton({
   onJoined,
   membershipHint,
 }: EntityJoinButtonProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { notifyJoinRequest } = useNotifications();
   const [loading, setLoading] = useState(false);
@@ -84,7 +86,7 @@ export function EntityJoinButton({
     const { error } = await (supabase.from(cfg.members as any).insert(insertData) as any);
     setLoading(false);
     if (error) {
-      toast({ title: "Failed to join", description: error.message, variant: "destructive" });
+      toast({ title: t("uiEntityJoinButton.failedToJoin"), description: error.message, variant: "destructive" });
     } else {
       toast({ title: `Joined ${label}!`, description: membershipHint });
       onJoined?.();
@@ -106,9 +108,9 @@ export function EntityJoinButton({
     setLoading(false);
     if (error) {
       if (error.message?.includes("unique") || error.code === "23505") {
-        toast({ title: "You already have a pending application", variant: "destructive" });
+        toast({ title: t("uiEntityJoinButton.youAlreadyHaveAPendingApplication"), variant: "destructive" });
       } else {
-        toast({ title: "Failed to submit", description: error.message, variant: "destructive" });
+        toast({ title: t("uiEntityJoinButton.failedToSubmit"), description: error.message, variant: "destructive" });
       }
     } else {
       setPendingApp(true);
@@ -125,7 +127,7 @@ export function EntityJoinButton({
     return (
       <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
         <Lock className="h-4 w-4" />
-        <span>Invite-only {label}</span>
+        <span>{t("uiEntityJoinButton.inviteOnly")} {label}</span>
       </div>
     );
   }
@@ -133,7 +135,7 @@ export function EntityJoinButton({
   if (joinPolicy === "APPROVAL_REQUIRED" && pendingApp) {
     return (
       <Badge variant="outline" className="gap-1">
-        <Clock className="h-3 w-3" /> Application pending
+        <Clock className="h-3 w-3" /> {t("uiEntityJoinButton.applicationPending")}
       </Badge>
     );
   }
@@ -145,18 +147,18 @@ export function EntityJoinButton({
           setAnswers(applicationQuestions.map(() => ""));
           setApplyOpen(true);
         }}>
-          <UserPlus className="h-4 w-4 mr-1" /> Apply to join
+          <UserPlus className="h-4 w-4 mr-1" /> {t("uiEntityJoinButton.applyToJoin")}
         </Button>
 
         <Dialog open={applyOpen} onOpenChange={setApplyOpen}>
           <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Apply to join</DialogTitle>
-              <DialogDescription>Answer the questions below. Admins will review your application.</DialogDescription>
+              <DialogTitle>{t("uiEntityJoinButton.applyToJoin")}</DialogTitle>
+              <DialogDescription>{t("uiEntityJoinButton.answerTheQuestionsBelowAdminsWill")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-2">
               {applicationQuestions.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No specific questions — just submit to apply.</p>
+                <p className="text-sm text-muted-foreground">{t("uiEntityJoinButton.noSpecificQuestionsJustSubmitTo")}</p>
               ) : (
                 applicationQuestions.map((q, i) => (
                   <div key={i}>
@@ -168,7 +170,7 @@ export function EntityJoinButton({
                         next[i] = e.target.value;
                         setAnswers(next);
                       }}
-                      placeholder="Your answer…"
+                      placeholder={t("uiEntityJoinButton.yourAnswer")}
                       maxLength={1000}
                       className="resize-none"
                     />
@@ -177,7 +179,7 @@ export function EntityJoinButton({
               )}
               <Button onClick={handleSubmitApplication} disabled={loading} className="w-full">
                 {loading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-                Submit application
+                {t("uiEntityJoinButton.submitApplication")}
               </Button>
             </div>
           </DialogContent>
@@ -190,7 +192,7 @@ export function EntityJoinButton({
   return (
     <Button size="sm" variant="outline" onClick={handleOpenJoin} disabled={loading}>
       {loading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <UserPlus className="h-4 w-4 mr-1" />}
-      Join {label}
+      {t("uiEntityJoinButton.join")} {label}
     </Button>
   );
 }

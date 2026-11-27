@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -40,6 +41,7 @@ export function FollowOnHoverButton({
   targetUserId: string;
   isFollowed: boolean;
 }) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const qc = useQueryClient();
   const { notifyNewFollower } = useNotifications();
@@ -65,7 +67,7 @@ export function FollowOnHoverButton({
       qc.invalidateQueries({ queryKey: ["my-follows"] });
       qc.invalidateQueries({ queryKey: ["following-feed"] });
     },
-    onError: () => toast.error("Failed to follow"),
+    onError: () => toast.error(t("uiFollowOnHoverButton.failedToFollow")),
   });
 
   // Don't show for own profile or already-followed users
@@ -91,7 +93,7 @@ export function FollowOnHoverButton({
         }}
         disabled={followMut.isPending}
         className="rounded-full p-1.5 bg-primary text-primary-foreground shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:scale-110 active:scale-95"
-        title="Follow"
+        title={t("uiFollowOnHoverButton.follow")}
       >
         <UserPlus className="h-3.5 w-3.5" />
       </button>

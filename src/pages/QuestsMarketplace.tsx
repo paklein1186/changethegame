@@ -25,6 +25,7 @@ import { QUEST_NATURE_LABELS, QUEST_NATURE_COLORS, QUEST_NATURE_ICONS, isMission
 import { QuestNature } from "@/types/enums";
 
 function CreateQuestButton() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { data: memberships } = useMyGuildMemberships();
@@ -38,22 +39,22 @@ function CreateQuestButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Create Quest</Button>
+        <Button size="sm"><Plus className="h-4 w-4 mr-1" /> {t("uiQuestsMarketplace.createQuest")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader><DialogTitle>Create a new Quest</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t("uiQuestsMarketplace.createANewQuest")}</DialogTitle></DialogHeader>
         <p className="text-sm text-muted-foreground mb-4">
           {myAdminGuilds.length > 0 || myCompanies.length > 0
-            ? "You can create this quest as yourself, or attach it to a Guild or Company you manage."
-            : "You can create this quest as yourself."}
+            ? t("uiQuestsMarketplace.youCanCreateThisQuestAs")
+            : t("uiQuestsMarketplace.youCanCreateThisQuestAs2")}
         </p>
         <Button variant="outline" className="w-full justify-between" onClick={() => go("/quests/new")}>
-          <span className="flex items-center gap-2"><Users className="h-4 w-4" /> Continue as myself</span>
+          <span className="flex items-center gap-2"><Users className="h-4 w-4" /> {t("uiQuestsMarketplace.continueAsMyself")}</span>
           <ChevronRight className="h-4 w-4" />
         </Button>
         {myAdminGuilds.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Create under a Guild</h3>
+            <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-2">{t("uiQuestsMarketplace.createUnderAGuild")}</h3>
             <div className="space-y-1.5">
               {myAdminGuilds.map((g: any) => (
                 <Button key={g.id} variant="ghost" className="w-full justify-between" onClick={() => go(`/guilds/${g.id}/quests/new`)}>
@@ -66,7 +67,7 @@ function CreateQuestButton() {
         )}
         {myCompanies.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Create under a Company</h3>
+            <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-2">{t("uiQuestsMarketplace.createUnderACompany")}</h3>
             <div className="space-y-1.5">
               {myCompanies.map((c: any) => (
                 <Button key={c.id} variant="ghost" className="w-full justify-between" onClick={() => go(`/companies/${c.id}/quests/new`)}>
@@ -150,7 +151,7 @@ export default function QuestsMarketplace({ bare, statusFilter: externalStatusFi
     <PageShell bare={bare}>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
          <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-           <Compass className="h-7 w-7 text-primary" /> Quests Marketplace
+           <Compass className="h-7 w-7 text-primary" /> {t("uiQuestsMarketplace.questsMarketplace")}
          </h1>
          {isLoggedIn && !bare && <CreateQuestButton />}
        </div>
@@ -184,7 +185,7 @@ export default function QuestsMarketplace({ bare, statusFilter: externalStatusFi
             className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-colors ${hideCompleted ? "bg-primary/10 border-primary/30 text-primary" : "border-border text-muted-foreground hover:border-primary/20"}`}
           >
             <EyeOff className="h-3 w-3" />
-            Completed hidden
+            {t("uiQuestsMarketplace.completedHidden")}
           </button>
         </div>
       </div>
@@ -253,7 +254,7 @@ export default function QuestsMarketplace({ bare, statusFilter: externalStatusFi
                       <div className="flex flex-wrap gap-1.5 mb-3">
                         {creditBudget > 0 && (
                           <Badge variant="secondary" className="text-[10px] gap-0.5">
-                            <CurrencyIcon currency="credits" className="h-3 w-3" /> {creditBudget} Credits
+                            <CurrencyIcon currency="credits" className="h-3 w-3" /> {creditBudget} {t("uiQuestsMarketplace.credits")}
                           </Badge>
                         )}
                         {ctg > 0 && (
@@ -291,10 +292,10 @@ export default function QuestsMarketplace({ bare, statusFilter: externalStatusFi
           ))}
           {!isLoading && filtered.length === 0 && (
             <div className="col-span-full text-center py-12">
-              <p className="text-muted-foreground">No quests match your filters.</p>
+              <p className="text-muted-foreground">{t("uiQuestsMarketplace.noQuestsMatchYourFilters")}</p>
               {hf.houseFilterActive && (
                 <Button variant="link" size="sm" className="mt-2" onClick={() => hf.setHouseFilterActive(false)}>
-                  Try showing all Houses
+                  {t("uiQuestsMarketplace.tryShowingAllHouses")}
                 </Button>
               )}
             </div>

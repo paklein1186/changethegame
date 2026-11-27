@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -16,24 +18,24 @@ const fadeUp = {
 const ACTIONS = [
   {
     icon: Target,
-    title: "Launch a Monetized Quest",
-    desc: "Create a challenge or call for proposals. Allocate budget, set territory scope, and open it to aligned talent.",
+    get title() { return i18n.t("uiOrganizationNextSteps.launchAMonetizedQuest"); },
+    get desc() { return i18n.t("uiOrganizationNextSteps.createAChallengeOrCallFor"); },
     link: (id: string) => `/companies/${id}/quests/new`,
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
   {
     icon: Briefcase,
-    title: "Post a Job Position",
-    desc: "Add contract positions with location, skills requirements, and XP level filters.",
+    get title() { return i18n.t("uiOrganizationNextSteps.postAJobPosition"); },
+    get desc() { return i18n.t("uiOrganizationNextSteps.addContractPositionsWithLocationSkills"); },
     link: (_id: string) => "/jobs",
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
   },
   {
     icon: Users,
-    title: "Request Matchmaking",
-    desc: "Find guilds, users, or pods aligned with your topics and territories. AI-assisted matching.",
+    get title() { return i18n.t("uiOrganizationNextSteps.requestMatchmaking"); },
+    get desc() { return i18n.t("uiOrganizationNextSteps.findGuildsUsersOrPodsAligned"); },
     link: (id: string) => `/companies/${id}?tab=ai-chat`,
     color: "text-purple-500",
     bgColor: "bg-purple-500/10",
@@ -41,7 +43,7 @@ const ACTIONS = [
   {
     icon: Handshake,
     title: "Offer Services",
-    desc: "Provide consulting, research, funding, mentorship. Connect via appointments and payments.",
+    get desc() { return i18n.t("uiOrganizationNextSteps.provideConsultingResearchFundingMentorshipConnect"); },
     link: (_id: string) => "/services/new",
     color: "text-amber-500",
     bgColor: "bg-amber-500/10",
@@ -49,6 +51,7 @@ const ACTIONS = [
 ];
 
 export default function OrganizationNextSteps() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: company } = useCompanyById(id);
@@ -64,7 +67,7 @@ export default function OrganizationNextSteps() {
             {company?.name ? `${company.name} is live!` : "Organization created!"}
           </h1>
           <p className="text-muted-foreground">
-            Your organization profile is now part of the ecosystem. Here's what you can do next.
+            {t("uiOrganizationNextSteps.yourOrganizationProfileIsNowPart")}
           </p>
         </motion.div>
 
@@ -94,10 +97,10 @@ export default function OrganizationNextSteps() {
           className="flex flex-col sm:flex-row gap-3 justify-center"
         >
           <Button variant="outline" asChild>
-            <Link to={`/companies/${id}`}><Building2 className="h-4 w-4 mr-1" /> View Organization Profile</Link>
+            <Link to={`/companies/${id}`}><Building2 className="h-4 w-4 mr-1" /> {t("uiOrganizationNextSteps.viewOrganizationProfile")}</Link>
           </Button>
           <Button asChild>
-            <Link to="/"><Rocket className="h-4 w-4 mr-1" /> Go to Dashboard</Link>
+            <Link to="/"><Rocket className="h-4 w-4 mr-1" /> {t("uiOrganizationNextSteps.goToDashboard")}</Link>
           </Button>
         </motion.div>
       </div>

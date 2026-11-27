@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { X, Minus, Send, Maximize2 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -51,6 +52,7 @@ interface Props {
 }
 
 export function MiniChatWindow({ bubble, index }: Props) {
+  const { t } = useTranslation();
   const { closeBubble, toggleMinimize } = useChatBubbles();
   const { session } = useAuth();
   const userId = session?.user?.id;
@@ -113,7 +115,7 @@ export function MiniChatWindow({ bubble, index }: Props) {
         </Avatar>
         <span className="text-sm font-semibold truncate flex-1">{bubble.userName}</span>
         <div className="flex items-center gap-0.5">
-          <Button size="icon" variant="ghost" className="h-6 w-6" asChild title="Open full messenger">
+          <Button size="icon" variant="ghost" className="h-6 w-6" asChild title={t("uiMiniChatWindow.openFullMessenger")}>
             <Link to="/inbox">
               <Maximize2 className="h-3.5 w-3.5" />
             </Link>
@@ -121,7 +123,7 @@ export function MiniChatWindow({ bubble, index }: Props) {
           <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => toggleMinimize(bubble.conversationId)} title="Minimize">
             <Minus className="h-3.5 w-3.5" />
           </Button>
-          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => closeBubble(bubble.conversationId)} title="Close">
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => closeBubble(bubble.conversationId)} title={t("uiMiniChatWindow.close")}>
             <X className="h-3.5 w-3.5" />
           </Button>
         </div>
@@ -131,7 +133,7 @@ export function MiniChatWindow({ bubble, index }: Props) {
       <ScrollArea className="flex-1 px-3 py-2">
         <div className="space-y-2">
           {messages.length === 0 && (
-            <p className="text-xs text-muted-foreground text-center py-8">Start the conversation!</p>
+            <p className="text-xs text-muted-foreground text-center py-8">{t("uiMiniChatWindow.startTheConversation")}</p>
           )}
           {messages.map((msg) => {
             const isOwn = msg.sender_id === userId;
@@ -163,7 +165,7 @@ export function MiniChatWindow({ bubble, index }: Props) {
         <MentionTextarea
           value={text}
           onChange={setText}
-          placeholder="Message… @ to mention"
+          placeholder={t("uiMiniChatWindow.messageToMention")}
           className="min-h-[32px] max-h-[80px] text-xs rounded-xl flex-1"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {

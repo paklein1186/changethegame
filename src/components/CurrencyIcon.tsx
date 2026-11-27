@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { CircleDollarSign, Sprout, Zap, Star, Scale, type LucideProps } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -14,32 +15,32 @@ interface CurrencyConfig {
 const CURRENCY_MAP: Record<CurrencyType, CurrencyConfig> = {
   coins: {
     icon: CircleDollarSign,
-    label: "Coins",
-    tooltip: "🟩 Coins — fiat-backed mission currency (1 Coin ≈ €0.04)",
+    get label() { return i18n.t("uiCurrencyIcon.coins"); },
+    get tooltip() { return i18n.t("uiCurrencyIcon.coinsFiatBackedMissionCurrency1"); },
     colorClass: "text-amber-600 dark:text-amber-400",
   },
   ctg: {
     icon: Sprout,
     label: "$CTG",
-    tooltip: "🌱 $CTG — earned by contributing to the commons. Fades 1%/month.",
+    get tooltip() { return i18n.t("uiCurrencyIcon.ctgEarnedByContributingToThe"); },
     colorClass: "text-emerald-600 dark:text-emerald-400",
   },
   credits: {
     icon: Zap,
-    label: "Credits",
-    tooltip: "🔷 Credits — platform utility fuel. Spend on boosts, tools & capacity.",
+    get label() { return i18n.t("uiCurrencyIcon.credits"); },
+    get tooltip() { return i18n.t("uiCurrencyIcon.creditsPlatformUtilityFuelSpendOn"); },
     colorClass: "text-cyan-600 dark:text-cyan-400",
   },
   xp: {
     icon: Star,
     label: "XP",
-    tooltip: "⭐ XP — your permanent reputation score. Never decays.",
+    get tooltip() { return i18n.t("uiCurrencyIcon.xpYourPermanentReputationScoreNever"); },
     colorClass: "text-violet-600 dark:text-violet-400",
   },
   weight: {
     icon: Scale,
     label: "Weight",
-    tooltip: "⚖️ Weight — multiplier used to calculate Weighted Units (WU).",
+    get tooltip() { return i18n.t("uiCurrencyIcon.weightMultiplierUsedToCalculateWeighted"); },
     colorClass: "text-slate-600 dark:text-slate-400",
   },
 };

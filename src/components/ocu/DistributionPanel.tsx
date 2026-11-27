@@ -370,7 +370,7 @@ export function DistributionPanel({ quest, isAdmin, isParticipant, onEnableOCU }
               <div className="flex flex-wrap gap-2">
                 {coinsEscrow > 0 && (
                   <Button size="sm" variant={currencyMode === "coins" ? "default" : "outline"} className="text-xs h-8" onClick={() => setCurrencyMode("coins")}>
-                    🟩 Coins
+                    {t("uiDistributionPanel.coins")}
                   </Button>
                 )}
                 {ctgEscrow > 0 && (
@@ -393,7 +393,7 @@ export function DistributionPanel({ quest, isAdmin, isParticipant, onEnableOCU }
                   <tr className="bg-muted/50 border-b border-border">
                     <th className="text-left p-2 font-medium">{t("distribution.contributor")}</th>
                     {distMode !== "manual" && <th className="text-right p-2 font-medium">{t("distribution.percentShare")}</th>}
-                    {showCoins && <th className="text-right p-2 font-medium">🟩 Coins</th>}
+                    {showCoins && <th className="text-right p-2 font-medium">{t("uiDistributionPanel.coins")}</th>}
                     {showCtg && <th className="text-right p-2 font-medium">🌱 $CTG</th>}
                   </tr>
                 </thead>
@@ -502,7 +502,7 @@ export function DistributionPanel({ quest, isAdmin, isParticipant, onEnableOCU }
                 <thead>
                   <tr className="bg-muted/50 border-b border-border">
                     <th className="text-left p-2 font-medium">{t("distribution.contributor")}</th>
-                    {showCoins && <th className="text-right p-2 font-medium">🟩 Coins</th>}
+                    {showCoins && <th className="text-right p-2 font-medium">{t("uiDistributionPanel.coins")}</th>}
                     {showCtg && <th className="text-right p-2 font-medium">🌱 $CTG</th>}
                   </tr>
                 </thead>
@@ -567,7 +567,7 @@ function DistributionCard({ distribution, quest, currentUserId, isAdmin }: {
 
       <div className="flex gap-4 text-xs">
         {distribution.currency !== "ctg" && (
-          <span>🟩 {recipients.reduce((s: number, r: any) => s + (r.amount_coins ?? 0), 0).toLocaleString()} Coins</span>
+          <span>🟩 {recipients.reduce((s: number, r: any) => s + (r.amount_coins ?? 0), 0).toLocaleString()} {t("uiDistributionPanel.coins2")}</span>
         )}
         {distribution.currency !== "coins" && (
           <span>🌱 {recipients.reduce((s: number, r: any) => s + (r.amount_ctg ?? 0), 0).toLocaleString()} $CTG</span>
@@ -577,7 +577,7 @@ function DistributionCard({ distribution, quest, currentUserId, isAdmin }: {
       {myAlloc && (
         <div className="rounded-md bg-primary/5 border border-primary/20 p-2 text-xs">
           <span>{t("distribution.youReceived")}</span>
-          {myAlloc.amount_coins > 0 && <span>🟩 {myAlloc.amount_coins.toLocaleString()} Coins </span>}
+          {myAlloc.amount_coins > 0 && <span>🟩 {myAlloc.amount_coins.toLocaleString()} {t("uiDistributionPanel.coins2")} </span>}
           {myAlloc.amount_ctg > 0 && <span>🌱 {myAlloc.amount_ctg.toLocaleString()} $CTG</span>}
         </div>
       )}

@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -36,9 +38,9 @@ function useStewardedTerritories(userId: string) {
 }
 
 const ATTACHMENT_LABELS: Record<string, { label: string; emoji: string }> = {
-  LIVE_IN: { label: "Lives in", emoji: "🏠" },
-  WORK_IN: { label: "Works in", emoji: "💼" },
-  CARE_FOR: { label: "Cares for", emoji: "💚" },
+  LIVE_IN: { get label() { return i18n.t("uiProfileTerritoriesTab.livesIn"); }, emoji: "🏠" },
+  WORK_IN: { get label() { return i18n.t("uiProfileTerritoriesTab.worksIn"); }, emoji: "💼" },
+  CARE_FOR: { get label() { return i18n.t("uiProfileTerritoriesTab.caresFor"); }, emoji: "💚" },
 };
 
 interface Props {
@@ -47,6 +49,7 @@ interface Props {
 }
 
 export function ProfileTerritoriesTab({ userId, territories }: Props) {
+  const { t } = useTranslation();
   const [view, setView] = useState<"map" | "tiles">("map");
 
   // Build leaderboard-shaped items for the map component
@@ -149,7 +152,7 @@ export function ProfileTerritoriesTab({ userId, territories }: Props) {
     return (
       <div className="text-center py-12">
         <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-        <p className="text-sm text-muted-foreground">No territories linked yet.</p>
+        <p className="text-sm text-muted-foreground">{t("uiProfileTerritoriesTab.noTerritoriesLinkedYet")}</p>
       </div>
     );
   }
@@ -160,7 +163,7 @@ export function ProfileTerritoriesTab({ userId, territories }: Props) {
       {stewarded.length > 0 && (
         <section>
           <h4 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
-            <Crown className="h-4 w-4 text-amber-500" /> Stewarded Territories
+            <Crown className="h-4 w-4 text-amber-500" /> {t("uiProfileTerritoriesTab.stewardedTerritories")}
           </h4>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {stewarded.map((t: any) => (
@@ -192,7 +195,7 @@ export function ProfileTerritoriesTab({ userId, territories }: Props) {
       {/* View toggle */}
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold text-lg flex items-center gap-2">
-          <Globe className="h-5 w-5 text-primary" /> Territories ({mapItems.length})
+          <Globe className="h-5 w-5 text-primary" /> {t("uiProfileTerritoriesTab.territories")}{mapItems.length})
         </h3>
         <div className="flex gap-1 rounded-lg border border-border p-0.5">
           <Button
@@ -262,7 +265,7 @@ export function ProfileTerritoriesTab({ userId, territories }: Props) {
       {/* Territory activity */}
       <section>
         <h4 className="font-display font-semibold flex items-center gap-2 mb-3">
-          <History className="h-4 w-4 text-primary" /> Territory Activity
+          <History className="h-4 w-4 text-primary" /> {t("uiProfileTerritoriesTab.territoryActivity")}
         </h4>
         {loadingActivity ? (
           <div className="flex justify-center py-6">
@@ -270,7 +273,7 @@ export function ProfileTerritoriesTab({ userId, territories }: Props) {
           </div>
         ) : territoryActivity.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4 text-center">
-            No territory-specific activity recorded yet. Posts, follows, and contributions in your territories will appear here.
+            {t("uiProfileTerritoriesTab.noTerritorySpecificActivityRecordedYet")}
           </p>
         ) : (
           <div className="space-y-2">

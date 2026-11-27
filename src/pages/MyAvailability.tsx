@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Clock, Plus, Trash2, CalendarOff, CalendarCheck } from "lucide-react";
@@ -53,6 +54,7 @@ function BufferedDateInput({ value, onSave, className }: { value: string; onSave
 }
 
 export default function MyAvailability({ bare }: { bare?: boolean }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const [tab, setTab] = useState("global");
@@ -90,7 +92,7 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
 
   const RuleEditor = ({ rules, serviceId }: { rules: typeof allRules; serviceId?: string }) => (
     <div className="space-y-3">
-      {rules.length === 0 && <p className="text-muted-foreground text-sm">No availability rules set. Add one below.</p>}
+      {rules.length === 0 && <p className="text-muted-foreground text-sm">{t("uiMyAvailability.noAvailabilityRulesSetAddOne")}</p>}
       {rules.map((rule, i) => (
         <motion.div key={rule.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
           className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3">
@@ -103,23 +105,23 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
           <BufferedTimeInput value={rule.end_time} onSave={(v) => updateRule.mutate({ id: rule.id, end_time: v })} className="w-[120px]" />
           <div className="flex items-center gap-2">
             <Switch checked={rule.is_active} onCheckedChange={(v) => updateRule.mutate({ id: rule.id, is_active: v })} />
-            <span className="text-xs text-muted-foreground">{rule.is_active ? "Active" : "Off"}</span>
+            <span className="text-xs text-muted-foreground">{rule.is_active ? t("uiMyAvailability.active") : "Off"}</span>
           </div>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteRule.mutate(rule.id)}>
             <Trash2 className="h-4 w-4" />
           </Button>
         </motion.div>
       ))}
-      <Button variant="outline" size="sm" onClick={() => addRule(serviceId)}><Plus className="h-4 w-4 mr-1" /> Add rule</Button>
+      <Button variant="outline" size="sm" onClick={() => addRule(serviceId)}><Plus className="h-4 w-4 mr-1" /> {t("uiMyAvailability.addRule")}</Button>
     </div>
   );
   return (
     <PageShell bare={bare}>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-          <Clock className="h-7 w-7 text-primary" /> My Availability
+          <Clock className="h-7 w-7 text-primary" /> {t("uiMyAvailability.myAvailability")}
         </h1>
-        <p className="text-muted-foreground mt-1">Set your weekly availability. Per-service overrides take precedence over global rules.</p>
+        <p className="text-muted-foreground mt-1">{t("uiMyAvailability.setYourWeeklyAvailabilityPerService")}</p>
       </div>
 
       <Tabs value={tab} onValueChange={setTab}>
@@ -139,16 +141,16 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
           return (
             <TabsContent key={svc.id} value={svc.id}>
               <h2 className="font-display text-lg font-semibold mb-1">{svc.title}</h2>
-              <p className="text-sm text-muted-foreground mb-3">Override rules specific to this service.</p>
+              <p className="text-sm text-muted-foreground mb-3">{t("uiMyAvailability.overrideRulesSpecificToThisService")}</p>
               <RuleEditor rules={svcRules} serviceId={svc.id} />
             </TabsContent>
           );
         })}
 
         <TabsContent value="exceptions">
-          <h2 className="font-display text-lg font-semibold mb-3">Date exceptions</h2>
-          <p className="text-sm text-muted-foreground mb-4">Block specific dates or add extra availability on particular days.</p>
-          {allExceptions.length === 0 && <p className="text-muted-foreground text-sm mb-3">No exceptions set.</p>}
+          <h2 className="font-display text-lg font-semibold mb-3">{t("uiMyAvailability.dateExceptions")}</h2>
+          <p className="text-sm text-muted-foreground mb-4">{t("uiMyAvailability.blockSpecificDatesOrAddExtra")}</p>
+          {allExceptions.length === 0 && <p className="text-muted-foreground text-sm mb-3">{t("uiMyAvailability.noExceptionsSet")}</p>}
           <div className="space-y-3">
             {allExceptions.map((exc, i) => (
               <motion.div key={exc.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
@@ -156,7 +158,7 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
                 <BufferedDateInput value={exc.date} onSave={(v) => updateException.mutate({ id: exc.id, date: v })} className="w-[160px]" />
                 <Badge variant={exc.is_available ? "default" : "destructive"} className="cursor-pointer"
                   onClick={() => updateException.mutate({ id: exc.id, is_available: !exc.is_available })}>
-                  {exc.is_available ? <><CalendarCheck className="h-3 w-3 mr-1" /> Available</> : <><CalendarOff className="h-3 w-3 mr-1" /> Blocked</>}
+                  {exc.is_available ? <><CalendarCheck className="h-3 w-3 mr-1" /> {t("uiMyAvailability.available")}</> : <><CalendarOff className="h-3 w-3 mr-1" /> Blocked</>}
                 </Badge>
                 {exc.is_available && (
                   <>
@@ -171,7 +173,7 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
               </motion.div>
             ))}
           </div>
-          <Button variant="outline" size="sm" className="mt-3" onClick={addException}><Plus className="h-4 w-4 mr-1" /> Add exception</Button>
+          <Button variant="outline" size="sm" className="mt-3" onClick={addException}><Plus className="h-4 w-4 mr-1" /> {t("uiMyAvailability.addException")}</Button>
         </TabsContent>
       </Tabs>
     </PageShell>

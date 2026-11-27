@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -50,14 +52,15 @@ const EDGE_TYPE_LABELS: Record<string, string> = {
 };
 
 const VISIBILITY_BADGE: Record<string, { label: string; className: string }> = {
-  public: { label: "Public", className: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
+  public: { get label() { return i18n.t("uiTrustTab.public"); }, className: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
   network: { label: "Network", className: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
-  private: { label: "Private", className: "bg-muted text-muted-foreground border-border" },
+  private: { get label() { return i18n.t("uiTrustTab.private"); }, className: "bg-muted text-muted-foreground border-border" },
 };
 
 const MONTHS_24_MS = 24 * 30 * 24 * 60 * 60 * 1000;
 
 function FreshnessIndicator({ lastConfirmedAt, createdAt }: { lastConfirmedAt: string | null; createdAt: string }) {
+  const { t } = useTranslation();
   const ref = lastConfirmedAt || createdAt;
   const age = Date.now() - new Date(ref).getTime();
   const isFresh = age < 6 * 30 * 24 * 60 * 60 * 1000;
@@ -68,7 +71,7 @@ function FreshnessIndicator({ lastConfirmedAt, createdAt }: { lastConfirmedAt: s
       <TooltipTrigger asChild>
         <span className={`inline-flex items-center gap-1 text-[10px] font-medium ${isFresh ? "text-emerald-600" : isStale ? "text-orange-500" : "text-muted-foreground"}`}>
           <Clock className="h-3 w-3" />
-          {isFresh ? "Fresh" : isStale ? "Aging" : "Active"}
+          {isFresh ? "Fresh" : isStale ? "Aging" : t("uiTrustTab.active")}
         </span>
       </TooltipTrigger>
       <TooltipContent>
@@ -80,6 +83,7 @@ function FreshnessIndicator({ lastConfirmedAt, createdAt }: { lastConfirmedAt: s
 
 // ─── Summary Header ────────────────────────────────────────
 function TrustSummaryHeader({ edges }: { edges: TrustEdgeRow[] }) {
+  const { t } = useTranslation();
   const publicEdges = edges.filter(e => e.visibility === "public");
   const totalPublicTrust = publicEdges.length;
 
@@ -130,7 +134,7 @@ function TrustSummaryHeader({ edges }: { edges: TrustEdgeRow[] }) {
     return (
       <div className="rounded-xl border border-border bg-muted/30 p-6 text-center">
         <Shield className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-        <p className="text-sm text-muted-foreground">No trust attestations received yet.</p>
+        <p className="text-sm text-muted-foreground">{t("uiTrustTab.noTrustAttestationsReceivedYet")}</p>
       </div>
     );
   }
@@ -139,7 +143,7 @@ function TrustSummaryHeader({ edges }: { edges: TrustEdgeRow[] }) {
     <div className="rounded-xl border border-border bg-card/50 p-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
       <div className="text-center">
         <p className="text-2xl font-bold text-foreground">{totalPublicTrust}</p>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Public Trust</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTrustTab.publicTrust")}</p>
       </div>
       <div className="text-center">
         <p className="text-2xl font-bold text-primary">{trustScoreGlobal}</p>
@@ -233,6 +237,7 @@ function TrustEdgeCard({ edge, giver }: { edge: TrustEdgeRow; giver?: GiverProfi
 
 // ─── Main TrustTab ─────────────────────────────────────────
 export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId: string }) {
+  const { t } = useTranslation();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filterTag, setFilterTag] = useState("all");
   const [filterEdgeType, setFilterEdgeType] = useState("all");
@@ -311,7 +316,7 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
   }, [edges, filterTag, filterEdgeType, filterDate]);
 
   if (isLoading) {
-    return <div className="py-8 text-center text-muted-foreground text-sm">Loading trust data…</div>;
+    return <div className="py-8 text-center text-muted-foreground text-sm">{t("uiTrustTab.loadingTrustData")}</div>;
   }
 
   return (
@@ -335,7 +340,7 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
                   <SelectValue placeholder="Edge type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All types</SelectItem>
+                  <SelectItem value="all">{t("uiTrustTab.allTypes")}</SelectItem>
                   {Object.entries(EDGE_TYPE_LABELS).map(([k, v]) => (
                     <SelectItem key={k} value={k}>{v}</SelectItem>
                   ))}
@@ -344,10 +349,10 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
               {allTags.length > 0 && (
                 <Select value={filterTag} onValueChange={setFilterTag}>
                   <SelectTrigger className="w-[160px] h-8 text-xs">
-                    <SelectValue placeholder="Filter by tag" />
+                    <SelectValue placeholder={t("uiTrustTab.filterByTag")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All tags</SelectItem>
+                    <SelectItem value="all">{t("uiTrustTab.allTags")}</SelectItem>
                     {allTags.map(tag => (
                       <SelectItem key={tag} value={tag}>{tag}</SelectItem>
                     ))}
@@ -356,10 +361,10 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
               )}
               <Select value={filterDate} onValueChange={setFilterDate}>
                 <SelectTrigger className="w-[140px] h-8 text-xs">
-                  <SelectValue placeholder="Date range" />
+                  <SelectValue placeholder={t("uiTrustTab.dateRange")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="all">{t("uiTrustTab.allTime")}</SelectItem>
                   <SelectItem value="30d">Last 30 days</SelectItem>
                   <SelectItem value="6m">Last 6 months</SelectItem>
                   <SelectItem value="1y">Last year</SelectItem>
@@ -372,7 +377,7 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
 
       {/* Edge list */}
       {filteredEdges.length === 0 && edges.length > 0 && (
-        <p className="text-sm text-muted-foreground text-center py-4">No edges match the current filters.</p>
+        <p className="text-sm text-muted-foreground text-center py-4">{t("uiTrustTab.noEdgesMatchTheCurrentFilters")}</p>
       )}
       <div className="space-y-3">
         {filteredEdges.map(edge => (

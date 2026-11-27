@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { TrustSummary } from "@/hooks/useTrustSummary";
@@ -9,6 +10,7 @@ interface TrustSummaryBadgeProps {
 }
 
 export function TrustSummaryBadge({ summary, variant = "compact" }: TrustSummaryBadgeProps) {
+  const { t } = useTranslation();
   if (!summary || summary.publicAttestationCount === 0) return null;
 
   const maxTags = variant === "compact" ? 2 : 3;
@@ -22,7 +24,7 @@ export function TrustSummaryBadge({ summary, variant = "compact" }: TrustSummary
       </span>
       {variant === "full" && (
         <span className="text-[10px] text-muted-foreground">
-          · Trusted by {summary.publicAttestationCount}
+          {t("uiTrustSummaryBadge.trustedBy")} {summary.publicAttestationCount}
         </span>
       )}
       {tags.map((tag) => (

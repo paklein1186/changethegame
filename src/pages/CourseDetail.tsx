@@ -37,8 +37,8 @@ export default function CourseDetail() {
   const courseTopics = (course as any)?.course_topics?.map((ct: any) => ct.topics).filter(Boolean) || [];
   const courseTerritories = (course as any)?.course_territories?.map((ct: any) => ct.territories).filter(Boolean) || [];
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!course) return <PageShell><p>Course not found.</p></PageShell>;
+  if (isLoading) return <PageShell><p>{t("uiCourseDetail.loading")}</p></PageShell>;
+  if (!course) return <PageShell><p>{t("uiCourseDetail.courseNotFound")}</p></PageShell>;
 
   const lessonsList = lessons || [];
   const isCreator = course.owner_user_id === currentUser.id;
@@ -49,7 +49,7 @@ export default function CourseDetail() {
     const { error } = await supabase.from("course_enrollments").insert({
       course_id: course.id, user_id: currentUser.id, progress_percent: 0,
     });
-    if (error) { toast({ title: "Failed to enroll", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiCourseDetail.failedToEnroll"), variant: "destructive" }); return; }
     autoFollowEntity(currentUser.id, "COURSE", course.id);
     qc.invalidateQueries({ queryKey: ["course-enrollment", id] });
     toast({ title: "Enrolled!" });
@@ -62,13 +62,13 @@ export default function CourseDetail() {
         body: { courseId: course.id },
       });
       if (checkoutErr || !checkoutData?.url) {
-        toast({ title: "Payment error", description: checkoutErr?.message || "Could not start checkout", variant: "destructive" });
+        toast({ title: t("uiCourseDetail.paymentError"), description: checkoutErr?.message || t("uiCourseDetail.couldNotStartCheckout"), variant: "destructive" });
         return;
       }
       window.open(checkoutData.url, "_blank");
-      toast({ title: "Complete payment in the new tab to unlock the course." });
+      toast({ title: t("uiCourseDetail.completePaymentInTheNewTab") });
     } catch {
-      toast({ title: "Payment error", description: "Could not start checkout", variant: "destructive" });
+      toast({ title: t("uiCourseDetail.paymentError"), description: t("uiCourseDetail.couldNotStartCheckout"), variant: "destructive" });
     }
   };
 
@@ -77,7 +77,7 @@ export default function CourseDetail() {
   return (
     <PageShell>
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCourseDetail.back")}
       </Button>
 
       {course.cover_image_url && (
@@ -96,7 +96,7 @@ export default function CourseDetail() {
                 <Badge className="bg-primary/10 text-primary border-0">€{course.price_amount}</Badge>
               )}
               {course.level && <Badge variant="outline" className="capitalize">{course.level.toLowerCase()}</Badge>}
-              {!course.is_published && <Badge variant="outline" className="text-amber-600 border-amber-500/30">Draft</Badge>}
+              {!course.is_published && <Badge variant="outline" className="text-amber-600 border-amber-500/30">{t("uiCourseDetail.draft")}</Badge>}
             </div>
             <h1 className="font-display text-3xl font-bold mb-1">{course.title}</h1>
             <div className="flex items-center gap-4 text-sm text-muted-foreground mt-3">
@@ -111,17 +111,17 @@ export default function CourseDetail() {
             <ShareLinkButton entityType="course" entityId={course.id} entityName={course.title} />
             {isCreator && (
               <Button size="sm" variant="outline" asChild>
-                <Link to={`/courses/${course.id}/edit`}><Pencil className="h-4 w-4 mr-1" /> Edit course</Link>
+                <Link to={`/courses/${course.id}/edit`}><Pencil className="h-4 w-4 mr-1" /> {t("uiCourseDetail.editCourse")}</Link>
               </Button>
             )}
             {!isCreator && !isEnrolled && course.is_free && (
-              <Button onClick={handleEnroll}><GraduationCap className="h-4 w-4 mr-1" /> Enroll for free</Button>
+              <Button onClick={handleEnroll}><GraduationCap className="h-4 w-4 mr-1" /> {t("uiCourseDetail.enrollForFree")}</Button>
             )}
             {!isCreator && !isEnrolled && !course.is_free && (
               <Button onClick={handleBuy}><GraduationCap className="h-4 w-4 mr-1" /> Buy course — €{course.price_amount}</Button>
             )}
             {isEnrolled && continueLesson && (
-              <Button asChild><Link to={continueLesson}><Play className="h-4 w-4 mr-1" /> Continue learning</Link></Button>
+              <Button asChild><Link to={continueLesson}><Play className="h-4 w-4 mr-1" /> {t("uiCourseDetail.continueLearning")}</Link></Button>
             )}
             {isEnrolled && enrollment && (
               <div className="w-48">
@@ -143,7 +143,7 @@ export default function CourseDetail() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="font-display text-lg font-semibold mb-3">About this course</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">{t("uiCourseDetail.aboutThisCourse")}</h2>
           <div className="prose prose-sm max-w-none text-foreground/80 whitespace-pre-line">{course.description}</div>
         </div>
 

@@ -49,6 +49,7 @@ const TOPIC_LABELS: Record<string, string> = {
 };
 
 export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, context, onApply }: Props) {
+  const { t } = useTranslation();
   const { i18n } = useTranslation();
   const { toast } = useToast();
 
@@ -119,7 +120,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
       const data = await call("generate", collected);
       setNotes(Array.isArray(data.notes) ? data.notes : []);
       onApply({ title: data.title, html: data.html });
-      toast({ title: "Contract updated by AI", description: "Review the text before saving." });
+      toast({ title: t("uiContractAiAssistant.contractUpdatedByAi"), description: t("uiContractAiAssistant.reviewTheTextBeforeSaving") });
       onOpenChange(false);
     } catch (e: any) {
       toast({ title: "AI unavailable", description: e.message, variant: "destructive" });
@@ -160,13 +161,11 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
           {!started && (
             <div className="space-y-3">
               <p className="text-xs text-muted-foreground">
-                The assistant reads the current draft and the quest context, then asks targeted questions
-                (objectives, roles, financial terms, milestones, deliverables, termination, legal obligations)
-                to complete the contract. Questions adapt to your answers — you can skip any of them.
+                {t("uiContractAiAssistant.theAssistantReadsTheCurrentDraft")}
               </p>
               <Button size="sm" className="gap-1" onClick={() => loadQuestions([])} disabled={loading}>
                 {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                Start the interview
+                {t("uiContractAiAssistant.startTheInterview")}
               </Button>
             </div>
           )}
@@ -202,7 +201,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
 
               {loading && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground py-4">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Analysing the contract…
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t("uiContractAiAssistant.analysingTheContract")}
                 </div>
               )}
 
@@ -236,7 +235,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
                       <Textarea
                         value={drafts[q.id] ?? ""}
                         onChange={(e) => setDrafts((p) => ({ ...p, [q.id]: e.target.value }))}
-                        placeholder="Your answer (leave empty to skip)"
+                        placeholder={t("uiContractAiAssistant.yourAnswerLeaveEmptyToSkip")}
                         className="text-xs min-h-[60px]"
                       />
                     </div>
@@ -247,7 +246,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
               {!loading && done && questions.length === 0 && (
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  The assistant has everything it needs — generate the contract.
+                  {t("uiContractAiAssistant.theAssistantHasEverythingItNeeds")}
                 </p>
               )}
 
@@ -260,16 +259,16 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
               <div className="flex flex-wrap gap-2 justify-end pt-1">
                 {questions.length > 0 && (
                   <Button variant="outline" size="sm" className="gap-1" onClick={handleSubmitRound} disabled={loading || generating}>
-                    <ArrowRight className="h-3.5 w-3.5" /> Answer & continue
+                    <ArrowRight className="h-3.5 w-3.5" /> {t("uiContractAiAssistant.answerContinue")}
                   </Button>
                 )}
                 <Button size="sm" className="gap-1" onClick={handleGenerate} disabled={generating || loading}>
                   {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                  {mode === "edit" ? "Update contract with AI" : "Generate contract"}
+                  {mode === "edit" ? t("uiContractAiAssistant.updateContractWithAi") : "Generate contract"}
                 </Button>
               </div>
               <p className="text-[10px] text-muted-foreground text-right">
-                The generated text replaces the editor content — you can still edit it before saving.
+                {t("uiContractAiAssistant.theGeneratedTextReplacesTheEditor")}
               </p>
             </>
           )}

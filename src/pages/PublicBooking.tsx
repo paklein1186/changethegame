@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -30,6 +31,7 @@ import { ShareLinkButton } from "@/components/ShareLinkButton";
 const PENDING_BOOKING_KEY = "pendingBookingSlot";
 
 export default function PublicBooking() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -167,7 +169,7 @@ export default function PublicBooking() {
         }).select("id").single();
         setBookingInProgress(false);
         if (error || !newBooking) {
-          toast({ title: "Could not create booking", description: error?.message, variant: "destructive" });
+          toast({ title: t("uiPublicBooking.couldNotCreateBooking"), description: error?.message, variant: "destructive" });
           return;
         }
         // Notify provider
@@ -175,7 +177,7 @@ export default function PublicBooking() {
           await supabase.from("notifications").insert({
             user_id: svc.provider_user_id,
             type: "BOOKING_REQUESTED",
-            title: "New booking request",
+            title: t("uiPublicBooking.newBookingRequest"),
             body: `${currentUser.name || "Someone"} requested "${svc.title}"${data.startDateTime ? `\n📅 ${new Date(data.startDateTime).toLocaleString()}` : ""}`,
             related_entity_type: "BOOKING",
             related_entity_id: newBooking.id,
@@ -194,7 +196,7 @@ export default function PublicBooking() {
             await supabase.from("notifications").insert({
               user_id: admin.user_id,
               type: "BOOKING_REQUESTED",
-              title: "New booking request",
+              title: t("uiPublicBooking.newBookingRequest"),
               body: `${currentUser.name || "Someone"} requested "${svc.title}"`,
               related_entity_type: "BOOKING",
               related_entity_id: newBooking.id,
@@ -203,7 +205,7 @@ export default function PublicBooking() {
             });
           }
         }
-        toast({ title: isFree ? "✅ Session confirmed!" : "✅ Booking request sent!" });
+        toast({ title: isFree ? "✅ Session confirmed!" : t("uiPublicBooking.bookingRequestSent") });
         navigate(`/bookings/${newBooking.id}`);
       })();
     } catch {
@@ -232,7 +234,7 @@ export default function PublicBooking() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-muted-foreground">Loading service…</div>
+        <div className="animate-pulse text-muted-foreground">{t("uiPublicBooking.loadingService")}</div>
       </div>
     );
   }
@@ -241,8 +243,8 @@ export default function PublicBooking() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Service not found</h1>
-          <p className="text-muted-foreground">This service may have been removed.</p>
+          <h1 className="text-2xl font-bold">{t("uiPublicBooking.serviceNotFound")}</h1>
+          <p className="text-muted-foreground">{t("uiPublicBooking.thisServiceMayHaveBeenRemoved")}</p>
         </div>
       </div>
     );
@@ -339,7 +341,7 @@ export default function PublicBooking() {
           <div className="rounded-xl border border-border bg-card p-5 space-y-4 mb-6">
             <h2 className="font-display font-semibold flex items-center gap-2">
               <CalendarClock className="h-5 w-5 text-primary" />
-              Choose a time slot
+              {t("uiPublicBooking.chooseATimeSlot")}
             </h2>
 
             <div className="flex items-center justify-between">
@@ -354,7 +356,7 @@ export default function PublicBooking() {
 
             {(providerUserId || isUnitService) ? (
               Object.keys(slotsByDate).length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-6">No available slots this week.</p>
+                <p className="text-sm text-muted-foreground text-center py-6">{t("uiPublicBooking.noAvailableSlotsThisWeek")}</p>
               ) : (
                 <div className="max-h-[320px] overflow-y-auto space-y-3">
                   {Object.entries(slotsByDate).map(([date, daySlots]) => (
@@ -385,7 +387,7 @@ export default function PublicBooking() {
               )
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
-                Availability not configured for this service.
+                {t("uiPublicBooking.availabilityNotConfiguredForThisService")}
               </p>
             )}
           </div>
@@ -399,7 +401,7 @@ export default function PublicBooking() {
                 onChange={e => setBookNotes(e.target.value)}
                 maxLength={500}
                 className="resize-none"
-                placeholder="Any details for the provider…"
+                placeholder={t("uiPublicBooking.anyDetailsForTheProvider")}
               />
             </div>
           )}
@@ -417,12 +419,12 @@ export default function PublicBooking() {
             ) : isLoggedIn ? (
               <>
                 <CalendarClock className="h-4 w-4 mr-2" />
-                {isFree ? "Confirm session" : `Book & Pay (€${svc.price_amount})`}
+                {isFree ? t("uiPublicBooking.confirmSession") : `Book & Pay (€${svc.price_amount})`}
               </>
             ) : (
               <>
                 <ArrowRight className="h-4 w-4 mr-2" />
-                Sign up to book this slot
+                {t("uiPublicBooking.signUpToBookThisSlot")}
               </>
             )}
           </Button>
@@ -430,7 +432,7 @@ export default function PublicBooking() {
 
           {!isLoggedIn && (
             <p className="text-xs text-muted-foreground text-center mt-3">
-              You'll create a free account to confirm your booking.
+              {t("uiPublicBooking.youLlCreateAFreeAccount")}
             </p>
           )}
 

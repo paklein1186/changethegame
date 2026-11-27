@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -34,6 +35,7 @@ type Step = "welcome" | "input" | "processing" | "review" | "done";
 
 /* ─── Component ─── */
 export default function ProfileEnrichment() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, refreshProfile } = useAuth();
   const [step, setStep] = useState<Step>("welcome");
@@ -71,11 +73,11 @@ export default function ProfileEnrichment() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.type !== "application/pdf" && !file.name.endsWith(".pdf")) {
-      toast.error("Please upload a PDF file");
+      toast.error(t("uiProfileEnrichment.pleaseUploadAPdfFile"));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("File must be under 5MB");
+      toast.error(t("uiProfileEnrichment.fileMustBeUnder5mb"));
       return;
     }
     setResumeFileName(file.name);
@@ -98,7 +100,7 @@ export default function ProfileEnrichment() {
   /* ─── Submit to AI ─── */
   const handleAnalyze = useCallback(async () => {
     if (inputCount === 0) {
-      toast.error("Please provide at least one input");
+      toast.error(t("uiProfileEnrichment.pleaseProvideAtLeastOneInput"));
       return;
     }
     setStep("processing");
@@ -124,7 +126,7 @@ export default function ProfileEnrichment() {
       setStep("review");
     } catch (err: any) {
       console.error("Enrichment error:", err);
-      toast.error(err?.message || "Failed to analyze your profile");
+      toast.error(err?.message || t("uiProfileEnrichment.failedToAnalyzeYourProfile"));
       setStep("input");
     } finally {
       setLoading(false);
@@ -147,10 +149,10 @@ export default function ProfileEnrichment() {
 
       if (error) throw error;
       await refreshProfile();
-      toast.success("Profile enriched successfully! 🌱");
+      toast.success(t("uiProfileEnrichment.profileEnrichedSuccessfully"));
       setStep("done");
     } catch (err: any) {
-      toast.error(err?.message || "Failed to update profile");
+      toast.error(err?.message || t("uiProfileEnrichment.failedToUpdateProfile"));
     } finally {
       setLoading(false);
     }
@@ -206,16 +208,15 @@ export default function ProfileEnrichment() {
               </div>
               <div>
                 <h2 className="text-2xl font-display font-bold mb-2">
-                  Let's build your showcase 🌱
+                  {t("uiProfileEnrichment.letSBuildYourShowcase")}
                 </h2>
                 <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
-                  I'm <strong>Pulse</strong>, your living guide. Share a bit about yourself and I'll help
-                  structure your profile — you stay in full control of every edit.
+                  I'm <strong>Pulse</strong>{t("uiProfileEnrichment.yourLivingGuideShareABit")}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => setStep("input")} size="lg">
-                  Start enrichment <ChevronRight className="ml-1 h-4 w-4" />
+                  {t("uiProfileEnrichment.startEnrichment")} <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
                 <Button variant="ghost" onClick={() => navigate(-1)}>
                   Maybe later
@@ -234,7 +235,7 @@ export default function ProfileEnrichment() {
               className="space-y-6"
             >
               <p className="text-muted-foreground text-sm">
-                Choose up to 3 ways to share about yourself. The more you share, the richer the suggestions.
+                {t("uiProfileEnrichment.chooseUpTo3WaysTo")}
               </p>
 
               {/* Option A: Resume */}
@@ -242,14 +243,14 @@ export default function ProfileEnrichment() {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <FileText className="h-4 w-4 text-primary" />
-                    Upload Resume (PDF)
+                    {t("uiProfileEnrichment.uploadResumePdf")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <label className="flex items-center gap-3 px-4 py-3 border border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
                     <Upload className="h-5 w-5 text-muted-foreground" />
                     <span className="text-sm text-muted-foreground">
-                      {resumeFileName || "Click to upload PDF"}
+                      {resumeFileName || t("uiProfileEnrichment.clickToUploadPdf")}
                     </span>
                     <input
                       type="file"
@@ -260,7 +261,7 @@ export default function ProfileEnrichment() {
                   </label>
                   {resumeText && (
                     <div className="mt-2 flex items-center gap-2 text-xs text-emerald-600">
-                      <Check className="h-3 w-3" /> Extracted text from {resumeFileName}
+                      <Check className="h-3 w-3" /> {t("uiProfileEnrichment.extractedTextFrom")} {resumeFileName}
                     </div>
                   )}
                 </CardContent>
@@ -271,7 +272,7 @@ export default function ProfileEnrichment() {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Link2 className="h-4 w-4 text-primary" />
-                    LinkedIn Profile URL
+                    {t("uiProfileEnrichment.linkedinProfileUrl")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -281,7 +282,7 @@ export default function ProfileEnrichment() {
                     onChange={(e) => setLinkedinUrl(e.target.value)}
                   />
                   {linkedinPrefilled && (
-                    <p className="text-xs text-muted-foreground mt-1">Pre-filled from your profile — update if needed.</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t("uiProfileEnrichment.preFilledFromYourProfileUpdate")}</p>
                   )}
                 </CardContent>
               </Card>
@@ -291,12 +292,12 @@ export default function ProfileEnrichment() {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <MessageSquareText className="h-4 w-4 text-primary" />
-                    Paste a description
+                    {t("uiProfileEnrichment.pasteADescription")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Textarea
-                    placeholder="Tell us about yourself — your passions, projects, dream quests, or paste what your favorite AI says about you..."
+                    placeholder={t("uiProfileEnrichment.tellUsAboutYourselfYourPassions")}
                     value={pastedDescription}
                     onChange={(e) => setPastedDescription(e.target.value)}
                     rows={5}
@@ -308,7 +309,7 @@ export default function ProfileEnrichment() {
                 <span className="text-xs text-muted-foreground">{inputCount}/3 sources provided</span>
                 <Button onClick={handleAnalyze} disabled={inputCount === 0}>
                   <Sparkles className="mr-1.5 h-4 w-4" />
-                  Analyze with Pulse
+                  {t("uiProfileEnrichment.analyzeWithPulse")}
                 </Button>
               </div>
             </motion.div>
@@ -325,9 +326,9 @@ export default function ProfileEnrichment() {
             >
               <Loader2 className="h-12 w-12 animate-spin text-emerald-500 mx-auto" />
               <div>
-                <h3 className="font-display font-semibold text-lg mb-1">Pulse is reading…</h3>
+                <h3 className="font-display font-semibold text-lg mb-1">{t("uiProfileEnrichment.pulseIsReading")}</h3>
                 <p className="text-muted-foreground text-sm">
-                  Extracting your story, mapping topics, detecting territories and organizations.
+                  {t("uiProfileEnrichment.extractingYourStoryMappingTopicsDetecting")}
                 </p>
               </div>
             </motion.div>
@@ -372,7 +373,7 @@ export default function ProfileEnrichment() {
               {/* Bio variants */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">Bio — Choose your style</CardTitle>
+                  <CardTitle className="text-sm">{t("uiProfileEnrichment.bioChooseYourStyle")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {(["short", "medium", "narrative"] as const).map((variant) => (
@@ -386,7 +387,7 @@ export default function ProfileEnrichment() {
                       }`}
                     >
                       <span className="text-xs font-medium uppercase text-muted-foreground block mb-1">
-                        {variant === "short" ? "Short (3 lines)" : variant === "medium" ? "Medium (about section)" : "Narrative (storytelling)"}
+                        {variant === "short" ? "Short (3 lines)" : variant === "medium" ? t("uiProfileEnrichment.mediumAboutSection") : "Narrative (storytelling)"}
                       </span>
                       <p className="text-foreground leading-relaxed">{result.bioVariants[variant]}</p>
                     </button>
@@ -399,7 +400,7 @@ export default function ProfileEnrichment() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Target className="h-4 w-4" /> Suggested Topics
+                      <Target className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedTopics")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -425,7 +426,7 @@ export default function ProfileEnrichment() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <MapPin className="h-4 w-4" /> Suggested Territories
+                      <MapPin className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedTerritories")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -466,7 +467,7 @@ export default function ProfileEnrichment() {
                           variant="outline"
                           onClick={() => navigate("/onboarding/organization")}
                         >
-                          Create profile
+                          {t("uiProfileEnrichment.createProfile")}
                         </Button>
                       </div>
                     ))}
@@ -479,7 +480,7 @@ export default function ProfileEnrichment() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Target className="h-4 w-4" /> Suggested Quests
+                      <Target className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedQuests")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -495,7 +496,7 @@ export default function ProfileEnrichment() {
                     {result.suggestedOpenQuests.map((q, i) => (
                       <div key={`o-${i}`} className="p-2 rounded-lg bg-primary/5 border border-primary/20">
                         <div className="flex items-center gap-2 mb-1">
-                          <Badge className="text-xs">Open</Badge>
+                          <Badge className="text-xs">{t("uiProfileEnrichment.open")}</Badge>
                           <span className="text-sm font-medium">{q.title}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{q.description}</p>
@@ -508,11 +509,11 @@ export default function ProfileEnrichment() {
               {/* Apply */}
               <div className="flex items-center justify-between pt-4 border-t border-border">
                 <Button variant="ghost" onClick={() => setStep("input")}>
-                  Back to inputs
+                  {t("uiProfileEnrichment.backToInputs")}
                 </Button>
                 <Button onClick={handleApply} disabled={loading}>
                   {loading ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Check className="mr-1.5 h-4 w-4" />}
-                  Apply to profile
+                  {t("uiProfileEnrichment.applyToProfile")}
                 </Button>
               </div>
             </motion.div>
@@ -530,17 +531,17 @@ export default function ProfileEnrichment() {
                 <Check className="h-8 w-8 text-emerald-500" />
               </div>
               <div>
-                <h2 className="text-2xl font-display font-bold mb-2">Your vitrine is growing 🌱</h2>
+                <h2 className="text-2xl font-display font-bold mb-2">{t("uiProfileEnrichment.yourVitrineIsGrowing")}</h2>
                 <p className="text-muted-foreground">
-                  Profile enhanced! You can always refine it from your settings.
+                  {t("uiProfileEnrichment.profileEnhancedYouCanAlwaysRefine")}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate(`/users/${user?.id}`)}>
-                  View my profile
+                  {t("uiProfileEnrichment.viewMyProfile")}
                 </Button>
                 <Button variant="outline" onClick={() => navigate("/home")}>
-                  Back to home
+                  {t("uiProfileEnrichment.backToHome")}
                 </Button>
               </div>
             </motion.div>

@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -8,19 +10,19 @@ import { cn } from "@/lib/utils";
 import { UnitCoverImage } from "@/components/UnitCoverImage";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  DRAFT: { label: "Draft", color: "bg-muted text-muted-foreground" },
-  OPEN: { label: "Open", color: "bg-sky-500/10 text-sky-700 border-sky-500/30" },
-  OPEN_FOR_PROPOSALS: { label: "Proposals", color: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
-  ACTIVE: { label: "Active", color: "bg-amber-500/10 text-amber-700 border-amber-500/30" },
-  COMPLETED: { label: "Completed", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
-  CANCELLED: { label: "Cancelled", color: "bg-destructive/10 text-destructive border-destructive/30" },
+  DRAFT: { get label() { return i18n.t("uiEntityQuestsFilters.draft"); }, color: "bg-muted text-muted-foreground" },
+  OPEN: { get label() { return i18n.t("uiEntityQuestsFilters.open"); }, color: "bg-sky-500/10 text-sky-700 border-sky-500/30" },
+  OPEN_FOR_PROPOSALS: { get label() { return i18n.t("uiEntityQuestsFilters.proposals"); }, color: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
+  ACTIVE: { get label() { return i18n.t("uiEntityQuestsFilters.active"); }, color: "bg-amber-500/10 text-amber-700 border-amber-500/30" },
+  COMPLETED: { get label() { return i18n.t("uiEntityQuestsFilters.completed"); }, color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
+  CANCELLED: { get label() { return i18n.t("uiEntityQuestsFilters.cancelled"); }, color: "bg-destructive/10 text-destructive border-destructive/30" },
 };
 
 const KANBAN_COLUMNS = [
-  { key: "DRAFT", label: "Draft" },
-  { key: "OPEN_FOR_PROPOSALS", label: "Proposals" },
-  { key: "ACTIVE", label: "Active" },
-  { key: "COMPLETED", label: "Completed" },
+  { key: "DRAFT", get label() { return i18n.t("uiEntityQuestsFilters.draft"); } },
+  { key: "OPEN_FOR_PROPOSALS", get label() { return i18n.t("uiEntityQuestsFilters.proposals"); } },
+  { key: "ACTIVE", get label() { return i18n.t("uiEntityQuestsFilters.active"); } },
+  { key: "COMPLETED", get label() { return i18n.t("uiEntityQuestsFilters.completed"); } },
 ];
 
 type SortMode = "recent" | "status" | "budget";
@@ -32,6 +34,7 @@ interface EntityQuestsFiltersProps {
 }
 
 export function EntityQuestsFilters({ quests, children }: EntityQuestsFiltersProps) {
+  const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -160,7 +163,7 @@ export function EntityQuestsFilters({ quests, children }: EntityQuestsFiltersPro
             }
           >
             <ArrowDownUp className="h-3.5 w-3.5" />
-            {sortBy === "recent" ? "Recent" : sortBy === "status" ? "Status" : "Budget"}
+            {sortBy === "recent" ? "Recent" : sortBy === "status" ? t("uiEntityQuestsFilters.status") : t("uiEntityQuestsFilters.budget")}
           </Button>
 
           {/* View mode toggle */}
@@ -208,7 +211,7 @@ export function EntityQuestsFilters({ quests, children }: EntityQuestsFiltersPro
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
-            placeholder="Search quests…"
+            placeholder={t("uiEntityQuestsFilters.searchQuests")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-9 text-sm pl-8"
@@ -229,6 +232,7 @@ export function EntityQuestsFilters({ quests, children }: EntityQuestsFiltersPro
 
 /* ─── Kanban View ─── */
 function KanbanView({ quests }: { quests: any[] }) {
+  const { t } = useTranslation();
   const columns = useMemo(() => {
     const map: Record<string, any[]> = {};
     for (const col of KANBAN_COLUMNS) map[col.key] = [];
@@ -259,7 +263,7 @@ function KanbanView({ quests }: { quests: any[] }) {
             </div>
             <div className="space-y-2 min-h-[60px] rounded-lg bg-muted/20 p-2">
               {items.length === 0 && (
-                <p className="text-[11px] text-muted-foreground/50 text-center py-4">No quests</p>
+                <p className="text-[11px] text-muted-foreground/50 text-center py-4">{t("uiEntityQuestsFilters.noQuests")}</p>
               )}
               {items.map((q) => (
                 <Link

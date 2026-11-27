@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Send, Loader2, Users, Shield } from "lucide-react";
 import { CurrencyIcon } from "@/components/CurrencyIcon";
@@ -32,6 +33,7 @@ interface Props {
 export function TransferCreditsDialog({
   open, onOpenChange, sourceGuildId, sourceGuildName, currentBalance,
 }: Props) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -73,17 +75,17 @@ export function TransferCreditsDialog({
   const handleTransfer = async () => {
     const amt = parseInt(amount);
     if (!amt || amt < 1) {
-      toast({ title: "Invalid amount", description: "Enter at least 1 Platform Credit.", variant: "destructive" });
+      toast({ title: t("uiTransferCreditsDialog.invalidAmount"), description: t("uiTransferCreditsDialog.enterAtLeast1PlatformCredit"), variant: "destructive" });
       return;
     }
     if (amt > currentBalance) {
-      toast({ title: "Insufficient Platform Credits", description: `You only have ${currentBalance} Platform Credits.`, variant: "destructive" });
+      toast({ title: t("uiTransferCreditsDialog.insufficientPlatformCredits"), description: `You only have ${currentBalance} Platform Credits.`, variant: "destructive" });
       return;
     }
 
     const targetId = targetType === "user" ? selectedUserId : selectedGuildId;
     if (!targetId) {
-      toast({ title: "No recipient selected", variant: "destructive" });
+      toast({ title: t("uiTransferCreditsDialog.noRecipientSelected"), variant: "destructive" });
       return;
     }
 
@@ -106,7 +108,7 @@ export function TransferCreditsDialog({
       reset();
       onOpenChange(false);
     } catch (err: any) {
-      toast({ title: "Transfer failed", description: err.message, variant: "destructive" });
+      toast({ title: t("uiTransferCreditsDialog.transferFailed"), description: err.message, variant: "destructive" });
     } finally {
       setSending(false);
     }
@@ -121,7 +123,7 @@ export function TransferCreditsDialog({
         <DialogHeader>
            <DialogTitle className="flex items-center gap-2">
             <Send className="h-5 w-5" />
-            🔷 Transfer Platform Credits
+            {t("uiTransferCreditsDialog.transferPlatformCredits")}
           </DialogTitle>
         </DialogHeader>
 
@@ -129,7 +131,7 @@ export function TransferCreditsDialog({
           {/* Source info */}
           <div className="rounded-lg bg-muted/50 border border-border p-3 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
-              From: <strong>{isGuildSource ? sourceGuildName : "Your wallet"}</strong>
+              {t("uiTransferCreditsDialog.from")} <strong>{isGuildSource ? sourceGuildName : t("uiTransferCreditsDialog.yourWallet")}</strong>
             </span>
             <span className="text-sm font-bold flex items-center gap-1">
               <CurrencyIcon currency="credits" className="h-4 w-4" /> {currentBalance}
@@ -144,14 +146,14 @@ export function TransferCreditsDialog({
                   <Users className="h-3.5 w-3.5" /> User
                 </TabsTrigger>
                 <TabsTrigger value="guild" className="flex-1 gap-1">
-                  <Shield className="h-3.5 w-3.5" /> Guild
+                  <Shield className="h-3.5 w-3.5" /> {t("uiTransferCreditsDialog.guild")}
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="user" className="mt-3">
                 <Label className="text-xs text-muted-foreground mb-1 block">Recipient</Label>
                 <UserSearchInput
-                  placeholder="Search for a user…"
+                  placeholder={t("uiTransferCreditsDialog.searchForAUser")}
                   excludeUserIds={userId ? [userId] : []}
                   onSelect={(u) => {
                     setSelectedUserId(u.user_id);
@@ -159,14 +161,14 @@ export function TransferCreditsDialog({
                   }}
                 />
                 {selectedUserId && (
-                  <p className="text-xs text-muted-foreground mt-1">Sending to: <strong>{selectedUserName}</strong></p>
+                  <p className="text-xs text-muted-foreground mt-1">{t("uiTransferCreditsDialog.sendingTo")} <strong>{selectedUserName}</strong></p>
                 )}
               </TabsContent>
 
               <TabsContent value="guild" className="mt-3">
-                <Label className="text-xs text-muted-foreground mb-1 block">Select guild</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">{t("uiTransferCreditsDialog.selectGuild")}</Label>
                 <Select value={selectedGuildId || ""} onValueChange={setSelectedGuildId}>
-                  <SelectTrigger><SelectValue placeholder="Choose a guild…" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t("uiTransferCreditsDialog.chooseAGuild")} /></SelectTrigger>
                   <SelectContent>
                     {myGuilds.map((g: any) => (
                       <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
@@ -179,28 +181,28 @@ export function TransferCreditsDialog({
             <div>
               <Label className="text-xs text-muted-foreground mb-1 block">Recipient (user)</Label>
               <UserSearchInput
-                placeholder="Search for a user…"
+                placeholder={t("uiTransferCreditsDialog.searchForAUser")}
                 onSelect={(u) => {
                   setSelectedUserId(u.user_id);
                   setSelectedUserName(u.display_name || "User");
                 }}
               />
               {selectedUserId && (
-                <p className="text-xs text-muted-foreground mt-1">Sending to: <strong>{selectedUserName}</strong></p>
+                <p className="text-xs text-muted-foreground mt-1">{t("uiTransferCreditsDialog.sendingTo")} <strong>{selectedUserName}</strong></p>
               )}
             </div>
           )}
 
           {/* Amount */}
           <div>
-            <Label className="text-xs text-muted-foreground mb-1 block">Amount</Label>
+            <Label className="text-xs text-muted-foreground mb-1 block">{t("uiTransferCreditsDialog.amount")}</Label>
             <Input
               type="number"
               min={1}
               max={currentBalance}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter Platform Credit amount"
+              placeholder={t("uiTransferCreditsDialog.enterPlatformCreditAmount")}
             />
           </div>
 
@@ -210,7 +212,7 @@ export function TransferCreditsDialog({
             <Textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Add a message…"
+              placeholder={t("uiTransferCreditsDialog.addAMessage")}
               rows={2}
               className="resize-none"
             />
@@ -219,11 +221,11 @@ export function TransferCreditsDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={sending}>
-            Cancel
+            {t("uiTransferCreditsDialog.cancel")}
           </Button>
           <Button onClick={handleTransfer} disabled={sending || !amount}>
             {sending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
-            Send {amount ? `${amount} Platform Credits` : ""}
+            {t("uiTransferCreditsDialog.send")} {amount ? `${amount} Platform Credits` : ""}
           </Button>
         </DialogFooter>
       </DialogContent>

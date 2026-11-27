@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ import { Loader2, FileX } from "lucide-react";
  * top-level navigation that ad-blockers allow) plus a preview iframe.
  */
 export default function DocumentRedirect() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState(false);
   const [att, setAtt] = useState<{
@@ -45,7 +47,7 @@ export default function DocumentRedirect() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-muted-foreground">
         <FileX className="h-10 w-10" />
-        <p className="text-sm">Document not found or has been deleted.</p>
+        <p className="text-sm">{t("uiDocumentRedirect.documentNotFoundOrHasBeen")}</p>
       </div>
     );
   }
@@ -54,7 +56,7 @@ export default function DocumentRedirect() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">Loading document…</p>
+        <p className="text-sm text-muted-foreground">{t("uiDocumentRedirect.loadingDocument")}</p>
       </div>
     );
   }

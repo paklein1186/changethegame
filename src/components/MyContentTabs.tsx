@@ -9,6 +9,7 @@ import { translateEntityType } from "@/lib/entityLabels";
 
 // ── My Quests (created + joined) ──
 export function MyQuestsTab({ userId }: { userId: string }) {
+  const { t } = useTranslation();
   const { data: created = [], isLoading: l1 } = useQuery({
     queryKey: ["my-quests-created", userId],
     queryFn: async () => {
@@ -40,24 +41,24 @@ export function MyQuestsTab({ userId }: { userId: string }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2"><Swords className="h-5 w-5" /> Quests I Created</h3>
-        <Button size="sm" asChild><Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> New quest</Link></Button>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2"><Swords className="h-5 w-5" /> {t("uiMyContentTabs.questsICreated")}</h3>
+        <Button size="sm" asChild><Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> {t("uiMyContentTabs.newQuest")}</Link></Button>
       </div>
       {loading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
-      {!loading && created.length === 0 && <p className="text-sm text-muted-foreground">No quests created yet.</p>}
+      {!loading && created.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.noQuestsCreatedYet")}</p>}
       <div className="space-y-2">
         {created.map((q: any) => (
           <Link key={q.id} to={`/quests/${q.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
             <div>
               <p className="text-sm font-medium">{q.title}</p>
               <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-xs text-muted-foreground">{q.reward_xp} XP reward</p>
-                {q.coin_budget > 0 && <Badge variant="outline" className="text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-800 text-[10px]">🟩 {q.coin_budget.toLocaleString()} Coins</Badge>}
+                <p className="text-xs text-muted-foreground">{q.reward_xp} {t("uiMyContentTabs.xpReward")}</p>
+                {q.coin_budget > 0 && <Badge variant="outline" className="text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-800 text-[10px]">🟩 {q.coin_budget.toLocaleString()} {t("uiMyContentTabs.coins")}</Badge>}
                 {q.credit_budget > 0 && <Badge variant="outline" className="text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 text-[10px]">🌱 {q.credit_budget} $CTG</Badge>}
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {q.is_draft && <Badge variant="secondary" className="text-[10px]">Draft</Badge>}
+              {q.is_draft && <Badge variant="secondary" className="text-[10px]">{t("uiMyContentTabs.draft")}</Badge>}
               <Badge variant="outline" className="text-[10px] capitalize">{q.status?.toLowerCase()}</Badge>
             </div>
           </Link>
@@ -65,14 +66,14 @@ export function MyQuestsTab({ userId }: { userId: string }) {
       </div>
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Swords className="h-5 w-5" /> Quests I Joined</h3>
-        {!loading && joined.length === 0 && <p className="text-sm text-muted-foreground">You haven't joined any quests yet.</p>}
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Swords className="h-5 w-5" /> {t("uiMyContentTabs.questsIJoined")}</h3>
+        {!loading && joined.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youHavenTJoinedAnyQuests")}</p>}
         <div className="space-y-2">
           {joined.map((q: any) => (
             <Link key={q.id} to={`/quests/${q.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
               <div>
                 <p className="text-sm font-medium">{q.title}</p>
-                <p className="text-xs text-muted-foreground">Role: {q.participantRole} · {q.participantStatus}</p>
+                <p className="text-xs text-muted-foreground">{t("uiMyContentTabs.role")} {q.participantRole} · {q.participantStatus}</p>
               </div>
               <Badge variant="outline" className="text-[10px] capitalize">{q.status?.toLowerCase()}</Badge>
             </Link>
@@ -100,9 +101,9 @@ export function MyGuildsTab({ userId }: { userId: string }) {
 
   return (
     <div>
-      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><Users className="h-5 w-5" /> My Guilds</h3>
+      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><Users className="h-5 w-5" /> {t("uiMyContentTabs.myGuilds")}</h3>
       {isLoading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
-      {!isLoading && guilds.length === 0 && <p className="text-sm text-muted-foreground">You're not a member of any guilds yet. <Link to="/explore" className="text-primary hover:underline">Explore guilds</Link></p>}
+      {!isLoading && guilds.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youReNotAMemberOf")} <Link to="/explore" className="text-primary hover:underline">{t("uiMyContentTabs.exploreGuilds")}</Link></p>}
       <div className="space-y-2">
         {guilds.map((g: any) => (
           <Link key={g.id} to={`/guilds/${g.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
@@ -120,6 +121,7 @@ export function MyGuildsTab({ userId }: { userId: string }) {
 
 // ── My Pods ──
 export function MyPodsTab({ userId }: { userId: string }) {
+  const { t } = useTranslation();
   const { data: pods = [], isLoading } = useQuery({
     queryKey: ["my-pods", userId],
     queryFn: async () => {
@@ -134,9 +136,9 @@ export function MyPodsTab({ userId }: { userId: string }) {
 
   return (
     <div>
-      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><Users className="h-5 w-5" /> My Pods</h3>
+      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><Users className="h-5 w-5" /> {t("uiMyContentTabs.myPods")}</h3>
       {isLoading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
-      {!isLoading && pods.length === 0 && <p className="text-sm text-muted-foreground">You're not in any pods yet. <Link to="/explore" className="text-primary hover:underline">Explore pods</Link></p>}
+      {!isLoading && pods.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youReNotInAnyPods")} <Link to="/explore" className="text-primary hover:underline">Explore pods</Link></p>}
       <div className="space-y-2">
         {pods.map((p: any) => (
           <Link key={p.id} to={`/pods/${p.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
@@ -154,6 +156,7 @@ export function MyPodsTab({ userId }: { userId: string }) {
 
 // ── My Courses (enrolled + teaching) ──
 export function MyCoursesTab({ userId }: { userId: string }) {
+  const { t } = useTranslation();
   const { data: enrolled = [], isLoading: l1 } = useQuery({
     queryKey: ["my-courses-enrolled", userId],
     queryFn: async () => {
@@ -186,10 +189,10 @@ export function MyCoursesTab({ userId }: { userId: string }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-lg font-semibold flex items-center gap-2"><GraduationCap className="h-5 w-5" /> Courses I Teach</h3>
-        <Button size="sm" asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> New course</Link></Button>
+        <Button size="sm" asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> {t("uiMyContentTabs.newCourse")}</Link></Button>
       </div>
       {loading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
-      {!loading && teaching.length === 0 && <p className="text-sm text-muted-foreground">No courses created yet.</p>}
+      {!loading && teaching.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.noCoursesCreatedYet")}</p>}
       <div className="space-y-2">
         {teaching.map((c: any) => (
           <Link key={c.id} to={`/courses/${c.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
@@ -198,7 +201,7 @@ export function MyCoursesTab({ userId }: { userId: string }) {
               <p className="text-xs text-muted-foreground capitalize">{c.level?.toLowerCase()}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={c.is_published ? "default" : "secondary"} className="text-[10px]">{c.is_published ? "Published" : "Draft"}</Badge>
+              <Badge variant={c.is_published ? "default" : "secondary"} className="text-[10px]">{c.is_published ? "Published" : t("uiMyContentTabs.draft")}</Badge>
               <Badge variant="outline" className="text-[10px]">{c.is_free ? "Free" : "Paid"}</Badge>
             </div>
           </Link>
@@ -207,7 +210,7 @@ export function MyCoursesTab({ userId }: { userId: string }) {
 
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><GraduationCap className="h-5 w-5" /> Courses I'm Taking</h3>
-        {!loading && enrolled.length === 0 && <p className="text-sm text-muted-foreground">You haven't enrolled in any courses. <Link to="/explore" className="text-primary hover:underline">Browse courses</Link></p>}
+        {!loading && enrolled.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youHavenTEnrolledInAny")} <Link to="/explore" className="text-primary hover:underline">Browse courses</Link></p>}
         <div className="space-y-2">
           {enrolled.map((c: any) => (
             <Link key={c.id} to={`/courses/${c.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
@@ -215,7 +218,7 @@ export function MyCoursesTab({ userId }: { userId: string }) {
                 <p className="text-sm font-medium">{c.title}</p>
                 <p className="text-xs text-muted-foreground">{c.progress}% complete</p>
               </div>
-              <Badge variant={c.completed ? "default" : "secondary"} className="text-[10px]">{c.completed ? "Completed" : "In progress"}</Badge>
+              <Badge variant={c.completed ? "default" : "secondary"} className="text-[10px]">{c.completed ? t("uiMyContentTabs.completed") : t("uiMyContentTabs.inProgress")}</Badge>
             </Link>
           ))}
         </div>

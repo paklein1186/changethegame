@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   CalendarClock, Video, ExternalLink, ArrowLeft,
@@ -23,23 +24,24 @@ const statusColors: Record<string, string> = {
 };
 
 export default function BookingDetail() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const currentUser = useCurrentUser();
   const { data: booking, isLoading, error } = useBookingById(id);
   const { isAdmin: userIsAdmin } = useUserRoles(currentUser.id);
 
-  if (isLoading) return <PageShell><p className="text-muted-foreground">Loading…</p></PageShell>;
+  if (isLoading) return <PageShell><p className="text-muted-foreground">{t("uiBookingDetail.loading")}</p></PageShell>;
 
   if (!booking || error) {
     return (
       <PageShell>
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <FileQuestion className="h-16 w-16 text-muted-foreground mb-4" />
-          <h1 className="font-display text-2xl font-bold mb-2">Booking not found</h1>
-          <p className="text-muted-foreground mb-6">This booking doesn't exist or has been removed.</p>
+          <h1 className="font-display text-2xl font-bold mb-2">{t("uiBookingDetail.bookingNotFound")}</h1>
+          <p className="text-muted-foreground mb-6">{t("uiBookingDetail.thisBookingDoesnTExistOr")}</p>
           <Button variant="outline" asChild>
-            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Work</Link>
+            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiBookingDetail.backToWork")}</Link>
           </Button>
         </div>
       </PageShell>
@@ -56,9 +58,9 @@ export default function BookingDetail() {
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
           <h1 className="font-display text-2xl font-bold mb-2">Access denied</h1>
-          <p className="text-muted-foreground mb-6">You don't have permission to view this booking.</p>
+          <p className="text-muted-foreground mb-6">{t("uiBookingDetail.youDonTHavePermissionTo")}</p>
           <Button variant="outline" asChild>
-            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Work</Link>
+            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiBookingDetail.backToWork")}</Link>
           </Button>
         </div>
       </PageShell>
@@ -73,13 +75,13 @@ export default function BookingDetail() {
     <PageShell>
       <div className="max-w-2xl mx-auto">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back
+          <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiBookingDetail.back")}
         </Button>
 
         <div className="flex items-start justify-between mb-6">
           <div>
             <h1 className="font-display text-2xl font-bold flex items-center gap-2">
-              <CalendarClock className="h-6 w-6 text-primary" /> Booking Details
+              <CalendarClock className="h-6 w-6 text-primary" /> {t("uiBookingDetail.bookingDetails")}
             </h1>
           </div>
           <Badge className={`${statusColors[booking.status] || ""} border-0 capitalize text-sm px-3 py-1`}>
@@ -100,7 +102,7 @@ export default function BookingDetail() {
         </section>
 
         <section className="rounded-xl border border-border bg-card p-5 mb-4">
-          <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Date & Time</h2>
+          <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">{t("uiBookingDetail.dateTime")}</h2>
           {booking.start_date_time ? (
             <p className="text-sm">
               📅 {new Date(booking.start_date_time).toLocaleString()}
@@ -109,7 +111,7 @@ export default function BookingDetail() {
           ) : booking.requested_date_time ? (
             <p className="text-sm text-muted-foreground">Preferred: {new Date(booking.requested_date_time).toLocaleString()}</p>
           ) : (
-            <p className="text-sm text-muted-foreground">No date set</p>
+            <p className="text-sm text-muted-foreground">{t("uiBookingDetail.noDateSet")}</p>
           )}
         </section>
 
@@ -117,7 +119,7 @@ export default function BookingDetail() {
           <section className="rounded-xl border border-border bg-card p-5 mb-4">
             <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Payment</h2>
             <p className="text-sm">
-              🟩 {Math.round(booking.amount / 0.04).toLocaleString()} Coins (≈ €{booking.amount}) — <span className="capitalize">{booking.payment_status?.toLowerCase().replace(/_/g, " ") || "N/A"}</span>
+              🟩 {Math.round(booking.amount / 0.04).toLocaleString()} {t("uiBookingDetail.coins")}{booking.amount}) — <span className="capitalize">{booking.payment_status?.toLowerCase().replace(/_/g, " ") || "N/A"}</span>
             </p>
           </section>
         )}
@@ -136,13 +138,13 @@ export default function BookingDetail() {
               <>
                 <Button asChild>
                   <Link to={`/call/${booking.id}`}>
-                    <Video className="h-4 w-4 mr-2" /> Join call room
+                    <Video className="h-4 w-4 mr-2" /> {t("uiBookingDetail.joinCallRoom")}
                   </Link>
                 </Button>
                 {effectiveCallUrl && (
                   <Button variant="outline" asChild>
                     <a href={effectiveCallUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4 mr-2" /> Open in Jitsi
+                      <ExternalLink className="h-4 w-4 mr-2" /> {t("uiBookingDetail.openInJitsi")}
                     </a>
                   </Button>
                 )}
@@ -150,9 +152,9 @@ export default function BookingDetail() {
             ) : (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button disabled><Video className="h-4 w-4 mr-2" /> Join call</Button>
+                  <Button disabled><Video className="h-4 w-4 mr-2" /> {t("uiBookingDetail.joinCall")}</Button>
                 </TooltipTrigger>
-                <TooltipContent>Call link will be available once the booking is confirmed</TooltipContent>
+                <TooltipContent>{t("uiBookingDetail.callLinkWillBeAvailableOnce")}</TooltipContent>
               </Tooltip>
             )}
           </div>

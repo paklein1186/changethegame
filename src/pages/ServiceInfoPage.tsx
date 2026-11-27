@@ -5,16 +5,16 @@ export default function ServiceInfoPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.serviceInfo.title")} subtitle={t("pages.serviceInfo.subtitle")}>
-      <ContentSection title="What You Can Offer">
-        <p>Services (or skill sessions) let you offer:</p>
+      <ContentSection title={t("uiServiceInfoPage.whatYouCanOffer")}>
+        <p>{t("uiServiceInfoPage.servicesOrSkillSessionsLetYou")}</p>
         <ContentList items={["Expertise", "Creative sessions", "Workshops", "Mentoring", "Coaching", "Artistic practices"]} />
       </ContentSection>
 
       <ContentSection title="Features">
-        <p>Integrated booking, calendar, and optional credit payments.</p>
+        <p>{t("uiServiceInfoPage.integratedBookingCalendarAndOptionalCredit")}</p>
       </ContentSection>
 
-      <ContentCTA links={[{ label: "Create a service", href: "/services/new" }]} />
+      <ContentCTA links={[{ label: t("uiServiceInfoPage.createAService"), href: "/services/new" }]} />
     </ContentPageShell>
   );
 }

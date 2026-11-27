@@ -41,7 +41,7 @@ export default function GovernancePage({ embedded }: { embedded?: boolean }) {
             return (
               <div key={tier.levels} className={`rounded-lg border bg-card p-4 ${unlocked ? "border-primary/30" : "border-border"}`}>
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant={unlocked ? "default" : "outline"} className="text-xs">Level {tier.levels}</Badge>
+                  <Badge variant={unlocked ? "default" : "outline"} className="text-xs">{t("uiGovernancePage.level")} {tier.levels}</Badge>
                   <span className="font-display font-semibold text-sm">{tier.label}</span>
                   {unlocked && <Badge variant="secondary" className="text-[10px]">✓ {t("governancePage.unlocked")}</Badge>}
                 </div>

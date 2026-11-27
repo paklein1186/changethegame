@@ -138,7 +138,7 @@ export default function SharesPage() {
         setQuantity(1);
       }
     } catch (e: any) {
-      toast({ title: "Purchase failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiSharesPage.purchaseFailed"), description: e.message, variant: "destructive" });
     } finally {
       setPurchasing(false);
     }
@@ -158,8 +158,7 @@ export default function SharesPage() {
             {t("pages.shares.heading")} <span className="text-primary">changethegame</span>
           </h1>
           <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-            changethegame is co-owned by its members. Three share classes exist — Guardian (A), Steward (B), and Strategic Partner (C).
-            Your voice and vote count through a fair logarithmic system.
+            {t("uiSharesPage.changethegameIsCoOwnedByIts")}
           </p>
         </motion.div>
 
@@ -169,27 +168,27 @@ export default function SharesPage() {
           <div className="flex items-center gap-2">
             <Handshake className="h-5 w-5 text-primary" />
             <h2 className="font-display text-lg sm:text-xl font-semibold">
-              Before becoming a shareholder, join the {guildSingular.toLowerCase()}.
+              {t("uiSharesPage.beforeBecomingAShareholderJoinThe")} {guildSingular.toLowerCase()}.
             </h2>
           </div>
           <div className="text-sm sm:text-base text-muted-foreground space-y-2 max-w-2xl">
             <p>
-              <span className="text-foreground font-medium">changethegame</span> is first and foremost a collaborative ecosystem.
+              <span className="text-foreground font-medium">changethegame</span> {t("uiSharesPage.isFirstAndForemostACollaborative")}
             </p>
             <p>
-              You can join {guildLabel.toLowerCase()}, take part in {questLabel.toLowerCase()}, co-create missions, start {podLabel.toLowerCase()}, share {serviceLabel.toLowerCase()}, and interact with other builders and creators.
+              {t("uiSharesPage.youCanJoin")} {guildLabel.toLowerCase()}{t("uiSharesPage.takePartIn")} {questLabel.toLowerCase()}{t("uiSharesPage.coCreateMissionsStart")} {podLabel.toLowerCase()}{t("uiSharesPage.share")} {serviceLabel.toLowerCase()}{t("uiSharesPage.andInteractWithOtherBuildersAnd")}
             </p>
             <p>
-              Becoming a shareholder is <strong>optional</strong>.
+              {t("uiSharesPage.becomingAShareholderIs")} <strong>optional</strong>.
             </p>
             <p className="font-medium text-foreground">
-              The real value begins with participation.
+              {t("uiSharesPage.theRealValueBeginsWithParticipation")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3 pt-1">
             <Button asChild>
               <Link to="/explore?tab=entities&sub=guilds">
-                <Users className="h-4 w-4 mr-2" /> Join a {guildSingular}
+                <Users className="h-4 w-4 mr-2" /> {t("uiSharesPage.joinA")} {guildSingular}
               </Link>
             </Button>
             <Button variant="outline" asChild>
@@ -207,7 +206,7 @@ export default function SharesPage() {
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <h3 className="font-display font-semibold text-lg flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-primary" /> You are a coop-like member
+                  <Shield className="h-5 w-5 text-primary" /> {t("uiSharesPage.youAreACoopLikeMember")}
                 </h3>
                 <div className="flex gap-4 mt-2 text-sm">
                   {(profile.total_shares_a ?? 0) > 0 && <Badge variant="default" className="text-xs">Guardian</Badge>}
@@ -220,9 +219,9 @@ export default function SharesPage() {
                   <Link to="/governance">Governance decisions</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
-                  <a href={CLASS_A_MAILTO}>Apply for Class A</a>
+                  <a href={CLASS_A_MAILTO}>{t("uiSharesPage.applyForClassA")}</a>
                 </Button>
-                <Button size="sm" onClick={() => setShowBuyB(true)}>Buy more Class B</Button>
+                <Button size="sm" onClick={() => setShowBuyB(true)}>{t("uiSharesPage.buyMoreClassB")}</Button>
               </div>
             </div>
           </motion.div>
@@ -237,7 +236,7 @@ export default function SharesPage() {
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[100%]" />
             <CardHeader>
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge className="bg-primary/10 text-primary border-0">Class A</Badge>
+                <Badge className="bg-primary/10 text-primary border-0">{t("uiSharesPage.classA")}</Badge>
                 <Badge variant="outline">25 000 € minimum</Badge>
                 <Badge variant="secondary" className="text-[10px]">
                   <Lock className="h-3 w-3 mr-0.5" /> Application-Only
@@ -245,27 +244,27 @@ export default function SharesPage() {
               </div>
               <CardTitle className="font-display text-xl">Guardian Shares</CardTitle>
               <CardDescription>
-                For governance participation and operational decision-making.
+                {t("uiSharesPage.forGovernanceParticipationAndOperationalDecision")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2"><Vote className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Strategic governance voting</li>
                 <li className="flex items-start gap-2"><Shield className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Operational decision power</li>
-                <li className="flex items-start gap-2"><Users className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Participation in inner governance group</li>
+                <li className="flex items-start gap-2"><Users className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("uiSharesPage.participationInInnerGovernanceGroup")}</li>
               </ul>
               <div className="rounded-lg bg-muted/50 border border-border p-3 text-xs text-muted-foreground space-y-1">
-                <p className="font-medium text-foreground text-sm">Voting weight: log(1 + shares)</p>
+                <p className="font-medium text-foreground text-sm">{t("uiSharesPage.votingWeightLog1Shares")}</p>
                 <p>Full logarithmic governance weight.</p>
               </div>
 
               <Button className="w-full" variant="outline" asChild>
                 <a href={CLASS_A_MAILTO}>
-                  <Mail className="h-4 w-4 mr-2" /> Apply
+                  <Mail className="h-4 w-4 mr-2" /> {t("uiSharesPage.apply")}
                 </a>
               </Button>
               <p className="text-xs text-muted-foreground text-center italic">
-                Class A membership is selective and handled manually.
+                {t("uiSharesPage.classAMembershipIsSelectiveAnd")}
               </p>
             </CardContent>
           </Card>
@@ -276,24 +275,24 @@ export default function SharesPage() {
             <CardHeader>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className="bg-accent/10 text-accent border-0">Class B</Badge>
-                <Badge variant="outline">{sharePrice} € / share</Badge>
+                <Badge variant="outline">{sharePrice} {t("uiSharesPage.share2")}</Badge>
                 <Badge variant="secondary" className="text-[10px] bg-accent/10 text-accent border-0">
-                  Open for Purchase
+                  {t("uiSharesPage.openForPurchase")}
                 </Badge>
               </div>
               <CardTitle className="font-display text-xl">Steward Shares</CardTitle>
               <CardDescription>
-                Support the ecosystem & join assemblies.
+                {t("uiSharesPage.supportTheEcosystemJoinAssemblies")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Users className="h-4 w-4 text-accent mt-0.5 shrink-0" /> Access to assemblies & community events</li>
+                <li className="flex items-start gap-2"><Users className="h-4 w-4 text-accent mt-0.5 shrink-0" /> {t("uiSharesPage.accessToAssembliesCommunityEvents")}</li>
                 <li className="flex items-start gap-2"><Vote className="h-4 w-4 text-accent mt-0.5 shrink-0" /> Symbolic governance input (light vote)</li>
               </ul>
               <div className="rounded-lg bg-muted/50 border border-border p-3 text-xs text-muted-foreground space-y-1">
-                <p className="font-medium text-foreground text-sm">Voting weight: log(1 + shares) × 0.2</p>
-                <p>Reduced weight for community input.</p>
+                <p className="font-medium text-foreground text-sm">{t("uiSharesPage.votingWeightLog1Shares0")}</p>
+                <p>{t("uiSharesPage.reducedWeightForCommunityInput")}</p>
               </div>
 
               {showBuyB ? (
@@ -313,9 +312,9 @@ export default function SharesPage() {
                   <div className="flex gap-2">
                     <Button className="flex-1" variant="secondary" onClick={handlePurchaseB} disabled={purchasing}>
                       {purchasing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                      Confirm purchase
+                      {t("uiSharesPage.confirmPurchase")}
                     </Button>
-                    <Button variant="ghost" onClick={() => { setShowBuyB(false); setQuantity(1); }}>Cancel</Button>
+                    <Button variant="ghost" onClick={() => { setShowBuyB(false); setQuantity(1); }}>{t("uiSharesPage.cancel")}</Button>
                   </div>
                 </div>
               ) : (
@@ -335,22 +334,22 @@ export default function SharesPage() {
                   <Building2 className="h-3 w-3 mr-0.5" /> Institutional
                 </Badge>
                 <Badge variant="secondary" className="text-[10px]">
-                  <Lock className="h-3 w-3 mr-0.5" /> By Application
+                  <Lock className="h-3 w-3 mr-0.5" /> {t("uiSharesPage.byApplication")}
                 </Badge>
               </div>
               <CardTitle className="font-display text-xl">Strategic Stewardship</CardTitle>
               <CardDescription>
-                Designed for institutional partners aligned with the long-term mission of Changethegame.
+                {t("uiSharesPage.designedForInstitutionalPartnersAlignedWith")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               {/* Purpose */}
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">What this represents</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("uiSharesPage.whatThisRepresents")}</p>
                 <p className="text-sm text-muted-foreground">
-                  Class C shares reflect structural participation in governance and long-term ecosystem development. Intended for institutional partners, territorial anchors, and long-term ecosystem allies.
+                  {t("uiSharesPage.classCSharesReflectStructuralParticipation")}
                 </p>
-                <p className="text-xs italic text-muted-foreground">This is stewardship, not speculation.</p>
+                <p className="text-xs italic text-muted-foreground">{t("uiSharesPage.thisIsStewardshipNotSpeculation")}</p>
               </div>
 
               <Separator />
@@ -366,7 +365,7 @@ export default function SharesPage() {
                         <TooltipTrigger asChild>
                           <span className="cursor-help border-b border-dotted border-muted-foreground/40">Governance participation</span>
                         </TooltipTrigger>
-                        <TooltipContent><p className="max-w-xs text-xs">Governance rights are balanced with XP-based participation to preserve contribution-led legitimacy.</p></TooltipContent>
+                        <TooltipContent><p className="max-w-xs text-xs">{t("uiSharesPage.governanceRightsAreBalancedWithXp")}</p></TooltipContent>
                       </Tooltip>
                     </li>
                     <li className="flex items-start gap-2">
@@ -375,7 +374,7 @@ export default function SharesPage() {
                         <TooltipTrigger asChild>
                           <span className="cursor-help border-b border-dotted border-muted-foreground/40">Dividend eligibility</span>
                         </TooltipTrigger>
-                        <TooltipContent><p className="max-w-xs text-xs">Dividends are distributed only when annual surplus allows, after reinvestment and ecosystem allocation.</p></TooltipContent>
+                        <TooltipContent><p className="max-w-xs text-xs">{t("uiSharesPage.dividendsAreDistributedOnlyWhenAnnual")}</p></TooltipContent>
                       </Tooltip>
                     </li>
                     <li className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Visibility as ecosystem partner</li>
@@ -384,7 +383,7 @@ export default function SharesPage() {
                   </ul>
                 </TooltipProvider>
                 <p className="text-xs text-muted-foreground italic mt-1">
-                  Voting weight remains balanced by XP and contribution metrics to preserve merit-based governance.
+                  {t("uiSharesPage.votingWeightRemainsBalancedByXp")}
                 </p>
               </div>
 
@@ -395,12 +394,12 @@ export default function SharesPage() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Eligibility</p>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2"><span className="text-foreground">•</span> Minimum strategic alignment review</li>
-                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> Participation in ecosystem initiatives</li>
+                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> {t("uiSharesPage.participationInEcosystemInitiatives")}</li>
                   <li className="flex items-start gap-2"><span className="text-foreground">•</span> Administrative approval</li>
-                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> XP threshold for representatives</li>
+                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> {t("uiSharesPage.xpThresholdForRepresentatives")}</li>
                 </ul>
                 <p className="text-xs text-muted-foreground">
-                  Organisation representatives must hold sufficient XP level to activate governance rights.
+                  {t("uiSharesPage.organisationRepresentativesMustHoldSufficientXp")}
                 </p>
               </div>
 
@@ -411,10 +410,10 @@ export default function SharesPage() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Economic framework</p>
                 <div className="rounded-lg bg-muted/50 border border-border p-3 text-xs text-muted-foreground space-y-2">
                   <ul className="space-y-1">
-                    <li>• Do not grant operational control</li>
-                    <li>• Are not publicly tradable</li>
-                    <li>• Cannot be exchanged within the platform</li>
-                    <li>• Bound by mission protection clause</li>
+                    <li>{t("uiSharesPage.doNotGrantOperationalControl")}</li>
+                    <li>{t("uiSharesPage.areNotPubliclyTradable")}</li>
+                    <li>{t("uiSharesPage.cannotBeExchangedWithinThePlatform")}</li>
+                    <li>{t("uiSharesPage.boundByMissionProtectionClause")}</li>
                   </ul>
                 </div>
                 <p className="text-xs font-medium text-foreground mb-1">Annual surplus allocation</p>
@@ -435,21 +434,21 @@ export default function SharesPage() {
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Stewardship commitment</p>
                 <p className="text-sm text-muted-foreground">
-                  By holding Class C shares, partners commit to supporting long-term ecosystem resilience, avoiding extractive influence, respecting territorial autonomy, and protecting mission integrity.
+                  {t("uiSharesPage.byHoldingClassCSharesPartners")}
                 </p>
                 <p className="text-xs italic text-muted-foreground">
-                  Changethegame is structured to align capital with contribution and purpose.
+                  {t("uiSharesPage.changethegameIsStructuredToAlignCapital")}
                 </p>
               </div>
 
               {/* CTA */}
               <Button className="w-full" variant="outline" asChild>
                 <a href="mailto:pa@changethegame.xyz?subject=Class%20C%20Strategic%20Participation%20Inquiry">
-                  <Mail className="h-4 w-4 mr-2" /> Request Strategic Participation
+                  <Mail className="h-4 w-4 mr-2" /> {t("uiSharesPage.requestStrategicParticipation")}
                 </a>
               </Button>
               <p className="text-xs text-muted-foreground text-center italic">
-                Applications are reviewed by the stewardship council.
+                {t("uiSharesPage.applicationsAreReviewedByTheStewardship")}
               </p>
             </CardContent>
           </Card>
@@ -460,12 +459,12 @@ export default function SharesPage() {
         {/* Purchase history */}
         {holdings.length > 0 && (
           <div className="space-y-4">
-            <h2 className="font-display text-xl font-semibold">Your share history</h2>
+            <h2 className="font-display text-xl font-semibold">{t("uiSharesPage.yourShareHistory")}</h2>
             <div className="rounded-xl border border-border overflow-x-auto">
               <table className="w-full text-sm min-w-[360px]">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="text-left p-2 sm:p-3 font-medium">Date</th>
+                    <th className="text-left p-2 sm:p-3 font-medium">{t("uiSharesPage.date")}</th>
                     <th className="text-left p-2 sm:p-3 font-medium">Class</th>
                     <th className="text-right p-2 sm:p-3 font-medium">Shares</th>
                   </tr>

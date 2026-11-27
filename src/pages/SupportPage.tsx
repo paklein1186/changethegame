@@ -15,7 +15,7 @@ export default function SupportPage() {
         ]} />
       </ContentSection>
 
-      <ContentSection title="In-depth Guides">
+      <ContentSection title={t("uiSupportPage.inDepthGuides")}>
         <ContentList items={[
           "XP, credits & contribution index",
           "Pods and collaboration tools",
@@ -36,8 +36,8 @@ export default function SupportPage() {
         ]} />
       </ContentSection>
 
-      <ContentSection title="Ask for Help">
-        <p>Stuck? Contact the team for direct support.</p>
+      <ContentSection title={t("uiSupportPage.askForHelp")}>
+        <p>{t("uiSupportPage.stuckContactTheTeamForDirect")}</p>
       </ContentSection>
 
       <ContentCTA links={[{ label: "Contact us", href: "/contact" }]} />

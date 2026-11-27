@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { Search, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +45,7 @@ export function SearchableTagPicker({
   icon,
   className,
 }: SearchableTagPickerProps) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -72,7 +74,7 @@ export function SearchableTagPicker({
               className="h-6 text-[10px] px-2"
               onClick={onSelectAll}
             >
-              Select all
+              {t("uiSearchableTagPicker.selectAll")}
             </Button>
           )}
           {onClearAll && (
@@ -129,7 +131,7 @@ export function SearchableTagPicker({
         >
           {filtered.length === 0 && (
             <p className="text-xs text-muted-foreground py-2 text-center w-full">
-              No results for "{search}"
+              {t("uiSearchableTagPicker.noResultsFor")}{search}"
             </p>
           )}
 

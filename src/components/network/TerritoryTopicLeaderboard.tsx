@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { coverCreditText } from "@/lib/coverCredit";
 import { Link } from "react-router-dom";
@@ -51,8 +53,8 @@ function getInitials(name: string) {
 
 function getActivityLevel(t: TerritoryLeaderboardItem) {
   const score = t.quests * 3 + t.entities * 2 + t.memoryContributions;
-  if (score >= 15) return { label: "Very Active", color: "bg-emerald-500" };
-  if (score >= 6) return { label: "Active", color: "bg-blue-500" };
+  if (score >= 15) return { get label() { return i18n.t("uiTerritoryTopicLeaderboard.veryActive"); }, color: "bg-emerald-500" };
+  if (score >= 6) return { get label() { return i18n.t("uiTerritoryTopicLeaderboard.active"); }, color: "bg-blue-500" };
   if (score >= 1) return { label: "Growing", color: "bg-amber-500" };
   return { label: "Emerging", color: "bg-muted-foreground" };
 }
@@ -216,6 +218,7 @@ type ViewMode = "grid" | "map";
 
 // ─── Main Component ────────────────────────────────────────
 export default function TerritoryTopicLeaderboard() {
+  const { t } = useTranslation();
   const [sub, setSub] = useState<"territories" | "topics">("territories");
   const [tSort, setTSort] = useState<TerritorySort>("activity");
   const [topSort, setTopSort] = useState<TopicSort>("activity");
@@ -244,10 +247,10 @@ export default function TerritoryTopicLeaderboard() {
       {/* Header */}
       <div>
         <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-          <Compass className="h-5 w-5 text-primary" /> Territories
+          <Compass className="h-5 w-5 text-primary" /> {t("uiTerritoryTopicLeaderboard.territories")}
         </h2>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Explore active territories across the ecosystem.
+          {t("uiTerritoryTopicLeaderboard.exploreActiveTerritoriesAcrossTheEcosystem")}
         </p>
       </div>
 
@@ -262,7 +265,7 @@ export default function TerritoryTopicLeaderboard() {
                   variant={viewMode === "grid" ? "secondary" : "ghost"}
                   className="h-7 w-7 p-0"
                   onClick={() => setViewMode("grid")}
-                  title="Grid view"
+                  title={t("uiTerritoryTopicLeaderboard.gridView")}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
                 </Button>
@@ -271,7 +274,7 @@ export default function TerritoryTopicLeaderboard() {
                   variant={viewMode === "map" ? "secondary" : "ghost"}
                   className="h-7 w-7 p-0"
                   onClick={() => setViewMode("map")}
-                  title="Map view"
+                  title={t("uiTerritoryTopicLeaderboard.mapView")}
                 >
                   <Map className="h-3.5 w-3.5" />
                 </Button>
@@ -287,7 +290,7 @@ export default function TerritoryTopicLeaderboard() {
                   className="h-7 text-xs"
                   onClick={() => setTSort("activity")}
                 >
-                  Most active
+                  {t("uiTerritoryTopicLeaderboard.mostActive")}
                 </Button>
                 <Button
                   size="sm"
@@ -311,7 +314,7 @@ export default function TerritoryTopicLeaderboard() {
           ) : sortedTerritories.length === 0 ? (
             <div className="text-center py-16 rounded-xl border border-dashed border-border space-y-3">
               <MapPin className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-              <p className="text-muted-foreground">No territories found yet.</p>
+              <p className="text-muted-foreground">{t("uiTerritoryTopicLeaderboard.noTerritoriesFoundYet")}</p>
             </div>
           ) : (
             <AnimatePresence mode="wait">

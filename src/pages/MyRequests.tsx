@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CalendarClock, Video, ExternalLink, X } from "lucide-react";
@@ -25,6 +26,7 @@ const statusColors: Record<string, string> = {
 const CANCELLABLE = ["REQUESTED", "PENDING", "PENDING_PAYMENT", "CONFIRMED", "ACCEPTED"];
 
 export default function MyRequests({ bare }: { bare?: boolean }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const { data: allBookings = [], isLoading } = useMyBookings(currentUser.id);
@@ -35,7 +37,7 @@ export default function MyRequests({ bare }: { bare?: boolean }) {
   const cancelBooking = (bookingId: string) => {
     updateStatus.mutate({ bookingId, status: "CANCELLED" }, {
       onSuccess: () => {
-        toast({ title: "Booking cancelled" });
+        toast({ title: t("uiMyRequests.bookingCancelled") });
         const booking = myRequests.find((b) => b.id === bookingId);
         if (booking?.provider_user_id) {
           const svc = booking.services as any;
@@ -49,13 +51,13 @@ export default function MyRequests({ bare }: { bare?: boolean }) {
     <PageShell bare={bare}>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-          <CalendarClock className="h-7 w-7 text-primary" /> My Requests
+          <CalendarClock className="h-7 w-7 text-primary" /> {t("uiMyRequests.myRequests")}
         </h1>
-        <p className="text-muted-foreground mt-1">Sessions you've requested from providers.</p>
+        <p className="text-muted-foreground mt-1">{t("uiMyRequests.sessionsYouVeRequestedFromProviders")}</p>
       </div>
 
-      {isLoading && <p className="text-muted-foreground">Loading…</p>}
-      {!isLoading && myRequests.length === 0 && <p className="text-muted-foreground">You haven't requested any sessions yet.</p>}
+      {isLoading && <p className="text-muted-foreground">{t("uiMyRequests.loading")}</p>}
+      {!isLoading && myRequests.length === 0 && <p className="text-muted-foreground">{t("uiMyRequests.youHavenTRequestedAnySessions")}</p>}
 
       <div className="space-y-3">
         {myRequests.map((b, i) => {
@@ -85,7 +87,7 @@ export default function MyRequests({ bare }: { bare?: boolean }) {
                     <AvatarFallback className="text-[10px]">{provider.name?.charAt(0) || "?"}</AvatarFallback>
                   </Avatar>
                   <span className="text-sm text-muted-foreground">
-                    Session with <Link to={`/users/${b.provider_user_id}`} className="font-medium text-foreground hover:text-primary">{provider.name}</Link>
+                    {t("uiMyRequests.sessionWith")} <Link to={`/users/${b.provider_user_id}`} className="font-medium text-foreground hover:text-primary">{provider.name}</Link>
                   </span>
                 </div>
               )}
@@ -99,12 +101,12 @@ export default function MyRequests({ bare }: { bare?: boolean }) {
               )}
 
               {b.amount != null && b.amount > 0 && (
-                <p className="text-xs text-muted-foreground mb-1">🟩 {Math.round(b.amount / 0.04).toLocaleString()} Coins (≈ €{b.amount}) — {b.payment_status?.toLowerCase().replace(/_/g, " ") || "N/A"}</p>
+                <p className="text-xs text-muted-foreground mb-1">🟩 {Math.round(b.amount / 0.04).toLocaleString()} {t("uiMyRequests.coins")}{b.amount}) — {b.payment_status?.toLowerCase().replace(/_/g, " ") || "N/A"}</p>
               )}
 
               {(b.status === "CONFIRMED" || b.status === "ACCEPTED") && (
                 <Link to={`/call/${b.id}`} className="inline-flex items-center gap-1 text-xs text-primary hover:underline mb-2">
-                  <Video className="h-3 w-3" /> Join call room <ExternalLink className="h-3 w-3" />
+                  <Video className="h-3 w-3" /> {t("uiMyRequests.joinCallRoom")} <ExternalLink className="h-3 w-3" />
                 </Link>
               )}
 
@@ -112,7 +114,7 @@ export default function MyRequests({ bare }: { bare?: boolean }) {
 
               {canCancel && b.status !== "COMPLETED" && (
                 <Button size="sm" variant="outline" onClick={() => cancelBooking(b.id)}>
-                  <X className="h-3.5 w-3.5 mr-1" /> Cancel
+                  <X className="h-3.5 w-3.5 mr-1" /> {t("uiMyRequests.cancel")}
                 </Button>
               )}
             </motion.div>

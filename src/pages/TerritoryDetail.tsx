@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import { GraphView } from "@/components/graph/GraphView";
 import { PiContextSetter } from "@/components/assistant/PiContextSetter";
 
 export default function TerritoryDetail() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -47,8 +49,8 @@ export default function TerritoryDetail() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <MapPin className="h-10 w-10 text-muted-foreground" />
-        <p className="text-muted-foreground">Territory not found</p>
-        <Link to="/explore" className="text-sm text-primary hover:underline">← Back to Explore</Link>
+        <p className="text-muted-foreground">{t("uiTerritoryDetail.territoryNotFound")}</p>
+        <Link to="/explore" className="text-sm text-primary hover:underline">{t("uiTerritoryDetail.backToExplore")}</Link>
       </div>
     );
   }
@@ -69,7 +71,7 @@ export default function TerritoryDetail() {
           onClick={() => window.history.length > 1 ? navigate(-1) : navigate("/explore")}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back
+          <ArrowLeft className="h-3.5 w-3.5" /> {t("uiTerritoryDetail.back")}
         </button>
 
         {/* Header */}
@@ -100,7 +102,7 @@ export default function TerritoryDetail() {
                 className="gap-1.5"
               >
                 <Heart className={cn("h-3.5 w-3.5", isFollowing && "fill-current")} />
-                {isFollowing ? "Following" : "Follow"}
+                {isFollowing ? "Following" : t("uiTerritoryDetail.follow")}
               </Button>
               <ShareLinkButton entityType="territory" entityId={territory.id} entityName={territory.name} />
             </div>
@@ -111,7 +113,7 @@ export default function TerritoryDetail() {
         <SectionBanner {...HINTS.banners.territoryFirst} />
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="overview">{t("uiTerritoryDetail.overview")}</TabsTrigger>
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="ecosystem">Ecosystem <HintTooltip {...HINTS.tooltips.territoryEcosystem} /></TabsTrigger>
             <TabsTrigger value="living"><Leaf className="h-3.5 w-3.5 mr-1" /> Living <HintTooltip {...HINTS.tooltips.territoryLiving} /></TabsTrigger>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -279,6 +280,7 @@ function useExploreUsersMap(filters: {
 // ─── Component ───────────────────────────────────────────────
 
 export default function ExploreUsers({ bare }: { bare?: boolean }) {
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("newest");
@@ -326,7 +328,7 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
           <Input
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-            placeholder={isLoggedIn ? "Search by name, headline, or bio…" : "Search by first name…"}
+            placeholder={isLoggedIn ? t("uiExploreUsers.searchByNameHeadlineOrBio") : t("uiExploreUsers.searchByFirstName")}
             className="pl-9"
           />
         </div>
@@ -337,13 +339,13 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="relevance">A–Z</SelectItem>
-            <SelectItem value="xp">Most XP</SelectItem>
+            <SelectItem value="xp">{t("uiExploreUsers.mostXp")}</SelectItem>
             <SelectItem value="newest">Newest</SelectItem>
           </SelectContent>
         </Select>
         <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as "grid" | "map")} className="border rounded-md">
-          <ToggleGroupItem value="grid" aria-label="Grid view" className="px-2.5"><LayoutGrid className="h-4 w-4" /></ToggleGroupItem>
-          <ToggleGroupItem value="map" aria-label="Map view" className="px-2.5"><Map className="h-4 w-4" /></ToggleGroupItem>
+          <ToggleGroupItem value="grid" aria-label={t("uiExploreUsers.gridView")} className="px-2.5"><LayoutGrid className="h-4 w-4" /></ToggleGroupItem>
+          <ToggleGroupItem value="map" aria-label={t("uiExploreUsers.mapView")} className="px-2.5"><Map className="h-4 w-4" /></ToggleGroupItem>
         </ToggleGroup>
       </div>
 
@@ -370,7 +372,7 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
       )}
 
       <p className="text-sm text-muted-foreground">
-        {isLoading ? "Loading…" : `${total} user${total !== 1 ? "s" : ""} found`}
+        {isLoading ? t("uiExploreUsers.loading") : `${total} user${total !== 1 ? "s" : ""} found`}
       </p>
 
       {isLoading || (viewMode === "map" && mapLoading) ? (
@@ -386,8 +388,8 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
       ) : users.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground">
           <Users className="h-10 w-10 mx-auto mb-3 opacity-40" />
-          <p className="font-medium">No humans found</p>
-          <p className="text-sm mt-1">Try adjusting your filters or search query.</p>
+          <p className="font-medium">{t("uiExploreUsers.noHumansFound")}</p>
+          <p className="text-sm mt-1">{t("uiExploreUsers.tryAdjustingYourFiltersOrSearch")}</p>
         </div>
       ) : (
         <UserCardGrid users={users} isLoggedIn={isLoggedIn} />
@@ -397,7 +399,7 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
         <div className="flex justify-center gap-2 pt-4">
           <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>Previous</Button>
           <span className="flex items-center text-sm text-muted-foreground px-3">Page {page + 1} of {totalPages}</span>
-          <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>Next</Button>
+          <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>{t("uiExploreUsers.next")}</Button>
         </div>
       )}
     </div>
@@ -411,7 +413,7 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
           <Users className="h-7 w-7 text-primary" /> Discover People
         </h1>
-        <p className="text-muted-foreground mt-1">Browse and connect with community members.</p>
+        <p className="text-muted-foreground mt-1">{t("uiExploreUsers.browseAndConnectWithCommunityMembers")}</p>
       </div>
       {content}
     </PageShell>
@@ -438,6 +440,7 @@ function UserCardGrid({ users, isLoggedIn }: { users: ExploreUser[]; isLoggedIn:
 // ─── User Card ───────────────────────────────────────────────
 
 function UserCard({ user, isLoggedIn, isFollowed = false, trustSummary }: { user: ExploreUser; isLoggedIn: boolean; isFollowed?: boolean; trustSummary?: import("@/hooks/useTrustSummary").TrustSummary }) {
+  const { t } = useTranslation();
   const displayName = isLoggedIn ? user.name : redactName(user.name);
   const personaLabel = PERSONA_LABELS[user.persona_type];
 
@@ -506,7 +509,7 @@ function UserCard({ user, isLoggedIn, isFollowed = false, trustSummary }: { user
         </div>
       )}
       {!isLoggedIn && (
-        <p className="text-[10px] text-muted-foreground mt-3 italic">Log in to see full profile & connect</p>
+        <p className="text-[10px] text-muted-foreground mt-3 italic">{t("uiExploreUsers.logInToSeeFullProfile")}</p>
       )}
     </Link>
   );

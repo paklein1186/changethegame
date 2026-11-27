@@ -99,7 +99,7 @@ export default function CompaniesList({ bare, hideFilters, externalFilters }: { 
                   {isLoggedIn ? (
                     company.description && <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{company.description}</p>
                   ) : (
-                    <p className="text-sm text-muted-foreground mb-3 italic">Log in to see details</p>
+                    <p className="text-sm text-muted-foreground mb-3 italic">{t("uiCompaniesList.logInToSeeDetails")}</p>
                   )}
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {cTerrs.map((t: any) => <Badge key={t.id} variant="outline" className="text-[10px]"><MapPin className="h-2.5 w-2.5 mr-0.5" />{t.name}</Badge>)}
@@ -112,7 +112,7 @@ export default function CompaniesList({ bare, hideFilters, externalFilters }: { 
             </motion.div>
           );
         })}
-        {!isLoading && filtered.length === 0 && <p className="col-span-full text-center text-muted-foreground py-12">No traditional organizations match your filters.</p>}
+        {!isLoading && filtered.length === 0 && <p className="col-span-full text-center text-muted-foreground py-12">{t("uiCompaniesList.noTraditionalOrganizationsMatchYourFilters")}</p>}
       </div>
     </PageShell>
   );

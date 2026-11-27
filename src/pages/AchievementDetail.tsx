@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Star, Compass, Calendar } from "lucide-react";
@@ -11,18 +12,19 @@ import { useAchievementById, usePublicProfile, useQuestById } from "@/hooks/useE
 import { formatDistanceToNow } from "date-fns";
 
 export default function AchievementDetail() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data: achievement, isLoading } = useAchievementById(id);
   const { data: user } = usePublicProfile(achievement?.user_id);
   const { data: quest } = useQuestById(achievement?.quest_id ?? undefined);
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!achievement) return <PageShell><p>Achievement not found.</p></PageShell>;
+  if (isLoading) return <PageShell><p>{t("uiAchievementDetail.loading")}</p></PageShell>;
+  if (!achievement) return <PageShell><p>{t("uiAchievementDetail.achievementNotFound")}</p></PageShell>;
 
   return (
     <PageShell>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/users/${achievement.user_id}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to Profile</Link>
+        <Link to={`/users/${achievement.user_id}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiAchievementDetail.backToProfile")}</Link>
       </Button>
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
@@ -55,7 +57,7 @@ export default function AchievementDetail() {
         {quest && (
           <div className="rounded-lg border border-border bg-card p-3 inline-flex items-center gap-2">
             <Compass className="h-4 w-4 text-primary" />
-            <span className="text-sm">Quest:</span>
+            <span className="text-sm">{t("uiAchievementDetail.quest")}</span>
             <Link to={`/quests/${quest.id}`} className="text-sm font-medium hover:text-primary transition-colors">
               {quest.title}
             </Link>

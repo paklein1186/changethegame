@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -36,6 +37,7 @@ interface UnitWalletTabProps {
 }
 
 export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: UnitWalletTabProps) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();
   const [buyLoading, setBuyLoading] = useState<string | null>(null);
@@ -73,7 +75,7 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiUnitWalletTab.error"), description: err.message, variant: "destructive" });
     } finally {
       setBuyLoading(null);
     }
@@ -82,23 +84,23 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
   return (
     <div className="space-y-6 max-w-lg">
       {/* Balance */}
-      <Section title="Unit Credits" icon={<CurrencyIcon currency="credits" className="h-5 w-5" />}>
+      <Section title={t("uiUnitWalletTab.unitCredits")} icon={<CurrencyIcon currency="credits" className="h-5 w-5" />}>
         <div className="flex flex-wrap items-center gap-4 mb-3">
           <div className="inline-flex items-center gap-2 rounded-xl border-2 border-primary/30 bg-primary/5 px-6 py-3">
             <CurrencyIcon currency="credits" className="h-6 w-6" />
             <div>
               <p className="text-2xl font-bold">{creditsBalance}</p>
-              <p className="text-xs text-muted-foreground">Credits</p>
+              <p className="text-xs text-muted-foreground">{t("uiUnitWalletTab.credits")}</p>
             </div>
           </div>
           {unitType === "GUILD" && (
             <Button variant="outline" size="sm" onClick={() => setTransferOpen(true)}>
-              <Send className="h-4 w-4 mr-1" /> Send to Member
+              <Send className="h-4 w-4 mr-1" /> {t("uiUnitWalletTab.sendToMember")}
             </Button>
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          These credits belong to <strong>{unitName}</strong> and can be used for quests, events, or services hosted by this unit.
+          {t("uiUnitWalletTab.theseCreditsBelongTo")} <strong>{unitName}</strong> {t("uiUnitWalletTab.andCanBeUsedForQuests")}
         </p>
 
         {unitType === "GUILD" && (
@@ -115,12 +117,12 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
       <Separator />
 
       {/* Buy credits */}
-      <Section title="Buy Credits for this Unit" icon={<Package className="h-5 w-5" />}>
+      <Section title={t("uiUnitWalletTab.buyCreditsForThisUnit")} icon={<Package className="h-5 w-5" />}>
         <div className="grid gap-3 md:grid-cols-3">
           {CREDIT_BUNDLES.map((b) => (
             <div key={b.code} className="rounded-lg border border-border bg-card p-4 text-center">
               <Package className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <p className="font-bold">{b.credits} Credits</p>
+              <p className="font-bold">{b.credits} {t("uiUnitWalletTab.credits")}</p>
               <p className="text-lg font-bold">€{b.priceEur}</p>
               <p className="text-xs text-muted-foreground mb-2">€{(b.priceEur / b.credits).toFixed(3)}/credit</p>
               <Button size="sm" className="w-full" onClick={() => handleBuyCredits(b.code)} disabled={!!buyLoading}>
@@ -141,7 +143,7 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
           <Select value={txFilter} onValueChange={setTxFilter}>
             <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="all">{t("uiUnitWalletTab.all")}</SelectItem>
               <SelectItem value="earned">Earned</SelectItem>
               <SelectItem value="spent">Spent</SelectItem>
             </SelectContent>
@@ -151,7 +153,7 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
         {txLoading ? (
           <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
         ) : filteredTx.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4 text-center">No transactions yet.</p>
+          <p className="text-sm text-muted-foreground py-4 text-center">{t("uiUnitWalletTab.noTransactionsYet")}</p>
         ) : (
           <div className="space-y-1">
             {filteredTx.map((tx: any) => (
@@ -183,7 +185,7 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
 
       <div className="rounded-lg border border-border bg-muted/30 p-4">
         <p className="text-xs text-muted-foreground flex items-center gap-1">
-          <Info className="h-3 w-3" /> Unit credits can fund quests created by this unit. When a quest is completed, earned 🌱 $CTG tokens go to participants' wallets.
+          <Info className="h-3 w-3" /> {t("uiUnitWalletTab.unitCreditsCanFundQuestsCreated")}
         </p>
       </div>
     </div>

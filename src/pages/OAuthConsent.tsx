@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Loader2, ShieldCheck } from "lucide-react";
@@ -14,6 +15,7 @@ type OAuthNamespace = {
 const oauth = () => (supabase.auth as unknown as { oauth: OAuthNamespace }).oauth;
 
 export default function OAuthConsent() {
+  const { t } = useTranslation();
   const [params] = useSearchParams();
   const authorizationId = params.get("authorization_id") ?? "";
   const [details, setDetails] = useState<any>(null);
@@ -86,7 +88,7 @@ export default function OAuthConsent() {
           </div>
         ) : !details ? (
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading authorization request…
+            <Loader2 className="h-4 w-4 animate-spin" /> {t("uiOAuthConsent.loadingAuthorizationRequest")}
           </div>
         ) : (
           <>
@@ -96,14 +98,12 @@ export default function OAuthConsent() {
                 Connect {clientName}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {clientName} is asking to use changethegame as you. It will be able to read your
-                profile, quests, guilds and tasks, and manage your personal to-do list — nothing you
-                cannot already see or do yourself.
+                {clientName} {t("uiOAuthConsent.isAskingToUseChangethegameAs")}
               </p>
             </div>
             <div className="flex gap-3">
               <Button className="flex-1" disabled={busy} onClick={() => decide(true)}>
-                {busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} Approve
+                {busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t("uiOAuthConsent.approve")}
               </Button>
               <Button variant="outline" className="flex-1" disabled={busy} onClick={() => decide(false)}>
                 Deny

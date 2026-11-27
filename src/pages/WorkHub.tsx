@@ -132,7 +132,7 @@ export default function WorkHub() {
             { value: "services", label: <><span className="hidden sm:inline">{t("work.services")}</span><span className="sm:hidden">{t("tabs.services")}</span> ({servicesList.length})</> },
             { value: "bookings", label: <>{t("tabs.bookings")}<HintTooltip {...HINTS.tooltips.workBookings} /></> },
             { value: "calendar", label: <><Calendar className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Calendar</span></> },
-            { value: "contributions", label: <><Scale className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Contributions</span></> },
+            { value: "contributions", label: <><Scale className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiWorkHub.contributions")}</span></> },
             { value: "drafts", label: <>{t("tabs.drafts")} ({drafts ? totalDrafts : "…"})</> },
           ];
           return <WorkTabsListInner tabs={workTabs} />;
@@ -153,7 +153,7 @@ export default function WorkHub() {
             {nonIdeaQuests.map((qp: any, i: number) => (
               <motion.div key={qp.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="relative">
                 <Link to={`/quests/${qp.quest_id}`} className="flex gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-all">
-                  <Thumb src={qp.quests?.cover_image_url} fallback={questPattern} alt={qp.quests?.title || "Quest"} />
+                  <Thumb src={qp.quests?.cover_image_url} fallback={questPattern} alt={qp.quests?.title || t("uiWorkHub.quest")} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <h4 className="font-display font-semibold truncate">{qp.quests?.title}</h4>
@@ -188,8 +188,8 @@ export default function WorkHub() {
           {!questsLoading && ideasList.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Lightbulb className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground mb-4">No ideas yet. Create a quest with "Idea" status to get started!</p>
-              <Button asChild><Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> Create Idea</Link></Button>
+              <p className="text-muted-foreground mb-4">{t("uiWorkHub.noIdeasYetCreateAQuest")}</p>
+              <Button asChild><Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> {t("uiWorkHub.createIdea")}</Link></Button>
             </div>
           )}
           <div className="grid gap-3 md:grid-cols-2">
@@ -288,7 +288,7 @@ export default function WorkHub() {
         {/* ── Drafts ── */}
         <TabsContent value="drafts">
           {draftsLoading && <WorkListLoading />}
-          {!draftsLoading && totalDrafts === 0 && <p className="text-muted-foreground">No drafts.</p>}
+          {!draftsLoading && totalDrafts === 0 && <p className="text-muted-foreground">{t("uiWorkHub.noDrafts")}</p>}
           <div className="space-y-6">
             {(drafts?.quests || []).length > 0 && (
               <div>
@@ -301,7 +301,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{q.title}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{q.description}</p>
                         </div>
@@ -322,7 +322,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{g.name}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{g.description}</p>
                         </div>
@@ -343,7 +343,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{p.name}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{p.description}</p>
                         </div>
@@ -364,7 +364,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{s.title}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{s.description}</p>
                         </div>

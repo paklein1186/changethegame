@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { type LucideIcon, Circle, Droplet, Sprout, Anchor, Leaf, GitBranch, Flower2, TreePine, Wheat, Sparkles, Waypoints, TreeDeciduous, Shield, ShieldCheck, Trees } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -32,6 +33,7 @@ const LEVEL_VISUALS: Record<number, { icon: LucideIcon; color: string }> = {
 };
 
 export function XpLevelBadge({ level, xp, compact }: XpLevelBadgeProps) {
+  const { t } = useTranslation();
   const levelLabel = LEVEL_LABELS[level] || `Level ${level}`;
   const { label: pLabel } = usePersona();
   const xpWord = pLabel("xp.label");
@@ -54,7 +56,7 @@ export function XpLevelBadge({ level, xp, compact }: XpLevelBadgeProps) {
           </TooltipTrigger>
           <TooltipContent>
             <p className="text-xs">{levelLabel}{xp != null ? ` · ${xp} ${xpWord}` : ""}</p>
-            <p className="text-[10px] text-muted-foreground">Click to learn about levels</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiXpLevelBadge.clickToLearnAboutLevels")}</p>
           </TooltipContent>
         </Tooltip>
         <XpLadderModal open={modalOpen} onOpenChange={setModalOpen} currentLevel={level} currentXp={xp} />

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,7 @@ interface EntityRow {
 }
 
 export function FollowedEntitiesDialog({ open, onOpenChange, userId, entityType }: FollowedEntitiesDialogProps) {
+  const { t } = useTranslation();
   const { data: entities = [], isLoading } = useQuery({
     queryKey: ["followed-entities", userId, entityType],
     queryFn: async () => {
@@ -77,7 +79,7 @@ export function FollowedEntitiesDialog({ open, onOpenChange, userId, entityType 
             </div>
           ) : entities.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              No {entityType.toLowerCase()}s followed yet
+              {t("uiFollowedEntitiesDialog.no")} {entityType.toLowerCase()}{t("uiFollowedEntitiesDialog.sFollowedYet")}
             </p>
           ) : (
             entities.map((e) => (

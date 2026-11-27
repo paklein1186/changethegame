@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { attachEmails } from "@/lib/profileEmails";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -37,6 +38,7 @@ interface RecipientRow {
 }
 
 export function BroadcastHistoryPanel() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [previewBroadcast, setPreviewBroadcast] = useState<BroadcastRow | null>(null);
@@ -89,8 +91,8 @@ export function BroadcastHistoryPanel() {
   const statusBadge = (status: string) => {
     switch (status) {
       case "sent": return <Badge variant="default" className="gap-1 text-xs"><CheckCircle2 className="h-3 w-3" /> Sent</Badge>;
-      case "failed": return <Badge variant="destructive" className="gap-1 text-xs"><XCircle className="h-3 w-3" /> Failed</Badge>;
-      default: return <Badge variant="secondary" className="gap-1 text-xs"><Clock className="h-3 w-3" /> Pending</Badge>;
+      case "failed": return <Badge variant="destructive" className="gap-1 text-xs"><XCircle className="h-3 w-3" /> {t("uiBroadcastHistoryPanel.failed")}</Badge>;
+      default: return <Badge variant="secondary" className="gap-1 text-xs"><Clock className="h-3 w-3" /> {t("uiBroadcastHistoryPanel.pending")}</Badge>;
     }
   };
 
@@ -107,7 +109,7 @@ export function BroadcastHistoryPanel() {
     return (
       <div className="rounded-lg border border-dashed p-6 text-center text-muted-foreground">
         <Megaphone className="h-8 w-8 mx-auto mb-2 opacity-40" />
-        <p className="text-sm">No broadcasts sent yet.</p>
+        <p className="text-sm">{t("uiBroadcastHistoryPanel.noBroadcastsSentYet")}</p>
       </div>
     );
   }
@@ -128,8 +130,8 @@ export function BroadcastHistoryPanel() {
               <TableHead>Sender</TableHead>
               <TableHead className="text-center">Recipients</TableHead>
               <TableHead className="text-center">Sent</TableHead>
-              <TableHead className="text-center">Failed</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead className="text-center">{t("uiBroadcastHistoryPanel.failed")}</TableHead>
+              <TableHead>{t("uiBroadcastHistoryPanel.date")}</TableHead>
               <TableHead className="w-8" />
             </TableRow>
           </TableHeader>
@@ -163,7 +165,7 @@ export function BroadcastHistoryPanel() {
                         size="sm"
                         variant="ghost"
                         onClick={(e) => { e.stopPropagation(); setPreviewBroadcast(b); }}
-                        title="View message"
+                        title={t("uiBroadcastHistoryPanel.viewMessage")}
                       >
                         <FileText className="h-4 w-4" />
                       </Button>
@@ -178,7 +180,7 @@ export function BroadcastHistoryPanel() {
                               <TableRow>
                                 <TableHead>Recipient</TableHead>
                                 <TableHead>Email</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>{t("uiBroadcastHistoryPanel.status")}</TableHead>
                                 <TableHead>Delivered</TableHead>
                                 <TableHead>Read</TableHead>
                               </TableRow>
@@ -203,7 +205,7 @@ export function BroadcastHistoryPanel() {
                                         {format(new Date(r.read_at), "MMM d, HH:mm")}
                                       </span>
                                     ) : (
-                                      <span className="text-xs text-muted-foreground">Not read</span>
+                                      <span className="text-xs text-muted-foreground">{t("uiBroadcastHistoryPanel.notRead")}</span>
                                     )}
                                   </TableCell>
                                 </TableRow>
@@ -211,7 +213,7 @@ export function BroadcastHistoryPanel() {
                               {(!recipients || recipients.length === 0) && (
                                 <TableRow>
                                   <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-4">
-                                    Loading recipients…
+                                    {t("uiBroadcastHistoryPanel.loadingRecipients")}
                                   </TableCell>
                                 </TableRow>
                               )}
@@ -238,7 +240,7 @@ export function BroadcastHistoryPanel() {
             </DialogTitle>
           </DialogHeader>
           <div className="text-xs text-muted-foreground flex items-center gap-3">
-            <span>From: {previewBroadcast?.sender_label}</span>
+            <span>{t("uiBroadcastHistoryPanel.from")} {previewBroadcast?.sender_label}</span>
             <span>{previewBroadcast && format(new Date(previewBroadcast.created_at), "MMM d, yyyy · HH:mm")}</span>
             <Badge variant="outline" className="gap-1"><Users className="h-3 w-3" />{previewBroadcast?.total_recipients}</Badge>
           </div>

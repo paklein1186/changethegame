@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Heart, Users, Globe, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 
 /** User's personal give-back history for wallet/dashboard */
 export function GiveBackHistory() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
 
@@ -37,13 +39,13 @@ export function GiveBackHistory() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-lg font-semibold flex items-center gap-2">
-          <Heart className="h-5 w-5 text-primary" /> My Give-back Contributions
+          <Heart className="h-5 w-5 text-primary" /> {t("uiGiveBackHistory.myGiveBackContributions")}
         </h3>
-        <Badge variant="secondary" className="text-xs">{totalCredits} Platform Credits total • {donations.length} donations</Badge>
+        <Badge variant="secondary" className="text-xs">{totalCredits} {t("uiGiveBackHistory.platformCreditsTotal")} {donations.length} donations</Badge>
       </div>
 
       {donations.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-4 text-center">No give-back contributions yet.</p>
+        <p className="text-sm text-muted-foreground py-4 text-center">{t("uiGiveBackHistory.noGiveBackContributionsYet")}</p>
       ) : (
         <div className="space-y-1">
           {donations.map((d: any) => (
@@ -56,10 +58,10 @@ export function GiveBackHistory() {
                 )}
                 <div>
                   <p className="text-sm font-medium">
-                    {d.to_target_type === "GUILD" ? d.guilds?.name || "Guild" : "Platform"}
+                    {d.to_target_type === "GUILD" ? d.guilds?.name || t("uiGiveBackHistory.guild") : "Platform"}
                   </p>
                   {d.metadata?.service_name && (
-                    <p className="text-xs text-muted-foreground">From: {d.metadata.service_name}</p>
+                    <p className="text-xs text-muted-foreground">{t("uiGiveBackHistory.from")} {d.metadata.service_name}</p>
                   )}
                 </div>
               </div>
@@ -79,6 +81,7 @@ export function GiveBackHistory() {
 
 /** Guild received give-backs (for guild admins) */
 export function GuildGiveBackReceived({ guildId }: { guildId: string }) {
+  const { t } = useTranslation();
   const { data: donations = [], isLoading } = useQuery({
     queryKey: ["guild-giveback-received", guildId],
     enabled: !!guildId,
@@ -104,18 +107,18 @@ export function GuildGiveBackReceived({ guildId }: { guildId: string }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="font-display text-base font-semibold flex items-center gap-2">
-          <Heart className="h-4 w-4 text-primary" /> Give-back Received
+          <Heart className="h-4 w-4 text-primary" /> {t("uiGiveBackHistory.giveBackReceived")}
         </h4>
-        <Badge variant="secondary" className="text-xs">{totalCredits} Platform Credits</Badge>
+        <Badge variant="secondary" className="text-xs">{totalCredits} {t("uiGiveBackHistory.platformCredits")}</Badge>
       </div>
       {donations.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No give-back contributions received yet.</p>
+        <p className="text-sm text-muted-foreground">{t("uiGiveBackHistory.noGiveBackContributionsReceivedYet")}</p>
       ) : (
         <div className="space-y-1">
           {donations.map((d: any) => (
             <div key={d.id} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50 transition-colors">
               <div>
-                <p className="text-sm font-medium">{(d.profiles as any)?.name || "Member"}</p>
+                <p className="text-sm font-medium">{(d.profiles as any)?.name || t("uiGiveBackHistory.member")}</p>
                 {d.metadata?.service_name && (
                   <p className="text-xs text-muted-foreground">{d.metadata.service_name}</p>
                 )}
@@ -134,6 +137,7 @@ export function GuildGiveBackReceived({ guildId }: { guildId: string }) {
 
 /** Admin platform give-back view */
 export function PlatformGiveBackAdmin() {
+  const { t } = useTranslation();
   const { data: donations = [], isLoading } = useQuery({
     queryKey: ["platform-giveback-admin"],
     queryFn: async () => {
@@ -157,12 +161,12 @@ export function PlatformGiveBackAdmin() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="font-display text-base font-semibold flex items-center gap-2">
-          <Heart className="h-4 w-4 text-primary" /> Platform Give-back
+          <Heart className="h-4 w-4 text-primary" /> {t("uiGiveBackHistory.platformGiveBack")}
         </h4>
-        <Badge variant="secondary" className="text-xs">{totalCredits} Platform Credits total</Badge>
+        <Badge variant="secondary" className="text-xs">{totalCredits} {t("uiGiveBackHistory.platformCreditsTotal2")}</Badge>
       </div>
       {donations.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No give-back contributions to the platform yet.</p>
+        <p className="text-sm text-muted-foreground">{t("uiGiveBackHistory.noGiveBackContributionsToThe")}</p>
       ) : (
         <div className="space-y-1">
           {donations.map((d: any) => (

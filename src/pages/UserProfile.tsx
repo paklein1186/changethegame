@@ -80,6 +80,7 @@ function PersonaBadge({ persona }: { persona: PersonaType }) {
 
 // ─── Unified XP Widget ─────────────────────────────────────
 function XpWidget({ xp, xpRecent12m, level, userId }: { xp: number; xpRecent12m: number; level: number; userId: string }) {
+  const { t } = useTranslation();
   const current = XP_LEVEL_THRESHOLDS.find((t) => t.level === level);
   const next = XP_LEVEL_THRESHOLDS.find((t) => t.level === level + 1);
   const levelLabel = LEVEL_LABELS[level] || `Level ${level}`;
@@ -103,7 +104,7 @@ function XpWidget({ xp, xpRecent12m, level, userId }: { xp: number; xpRecent12m:
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="text-xs">{xp} XP total · {xpRecent12m} earned in the last 12 months</p>
+              <p className="text-xs">{xp} {t("uiUserProfile.xpTotal")} {xpRecent12m} {t("uiUserProfile.earnedInTheLast12Months")}</p>
             </TooltipContent>
           </Tooltip>
         )}
@@ -111,10 +112,10 @@ function XpWidget({ xp, xpRecent12m, level, userId }: { xp: number; xpRecent12m:
         {isMaxLevel && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="text-[10px] text-muted-foreground">Max level · {xp} XP</span>
+              <span className="text-[10px] text-muted-foreground">{t("uiUserProfile.maxLevel")} {xp} XP</span>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="text-xs">{xpRecent12m} XP earned in the last 12 months</p>
+              <p className="text-xs">{xpRecent12m} {t("uiUserProfile.xpEarnedInTheLast12")}</p>
             </TooltipContent>
           </Tooltip>
         )}
@@ -148,12 +149,13 @@ function SocialRow({ profile }: { profile: ProfileData }) {
 const BIO_CLAMP_LINES = 4;
 
 function AboutSection({ bio }: { bio: string }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const isLong = bio.length > 200;
 
   return (
     <section>
-      <h2 className="font-display text-lg font-semibold mb-2">About</h2>
+      <h2 className="font-display text-lg font-semibold mb-2">{t("uiUserProfile.about")}</h2>
       <p
         className={cn(
           "text-sm text-foreground/80 leading-relaxed whitespace-pre-line",
@@ -167,7 +169,7 @@ function AboutSection({ bio }: { bio: string }) {
           onClick={() => setExpanded(!expanded)}
           className="text-xs text-primary hover:underline mt-1 font-medium"
         >
-          {expanded ? "Show less" : "Read more"}
+          {expanded ? t("uiUserProfile.showLess") : t("uiUserProfile.readMore")}
         </button>
       )}
     </section>
@@ -476,7 +478,7 @@ function UserProfileInner() {
     return <PageShell><div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></PageShell>;
   }
   if (!profile || isError) {
-    return <PageShell><p className="text-center py-20 text-muted-foreground">User not found.</p></PageShell>;
+    return <PageShell><p className="text-center py-20 text-muted-foreground">{t("uiUserProfile.userNotFound")}</p></PageShell>;
   }
 
   const persona = profile.personaType;
@@ -488,7 +490,7 @@ function UserProfileInner() {
     <PageShell>
       <div onClickCapture={handleGuestClick}>
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiUserProfile.back")}
       </Button>
 
       {/* ═══ Identity Banner ═══ */}
@@ -538,10 +540,10 @@ function UserProfileInner() {
               {isOwnProfile ? (
                 <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
                   <Button size="sm" variant="outline" asChild>
-                    <Link to="/me"><Pencil className="h-4 w-4 mr-1" /> Edit profile</Link>
+                    <Link to="/me"><Pencil className="h-4 w-4 mr-1" /> {t("uiUserProfile.editProfile")}</Link>
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => setShowCreateUnit(true)}>
-                    <Plus className="h-4 w-4 mr-1" /> Add entity
+                    <Plus className="h-4 w-4 mr-1" /> {t("uiUserProfile.addEntity")}
                   </Button>
                   <ShareLinkButton entityType="profile" entityId={profile.userId} entityName={profile.name} />
                   <Button size="sm" variant="ghost" asChild>
@@ -559,7 +561,7 @@ function UserProfileInner() {
                     <MessageSquare className="h-4 w-4 mr-1" /> Message
                   </Button>
                   <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => requireAuth(toggleFollow, "follow this user")}>
-                    {isFollowing ? <><UserMinus className="h-4 w-4 mr-1" /> Unfollow</> : <><UserPlus className="h-4 w-4 mr-1" /> Follow</>}
+                    {isFollowing ? <><UserMinus className="h-4 w-4 mr-1" /> Unfollow</> : <><UserPlus className="h-4 w-4 mr-1" /> {t("uiUserProfile.follow")}</>}
                   </Button>
                   {isLoggedIn && (
                     <Button size="sm" variant={isBlocked ? "destructive" : "outline"} onClick={toggleBlock}>
@@ -624,7 +626,7 @@ function UserProfileInner() {
                   )}
                   {topicsExpanded && (creativeHouses.length > 4 || impactTopics.length > 6) && (
                     <button onClick={() => setTopicsExpanded(false)} className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
-                      Show less
+                      {t("uiUserProfile.showLess")}
                     </button>
                   )}
                 </>
@@ -642,11 +644,11 @@ function UserProfileInner() {
               <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 flex items-center gap-3">
                 <Sparkles className="h-5 w-5 text-primary shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">Your profile looks a bit empty!</p>
-                  <p className="text-xs text-muted-foreground">Add topics, houses and territories to get better recommendations and connect with the right people.</p>
+                  <p className="text-sm font-medium">{t("uiUserProfile.yourProfileLooksABitEmpty")}</p>
+                  <p className="text-xs text-muted-foreground">{t("uiUserProfile.addTopicsHousesAndTerritoriesTo")}</p>
                 </div>
                 <Button size="sm" variant="default" asChild>
-                  <Link to="/profile/enrich">Enrich profile</Link>
+                  <Link to="/profile/enrich">{t("uiUserProfile.enrichProfile")}</Link>
                 </Button>
               </div>
             )}
@@ -657,16 +659,16 @@ function UserProfileInner() {
       {/* ═══ Tab Navigation ═══ */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-5 h-auto w-full justify-start flex-wrap gap-1 rounded-lg p-1">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="overview">{t("uiUserProfile.overview")}</TabsTrigger>
           <TabsTrigger value="wall">Wall</TabsTrigger>
-          <TabsTrigger value="quests">Quests</TabsTrigger>
+          <TabsTrigger value="quests">{t("uiUserProfile.quests")}</TabsTrigger>
           <TabsTrigger value="services">{serviceLabel}</TabsTrigger>
-          <TabsTrigger value="territories"><Globe className="h-3.5 w-3.5 mr-1" /> Territories</TabsTrigger>
+          <TabsTrigger value="territories"><Globe className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.territories")}</TabsTrigger>
           <TabsTrigger value="entities">Entities</TabsTrigger>
           <TabsTrigger value="trust"><Shield className="h-3.5 w-3.5 mr-1" /> Trust</TabsTrigger>
           <TabsTrigger value="living"><Leaf className="h-3.5 w-3.5 mr-1" /> Living</TabsTrigger>
           <TabsTrigger value="graph"><Compass className="h-3.5 w-3.5 mr-1" /> Graph</TabsTrigger>
-          {isOwnProfile && <TabsTrigger value="contributions"><CurrencyIcon currency="coins" className="h-3.5 w-3.5 mr-1" /> Contributions</TabsTrigger>}
+          {isOwnProfile && <TabsTrigger value="contributions"><CurrencyIcon currency="coins" className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.contributions")}</TabsTrigger>}
           {isOwnProfile && <TabsTrigger value="matchmaker"><Sparkles className="h-3.5 w-3.5 mr-1" /> Matchmaker</TabsTrigger>}
           {isOwnProfile && <TabsTrigger value="agents"><Bot className="h-3.5 w-3.5 mr-1" /> {t("profileAgents.tab")}</TabsTrigger>}
         </TabsList>
@@ -682,7 +684,7 @@ function UserProfileInner() {
               <section>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-display font-semibold">Entities ({totalEntities})</h3>
-                  <Button size="sm" variant="ghost" onClick={() => setTab("entities")} className="text-xs">View all →</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setTab("entities")} className="text-xs">{t("uiUserProfile.viewAll")}</Button>
                 </div>
                 <div className="grid gap-3 md:grid-cols-3">
                   {filteredGuilds.slice(0, 2).map((gm: any) => (
@@ -751,11 +753,11 @@ function UserProfileInner() {
             <div className="flex flex-wrap gap-3">
               {followersCount > 0 && <StatCard icon={UserPlus} label="Followers" count={followersCount} onClick={() => setFollowDialogMode("followers")} />}
               {followingCount > 0 && <StatCard icon={Users} label="Following people" count={followingCount} onClick={() => setFollowDialogMode("following")} />}
-              {filteredQuestsCreated.length > 0 && <StatCard icon={Compass} label="Quests created" count={filteredQuestsCreated.length} onClick={() => setListDialog("quests-created")} />}
-              {filteredQuestsJoined.length > 0 && <StatCard icon={Compass} label="Quests joined" count={filteredQuestsJoined.length} onClick={() => setListDialog("quests-joined")} />}
-              {filteredGuilds.length > 0 && <StatCard icon={Shield} label="Guilds" count={filteredGuilds.length} onClick={() => setListDialog("guilds")} />}
-              {followedGuildsCount > 0 && <StatCard icon={Shield} label="Guilds followed" count={followedGuildsCount} onClick={() => setFollowedEntityDialog("GUILD")} />}
-              {followedQuestsCount > 0 && <StatCard icon={Compass} label="Quests followed" count={followedQuestsCount} onClick={() => setFollowedEntityDialog("QUEST")} />}
+              {filteredQuestsCreated.length > 0 && <StatCard icon={Compass} label={t("uiUserProfile.questsCreated")} count={filteredQuestsCreated.length} onClick={() => setListDialog("quests-created")} />}
+              {filteredQuestsJoined.length > 0 && <StatCard icon={Compass} label={t("uiUserProfile.questsJoined")} count={filteredQuestsJoined.length} onClick={() => setListDialog("quests-joined")} />}
+              {filteredGuilds.length > 0 && <StatCard icon={Shield} label={t("uiUserProfile.guilds")} count={filteredGuilds.length} onClick={() => setListDialog("guilds")} />}
+              {followedGuildsCount > 0 && <StatCard icon={Shield} label={t("uiUserProfile.guildsFollowed")} count={followedGuildsCount} onClick={() => setFollowedEntityDialog("GUILD")} />}
+              {followedQuestsCount > 0 && <StatCard icon={Compass} label={t("uiUserProfile.questsFollowed")} count={followedQuestsCount} onClick={() => setFollowedEntityDialog("QUEST")} />}
               {filteredPods.length > 0 && <StatCard icon={CircleDot} label="Pods" count={filteredPods.length} onClick={() => setListDialog("pods")} />}
               {filteredCompanies.length > 0 && <StatCard icon={Building2} label="Organizations" count={filteredCompanies.length} onClick={() => setListDialog("companies")} />}
               {filteredServices.length > 0 && <StatCard icon={Briefcase} label={serviceLabel} count={filteredServices.length} onClick={() => setListDialog("services")} />}
@@ -786,7 +788,7 @@ function UserProfileInner() {
                         <Link key={item.data.id} to={`/quests/${item.data.id}`} className="rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all">
                           <UnitCoverImage type="QUEST" imageUrl={item.data.cover_image_url} height="h-24" />
                           <div className="p-4">
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Quest</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("uiUserProfile.quest")}</p>
                             <h4 className="font-display font-semibold truncate">{item.data.title}</h4>
                             <Badge variant="outline" className="text-[10px] capitalize mt-1">{(item.data.status || "draft").toLowerCase().replace(/_/g, " ")}</Badge>
                           </div>
@@ -816,22 +818,22 @@ function UserProfileInner() {
             {/* Own profile: continue where left off */}
             {isOwnProfile && (
               <section>
-                <h3 className="font-display font-semibold mb-3">Continue where you left off</h3>
+                <h3 className="font-display font-semibold mb-3">{t("uiUserProfile.continueWhereYouLeftOff")}</h3>
                 <div className="space-y-2">
                   {questsCreated.filter((q: any) => q.is_draft).slice(0, 3).map((q: any) => (
                     <Link key={q.id} to={`/quests/${q.id}`} className="flex items-center gap-3 rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-all">
-                      <Badge variant="outline" className="text-[10px]">Draft</Badge>
+                      <Badge variant="outline" className="text-[10px]">{t("uiUserProfile.draft")}</Badge>
                       <span className="text-sm font-medium truncate">{q.title}</span>
                     </Link>
                   ))}
                   {proposals.filter((p: any) => p.status === "PENDING").slice(0, 3).map((p: any) => (
                     <Link key={p.id} to={`/quests/${p.quest_id}`} className="flex items-center gap-3 rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-all">
-                      <Badge variant="secondary" className="text-[10px]">Pending proposal</Badge>
+                      <Badge variant="secondary" className="text-[10px]">{t("uiUserProfile.pendingProposal")}</Badge>
                       <span className="text-sm truncate">{p.title} → {p.quests?.title}</span>
                     </Link>
                   ))}
                   {questsCreated.filter((q: any) => q.is_draft).length === 0 && proposals.filter((p: any) => p.status === "PENDING").length === 0 && (
-                    <p className="text-sm text-muted-foreground">All caught up! 🎉</p>
+                    <p className="text-sm text-muted-foreground">{t("uiUserProfile.allCaughtUp")}</p>
                   )}
                 </div>
               </section>
@@ -840,25 +842,25 @@ function UserProfileInner() {
             {/* Persona empty states */}
             {topics.length === 0 && isOwnProfile && (
               <div className="rounded-xl border border-dashed border-border p-4 text-center">
-                <p className="text-sm text-muted-foreground mb-2">Add Topics to help others understand your fields of action.</p>
+                <p className="text-sm text-muted-foreground mb-2">{t("uiUserProfile.addTopicsToHelpOthersUnderstand")}</p>
                 <Button size="sm" variant="outline" asChild>
-                  <Link to="/me"><Hash className="h-4 w-4 mr-1" /> Add Topics</Link>
+                  <Link to="/me"><Hash className="h-4 w-4 mr-1" /> {t("uiUserProfile.addTopics")}</Link>
                 </Button>
               </div>
             )}
             {territories.length === 0 && isOwnProfile && (
               <div className="rounded-xl border border-dashed border-border p-4 text-center">
-                <p className="text-sm text-muted-foreground mb-2">Add Territories you care about to receive local quests & events.</p>
+                <p className="text-sm text-muted-foreground mb-2">{t("uiUserProfile.addTerritoriesYouCareAboutTo")}</p>
                 <Button size="sm" variant="outline" asChild>
-                  <Link to="/me"><MapPin className="h-4 w-4 mr-1" /> Add Territories</Link>
+                  <Link to="/me"><MapPin className="h-4 w-4 mr-1" /> {t("uiUserProfile.addTerritories")}</Link>
                 </Button>
               </div>
             )}
             {persona === "UNSET" && isOwnProfile && (
               <div className="rounded-xl border border-dashed border-primary/30 p-4 text-center bg-primary/5">
-                <p className="text-sm text-foreground mb-2">Tell us why you're here to personalize your space.</p>
+                <p className="text-sm text-foreground mb-2">{t("uiUserProfile.tellUsWhyYouReHere")}</p>
                 <Button size="sm" asChild>
-                  <Link to="/onboarding"><Sparkles className="h-4 w-4 mr-1" /> Take the quiz</Link>
+                  <Link to="/onboarding"><Sparkles className="h-4 w-4 mr-1" /> {t("uiUserProfile.takeTheQuiz")}</Link>
                 </Button>
               </div>
             )}
@@ -925,7 +927,7 @@ function UserProfileInner() {
             {/* Roles cloud */}
             {userCrossRoles.length > 0 && (
               <section>
-                <h3 className="font-display font-semibold mb-3">Roles</h3>
+                <h3 className="font-display font-semibold mb-3">{t("uiUserProfile.roles")}</h3>
                 <div className="flex flex-wrap gap-2">
                   {userCrossRoles.map((role) => (
                     <Badge
@@ -1085,9 +1087,9 @@ function UserProfileInner() {
           open={!!listDialog}
           onOpenChange={(open) => { if (!open) setListDialog(null); }}
           title={
-            listDialog === "quests-created" ? "Quests Created" :
-            listDialog === "quests-joined" ? "Quests Joined" :
-            listDialog === "guilds" ? "Guilds" :
+            listDialog === "quests-created" ? t("uiUserProfile.questsCreated2") :
+            listDialog === "quests-joined" ? t("uiUserProfile.questsJoined2") :
+            listDialog === "guilds" ? t("uiUserProfile.guilds") :
             listDialog === "pods" ? "Pods" :
             listDialog === "companies" ? "Organizations" :
             listDialog === "services" ? serviceLabel : ""

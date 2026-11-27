@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Leaf, Plus, TreePine, Droplets, Mountain, Sprout, Bug, Microscope, Link2, Search as SearchIcon } from "lucide-react";
@@ -28,6 +29,7 @@ const CODEP_LABELS: Record<string, string> = {
 };
 
 function NaturalSystemCard({ system, codepSource }: { system: LinkedNaturalSystem; codepSource?: string }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const desc = system.description
     ? system.description.length > 120
@@ -66,7 +68,7 @@ function NaturalSystemCard({ system, codepSource }: { system: LinkedNaturalSyste
           <div className="flex items-center gap-1.5 mt-1.5">
             {system.linked_via === "quest" && (
               <Badge className="text-[9px] bg-primary/10 text-primary border-0 py-0">
-                <Link2 className="h-2.5 w-2.5 mr-0.5" /> via quests
+                <Link2 className="h-2.5 w-2.5 mr-0.5" /> {t("uiLivingTab.viaQuests")}
               </Badge>
             )}
             {codepSource && codepSource !== "direct" && (
@@ -89,6 +91,7 @@ interface LivingTabProps {
 }
 
 export function LivingTab({ linkedType, linkedId, defaultTerritoryId }: LivingTabProps) {
+  const { t } = useTranslation();
   const { data: systems, isLoading } = useLinkedNaturalSystems(linkedType, linkedId);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -103,11 +106,11 @@ export function LivingTab({ linkedType, linkedId, defaultTerritoryId }: LivingTa
             <Leaf className="h-5 w-5 text-emerald-600" /> Connected Natural Systems
           </h3>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Ecosystems linked to this {linkedType === "entity" ? "guild" : linkedType}
+            {t("uiLivingTab.ecosystemsLinkedToThis")} {linkedType === "entity" ? "guild" : linkedType}
           </p>
         </div>
         <Button size="sm" onClick={() => setModalOpen(true)}>
-          <Plus className="h-4 w-4 mr-1" /> Add / Link
+          <Plus className="h-4 w-4 mr-1" /> {t("uiLivingTab.addLink")}
         </Button>
       </div>
 
@@ -127,9 +130,9 @@ export function LivingTab({ linkedType, linkedId, defaultTerritoryId }: LivingTa
       ) : (
         <div className="rounded-xl border border-dashed border-border p-8 text-center">
           <Leaf className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">No natural systems linked yet.</p>
+          <p className="text-sm text-muted-foreground">{t("uiLivingTab.noNaturalSystemsLinkedYet")}</p>
           <Button size="sm" variant="outline" className="mt-3" onClick={() => setModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" /> Add your first
+            <Plus className="h-4 w-4 mr-1" /> {t("uiLivingTab.addYourFirst")}
           </Button>
         </div>
       )}
@@ -145,7 +148,7 @@ export function LivingTab({ linkedType, linkedId, defaultTerritoryId }: LivingTa
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-emerald-600">{ecoQuestCount}</p>
-              <p className="text-xs text-muted-foreground">Linked via Quests</p>
+              <p className="text-xs text-muted-foreground">{t("uiLivingTab.linkedViaQuests")}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-amber-600">

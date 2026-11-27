@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +18,7 @@ function getPersonaHeadline(persona: string): string {
 }
 
 export function PiMilestoneBanner() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { persona } = usePersona();
   const { pendingPopup, acknowledgeMilestone } = useMilestones();
@@ -105,13 +107,13 @@ export function PiMilestoneBanner() {
                 {current.reward_type === "CREDITS" && (
                   <>
                     <CurrencyIcon currency="credits" className="h-3 w-3" />
-                    <span>+{current.reward_amount} Credits</span>
+                    <span>+{current.reward_amount} {t("uiPiMilestoneBanner.credits")}</span>
                   </>
                 )}
                 {current.reward_type === "BADGE" && (
                   <>
                     <Trophy className="h-3 w-3 text-purple-500" />
-                    <Badge variant="secondary" className="text-[10px]">New Badge</Badge>
+                    <Badge variant="secondary" className="text-[10px]">{t("uiPiMilestoneBanner.newBadge")}</Badge>
                   </>
                 )}
               </div>

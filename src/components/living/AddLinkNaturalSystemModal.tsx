@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export function AddLinkNaturalSystemModal({ open, onOpenChange, linkedType, linkedId, defaultTerritoryId }: Props) {
+  const { t } = useTranslation();
   const [step, setStep] = useState<Step>("choose");
   const { toast } = useToast();
 
@@ -56,9 +58,9 @@ export function AddLinkNaturalSystemModal({ open, onOpenChange, linkedType, link
               onClick={() => setStep("create")}
             >
               <div className="flex items-center gap-2 font-semibold">
-                <Plus className="h-4 w-4" /> Create a new Natural System
+                <Plus className="h-4 w-4" /> {t("uiAddLinkNaturalSystemModal.createANewNaturalSystem")}
               </div>
-              <p className="text-xs text-muted-foreground text-left">Register a new ecosystem (river, forest, soil…) and link it here.</p>
+              <p className="text-xs text-muted-foreground text-left">{t("uiAddLinkNaturalSystemModal.registerANewEcosystemRiverForest")}</p>
             </Button>
             <Button
               variant="outline"
@@ -66,9 +68,9 @@ export function AddLinkNaturalSystemModal({ open, onOpenChange, linkedType, link
               onClick={() => setStep("link")}
             >
               <div className="flex items-center gap-2 font-semibold">
-                <Link2 className="h-4 w-4" /> Link an existing Natural System
+                <Link2 className="h-4 w-4" /> {t("uiAddLinkNaturalSystemModal.linkAnExistingNaturalSystem")}
               </div>
-              <p className="text-xs text-muted-foreground text-left">Search and connect a system that's already registered.</p>
+              <p className="text-xs text-muted-foreground text-left">{t("uiAddLinkNaturalSystemModal.searchAndConnectASystemThat")}</p>
             </Button>
           </div>
         )}
@@ -100,6 +102,7 @@ export function AddLinkNaturalSystemModal({ open, onOpenChange, linkedType, link
 function LinkForm({ linkedType, linkedId, onDone, onBack }: {
   linkedType: NsLinkType; linkedId: string; onDone: () => void; onBack: () => void;
 }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const { data: results, isLoading } = useSearchNaturalSystems(search);
   const linkMutation = useLinkNaturalSystem();
@@ -112,7 +115,7 @@ function LinkForm({ linkedType, linkedId, onDone, onBack }: {
       onDone();
     } catch (err: any) {
       console.error(err);
-      toast({ title: "Failed to link system", description: err.message, variant: "destructive" });
+      toast({ title: t("uiAddLinkNaturalSystemModal.failedToLinkSystem"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -121,7 +124,7 @@ function LinkForm({ linkedType, linkedId, onDone, onBack }: {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search by name…"
+          placeholder={t("uiAddLinkNaturalSystemModal.searchByName")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9"
@@ -146,10 +149,10 @@ function LinkForm({ linkedType, linkedId, onDone, onBack }: {
           </button>
         ))}
         {search.length >= 2 && !isLoading && results?.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">No systems found.</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t("uiAddLinkNaturalSystemModal.noSystemsFound")}</p>
         )}
       </div>
-      <Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>
+      <Button variant="ghost" size="sm" onClick={onBack}>{t("uiAddLinkNaturalSystemModal.back")}</Button>
     </div>
   );
 }
@@ -159,6 +162,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
   linkedType: NsLinkType; linkedId: string; defaultTerritoryId?: string;
   onDone: () => void; onBack: () => void;
 }) {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [kingdom, setKingdom] = useState<NaturalSystemKingdom>("ecosystem");
   const [systemType, setSystemType] = useState<NaturalSystemTypeV2>("other");
@@ -175,7 +179,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
   const { toast } = useToast();
 
   const handleSubmit = async () => {
-    if (!name.trim()) { toast({ title: "Name is required", variant: "destructive" }); return; }
+    if (!name.trim()) { toast({ title: t("uiAddLinkNaturalSystemModal.nameIsRequired"), variant: "destructive" }); return; }
     try {
       await createMutation.mutateAsync({
         name: name.trim(),
@@ -192,7 +196,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
       });
       onDone();
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiAddLinkNaturalSystemModal.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -212,7 +216,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
       }
       toast({ title: "Metadata imported" });
     } catch {
-      toast({ title: "Could not scrape URL", variant: "destructive" });
+      toast({ title: t("uiAddLinkNaturalSystemModal.couldNotScrapeUrl"), variant: "destructive" });
     } finally {
       setScraping(false);
     }
@@ -235,7 +239,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
       if (error) throw error;
       if (data?.text) setDescription(data.text);
     } catch {
-      toast({ title: "AI generation failed", variant: "destructive" });
+      toast({ title: t("uiAddLinkNaturalSystemModal.aiGenerationFailed"), variant: "destructive" });
     } finally {
       setAiLoading(false);
     }
@@ -251,7 +255,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
     <div className="space-y-4 py-2">
       {/* Name */}
       <div>
-        <Label>Name *</Label>
+        <Label>{t("uiAddLinkNaturalSystemModal.name")}</Label>
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Loire River Watershed" />
       </div>
 
@@ -267,7 +271,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
               ))}
             </SelectContent>
           </Select>
-          <p className="text-[10px] text-muted-foreground mt-1">Use "Ecosystem" for rivers, forests, etc.</p>
+          <p className="text-[10px] text-muted-foreground mt-1">{t("uiAddLinkNaturalSystemModal.useEcosystemForRiversForestsEtc")}</p>
         </div>
         <div>
           <Label>System Type</Label>
@@ -321,21 +325,21 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
       {/* Description + AI */}
       <div>
         <div className="flex items-center justify-between mb-1">
-          <Label>Description</Label>
+          <Label>{t("uiAddLinkNaturalSystemModal.description")}</Label>
           <Button type="button" size="sm" variant="ghost" className="text-xs h-7 gap-1" onClick={handleAiFill} disabled={aiLoading || !name}>
-            {aiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />} Fill with AI
+            {aiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />} {t("uiAddLinkNaturalSystemModal.fillWithAi")}
           </Button>
         </div>
-        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe this natural system…" rows={4} />
+        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("uiAddLinkNaturalSystemModal.describeThisNaturalSystem")} rows={4} />
       </div>
 
 
       {/* Actions */}
       <div className="flex justify-between pt-2">
-        <Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onBack}>{t("uiAddLinkNaturalSystemModal.back")}</Button>
         <Button onClick={handleSubmit} disabled={createMutation.isPending || !name.trim()}>
           {createMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Plus className="h-4 w-4 mr-1" />}
-          Create & Link
+          {t("uiAddLinkNaturalSystemModal.createLink")}
         </Button>
       </div>
     </div>

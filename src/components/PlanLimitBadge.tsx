@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Zap, Gift } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -19,6 +20,7 @@ interface PlanLimitBadgeProps {
 }
 
 export function PlanLimitBadge({ freeRemaining = 0, itemLabel, xpCost, limitReached, compact, inGracePeriod, gracePeriodDaysLeft }: PlanLimitBadgeProps) {
+  const { t } = useTranslation();
   if (inGracePeriod) {
     return (
       <Badge variant="secondary" className="text-[10px] gap-1 border-primary/30 text-primary">
@@ -31,7 +33,7 @@ export function PlanLimitBadge({ freeRemaining = 0, itemLabel, xpCost, limitReac
     if (freeRemaining <= 2 && freeRemaining > 0) {
       return (
         <Badge variant="secondary" className="text-[10px] gap-1">
-          {freeRemaining} free {itemLabel} left{compact ? "" : " this week"}
+          {freeRemaining} free {itemLabel} left{compact ? "" : ` ${t("uiPlanLimitBadge.thisWeek")}`}
         </Badge>
       );
     }

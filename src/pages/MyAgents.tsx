@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,6 +15,7 @@ import { AttachAgentDialog } from "@/components/agent/AttachAgentDialog";
 import { toast } from "sonner";
 
 export default function MyAgents() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -60,9 +62,9 @@ export default function MyAgents() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-            <Bot className="h-7 w-7 text-primary" /> My Agents
+            <Bot className="h-7 w-7 text-primary" /> {t("uiMyAgents.myAgents")}
           </h1>
-          <p className="text-muted-foreground mt-1">Agents you've hired and can deploy into your spaces.</p>
+          <p className="text-muted-foreground mt-1">{t("uiMyAgents.agentsYouVeHiredAndCan")}</p>
         </div>
         <Button variant="outline" size="sm" asChild>
           <Link to="/agents">Browse Agents</Link>
@@ -76,9 +78,9 @@ export default function MyAgents() {
       ) : !activeHires.length && !archivedHires.length ? (
         <Card className="p-12 text-center">
           <Bot className="h-14 w-14 mx-auto mb-4 text-muted-foreground/30" />
-          <h3 className="text-lg font-semibold mb-2">No agents hired yet</h3>
+          <h3 className="text-lg font-semibold mb-2">{t("uiMyAgents.noAgentsHiredYet")}</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Browse the agent marketplace to discover and hire AI agents.
+            {t("uiMyAgents.browseTheAgentMarketplaceToDiscover")}
           </p>
           <Button asChild>
             <Link to="/agents">Browse Agents</Link>
@@ -89,7 +91,7 @@ export default function MyAgents() {
           {activeHires.length > 0 && (
             <div className="space-y-4 mb-8">
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                Active ({activeHires.length})
+                {t("uiMyAgents.active")}{activeHires.length})
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {activeHires.map((hire: any) => {
@@ -113,11 +115,11 @@ export default function MyAgents() {
                       </div>
                       <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{agent.description}</p>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
-                        <Zap className="h-3 w-3" /> {agent.cost_per_use} credits/msg
+                        <Zap className="h-3 w-3" /> {agent.cost_per_use} {t("uiMyAgents.creditsMsg")}
                       </div>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" className="flex-1" asChild>
-                          <Link to={`/agents/${agent.id}`}>Open</Link>
+                          <Link to={`/agents/${agent.id}`}>{t("uiMyAgents.open")}</Link>
                         </Button>
                         <Button
                           size="sm"

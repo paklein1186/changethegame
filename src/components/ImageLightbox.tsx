@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Download, X } from "lucide-react";
 
@@ -8,6 +9,7 @@ interface ImageLightboxProps {
 }
 
 const ImageLightbox = ({ src, alt = "Image", onClose }: ImageLightboxProps) => {
+  const { t } = useTranslation();
   if (!src) return null;
 
   const handleDownload = async () => {
@@ -35,14 +37,14 @@ const ImageLightbox = ({ src, alt = "Image", onClose }: ImageLightboxProps) => {
             <button
               onClick={handleDownload}
               className="rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors"
-              aria-label="Download"
+              aria-label={t("uiImageLightbox.download")}
             >
               <Download className="h-5 w-5" />
             </button>
             <button
               onClick={onClose}
               className="rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors"
-              aria-label="Close"
+              aria-label={t("uiImageLightbox.close")}
             >
               <X className="h-5 w-5" />
             </button>

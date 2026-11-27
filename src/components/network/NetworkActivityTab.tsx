@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,7 +34,7 @@ const ACTION_CONFIG: Record<string, {
 };
 
 const FILTER_OPTIONS = [
-  { key: "all",        label: "All" },
+  { key: "all",        get label() { return i18n.t("uiNetworkActivityTab.all"); } },
   { key: "social",     label: "Social" },
   { key: "membership", label: "Membership" },
   { key: "content",    label: "Content" },
@@ -89,6 +91,7 @@ type ActivityEntry = {
 const PAGE_SIZE = 30;
 
 export default function NetworkActivityTab() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState("all");
   const [limit, setLimit] = useState(PAGE_SIZE);
 
@@ -214,10 +217,10 @@ export default function NetworkActivityTab() {
     <div className="space-y-5">
       <div>
         <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-          <Activity className="h-5 w-5 text-primary" /> Network Activity
+          <Activity className="h-5 w-5 text-primary" /> {t("uiNetworkActivityTab.networkActivity")}
         </h2>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Recent actions from people across the platform.
+          {t("uiNetworkActivityTab.recentActionsFromPeopleAcrossThe")}
         </p>
       </div>
 
@@ -244,9 +247,9 @@ export default function NetworkActivityTab() {
       ) : activities.length === 0 ? (
         <div className="text-center py-16 rounded-xl border border-dashed border-border space-y-3">
           <Activity className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-          <p className="text-muted-foreground font-medium">No activity yet.</p>
+          <p className="text-muted-foreground font-medium">{t("uiNetworkActivityTab.noActivityYet")}</p>
           <p className="text-sm text-muted-foreground">
-            Actions from other users will appear here as the community grows.
+            {t("uiNetworkActivityTab.actionsFromOtherUsersWillAppear")}
           </p>
         </div>
       ) : (
@@ -263,7 +266,7 @@ export default function NetworkActivityTab() {
                 onClick={() => setLimit((l) => l + PAGE_SIZE)}
                 className="text-xs"
               >
-                <ChevronDown className="h-3.5 w-3.5 mr-1" /> Load more
+                <ChevronDown className="h-3.5 w-3.5 mr-1" /> {t("uiNetworkActivityTab.loadMore")}
               </Button>
             </div>
           )}

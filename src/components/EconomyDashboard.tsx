@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Building2, Recycle, Users } from "lucide-react";
 import { CurrencyIcon, getCurrencyConfig } from "@/components/CurrencyIcon";
@@ -15,6 +16,7 @@ interface EconomyStats {
 }
 
 export function EconomyDashboard() {
+  const { t } = useTranslation();
   const { data: stats, isLoading } = useQuery({
     queryKey: ["economy-stats"],
     queryFn: async () => {
@@ -29,12 +31,12 @@ export function EconomyDashboard() {
   });
 
   const items = [
-    { icon: getCurrencyConfig("credits").icon, label: "🔷 Platform Credits in Circulation", value: stats?.total_credits_in_circulation ?? 0, color: getCurrencyConfig("credits").colorClass },
+    { icon: getCurrencyConfig("credits").icon, label: t("uiEconomyDashboard.platformCreditsInCirculation"), value: stats?.total_credits_in_circulation ?? 0, color: getCurrencyConfig("credits").colorClass },
     { icon: Building2, label: "Treasury Balance", value: stats?.treasury_balance ?? 0, color: "text-amber-500" },
-    { icon: Recycle, label: "Redistributed This Month", value: stats?.monthly_faded ?? 0, color: "text-emerald-500" },
-    { icon: getCurrencyConfig("xp").icon, label: "Minted This Month", value: stats?.monthly_minted ?? 0, color: getCurrencyConfig("xp").colorClass },
+    { icon: Recycle, label: t("uiEconomyDashboard.redistributedThisMonth"), value: stats?.monthly_faded ?? 0, color: "text-emerald-500" },
+    { icon: getCurrencyConfig("xp").icon, label: t("uiEconomyDashboard.mintedThisMonth"), value: stats?.monthly_minted ?? 0, color: getCurrencyConfig("xp").colorClass },
     { icon: getCurrencyConfig("credits").icon, label: "Total Lifetime Redistributed", value: stats?.total_lifetime_faded ?? 0, color: "text-orange-500" },
-    { icon: Users, label: "Active Holders", value: stats?.active_holders ?? 0, color: "text-violet-500" },
+    { icon: Users, label: t("uiEconomyDashboard.activeHolders"), value: stats?.active_holders ?? 0, color: "text-violet-500" },
   ];
 
   if (isLoading) {

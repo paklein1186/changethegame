@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, CheckCircle, Lock, Play, BookOpen, Video } from "lucide-react";
@@ -14,6 +15,7 @@ import {
 } from "@/data/mock";
 
 export default function LessonView() {
+  const { t } = useTranslation();
   const { courseId, lessonId } = useParams<{ courseId: string; lessonId: string }>();
   const course = getCourseById(courseId!);
   const lesson = getLessonById(lessonId!);
@@ -23,7 +25,7 @@ export default function LessonView() {
   const [, forceUpdate] = useState(0);
   const rerender = () => forceUpdate((n) => n + 1);
 
-  if (!course || !lesson) return <PageShell><p>Lesson not found.</p></PageShell>;
+  if (!course || !lesson) return <PageShell><p>{t("uiLessonView.lessonNotFound")}</p></PageShell>;
 
   const lessons = getLessonsForCourse(course.id);
   const enrollment = getUserEnrollment(course.id, currentUser.id);
@@ -35,11 +37,11 @@ export default function LessonView() {
       <PageShell>
         <div className="text-center py-20">
           <Lock className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-          <h2 className="font-display text-xl font-semibold mb-2">This lesson is locked</h2>
+          <h2 className="font-display text-xl font-semibold mb-2">{t("uiLessonView.thisLessonIsLocked")}</h2>
           <p className="text-muted-foreground mb-4">
-            {course.isFree ? "Enroll in this free course to access all lessons." : `Purchase this course (€${course.priceAmount}) to unlock all lessons.`}
+            {course.isFree ? t("uiLessonView.enrollInThisFreeCourseTo") : `Purchase this course (€${course.priceAmount}) to unlock all lessons.`}
           </p>
-          <Button asChild><Link to={`/courses/${course.id}`}>Go to course</Link></Button>
+          <Button asChild><Link to={`/courses/${course.id}`}>{t("uiLessonView.goToCourse")}</Link></Button>
         </div>
       </PageShell>
     );
@@ -57,9 +59,9 @@ export default function LessonView() {
     enrollment.progressPercentage = (enrollment.completedLessonIds.length / lessons.length) * 100;
     if (enrollment.progressPercentage >= 100) {
       enrollment.completionDate = new Date().toISOString();
-      toast({ title: "🎉 Course completed!", description: "Congratulations on finishing the course!" });
+      toast({ title: t("uiLessonView.courseCompleted"), description: t("uiLessonView.congratulationsOnFinishingTheCourse") });
     } else {
-      toast({ title: "Lesson completed!" });
+      toast({ title: t("uiLessonView.lessonCompleted") });
     }
     rerender();
   };
@@ -134,15 +136,15 @@ export default function LessonView() {
           <div className="flex items-center gap-3">
             {enrollment && !isCompleted && (
               <Button variant="outline" size="sm" onClick={markComplete}>
-                <CheckCircle className="h-4 w-4 mr-1" /> Mark as completed
+                <CheckCircle className="h-4 w-4 mr-1" /> {t("uiLessonView.markAsCompleted")}
               </Button>
             )}
             {isCompleted && (
-              <Badge className="bg-green-500/10 text-green-600 border-0"><CheckCircle className="h-3.5 w-3.5 mr-1" /> Completed</Badge>
+              <Badge className="bg-green-500/10 text-green-600 border-0"><CheckCircle className="h-3.5 w-3.5 mr-1" /> {t("uiLessonView.completed")}</Badge>
             )}
             {nextLesson && (
               <Button size="sm" asChild>
-                <Link to={`/courses/${course.id}/lessons/${nextLesson.id}`}>Next lesson <ArrowRight className="h-4 w-4 ml-1" /></Link>
+                <Link to={`/courses/${course.id}/lessons/${nextLesson.id}`}>{t("uiLessonView.nextLesson")} <ArrowRight className="h-4 w-4 ml-1" /></Link>
               </Button>
             )}
           </div>

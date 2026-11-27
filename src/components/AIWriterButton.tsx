@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Sparkles, Loader2, RotateCcw, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ interface AIWriterButtonProps {
  * Shows a preview of the generated text with accept/regenerate/dismiss actions.
  */
 export function AIWriterButton({ type, context, currentText, onAccept, label = "Generate with AI", className }: AIWriterButtonProps) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Record<string, string> | null>(null);
   const { toast } = useToast();
@@ -37,7 +39,7 @@ export function AIWriterButton({ type, context, currentText, onAccept, label = "
       }
       setResult(data);
     } catch (e: any) {
-      toast({ title: "Generation failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiAIWriterButton.generationFailed"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,7 @@ export function AIWriterButton({ type, context, currentText, onAccept, label = "
         </div>
         {result.tagline && <p className="text-xs font-medium text-primary italic">"{result.tagline}"</p>}
         {result.hook && <p className="text-xs font-medium text-primary italic">"{result.hook}"</p>}
-        {result.suggestedTitle && <p className="text-xs text-muted-foreground">Suggested title: <span className="font-medium">{result.suggestedTitle}</span></p>}
+        {result.suggestedTitle && <p className="text-xs text-muted-foreground">{t("uiAIWriterButton.suggestedTitle")} <span className="font-medium">{result.suggestedTitle}</span></p>}
         <p className="text-sm text-muted-foreground whitespace-pre-wrap max-h-40 overflow-y-auto">{result.text}</p>
       </div>
     );

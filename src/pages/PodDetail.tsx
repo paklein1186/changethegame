@@ -65,10 +65,10 @@ export default function PodDetail() {
 
   const isLoggedIn = !!currentUser.id;
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!pod) return <PageShell><p>Pod not found.</p></PageShell>;
-  if (pod.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>This pod has been removed.</p></PageShell>;
-  if (pod.is_draft && pod.creator_id !== currentUser.id && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>Pod not found.</p></PageShell>;
+  if (isLoading) return <PageShell><p>{t("uiPodDetail.loading")}</p></PageShell>;
+  if (!pod) return <PageShell><p>{t("uiPodDetail.podNotFound")}</p></PageShell>;
+  if (pod.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>{t("uiPodDetail.thisPodHasBeenRemoved")}</p></PageShell>;
+  if (pod.is_draft && pod.creator_id !== currentUser.id && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>{t("uiPodDetail.podNotFound")}</p></PageShell>;
 
   const members = pod.pod_members || [];
   const quest = pod.quests;
@@ -79,7 +79,7 @@ export default function PodDetail() {
 
   const doJoinPod = async () => {
     const { error } = await supabase.from("pod_members").insert({ pod_id: pod.id, user_id: currentUser.id, role: "MEMBER" as any });
-    if (error) { toast({ title: "Failed to join", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiPodDetail.failedToJoin"), variant: "destructive" }); return; }
     autoFollowEntity(currentUser.id, "POD", pod.id);
     qc.invalidateQueries({ queryKey: ["pod", id] });
     toast({ title: "Joined pod!" });
@@ -93,7 +93,7 @@ export default function PodDetail() {
 
   const markPodComplete = async () => {
     const { error } = await supabase.from("pods").update({ status: "COMPLETED" } as any).eq("id", pod.id);
-    if (error) { toast({ title: "Failed to complete pod", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiPodDetail.failedToCompletePod"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["pod", id] });
     toast({ title: "Pod marked as complete!" });
     // Emit $CTG + XP for pod host
@@ -111,13 +111,13 @@ export default function PodDetail() {
 
   const promoteToHost = async (userId: string) => {
     // RLS doesn't allow update on pod_members, so we'd need a function. For now skip.
-    toast({ title: "Promoted to Host" });
+    toast({ title: t("uiPodDetail.promotedToHost") });
   };
 
   const removeMember = async (userId: string) => {
     await supabase.from("pod_members").delete().eq("pod_id", pod.id).eq("user_id", userId);
     qc.invalidateQueries({ queryKey: ["pod", id] });
-    toast({ title: "Member removed" });
+    toast({ title: t("uiPodDetail.memberRemoved") });
   };
 
   return (
@@ -133,11 +133,11 @@ export default function PodDetail() {
         actionLabel="join one more pod"
         limitLabel="pod memberships for your plan"
         ctgBalance={limits.userCtgBalance}
-        onConfirm={async () => { const ok = await limits.spendCredits(EXTRA_POD_CREDIT_COST, `Extra pod membership: ${pod.name}`, "POD", pod.id); if (ok) doJoinPod(); else toast({ title: "Not enough Credits", variant: "destructive" }); }}
+        onConfirm={async () => { const ok = await limits.spendCredits(EXTRA_POD_CREDIT_COST, `Extra pod membership: ${pod.name}`, "POD", pod.id); if (ok) doJoinPod(); else toast({ title: t("uiPodDetail.notEnoughCredits"), variant: "destructive" }); }}
       />
 
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiPodDetail.back")}
       </Button>
 
       {pod.is_draft && <DraftBanner />}
@@ -175,7 +175,7 @@ export default function PodDetail() {
             </Badge>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Members</span>
+            <span className="text-sm text-muted-foreground">{t("uiPodDetail.members")}</span>
             <span className="text-sm font-medium">{members.length} / {(pod as any).max_members || "∞"}</span>
           </div>
           {(() => {
@@ -231,11 +231,11 @@ export default function PodDetail() {
               </div>
             ) : (
               <Button size="sm" onClick={() => { setAuthPromptAction("join this pod"); setAuthPromptOpen(true); }}>
-                <Users className="h-4 w-4 mr-1" /> Join
+                <Users className="h-4 w-4 mr-1" /> {t("uiPodDetail.join")}
               </Button>
             )
           ) : !isHost ? (
-            <Button variant="outline" onClick={leavePod}><UserMinus className="h-4 w-4 mr-1" /> Leave pod</Button>
+            <Button variant="outline" onClick={leavePod}><UserMinus className="h-4 w-4 mr-1" /> {t("uiPodDetail.leavePod")}</Button>
           ) : null}
           {isHost && <InviteLinkButton entityType="pod" entityId={pod.id} entityName={pod.name} />}
           {isHost && (pod as any).status !== "COMPLETED" && (
@@ -245,7 +245,7 @@ export default function PodDetail() {
           )}
           {isHost && (
             <Button variant="outline" size="sm" asChild>
-              <Link to={`/pods/${pod.id}/settings`}><Settings className="h-4 w-4 mr-1" /> Settings</Link>
+              <Link to={`/pods/${pod.id}/settings`}><Settings className="h-4 w-4 mr-1" /> {t("uiPodDetail.settings")}</Link>
             </Button>
           )}
           <ShareLinkButton entityType="pod" entityId={pod.id} entityName={pod.name} />
@@ -256,7 +256,7 @@ export default function PodDetail() {
       <Tabs defaultValue="members">
         <div className="flex items-center gap-1">
           <TabsList>
-            <TabsTrigger value="members"><Users className="h-4 w-4 mr-1" /> Members ({members.length})</TabsTrigger>
+            <TabsTrigger value="members"><Users className="h-4 w-4 mr-1" /> {t("uiPodDetail.members2")}{members.length})</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="discussion">Discussion</TabsTrigger>
             {isMember && <TabsTrigger value="agents"><Bot className="h-4 w-4 mr-1" /> Agents</TabsTrigger>}
@@ -266,7 +266,7 @@ export default function PodDetail() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-9 px-2.5 shrink-0">
                   <MoreHorizontal className="h-4 w-4" />
-                  <span className="ml-1 text-sm hidden sm:inline">More</span>
+                  <span className="ml-1 text-sm hidden sm:inline">{t("uiPodDetail.more")}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -290,25 +290,25 @@ export default function PodDetail() {
               <p className="text-sm text-muted-foreground">{members.length} member{members.length !== 1 ? "s" : ""}</p>
               <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" variant="outline"><UserPlus className="h-4 w-4 mr-1" /> Invite</Button>
+                  <Button size="sm" variant="outline"><UserPlus className="h-4 w-4 mr-1" /> {t("uiPodDetail.invite")}</Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader><DialogTitle>Invite a member</DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle>{t("uiPodDetail.inviteAMember")}</DialogTitle></DialogHeader>
                   <div className="space-y-3 mt-2">
                     <UserSearchInput
                       onSelect={async (user) => {
                         const already = members.some((m: any) => m.user_id === user.user_id);
-                        if (already) { toast({ title: "Already a member" }); return; }
+                        if (already) { toast({ title: t("uiPodDetail.alreadyAMember") }); return; }
                         const { error } = await supabase.from("pod_members").insert({
                           pod_id: pod.id, user_id: user.user_id, role: "MEMBER" as any,
                         });
-                        if (error) { toast({ title: "Failed to invite", variant: "destructive" }); return; }
+                        if (error) { toast({ title: t("uiPodDetail.failedToInvite"), variant: "destructive" }); return; }
                         sendInviteNotification({ invitedUserId: user.user_id, inviterName: currentUser.name, entityType: "pod", entityId: pod.id, entityName: pod.name });
                         setInviteOpen(false);
                         qc.invalidateQueries({ queryKey: ["pod", id] });
                         toast({ title: `${user.display_name || "User"} invited!` });
                       }}
-                      placeholder="Search by name…"
+                      placeholder={t("uiPodDetail.searchByName")}
                       excludeUserIds={members.map((m: any) => m.user_id)}
                     />
                   </div>
@@ -330,11 +330,11 @@ export default function PodDetail() {
                 {isHost && m.user_id !== currentUser.id && (
                   <div className="flex gap-1">
                     {m.role === "MEMBER" && (
-                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => promoteToHost(m.user_id)} title="Promote to Host">
+                      <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => promoteToHost(m.user_id)} title={t("uiPodDetail.promoteToHost")}>
                         <ShieldCheck className="h-3.5 w-3.5" />
                       </Button>
                     )}
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => removeMember(m.user_id)} title="Remove">
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => removeMember(m.user_id)} title={t("uiPodDetail.remove")}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>

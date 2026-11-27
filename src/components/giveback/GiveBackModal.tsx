@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Heart, Users, Globe, Loader2, X, Percent, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ interface GiveBackModalProps {
 }
 
 export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, bookingId }: GiveBackModalProps) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const { toast } = useToast();
@@ -145,7 +147,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
         .join(", ");
 
       toast({
-        title: "Thank you for giving back! 💚",
+        title: t("uiGiveBackModal.thankYouForGivingBack"),
         description: `${amount} credits distributed: ${recipientSummary}`,
       });
       qc.invalidateQueries({ queryKey: ["credit-transactions"] });
@@ -153,7 +155,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
       qc.invalidateQueries({ queryKey: ["giveback-history"] });
       onOpenChange(false);
     } catch (err: any) {
-      toast({ title: "Give-back failed", description: err.message, variant: "destructive" });
+      toast({ title: t("uiGiveBackModal.giveBackFailed"), description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -166,12 +168,12 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-primary" /> Give back from this transaction?
+            <Heart className="h-5 w-5 text-primary" /> {t("uiGiveBackModal.giveBackFromThisTransaction")}
           </DialogTitle>
           <DialogDescription>
             {earnedAmount != null && serviceName
               ? `You just earned ${earnedAmount} credits from "${serviceName}".`
-              : "Would you like to give back some credits?"
+              : t("uiGiveBackModal.wouldYouLikeToGiveBack")
             }
           </DialogDescription>
         </DialogHeader>
@@ -190,7 +192,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
                   }}
                 >
                   <SelectTrigger className="h-8 text-xs flex-1">
-                    <SelectValue placeholder="Choose…" />
+                    <SelectValue placeholder={t("uiGiveBackModal.choose")} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="platform">
@@ -223,7 +225,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
             ))}
             <div className="flex items-center justify-between">
               <Button variant="ghost" size="sm" className="text-xs h-7 gap-1 px-2" onClick={addRow}>
-                <Plus className="h-3 w-3" /> Add
+                <Plus className="h-3 w-3" /> {t("uiGiveBackModal.add")}
               </Button>
               <span className={`text-xs font-medium ${totalPercent === 100 ? "text-primary" : "text-destructive"}`}>
                 {totalPercent}%
@@ -254,7 +256,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
               <Input
                 type="number"
                 min={1}
-                placeholder="Amount…"
+                placeholder={t("uiGiveBackModal.amount")}
                 value={totalAmount}
                 onChange={(e) => setTotalAmount(e.target.value)}
                 className="h-8 w-28"
@@ -272,12 +274,12 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
             </div>
           ) : (
             <Button variant="link" size="sm" className="text-xs p-0 h-auto" onClick={() => setShowCustom(true)}>
-              Custom amount…
+              {t("uiGiveBackModal.customAmount")}
             </Button>
           )}
 
           <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => onOpenChange(false)}>
-            Skip this time
+            {t("uiGiveBackModal.skipThisTime")}
           </Button>
         </div>
       </DialogContent>

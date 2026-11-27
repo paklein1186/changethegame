@@ -377,7 +377,7 @@ export function WorkTasksTab() {
     const { data: inserted, error } = await supabase.from("personal_tasks" as any).insert({
       user_id: userId, title: newTitle.trim(), status: "BACKLOG",
     } as any).select("id").single();
-    if (error) toast({ title: "Failed to add task", variant: "destructive" });
+    if (error) toast({ title: t("uiWorkTasksTab.failedToAddTask"), variant: "destructive" });
     else {
       setNewTitle("");
       if (inserted) {
@@ -560,7 +560,7 @@ export function WorkTasksTab() {
       insertPayload.owner_type = "USER"; insertPayload.owner_id = userId;
     }
     const { data, error } = await supabase.from("quests").insert(insertPayload).select("id").single();
-    if (error) { toast({ title: "Failed to create quest", variant: "destructive" }); setConverting(false); return; }
+    if (error) { toast({ title: t("uiWorkTasksTab.failedToCreateQuest"), variant: "destructive" }); setConverting(false); return; }
     const questId = (data as any).id;
     await supabase.from("quest_participants").insert({ quest_id: questId, user_id: userId, role: "OWNER", status: "ACCEPTED" });
     // Emit $CTG for quest creation
@@ -582,7 +582,7 @@ export function WorkTasksTab() {
     qc.invalidateQueries({ queryKey: ["personal-tasks", userId] });
     qc.invalidateQueries({ queryKey: ["my-active-quests", userId] });
     setConverting(false); setUnitPickerOpen(false); setPendingConvertTask(null);
-    toast({ title: "Task converted to quest!" });
+    toast({ title: t("uiWorkTasksTab.taskConvertedToQuest") });
     navigate(`/quests/${questId}`);
   };
 
@@ -590,11 +590,11 @@ export function WorkTasksTab() {
     const { data, error } = await supabase.from("quest_subtasks" as any).insert({
       quest_id: questId, title: task.title, assignee_user_id: userId, assignee_user_ids: [userId], status: "TODO", order_index: 0,
     } as any).select("id").single();
-    if (error) { toast({ title: "Failed to create subtask", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiWorkTasksTab.failedToCreateSubtask"), variant: "destructive" }); return; }
     await supabase.from("personal_tasks" as any).update({ converted_to_subtask_id: (data as any).id } as any).eq("id", task.id);
     qc.invalidateQueries({ queryKey: ["personal-tasks", userId] });
     qc.invalidateQueries({ queryKey: ["my-subtasks", userId] });
-    toast({ title: "Task attached as subtask!" });
+    toast({ title: t("uiWorkTasksTab.taskAttachedAsSubtask") });
   };
 
   const addAssignee = async (taskId: string, assigneeUserId: string) => {
@@ -638,7 +638,7 @@ export function WorkTasksTab() {
           className="h-8 text-xs gap-1.5"
           onClick={() => setStatusFilter("all")}
         >
-          All
+          {t("uiWorkTasksTab.all")}
           <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 ml-0.5">{unified.length}</Badge>
         </Button>
         <Button
@@ -656,7 +656,7 @@ export function WorkTasksTab() {
           className="h-8 text-xs gap-1.5"
           onClick={() => setStatusFilter("TODO")}
         >
-          To do next
+          {t("uiWorkTasksTab.toDoNext")}
           <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 ml-0.5">{todoCount}</Badge>
         </Button>
         <Button
@@ -665,7 +665,7 @@ export function WorkTasksTab() {
           className="h-8 text-xs gap-1.5"
           onClick={() => setStatusFilter("IN_PROGRESS")}
         >
-          In Progress
+          {t("uiWorkTasksTab.inProgress")}
           <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 ml-0.5">{inProgressCount}</Badge>
         </Button>
         <Button
@@ -674,7 +674,7 @@ export function WorkTasksTab() {
           className="h-8 text-xs gap-1.5"
           onClick={() => setStatusFilter("DONE")}
         >
-          Done
+          {t("uiWorkTasksTab.done")}
           <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 ml-0.5">{doneCount}</Badge>
         </Button>
       </div>
@@ -684,7 +684,7 @@ export function WorkTasksTab() {
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
-            placeholder="Search tasks…"
+            placeholder={t("uiWorkTasksTab.searchTasks")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-9 text-sm pl-8"
@@ -694,10 +694,10 @@ export function WorkTasksTab() {
         {/* Source type quick-filter buttons */}
         <div className="flex border border-border rounded-md overflow-hidden">
           {([
-            { key: "all", label: "All", icon: null as React.ReactNode },
-            { key: "personal", label: "Task", icon: <ListTodo className="h-3 w-3" /> },
-            { key: "quest", label: "Quest", icon: <Compass className="h-3 w-3" /> },
-            { key: "subtask", label: "Subtask", icon: <ListChecks className="h-3 w-3" /> },
+            { key: "all", label: t("uiWorkTasksTab.all"), icon: null as React.ReactNode },
+            { key: "personal", label: t("uiWorkTasksTab.task"), icon: <ListTodo className="h-3 w-3" /> },
+            { key: "quest", label: t("uiWorkTasksTab.quest"), icon: <Compass className="h-3 w-3" /> },
+            { key: "subtask", label: t("uiWorkTasksTab.subtask"), icon: <ListChecks className="h-3 w-3" /> },
           ] as const).map(({ key, label, icon }) => (
             <Button
               key={key}
@@ -717,10 +717,10 @@ export function WorkTasksTab() {
           <Select value={entityFilter} onValueChange={(v) => setEntityFilter(v)}>
             <SelectTrigger className="w-[160px] h-9 text-xs gap-1">
               <Filter className="h-3 w-3 shrink-0" />
-              <SelectValue placeholder="All entities" />
+              <SelectValue placeholder={t("uiWorkTasksTab.allEntities")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All entities</SelectItem>
+              <SelectItem value="all">{t("uiWorkTasksTab.allEntities")}</SelectItem>
               {sortedEntities.map((e) => (
                 <SelectItem key={e.id} value={e.id}>
                   <span className="flex items-center gap-1.5">
@@ -741,7 +741,7 @@ export function WorkTasksTab() {
           onClick={() => setHideDone((v) => !v)}
         >
           <ListChecks className="h-3.5 w-3.5" />
-          {hideDone ? "Done hidden" : "Hide done"}
+          {hideDone ? t("uiWorkTasksTab.doneHidden") : t("uiWorkTasksTab.hideDone")}
         </Button>
 
         {/* Sort toggle */}
@@ -752,7 +752,7 @@ export function WorkTasksTab() {
           onClick={() => setSortBy(sortBy === "status" ? "priority" : sortBy === "priority" ? "recent" : "status")}
         >
           <ArrowDownUp className="h-3.5 w-3.5" />
-          {sortBy === "status" ? "Status" : sortBy === "priority" ? "Priority" : "Recent"}
+          {sortBy === "status" ? t("uiWorkTasksTab.status") : sortBy === "priority" ? "Priority" : "Recent"}
         </Button>
 
         {/* View mode toggle */}
@@ -779,14 +779,14 @@ export function WorkTasksTab() {
       {/* Quick add */}
       <div className="flex gap-2">
         <Input
-          placeholder="Add a task…"
+          placeholder={t("uiWorkTasksTab.addATask")}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addTask()}
           className="h-9 text-sm"
         />
         <Button size="sm" onClick={addTask} disabled={!newTitle.trim() || adding} className="h-9 gap-1">
-          <Plus className="h-3.5 w-3.5" /> Add
+          <Plus className="h-3.5 w-3.5" /> {t("uiWorkTasksTab.add")}
         </Button>
       </div>
 
@@ -798,7 +798,7 @@ export function WorkTasksTab() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-12 rounded-xl border border-dashed border-border">
           <ListTodo className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-          <p className="text-muted-foreground mb-3">No tasks match your filters</p>
+          <p className="text-muted-foreground mb-3">{t("uiWorkTasksTab.noTasksMatchYourFilters")}</p>
           <Button size="sm" variant="outline" onClick={() => { setFilter("all"); setStatusFilter("all"); setEntityFilter("all"); setSearchQuery(""); }}>
             Clear filters
           </Button>
@@ -818,15 +818,15 @@ export function WorkTasksTab() {
                 <tr>
                   <th className="w-7 sm:w-10 px-1.5 sm:px-3 py-1.5 sm:py-2.5"></th>
                   <th className="w-7 sm:w-8 px-1 py-1.5 sm:py-2.5"></th>
-                  <th className="text-left px-1.5 sm:px-3 py-1.5 sm:py-2.5 font-medium">Task</th>
+                  <th className="text-left px-1.5 sm:px-3 py-1.5 sm:py-2.5 font-medium">{t("uiWorkTasksTab.task")}</th>
                   <th className="text-left px-2 sm:px-3 py-1.5 sm:py-2.5 font-medium hidden md:table-cell">Source</th>
-                  <th className="text-left px-1.5 md:px-3 py-1.5 sm:py-2.5 font-medium w-[40px] md:w-[140px]"><span className="hidden md:inline">Status</span></th>
+                  <th className="text-left px-1.5 md:px-3 py-1.5 sm:py-2.5 font-medium w-[40px] md:w-[140px]"><span className="hidden md:inline">{t("uiWorkTasksTab.status")}</span></th>
                   <th className="text-left px-3 py-1.5 sm:py-2.5 font-medium hidden lg:table-cell">
                     <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Created</span>
                   </th>
-                  <th className="text-left px-3 py-1.5 sm:py-2.5 font-medium hidden xl:table-cell">Link</th>
+                  <th className="text-left px-3 py-1.5 sm:py-2.5 font-medium hidden xl:table-cell">{t("uiWorkTasksTab.link")}</th>
                   <th className="text-left px-3 py-1.5 sm:py-2.5 font-medium hidden md:table-cell">
-                    <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Assigned to</span>
+                    <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {t("uiWorkTasksTab.assignedTo")}</span>
                   </th>
                   <th className="w-8 sm:w-12 px-1.5 sm:px-3 py-1.5 sm:py-2.5"></th>
                 </tr>
@@ -901,8 +901,8 @@ export function WorkTasksTab() {
                               {task.title}
                             </span>
                             <div className="flex items-center gap-1 mt-0.5">
-                              {task.convertedToQuestId && <Badge variant="outline" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4">→ Quest</Badge>}
-                              {task.convertedToSubtaskId && <Badge variant="outline" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4">→ Subtask</Badge>}
+                              {task.convertedToQuestId && <Badge variant="outline" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4">{t("uiWorkTasksTab.quest2")}</Badge>}
+                              {task.convertedToSubtaskId && <Badge variant="outline" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4">{t("uiWorkTasksTab.subtask2")}</Badge>}
                               <span className="md:hidden" title={task.source === "personal" ? "Personal" : (task.sourceLabel || task.source)}>
                                 <Badge variant="secondary" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4 px-1">
                                   {task.source === "personal" ? <User className="h-2.5 w-2.5" /> : task.source === "quest" ? <Compass className="h-2.5 w-2.5" /> : <ListChecks className="h-2.5 w-2.5" />}
@@ -988,7 +988,7 @@ export function WorkTasksTab() {
                       <td className="px-3 py-2.5 hidden xl:table-cell">
                         {questLink && (
                           <Link to={questLink} className="text-xs text-primary hover:underline flex items-center gap-1">
-                            <ExternalLink className="h-3 w-3" /> View quest
+                            <ExternalLink className="h-3 w-3" /> {t("uiWorkTasksTab.viewQuest")}
                           </Link>
                         )}
                       </td>
@@ -1044,7 +1044,7 @@ export function WorkTasksTab() {
                                 </div>
                               )}
                               <UserSearchInput
-                                placeholder="Add user…"
+                                placeholder={t("uiWorkTasksTab.addUser")}
                                 excludeUserIds={task.assignees?.map((a) => a.user_id) || []}
                                 onSelect={(user) => addAssignee(task.id, user.user_id)}
                               />
@@ -1066,11 +1066,11 @@ export function WorkTasksTab() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuItem onClick={() => openUnitPicker(task)}>
-                                    <Rocket className="h-3.5 w-3.5 mr-2" /> Convert to Quest
+                                    <Rocket className="h-3.5 w-3.5 mr-2" /> {t("uiWorkTasksTab.convertToQuest")}
                                   </DropdownMenuItem>
                                   {allQuestsForPicker.length > 0 && (
                                     <DropdownMenuItem onClick={() => { setQuestPickerTask(task); setQuestPickerOpen(true); setQuestPickerSearch(""); }}>
-                                      <ListChecks className="h-3.5 w-3.5 mr-2" /> Attach to Quest…
+                                      <ListChecks className="h-3.5 w-3.5 mr-2" /> {t("uiWorkTasksTab.attachToQuest")}
                                     </DropdownMenuItem>
                                   )}
                                 </DropdownMenuContent>
@@ -1111,12 +1111,12 @@ export function WorkTasksTab() {
         <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Rocket className="h-5 w-5 text-primary" /> Convert to Quest
+              <Rocket className="h-5 w-5 text-primary" /> {t("uiWorkTasksTab.convertToQuest")}
             </DialogTitle>
             <DialogDescription>
               {convertStep === "unit"
-                ? "Choose which entity to attach this quest to, or create it as a personal quest."
-                : "Select topics and territories for this quest."}
+                ? t("uiWorkTasksTab.chooseWhichEntityToAttachThis")
+                : t("uiWorkTasksTab.selectTopicsAndTerritoriesForThis")}
             </DialogDescription>
           </DialogHeader>
 
@@ -1131,13 +1131,13 @@ export function WorkTasksTab() {
                   <User className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">Personal Quest</p>
-                  <p className="text-xs text-muted-foreground">Not attached to any entity</p>
+                  <p className="text-sm font-medium">{t("uiWorkTasksTab.personalQuest")}</p>
+                  <p className="text-xs text-muted-foreground">{t("uiWorkTasksTab.notAttachedToAnyEntity")}</p>
                 </div>
               </button>
               {userUnits.length > 0 && (
                 <div className="pt-1">
-                  <p className="text-xs font-medium text-muted-foreground px-1 pb-1.5">Your entities</p>
+                  <p className="text-xs font-medium text-muted-foreground px-1 pb-1.5">{t("uiWorkTasksTab.yourEntities")}</p>
                   {userUnits.map((unit) => (
                     <button
                       key={unit.id}
@@ -1152,7 +1152,7 @@ export function WorkTasksTab() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{unit.name}</p>
-                        <p className="text-xs text-muted-foreground">{unit.type === "GUILD" ? "Guild" : "Organisation"}</p>
+                        <p className="text-xs text-muted-foreground">{unit.type === "GUILD" ? t("uiWorkTasksTab.guild") : "Organisation"}</p>
                       </div>
                     </button>
                   ))}
@@ -1166,10 +1166,10 @@ export function WorkTasksTab() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium flex items-center gap-1.5">
-                    <Hash className="h-3.5 w-3.5" /> Topics
+                    <Hash className="h-3.5 w-3.5" /> {t("uiWorkTasksTab.topics")}
                   </label>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics((allTopics ?? []).map((t: any) => t.id))}>Select all</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics((allTopics ?? []).map((t: any) => t.id))}>{t("uiWorkTasksTab.selectAll")}</Button>
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics([])}>Clear</Button>
                   </div>
                 </div>
@@ -1189,10 +1189,10 @@ export function WorkTasksTab() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5" /> Territories
+                    <MapPin className="h-3.5 w-3.5" /> {t("uiWorkTasksTab.territories")}
                   </label>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories((allTerritories ?? []).map((t: any) => t.id))}>Select all</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories((allTerritories ?? []).map((t: any) => t.id))}>{t("uiWorkTasksTab.selectAll")}</Button>
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories([])}>Clear</Button>
                   </div>
                 </div>
@@ -1211,11 +1211,11 @@ export function WorkTasksTab() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => setConvertStep("unit")} className="flex-1">
-                  <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Back
+                  <ChevronLeft className="h-3.5 w-3.5 mr-1" /> {t("uiWorkTasksTab.back")}
                 </Button>
                 <Button size="sm" onClick={finalizeConvertToQuest} disabled={converting} className="flex-1">
                   {converting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Rocket className="h-3.5 w-3.5 mr-1" />}
-                  Create Quest
+                  {t("uiWorkTasksTab.createQuest")}
                 </Button>
               </div>
             </div>
@@ -1224,7 +1224,7 @@ export function WorkTasksTab() {
           {converting && (
             <div className="flex items-center justify-center py-2">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground mr-2" />
-              <span className="text-sm text-muted-foreground">Creating quest…</span>
+              <span className="text-sm text-muted-foreground">{t("uiWorkTasksTab.creatingQuest")}</span>
             </div>
           )}
         </DialogContent>
@@ -1235,16 +1235,16 @@ export function WorkTasksTab() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ListChecks className="h-5 w-5 text-primary" />
-              Attach to Quest
+              {t("uiWorkTasksTab.attachToQuest2")}
             </DialogTitle>
             <DialogDescription>
-              Choose a quest to attach "{questPickerTask?.title}" as a subtask.
+              {t("uiWorkTasksTab.chooseAQuestToAttach")}{questPickerTask?.title}{t("uiWorkTasksTab.asASubtask")}
             </DialogDescription>
           </DialogHeader>
           <div className="relative mb-2">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search quests…"
+              placeholder={t("uiWorkTasksTab.searchQuests")}
               value={questPickerSearch}
               onChange={(e) => setQuestPickerSearch(e.target.value)}
               className="h-8 text-sm pl-8"
@@ -1273,7 +1273,7 @@ export function WorkTasksTab() {
                 ))}
             </div>
             {allQuestsForPicker.filter((q) => !questPickerSearch.trim() || q.title.toLowerCase().includes(questPickerSearch.toLowerCase())).length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-6">No quests match your search.</p>
+              <p className="text-sm text-muted-foreground text-center py-6">{t("uiWorkTasksTab.noQuestsMatchYourSearch")}</p>
             )}
           </div>
         </DialogContent>

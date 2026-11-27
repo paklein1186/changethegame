@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,7 @@ const COLORS = [
 ];
 
 export default function AgentTrustTab({ agent }: Props) {
+  const { t } = useTranslation();
   const { data: trustScore } = useQuery({
     queryKey: ["agent-trust-score", agent.id],
     queryFn: async () => {
@@ -34,8 +36,8 @@ export default function AgentTrustTab({ agent }: Props) {
     return (
       <div className="text-center py-12">
         <Shield className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-        <p className="text-muted-foreground">Trust score not yet computed.</p>
-        <p className="text-xs text-muted-foreground mt-1">Trust scores are computed after the first agent actions.</p>
+        <p className="text-muted-foreground">{t("uiAgentTrustTab.trustScoreNotYetComputed")}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t("uiAgentTrustTab.trustScoresAreComputedAfterThe")}</p>
       </div>
     );
   }
@@ -113,11 +115,11 @@ export default function AgentTrustTab({ agent }: Props) {
             trust = 0.25 × owner_trust + 0.25 × history_score + 0.20 × guild_endorsements + 0.15 × xp_level − 0.15 × penalties
           </code>
           <div className="mt-3 space-y-1 text-xs text-muted-foreground">
-            <p>• <strong>Owner Trust:</strong> Derived from the agent creator's platform trust score</p>
+            <p>• <strong>{t("uiAgentTrustTab.ownerTrust")}</strong> {t("uiAgentTrustTab.derivedFromTheAgentCreatorS")}</p>
             <p>• <strong>History Score:</strong> Clean actions / total actions ratio × 100</p>
-            <p>• <strong>Guild Endorsements:</strong> Number of guild approvals (capped at 100)</p>
-            <p>• <strong>XP Level:</strong> Agent experience points from successful actions</p>
-            <p>• <strong>Penalties:</strong> Deducted for violations, errors, or complaints</p>
+            <p>• <strong>{t("uiAgentTrustTab.guildEndorsements")}</strong> {t("uiAgentTrustTab.numberOfGuildApprovalsCappedAt")}</p>
+            <p>• <strong>{t("uiAgentTrustTab.xpLevel")}</strong> {t("uiAgentTrustTab.agentExperiencePointsFromSuccessfulActions")}</p>
+            <p>• <strong>Penalties:</strong> {t("uiAgentTrustTab.deductedForViolationsErrorsOrComplaints")}</p>
           </div>
         </CardContent>
       </Card>

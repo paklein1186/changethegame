@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Plus, Briefcase, Building2, User, MapPin, FileText, Upload, Trash2, Link as LinkIcon, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,8 +17,8 @@ import { compressImage } from "@/lib/compressImage";
 import { SearchableTagPicker } from "@/components/SearchableTagPicker";
 
 const CONTRACT_TYPES = [
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
+  { value: "full-time", get label() { return i18n.t("uiAddJobDialog.fullTime"); } },
+  { value: "part-time", get label() { return i18n.t("uiAddJobDialog.partTime"); } },
   { value: "contract", label: "Contract" },
   { value: "freelance", label: "Freelance" },
   { value: "internship", label: "Internship" },
@@ -24,7 +26,7 @@ const CONTRACT_TYPES = [
 ];
 
 const REMOTE_POLICIES = [
-  { value: "on-site", label: "On-site" },
+  { value: "on-site", get label() { return i18n.t("uiAddJobDialog.onSite"); } },
   { value: "remote", label: "Remote" },
   { value: "hybrid", label: "Hybrid" },
 ];
@@ -53,6 +55,7 @@ interface Props {
 }
 
 export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { data: allTerritories = [], isLoading: terrLoading, error: terrError } = useTerritories();
   const createJob = useCreateJobPosition();
@@ -172,7 +175,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
     const path = `${userId}/jobs/${Date.now()}_${safeName}`;
     const { error } = await supabase.storage.from("entity-images").upload(path, file);
     if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      toast({ title: t("uiAddJobDialog.uploadFailed"), description: error.message, variant: "destructive" });
       setUploading(false);
       return;
     }
@@ -204,11 +207,11 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
         if (ext.contract_type) setContractType(ext.contract_type);
         if (ext.remote_policy) setRemotePolicy(ext.remote_policy);
         if (ext.location) setLocationText(ext.location);
-        toast({ title: "Info extracted", description: "Review and edit the pre-filled fields." });
+        toast({ title: "Info extracted", description: t("uiAddJobDialog.reviewAndEditThePreFilled") });
       }
     } catch (e) {
       console.error("Extraction failed:", e);
-      toast({ title: "Extraction failed", description: "Fill the form manually.", variant: "destructive" });
+      toast({ title: t("uiAddJobDialog.extractionFailed"), description: t("uiAddJobDialog.fillTheFormManually"), variant: "destructive" });
     } finally {
       setExtracting(false);
     }
@@ -262,7 +265,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
       resetForm();
       onOpenChange(false);
     } catch {
-      toast({ title: isEdit ? "Error updating job" : "Error creating job", variant: "destructive" });
+      toast({ title: isEdit ? t("uiAddJobDialog.errorUpdatingJob") : t("uiAddJobDialog.errorCreatingJob"), variant: "destructive" });
     }
   };
 
@@ -278,14 +281,14 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
       <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-primary" /> {isEdit ? "Edit Job Position" : "Post a Job Position"}
+            <Briefcase className="h-5 w-5 text-primary" /> {isEdit ? t("uiAddJobDialog.editJobPosition") : t("uiAddJobDialog.postAJobPosition")}
           </DialogTitle>
         </DialogHeader>
 
         {/* Step 1: Source selection */}
         {step === "source" && (
           <div className="space-y-4 mt-2">
-            <p className="text-sm text-muted-foreground">Who is posting this job?</p>
+            <p className="text-sm text-muted-foreground">{t("uiAddJobDialog.whoIsPostingThisJob")}</p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handleSourceSelect("individual")}
@@ -294,7 +297,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
                 <User className="h-8 w-8 text-primary" />
                 <div className="text-center">
                   <p className="font-semibold text-sm">Individual</p>
-                  <p className="text-xs text-muted-foreground mt-1">Post on your own behalf</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t("uiAddJobDialog.postOnYourOwnBehalf")}</p>
                 </div>
               </button>
               <button
@@ -304,7 +307,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
                 <Building2 className="h-8 w-8 text-primary" />
                 <div className="text-center">
                   <p className="font-semibold text-sm">Organization</p>
-                  <p className="text-xs text-muted-foreground mt-1">Post for an organization you manage</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t("uiAddJobDialog.postForAnOrganizationYouManage")}</p>
                 </div>
               </button>
             </div>
@@ -312,9 +315,9 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
             {/* Show company list if company was selected */}
             {source === "company" && (
               <div className="space-y-2">
-                {loadingCompanies && <p className="text-sm text-muted-foreground">Loading your Traditional Organizations…</p>}
+                {loadingCompanies && <p className="text-sm text-muted-foreground">{t("uiAddJobDialog.loadingYourTraditionalOrganizations")}</p>}
                 {!loadingCompanies && myCompanies.length === 0 && (
-                  <p className="text-sm text-muted-foreground">You don't manage any Traditional Organization yet.</p>
+                  <p className="text-sm text-muted-foreground">{t("uiAddJobDialog.youDonTManageAnyTraditional")}</p>
                 )}
                 {myCompanies.map((c: any) => (
                   <button
@@ -338,7 +341,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
         {/* Step 2: File upload */}
         {step === "file" && (
           <div className="space-y-4 mt-2">
-            <p className="text-sm text-muted-foreground">Upload a job description document or paste a URL (optional).</p>
+            <p className="text-sm text-muted-foreground">{t("uiAddJobDialog.uploadAJobDescriptionDocumentOr")}</p>
             <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleFileUpload} />
             {docUrl ? (
               <div className="flex items-center gap-2 text-sm bg-muted rounded-lg p-3">
@@ -352,7 +355,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
               <div className="space-y-3">
                 <Button variant="outline" className="w-full h-20 flex-col gap-2" onClick={() => fileRef.current?.click()} disabled={uploading}>
                   <Upload className="h-5 w-5 text-muted-foreground" />
-                  <span className="text-sm">{uploading ? "Uploading…" : "Upload document (PDF, DOC…)"}</span>
+                  <span className="text-sm">{uploading ? "Uploading…" : t("uiAddJobDialog.uploadDocumentPdfDoc")}</span>
                 </Button>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="flex-1 h-px bg-border" />
@@ -361,7 +364,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
                 </div>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Paste a URL to the job description…"
+                    placeholder={t("uiAddJobDialog.pasteAUrlToTheJob")}
                     className="text-sm"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleUrlPaste((e.target as HTMLInputElement).value);
@@ -377,11 +380,11 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
               </div>
             )}
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setStep("source")}>Back</Button>
+              <Button variant="outline" size="sm" onClick={() => setStep("source")}>{t("uiAddJobDialog.back")}</Button>
               <Button size="sm" className="flex-1" onClick={handleContinueToDetails} disabled={extracting}>
                 {docUrl ? (
-                  <><Sparkles className="h-3.5 w-3.5 mr-1" /> Extract & continue</>
-                ) : "Skip — fill manually"}
+                  <><Sparkles className="h-3.5 w-3.5 mr-1" /> {t("uiAddJobDialog.extractContinue")}</>
+                ) : t("uiAddJobDialog.skipFillManually")}
               </Button>
             </div>
           </div>
@@ -393,11 +396,11 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
             {extracting && (
               <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 rounded-lg p-3">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Extracting job info from document…</span>
+                <span>{t("uiAddJobDialog.extractingJobInfoFromDocument")}</span>
               </div>
             )}
             <div>
-              <label className="text-sm font-medium mb-1 block">Title *</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiAddJobDialog.title")}</label>
               <Input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} placeholder="e.g. Frontend Developer" />
             </div>
             <div>
@@ -405,8 +408,8 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
               <Input value={organizationName} onChange={e => setOrganizationName(e.target.value)} maxLength={120} placeholder="e.g. Fondation Terre de Liens" />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
-              <Textarea value={description} onChange={e => setDescription(e.target.value)} maxLength={2000} className="resize-none min-h-[100px]" placeholder="Describe the role…" />
+              <label className="text-sm font-medium mb-1 block">{t("uiAddJobDialog.description")}</label>
+              <Textarea value={description} onChange={e => setDescription(e.target.value)} maxLength={2000} className="resize-none min-h-[100px]" placeholder={t("uiAddJobDialog.describeTheRole")} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -441,16 +444,16 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
 
             {/* Territories */}
             <SearchableTagPicker
-              label="Territories"
+              label={t("uiAddJobDialog.territories")}
               items={allTerritories.map((t: any) => ({ id: t.id, name: t.name }))}
               selectedIds={selectedTerritories}
               onToggle={toggleTerritory}
             />
 
             <div className="flex gap-2">
-              {!isEdit && <Button variant="outline" size="sm" onClick={() => setStep("file")}>Back</Button>}
+              {!isEdit && <Button variant="outline" size="sm" onClick={() => setStep("file")}>{t("uiAddJobDialog.back")}</Button>}
               <Button onClick={handleCreate} className="flex-1" disabled={!title.trim() || createJob.isPending || updateJob.isPending}>
-                {(createJob.isPending || updateJob.isPending) ? (isEdit ? "Saving…" : "Creating…") : (isEdit ? "Save Changes" : "Post Job")}
+                {(createJob.isPending || updateJob.isPending) ? (isEdit ? "Saving…" : "Creating…") : (isEdit ? t("uiAddJobDialog.saveChanges") : "Post Job")}
               </Button>
             </div>
           </div>

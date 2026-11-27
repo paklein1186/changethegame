@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRecentDataPoints } from "@/hooks/useNaturalSystemData";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export function NsTimeseriesChart({ naturalSystemId, metric, unit }: Props) {
+  const { t } = useTranslation();
   const { data: points, isLoading } = useRecentDataPoints(naturalSystemId, metric, 30);
 
   const chartData = (points ?? [])
@@ -33,7 +35,7 @@ export function NsTimeseriesChart({ naturalSystemId, metric, unit }: Props) {
           <div className="h-32 rounded-lg bg-muted animate-pulse" />
         ) : chartData.length === 0 ? (
           <div className="h-32 flex items-center justify-center text-xs text-muted-foreground">
-            No data in the last 30 days
+            {t("uiNsTimeseriesChart.noDataInTheLast30")}
           </div>
         ) : (
           <div className="h-32">

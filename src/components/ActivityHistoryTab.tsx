@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,24 +15,25 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const ACTION_META: Record<string, { label: string; icon: typeof History; color: string; revertable?: boolean }> = {
-  post_created: { label: "Created a post", icon: FileText, color: "text-blue-500", revertable: true },
+  post_created: { get label() { return i18n.t("uiActivityHistoryTab.createdAPost"); }, icon: FileText, color: "text-blue-500", revertable: true },
   comment_created: { label: "Commented", icon: MessageSquare, color: "text-green-500", revertable: true },
-  post_upvoted: { label: "Upvoted a post", icon: Heart, color: "text-pink-500", revertable: true },
-  quest_joined: { label: "Joined a quest", icon: Swords, color: "text-orange-500", revertable: true },
-  quest_highlighted: { label: "Highlighted a quest", icon: Swords, color: "text-yellow-500", revertable: true },
-  guild_joined: { label: "Joined a guild", icon: UserPlus, color: "text-purple-500" },
-  company_joined: { label: "Joined a company", icon: UserPlus, color: "text-indigo-500" },
-  pod_joined: { label: "Joined a pod", icon: UserPlus, color: "text-teal-500" },
+  post_upvoted: { get label() { return i18n.t("uiActivityHistoryTab.upvotedAPost"); }, icon: Heart, color: "text-pink-500", revertable: true },
+  quest_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedAQuest"); }, icon: Swords, color: "text-orange-500", revertable: true },
+  quest_highlighted: { get label() { return i18n.t("uiActivityHistoryTab.highlightedAQuest"); }, icon: Swords, color: "text-yellow-500", revertable: true },
+  guild_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedAGuild"); }, icon: UserPlus, color: "text-purple-500" },
+  company_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedACompany"); }, icon: UserPlus, color: "text-indigo-500" },
+  pod_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedAPod"); }, icon: UserPlus, color: "text-teal-500" },
   followed: { label: "Followed", icon: Heart, color: "text-pink-400", revertable: true },
-  course_enrolled: { label: "Enrolled in a course", icon: FileText, color: "text-cyan-500" },
-  event_registered: { label: "Registered for an event", icon: FileText, color: "text-emerald-500" },
-  quest_deleted: { label: "Deleted a quest", icon: Trash2, color: "text-red-500", revertable: true },
-  subtask_deleted: { label: "Deleted a subtask", icon: Trash2, color: "text-red-400" },
-  subtask_completed: { label: "Completed a subtask", icon: CheckSquare, color: "text-green-600" },
-  quest_funded: { label: "Funded a quest", icon: Coins, color: "text-emerald-600" },
+  course_enrolled: { get label() { return i18n.t("uiActivityHistoryTab.enrolledInACourse"); }, icon: FileText, color: "text-cyan-500" },
+  event_registered: { get label() { return i18n.t("uiActivityHistoryTab.registeredForAnEvent"); }, icon: FileText, color: "text-emerald-500" },
+  quest_deleted: { get label() { return i18n.t("uiActivityHistoryTab.deletedAQuest"); }, icon: Trash2, color: "text-red-500", revertable: true },
+  subtask_deleted: { get label() { return i18n.t("uiActivityHistoryTab.deletedASubtask"); }, icon: Trash2, color: "text-red-400" },
+  subtask_completed: { get label() { return i18n.t("uiActivityHistoryTab.completedASubtask"); }, icon: CheckSquare, color: "text-green-600" },
+  quest_funded: { get label() { return i18n.t("uiActivityHistoryTab.fundedAQuest"); }, icon: Coins, color: "text-emerald-600" },
 };
 
 export function ActivityHistoryTab() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -73,7 +76,7 @@ export function ActivityHistoryTab() {
         }
         case "quest_joined": {
           await supabase.from("quest_participants").delete().eq("quest_id", action.target_id).eq("user_id", user.id);
-          toast({ title: "Left quest" });
+          toast({ title: t("uiActivityHistoryTab.leftQuest") });
           break;
         }
         case "quest_highlighted": {
@@ -95,17 +98,17 @@ export function ActivityHistoryTab() {
             break;
           }
           await supabase.from("quests").update({ is_deleted: false, deleted_at: null }).eq("id", action.target_id);
-          toast({ title: "Quest restored" });
+          toast({ title: t("uiActivityHistoryTab.questRestored") });
           break;
         }
         default:
-          toast({ title: "Cannot revert this action", variant: "destructive" });
+          toast({ title: t("uiActivityHistoryTab.cannotRevertThisAction"), variant: "destructive" });
       }
       // Remove the activity_log entry itself
       await supabase.from("activity_log").delete().eq("id", action.id);
       qc.invalidateQueries({ queryKey: ["my-activity-history"] });
     } catch {
-      toast({ title: "Revert failed", variant: "destructive" });
+      toast({ title: t("uiActivityHistoryTab.revertFailed"), variant: "destructive" });
     } finally {
       setReverting(null);
     }
@@ -125,15 +128,15 @@ export function ActivityHistoryTab() {
     <div className="space-y-4">
       <div>
         <h2 className="font-display text-lg font-bold flex items-center gap-2">
-          <History className="h-5 w-5 text-primary" /> Activity History
+          <History className="h-5 w-5 text-primary" /> {t("uiActivityHistoryTab.activityHistory")}
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Your recent content actions. You can undo some of them.
+          {t("uiActivityHistoryTab.yourRecentContentActionsYouCan")}
         </p>
       </div>
 
       {actions.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-8 text-center">No activity recorded yet.</p>
+        <p className="text-sm text-muted-foreground py-8 text-center">{t("uiActivityHistoryTab.noActivityRecordedYet")}</p>
       ) : (
         <div className="space-y-2">
           {actions.map((a: any) => {
@@ -157,7 +160,7 @@ export function ActivityHistoryTab() {
                   <p className="text-xs text-muted-foreground">
                     {new Date(a.created_at).toLocaleString()}
                     {isQuestDelete && !graceExpired && (
-                      <span className="ml-2 text-orange-500 font-medium">· {daysLeft}d left to restore</span>
+                      <span className="ml-2 text-orange-500 font-medium">· {daysLeft}{t("uiActivityHistoryTab.dLeftToRestore")}</span>
                     )}
                     {graceExpired && (
                       <span className="ml-2 text-muted-foreground">· grace period expired</span>
@@ -174,14 +177,14 @@ export function ActivityHistoryTab() {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Undo this action?</AlertDialogTitle>
+                        <AlertDialogTitle>{t("uiActivityHistoryTab.undoThisAction")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will revert "{m.label}" on "{a.target_name || "this item"}". This cannot be undone.
+                          {t("uiActivityHistoryTab.thisWillRevert")}{m.label}{t("uiActivityHistoryTab.on")}{a.target_name || t("uiActivityHistoryTab.thisItem")}{t("uiActivityHistoryTab.thisCannotBeUndone")}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => revertAction(a)}>Confirm Undo</AlertDialogAction>
+                        <AlertDialogCancel>{t("uiActivityHistoryTab.cancel")}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => revertAction(a)}>{t("uiActivityHistoryTab.confirmUndo")}</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>

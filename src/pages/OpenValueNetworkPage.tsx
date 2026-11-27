@@ -144,9 +144,9 @@ export default function OpenValueNetworkPage({ embedded }: Props) {
           <p className="mt-4">{t("ovnPage.s1Carries")}</p>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
             {[
-              { icon: <CurrencyIcon currency="xp" className="h-4 w-4" />, label: "⭐ XP" },
+              { icon: <CurrencyIcon currency="xp" className="h-4 w-4" />, label: t("uiOpenValueNetworkPage.xp") },
               { icon: <Shield className="h-4 w-4 text-primary" />, label: "Trust Index" },
-              { icon: <CurrencyIcon currency="credits" className="h-4 w-4" />, label: "🔷 Credits" },
+              { icon: <CurrencyIcon currency="credits" className="h-4 w-4" />, label: t("uiOpenValueNetworkPage.credits") },
               { icon: <CurrencyIcon currency="ctg" className="h-4 w-4" />, label: "🌱 $CTG" },
               { icon: <FileText className="h-4 w-4 text-primary" />, label: "History" },
             ].map((v) => (
@@ -179,7 +179,7 @@ export default function OpenValueNetworkPage({ embedded }: Props) {
           <p>{t("ovnPage.s3P")}</p>
           <div className="grid sm:grid-cols-3 gap-3 mt-3">
             <ValueCard
-              title="A. Reputation (⭐ XP)"
+              title={t("uiOpenValueNetworkPage.aReputationXp")}
               color="text-primary"
               desc=""
               icon={<Zap className="h-5 w-5" />}

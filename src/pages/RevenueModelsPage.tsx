@@ -111,9 +111,9 @@ export default function RevenueModelsPage({ embedded }: { embedded?: boolean }) 
 
   const overviewBoxes = [
     { icon: Landmark, title: t("revenuePage.ownership"), desc: t("revenuePage.ownershipDesc") },
-    { icon: Leaf, title: "🟩 Coins", desc: "Fiat-backed. Fund quests, earn from contributions, withdraw to €." },
-    { icon: Sprout, title: "🌱 $CTG", desc: "Contribution token. Frozen in quest escrow, circulates with demurrage." },
-    { icon: Coins, title: "🔷 Platform Credits", desc: "Feature fuel only. Never used for quest compensation." },
+    { icon: Leaf, title: t("uiRevenueModelsPage.coins"), desc: t("uiRevenueModelsPage.fiatBackedFundQuestsEarnFrom") },
+    { icon: Sprout, title: "🌱 $CTG", desc: t("uiRevenueModelsPage.contributionTokenFrozenInQuestEscrow") },
+    { icon: Coins, title: t("uiRevenueModelsPage.platformCredits"), desc: t("uiRevenueModelsPage.featureFuelOnlyNeverUsedFor") },
     { icon: Star, title: t("revenuePage.xpLabel"), desc: t("revenuePage.xpDesc") },
   ];
 
@@ -200,44 +200,37 @@ export default function RevenueModelsPage({ embedded }: { embedded?: boolean }) 
 
         {/* COINS & $CTG */}
         <section>
-          <SectionHeader id="coins-ctg" title="🟩 Coins & 🌱 $CTG — Quest Value Layer" icon={Leaf} />
+          <SectionHeader id="coins-ctg" title={t("uiRevenueModelsPage.coinsCtgQuestValueLayer")} icon={Leaf} />
           <Prose>
             <p>
-              Two distinct currencies power quest value flows on changethegame.
-              They can coexist on the same quest as independent incentive pools.
+              {t("uiRevenueModelsPage.twoDistinctCurrenciesPowerQuestValue")}
             </p>
           </Prose>
 
           <div className="mt-4 space-y-3">
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-5 py-4 text-sm leading-relaxed">
-              <p className="font-semibold text-foreground">🟩 Coins are fiat-backed mission units.</p>
+              <p className="font-semibold text-foreground">{t("uiRevenueModelsPage.coinsAreFiatBackedMissionUnits")}</p>
               <p className="text-muted-foreground mt-1">
-                Quest creators pre-fund a Coins pool at creation or top it up anytime.
-                Others can contribute via fundraising campaigns.
-                Coins in escrow are distributed to contributors via OCU pie %, equal split,
-                or manual dispatch. No demurrage — Coins hold their value.
+                {t("uiRevenueModelsPage.questCreatorsPreFundACoins")}
               </p>
             </div>
 
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-5 py-4 text-sm leading-relaxed">
-              <p className="font-semibold text-foreground">🌱 $CTG is the contribution commons token.</p>
+              <p className="font-semibold text-foreground">{t("uiRevenueModelsPage.ctgIsTheContributionCommonsToken")}</p>
               <p className="text-muted-foreground mt-1">
-                It can also be pre-funded into a quest as an incentive.
-                $CTG held in quest escrow is frozen from demurrage.
-                Once distributed to contributor wallets, normal 1%/month demurrage resumes.
-                $CTG is not fiat-backed and cannot be withdrawn as fiat.
+                {t("uiRevenueModelsPage.itCanAlsoBePreFunded")}
               </p>
             </div>
           </div>
 
           <Prose>
-            <p className="font-semibold text-foreground pt-4">Quest funding modes:</p>
+            <p className="font-semibold text-foreground pt-4">{t("uiRevenueModelsPage.questFundingModes")}</p>
           </Prose>
           <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm sm:text-base mt-2">
-            <li>🅐 No pre-funding + fundraising campaign: threshold → auto or manual dispatch</li>
-            <li>🅑 Pre-funded by creator: Coins and/or $CTG allocated at creation</li>
-            <li>🅒 OCU module: contribution tracking governs pie-based distribution</li>
-            <li>All three modes are combinable on the same quest.</li>
+            <li>{t("uiRevenueModelsPage.noPreFundingFundraisingCampaignThreshold")}</li>
+            <li>{t("uiRevenueModelsPage.preFundedByCreatorCoinsAnd")}</li>
+            <li>{t("uiRevenueModelsPage.ocuModuleContributionTrackingGovernsPie")}</li>
+            <li>{t("uiRevenueModelsPage.allThreeModesAreCombinableOn")}</li>
           </ul>
         </section>
 
@@ -250,10 +243,10 @@ export default function RevenueModelsPage({ embedded }: { embedded?: boolean }) 
           {/* Credits disclaimer */}
           <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm leading-relaxed mb-4">
             <p className="font-bold text-foreground">
-              ⛔ Platform Credits are never used for quest compensation or quest funding.
+              {t("uiRevenueModelsPage.platformCreditsAreNeverUsedFor")}
             </p>
             <p className="text-muted-foreground mt-1">
-              Quest pools use Coins and/or $CTG exclusively.
+              {t("uiRevenueModelsPage.questPoolsUseCoinsAndOr")}
             </p>
           </div>
 

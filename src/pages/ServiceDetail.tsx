@@ -187,18 +187,18 @@ export default function ServiceDetail() {
     return groups;
   }, [slots]);
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!svc) return <PageShell><p>Service not found.</p></PageShell>;
-  if (svc.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>This service has been removed.</p></PageShell>;
-  if (svc.is_draft && !isOwnService && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>Service not found.</p></PageShell>;
+  if (isLoading) return <PageShell><p>{t("uiServiceDetail.loading")}</p></PageShell>;
+  if (!svc) return <PageShell><p>{t("uiServiceDetail.serviceNotFound")}</p></PageShell>;
+  if (svc.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>{t("uiServiceDetail.thisServiceHasBeenRemoved")}</p></PageShell>;
+  if (svc.is_draft && !isOwnService && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>{t("uiServiceDetail.serviceNotFound")}</p></PageShell>;
 
   const isFree = !svc.price_amount || svc.price_amount === 0;
   const svcType = (svc as any).service_type || "online_call";
   const requiresApproval = svcType === "service_mission" || svcType === "event_attendance";
 
   const createBooking = async () => {
-    if (!selectedSlot) { toast({ title: "Please select a time slot", variant: "destructive" }); return; }
-    if (!currentUser.id) { toast({ title: "Please log in to book", variant: "destructive" }); return; }
+    if (!selectedSlot) { toast({ title: t("uiServiceDetail.pleaseSelectATimeSlot"), variant: "destructive" }); return; }
+    if (!currentUser.id) { toast({ title: t("uiServiceDetail.pleaseLogInToBook"), variant: "destructive" }); return; }
     // For online_call free services, auto-confirm. For mission/event, always require approval.
     const autoConfirm = isFree && !requiresApproval;
     const callUrl = autoConfirm ? generateCallUrl(`bk-${Date.now()}`, svc.online_location_type as any) : undefined;
@@ -214,7 +214,7 @@ export default function ServiceDetail() {
       notes: bookNotes.trim() || null, call_url: callUrl,
     };
     const { data: newBooking, error } = await supabase.from("bookings").insert(bookingPayload).select("id").single();
-    if (error || !newBooking) { toast({ title: "Failed to book", description: error?.message || "This slot may no longer be available.", variant: "destructive" }); return; }
+    if (error || !newBooking) { toast({ title: t("uiServiceDetail.failedToBook"), description: error?.message || t("uiServiceDetail.thisSlotMayNoLongerBe"), variant: "destructive" }); return; }
     setBookOpen(false); setBookNotes(""); setSelectedSlot(null); setWeekOffset(0);
     queryClient.invalidateQueries({ queryKey: ["bookings-for-provider"] });
     queryClient.invalidateQueries({ queryKey: ["bookings-for-unit"] });
@@ -228,14 +228,14 @@ export default function ServiceDetail() {
           body: { bookingId: newBooking.id },
         });
         if (checkoutErr || !checkoutData?.url) {
-          toast({ title: "Booking created", description: "Payment link could not be generated. You can pay later from your bookings." });
+          toast({ title: "Booking created", description: t("uiServiceDetail.paymentLinkCouldNotBeGenerated") });
         } else {
           window.open(checkoutData.url, "_blank");
-          toast({ title: "Booking created! Complete payment in the new tab." });
+          toast({ title: t("uiServiceDetail.bookingCreatedCompletePaymentInThe") });
           redirectedToCheckout = true;
         }
       } catch {
-        toast({ title: "Booking created", description: "Payment link could not be generated." });
+        toast({ title: "Booking created", description: t("uiServiceDetail.paymentLinkCouldNotBeGenerated2") });
       }
     }
 
@@ -296,11 +296,11 @@ export default function ServiceDetail() {
     });
 
     if (autoConfirm) {
-      toast({ title: "✅ Session confirmed!", description: "You can join via the call link in your bookings." });
+      toast({ title: "✅ Session confirmed!", description: t("uiServiceDetail.youCanJoinViaTheCall") });
     } else if (requiresApproval) {
-      toast({ title: "📋 Request submitted!", description: "An admin will review and validate your booking request." });
+      toast({ title: t("uiServiceDetail.requestSubmitted"), description: t("uiServiceDetail.anAdminWillReviewAndValidate") });
     } else {
-      toast({ title: "✅ Booking request sent!", description: `${provider?.name || "The provider"} will be notified. You'll hear back soon.` });
+      toast({ title: t("uiServiceDetail.bookingRequestSent"), description: `${provider?.name || "The provider"} will be notified. You'll hear back soon.` });
     }
     navigate(`/bookings/${newBooking.id}`);
   };
@@ -312,7 +312,7 @@ export default function ServiceDetail() {
   return (
     <PageShell>
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiServiceDetail.back")}
       </Button>
 
       {svc.is_draft && <DraftBanner />}
@@ -331,18 +331,18 @@ export default function ServiceDetail() {
             <Link to={`/guilds/${guild.id}`} className="flex items-center gap-2 hover:text-primary transition-colors">
               <Shield className="h-4 w-4 text-primary" />
               {guild.logo_url && <img src={guild.logo_url} className="h-6 w-6 rounded" alt="" />}
-              <span className="font-medium">Offered by <span className="text-foreground">{guild.name}</span></span>
+              <span className="font-medium">{t("uiServiceDetail.offeredBy")} <span className="text-foreground">{guild.name}</span></span>
             </Link>
           ) : ownerType === "COMPANY" && company ? (
             <Link to={`/companies/${(company as any).id}`} className="flex items-center gap-2 hover:text-primary transition-colors">
               <Shield className="h-4 w-4 text-primary" />
               {(company as any).logo_url && <img src={(company as any).logo_url} className="h-6 w-6 rounded" alt="" />}
-              <span className="font-medium">Offered by <span className="text-foreground">{(company as any).name}</span></span>
+              <span className="font-medium">{t("uiServiceDetail.offeredBy")} <span className="text-foreground">{(company as any).name}</span></span>
             </Link>
           ) : provider ? (
             <Link to={`/users/${provider.user_id}`} className="flex items-center gap-2 hover:text-primary transition-colors">
               <Avatar className="h-6 w-6"><AvatarImage src={provider.avatar_url ?? undefined} /><AvatarFallback>{provider.name?.[0]}</AvatarFallback></Avatar>
-              <span className="font-medium">Offered by <span className="text-foreground">{provider.name}</span></span>
+              <span className="font-medium">{t("uiServiceDetail.offeredBy")} <span className="text-foreground">{provider.name}</span></span>
               {provider.xp != null && <XpLevelBadge level={computeLevelFromXp(provider.xp)} compact />}
               <TrustSummaryBadge summary={providerTrust} variant="compact" />
             </Link>
@@ -357,7 +357,7 @@ export default function ServiceDetail() {
             </>
           )}
           {(svc as any).service_type === "service_mission" && <Badge variant="outline" className="text-xs"><Briefcase className="h-3 w-3 mr-1" />Mission</Badge>}
-          {(svc as any).service_type === "event_attendance" && <Badge variant="outline" className="text-xs"><Users className="h-3 w-3 mr-1" />Event</Badge>}
+          {(svc as any).service_type === "event_attendance" && <Badge variant="outline" className="text-xs"><Users className="h-3 w-3 mr-1" />{t("uiServiceDetail.event")}</Badge>}
           {(svc as any).service_type === "online_call" && svc.online_location_type && <Badge variant="outline" className="text-xs"><Video className="h-3 w-3 mr-1" />{svc.online_location_type}</Badge>}
           {(svc as any).location_text && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {(svc as any).location_text}</span>}
         </div>
@@ -380,18 +380,18 @@ export default function ServiceDetail() {
           <ReportButton targetType={ReportTargetType.SERVICE} targetId={svc.id} />
           {canManage && (
             <>
-              <Button size="sm" variant="outline" asChild><Link to={`/services/${svc.id}/edit`}><Pencil className="h-3.5 w-3.5 mr-1" /> Edit</Link></Button>
+              <Button size="sm" variant="outline" asChild><Link to={`/services/${svc.id}/edit`}><Pencil className="h-3.5 w-3.5 mr-1" /> {t("uiServiceDetail.edit")}</Link></Button>
               <Button size="sm" variant="ghost" className="text-destructive" onClick={async () => {
                 const { error } = await supabase.from("services").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", svc.id);
                 if (!error) { toast({ title: "Service deleted" }); navigate(-1); }
-              }}><Trash2 className="h-3.5 w-3.5 mr-1" /> Delete</Button>
+              }}><Trash2 className="h-3.5 w-3.5 mr-1" /> {t("uiServiceDetail.delete")}</Button>
             </>
           )}
         </div>
 
         {!isOwnService && (
           <Dialog open={bookOpen} onOpenChange={o => { setBookOpen(o); if (!o) { setSelectedSlot(null); setWeekOffset(0); } }}>
-            <DialogTrigger asChild><Button><CalendarClock className="h-4 w-4 mr-1" /> {svcType === "online_call" ? "Book a session" : svcType === "event_attendance" ? "Register" : "Request this service"}</Button></DialogTrigger>
+            <DialogTrigger asChild><Button><CalendarClock className="h-4 w-4 mr-1" /> {svcType === "online_call" ? t("uiServiceDetail.bookASession") : svcType === "event_attendance" ? "Register" : t("uiServiceDetail.requestThisService")}</Button></DialogTrigger>
             <DialogContent className="max-w-lg">
               <DialogHeader><DialogTitle>Book — {svc.title}</DialogTitle></DialogHeader>
               <div className="space-y-4 mt-2">
@@ -401,7 +401,7 @@ export default function ServiceDetail() {
                   <Button variant="ghost" size="icon" disabled={weekOffset >= 3} onClick={() => setWeekOffset(w => w + 1)}><ChevronRight className="h-4 w-4" /></Button>
                 </div>
                 {(providerUserId || isUnitService) ? (
-                  Object.keys(slotsByDate).length === 0 ? <p className="text-sm text-muted-foreground text-center py-4">No available slots this week.</p> : (
+                  Object.keys(slotsByDate).length === 0 ? <p className="text-sm text-muted-foreground text-center py-4">{t("uiServiceDetail.noAvailableSlotsThisWeek")}</p> : (
                     <div className="max-h-[280px] overflow-y-auto space-y-3">
                       {Object.entries(slotsByDate).map(([date, daySlots]) => (
                         <div key={date}>
@@ -411,9 +411,9 @@ export default function ServiceDetail() {
                       ))}
                     </div>
                   )
-                ) : <p className="text-sm text-muted-foreground">Service availability not configured.</p>}
+                ) : <p className="text-sm text-muted-foreground">{t("uiServiceDetail.serviceAvailabilityNotConfigured")}</p>}
                 <div><label className="text-sm font-medium mb-1 block">Notes (optional)</label><Textarea value={bookNotes} onChange={e => setBookNotes(e.target.value)} maxLength={500} className="resize-none" /></div>
-                <Button onClick={createBooking} className="w-full" disabled={!selectedSlot}><Send className="h-4 w-4 mr-1" />{requiresApproval ? (isFree ? "Submit request (Free)" : `Submit request (🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins)`) : isFree ? "Confirm (Free)" : `Book & Pay (🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins)`}</Button>
+                <Button onClick={createBooking} className="w-full" disabled={!selectedSlot}><Send className="h-4 w-4 mr-1" />{requiresApproval ? (isFree ? t("uiServiceDetail.submitRequestFree") : `Submit request (🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins)`) : isFree ? t("uiServiceDetail.confirmFree") : `Book & Pay (🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins)`}</Button>
               </div>
             </DialogContent>
           </Dialog>

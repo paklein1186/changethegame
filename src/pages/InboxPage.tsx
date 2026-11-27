@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useRef, useEffect, useCallback, type KeyboardEvent } from "react";
 import { compressImage } from "@/lib/compressImage";
 import { useNavigate } from "react-router-dom";
@@ -86,6 +87,7 @@ function isPulseConversation(conv: any): boolean {
 }
 
 function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: string, value: any) => void }) {
+  const { t } = useTranslation();
   if (!data) return null;
   return (
     <div className="space-y-3 mt-3 mb-2 px-1">
@@ -109,7 +111,7 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
               <div className="flex items-center justify-between mb-0.5">
                 <span className="text-[10px] font-medium uppercase text-muted-foreground">{key}</span>
                 <Button size="sm" variant="outline" className="h-5 text-[10px] px-1.5" onClick={() => onAccept("bio", value)}>
-                  Use this
+                  {t("uiInboxPage.useThis")}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">{value as string}</p>
@@ -120,7 +122,7 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
 
       {data.suggestedTopics?.length > 0 && (
         <div className="rounded-xl border border-accent/20 bg-accent/5 p-3">
-          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Hash className="h-3 w-3" /> Suggested Topics</p>
+          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Hash className="h-3 w-3" /> {t("uiInboxPage.suggestedTopics")}</p>
           <div className="flex flex-wrap gap-1.5">
             {data.suggestedTopics.map((t: string) => (
               <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
@@ -131,7 +133,7 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
 
       {data.suggestedTerritories?.length > 0 && (
         <div className="rounded-xl border border-accent/20 bg-accent/5 p-3">
-          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><MapPin className="h-3 w-3" /> Suggested Territories</p>
+          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><MapPin className="h-3 w-3" /> {t("uiInboxPage.suggestedTerritories")}</p>
           <div className="flex flex-wrap gap-1.5">
             {data.suggestedTerritories.map((t: string) => (
               <Badge key={t} variant="outline" className="text-xs"><MapPin className="h-3 w-3 mr-0.5" />{t}</Badge>
@@ -142,13 +144,13 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
 
       {data.suggestedQuests?.length > 0 && (
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
-          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Sparkles className="h-3 w-3" /> Quest Ideas</p>
+          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Sparkles className="h-3 w-3" /> {t("uiInboxPage.questIdeas")}</p>
           {data.suggestedQuests.map((q: any, i: number) => (
             <div key={i} className="flex items-start justify-between gap-2 mb-2 last:mb-0">
               <div>
                 <p className="text-sm font-medium">{q.title}</p>
                 <p className="text-xs text-muted-foreground">{q.description}</p>
-                <Badge variant="outline" className="text-[10px] mt-1">{q.type === "completed" ? "Past achievement" : "Open project"}</Badge>
+                <Badge variant="outline" className="text-[10px] mt-1">{q.type === "completed" ? "Past achievement" : t("uiInboxPage.openProject")}</Badge>
               </div>
             </div>
           ))}
@@ -171,6 +173,7 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
 }
 
 export default function InboxPage() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const isMobile = useIsMobile();
@@ -267,7 +270,7 @@ export default function InboxPage() {
         // Store the storage path (not public URL) since bucket is private
         uploadedFiles.push({ url: path, name: att.file.name, type: att.file.type, size: att.file.size });
       } catch (e: any) {
-        toast({ title: "Upload failed", description: `${att.file.name}: ${e?.message}`, variant: "destructive" });
+        toast({ title: t("uiInboxPage.uploadFailed"), description: `${att.file.name}: ${e?.message}`, variant: "destructive" });
       }
     }
 
@@ -313,7 +316,7 @@ export default function InboxPage() {
         qc.invalidateQueries({ queryKey: ["conversations", userId] });
       } catch (e: any) {
         console.error("Pulse bot error:", e);
-        toast({ title: "Pulse couldn't respond", description: e?.message || "Try again in a moment", variant: "destructive" });
+        toast({ title: "Pulse couldn't respond", description: e?.message || t("uiInboxPage.tryAgainInAMoment"), variant: "destructive" });
       } finally {
         setPulseLoading(false);
       }
@@ -329,7 +332,7 @@ export default function InboxPage() {
         toast({ title: `${field === "bio" ? "Bio" : "Headline"} updated!` });
       }
     } catch (e: any) {
-      toast({ title: "Failed to update", description: e?.message, variant: "destructive" });
+      toast({ title: t("uiInboxPage.failedToUpdate"), description: e?.message, variant: "destructive" });
     }
   }, [userId, toast]);
 
@@ -348,7 +351,7 @@ export default function InboxPage() {
     const newAttachments: { file: File; preview?: string }[] = [];
     for (const file of toAdd) {
       if (file.size > MAX_FILE_SIZE) {
-        toast({ title: "File too large", description: `${file.name} exceeds 25 MB.`, variant: "destructive" });
+        toast({ title: t("uiInboxPage.fileTooLarge"), description: `${file.name} exceeds 25 MB.`, variant: "destructive" });
         continue;
       }
       const preview = IMAGE_TYPES.includes(file.type) ? URL.createObjectURL(file) : undefined;
@@ -396,7 +399,7 @@ export default function InboxPage() {
     const existingIds = activeConv?.participants.map((p) => p.user_id) ?? [];
     const toAdd = newParticipants.filter((p) => !existingIds.includes(p.id));
     if (!toAdd.length) {
-      toast({ title: "Users already in conversation" });
+      toast({ title: t("uiInboxPage.usersAlreadyInConversation") });
       return;
     }
     await addParticipants.mutateAsync({
@@ -444,7 +447,7 @@ export default function InboxPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>New conversation</DialogTitle>
+                    <DialogTitle>{t("uiInboxPage.newConversation")}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     {selectedUsers.length > 0 && (
@@ -463,17 +466,17 @@ export default function InboxPage() {
                           setSelectedUsers((prev) => [...prev, { id: user.user_id, name: user.display_name ?? "User" }]);
                         }
                       }}
-                      placeholder="Search users..."
+                      placeholder={t("uiInboxPage.searchUsers")}
                     />
                     {selectedUsers.length > 1 && (
                       <Input
-                        placeholder="Group name (optional)"
+                        placeholder={t("uiInboxPage.groupNameOptional")}
                         value={groupTitle}
                         onChange={(e) => setGroupTitle(e.target.value)}
                       />
                     )}
                     <Button onClick={handleNewConversation} disabled={!selectedUsers.length || createConversation.isPending} className="w-full">
-                      {createConversation.isPending ? "Creating..." : "Start conversation"}
+                      {createConversation.isPending ? "Creating..." : t("uiInboxPage.startConversation")}
                     </Button>
                   </div>
                 </DialogContent>
@@ -487,7 +490,7 @@ export default function InboxPage() {
                 <Input
                   value={convSearch}
                   onChange={(e) => setConvSearch(e.target.value)}
-                  placeholder="Search conversations..."
+                  placeholder={t("uiInboxPage.searchConversations")}
                   className="h-8 text-xs pl-8 rounded-full"
                 />
               </div>
@@ -499,8 +502,8 @@ export default function InboxPage() {
               ) : conversations.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground">
                   <MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-40" />
-                  <p className="text-sm">No conversations yet</p>
-                  <p className="text-xs mt-1">Start one with the + button</p>
+                  <p className="text-sm">{t("uiInboxPage.noConversationsYet")}</p>
+                  <p className="text-xs mt-1">{t("uiInboxPage.startOneWithTheButton")}</p>
                 </div>
               ) : (
                 conversations.filter((conv) => {
@@ -591,13 +594,13 @@ export default function InboxPage() {
                     {/* Add people / convert to group */}
                     <Dialog open={showAddPeopleDialog} onOpenChange={setShowAddPeopleDialog}>
                       <DialogTrigger asChild>
-                        <Button size="icon" variant="ghost" title="Add people">
+                        <Button size="icon" variant="ghost" title={t("uiInboxPage.addPeople")}>
                           <UserPlus className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>{activeConv?.is_group ? "Add people" : "Create group from conversation"}</DialogTitle>
+                          <DialogTitle>{activeConv?.is_group ? t("uiInboxPage.addPeople") : t("uiInboxPage.createGroupFromConversation")}</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
                           {newParticipants.length > 0 && (
@@ -616,17 +619,17 @@ export default function InboxPage() {
                                 setNewParticipants((prev) => [...prev, { id: user.user_id, name: user.display_name ?? "User" }]);
                               }
                             }}
-                            placeholder="Search users to add..."
+                            placeholder={t("uiInboxPage.searchUsersToAdd")}
                           />
                           {!activeConv?.is_group && (
                             <Input
-                              placeholder="Group name (optional)"
+                              placeholder={t("uiInboxPage.groupNameOptional")}
                               value={newGroupTitle}
                               onChange={(e) => setNewGroupTitle(e.target.value)}
                             />
                           )}
                           <Button onClick={handleAddPeople} disabled={!newParticipants.length || addParticipants.isPending} className="w-full">
-                            {addParticipants.isPending ? "Adding..." : "Add participants"}
+                            {addParticipants.isPending ? "Adding..." : t("uiInboxPage.addParticipants")}
                           </Button>
                         </div>
                       </DialogContent>
@@ -685,11 +688,11 @@ export default function InboxPage() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                   <DropdownMenuItem onClick={() => { setEditingMsgId(msg.id); setEditText(msg.content); }}>
-                                    <Pencil className="h-4 w-4 mr-2" /> Edit
+                                    <Pencil className="h-4 w-4 mr-2" /> {t("uiInboxPage.edit")}
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem onClick={() => handleDelete(msg.id)} className="text-destructive focus:text-destructive">
-                                    <Trash2 className="h-4 w-4 mr-2" /> Delete
+                                    <Trash2 className="h-4 w-4 mr-2" /> {t("uiInboxPage.delete")}
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -787,7 +790,7 @@ export default function InboxPage() {
                         </Avatar>
                         <div className="rounded-2xl rounded-bl-md bg-muted px-3.5 py-2 flex items-center gap-2">
                           <Loader2 className="h-3.5 w-3.5 animate-spin text-green-600" />
-                          <span className="text-xs text-muted-foreground">Pulse is thinking...</span>
+                          <span className="text-xs text-muted-foreground">{t("uiInboxPage.pulseIsThinking")}</span>
                         </div>
                       </div>
                     )}
@@ -834,7 +837,7 @@ export default function InboxPage() {
                     <MentionTextarea
                       value={messageText}
                       onChange={setMessageText}
-                      placeholder={isPulseActive ? "Share your LinkedIn URL, describe yourself, or ask Pulse…" : "Type a message… Use @ to mention"}
+                      placeholder={isPulseActive ? t("uiInboxPage.shareYourLinkedinUrlDescribeYourself") : t("uiInboxPage.typeAMessageUseToMention")}
                       className="flex-1 min-h-[36px] max-h-[120px] py-1.5"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
@@ -853,7 +856,7 @@ export default function InboxPage() {
               <div className="flex-1 flex items-center justify-center text-muted-foreground">
                 <div className="text-center">
                   <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p className="text-sm">Select a conversation or start a new one</p>
+                  <p className="text-sm">{t("uiInboxPage.selectAConversationOrStartA")}</p>
                 </div>
               </div>
             )}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
@@ -27,6 +28,7 @@ export function BroadcastMessageDialog({
   guildName,
   trigger,
 }: BroadcastMessageDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
@@ -173,7 +175,7 @@ export function BroadcastMessageDialog({
         {trigger || (
           <Button size="sm" variant="outline">
             <Megaphone className="h-4 w-4 mr-1.5" />
-            Message all members
+            {t("uiBroadcastMessageDialog.messageAllMembers")}
           </Button>
         )}
       </DialogTrigger>
@@ -181,12 +183,12 @@ export function BroadcastMessageDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Megaphone className="h-5 w-5 text-primary" />
-            Broadcast to all members
+            {t("uiBroadcastMessageDialog.broadcastToAllMembers")}
           </DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          This message will be sent as an official message from <strong>{senderLabel}</strong> to{" "}
-          <strong>{recipientCount} member{recipientCount !== 1 ? "s" : ""}</strong>. Each member receives it in their inbox.
+          {t("uiBroadcastMessageDialog.thisMessageWillBeSentAs")} <strong>{senderLabel}</strong> to{" "}
+          <strong>{recipientCount} member{recipientCount !== 1 ? "s" : ""}</strong>{t("uiBroadcastMessageDialog.eachMemberReceivesItInTheir")}
         </p>
         <Textarea
           placeholder={`Write your announcement to all ${senderLabel} members...`}
@@ -206,13 +208,13 @@ export function BroadcastMessageDialog({
         )}
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={sending}>
-            Cancel
+            {t("uiBroadcastMessageDialog.cancel")}
           </Button>
           <Button onClick={handleSend} disabled={!content.trim() || sending}>
             {sending ? (
               <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Sending…</>
             ) : (
-              <><Megaphone className="h-4 w-4 mr-1" /> Send to {recipientCount} member{recipientCount !== 1 ? "s" : ""}</>
+              <><Megaphone className="h-4 w-4 mr-1" /> {t("uiBroadcastMessageDialog.sendTo")} {recipientCount} member{recipientCount !== 1 ? "s" : ""}</>
             )}
           </Button>
         </div>

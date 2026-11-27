@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
@@ -53,6 +54,7 @@ function EmptyState({ icon: Icon, message, cta, to }: { icon: any; message: stri
 }
 
 function SectionHeader({ icon: Icon, title, count, seeMoreTo }: { icon: any; title: string; count?: number; seeMoreTo?: string }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between mb-3">
       <h3 className="font-display font-semibold flex items-center gap-2">
@@ -61,7 +63,7 @@ function SectionHeader({ icon: Icon, title, count, seeMoreTo }: { icon: any; tit
       </h3>
       {seeMoreTo && (
         <Button size="sm" variant="ghost" asChild className="text-xs">
-          <Link to={seeMoreTo}>See more <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+          <Link to={seeMoreTo}>{t("uiNetworkHub.seeMore")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
         </Button>
       )}
     </div>
@@ -82,8 +84,8 @@ function NetworkTabs({ tab, setTab, people, totalEntities, isLoading, loadingPeo
     { value: "dashboard", label: <><LayoutDashboard className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Dashboard</span></> },
     { value: "people", label: <><Users className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.people")} ({people.length})</span><span className="sm:hidden">{people.length}</span></> },
     { value: "entities", label: <><Briefcase className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.entities")} ({totalEntities})</span><span className="sm:hidden">{totalEntities}</span></> },
-    { value: "territories", label: <><MapPin className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Territories</span><span className="sm:hidden">{t("tabs.areas")}</span></> },
-    { value: "houses", label: <><Sparkles className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Topics & Houses</span></>, visible: isCreativeOrHybrid },
+    { value: "territories", label: <><MapPin className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiNetworkHub.territories")}</span><span className="sm:hidden">{t("tabs.areas")}</span></> },
+    { value: "houses", label: <><Sparkles className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiNetworkHub.topicsHouses")}</span></>, visible: isCreativeOrHybrid },
     { value: "leaderboard", label: <><Trophy className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.leaderboard")}</span></> },
   ];
 
@@ -242,13 +244,14 @@ export default function NetworkHub() {
 
 // ─── Overview sections ──────────────────────────────────────
 function OverviewPeople({ people }: { people: any[] }) {
+  const { t } = useTranslation();
   const top = people.slice(0, 6);
   const userIds = useMemo(() => top.map((p: any) => p.user_id), [top]);
   const { data: followedIds = new Set<string>() } = useFollowedUserIds(userIds);
 
   return (
     <div>
-      <SectionHeader icon={Users} title="People in your orbit" count={people.length} seeMoreTo="/network?tab=people" />
+      <SectionHeader icon={Users} title={t("uiNetworkHub.peopleInYourOrbit")} count={people.length} seeMoreTo="/network?tab=people" />
       {top.length === 0 ? (
         <EmptyState icon={Users} message="Join guilds, organizations or quests to build your network." cta="Explore guilds" to="/explore?tab=entities" />
       ) : (
@@ -277,10 +280,11 @@ function OverviewGuilds({ memberships, label }: { memberships: any[]; label: (k:
 }
 
 function OverviewCompanies({ memberships }: { memberships: any[] }) {
+  const { t } = useTranslation();
   const top = memberships.slice(0, 4);
   return (
     <div>
-      <SectionHeader icon={Building2} title="Traditional Organizations in your orbit" count={memberships.length} seeMoreTo="/network?tab=entities" />
+      <SectionHeader icon={Building2} title={t("uiNetworkHub.traditionalOrganizationsInYourOrbit")} count={memberships.length} seeMoreTo="/network?tab=entities" />
       {top.length === 0 ? (
         <EmptyState icon={Building2} message="No traditional organizations linked to your account." cta="Create one" to="/me/companies" />
       ) : (
@@ -296,7 +300,7 @@ function OverviewTerritories({ territories, topics, activity }: { territories: a
   const { t } = useTranslation();
   return (
     <div>
-      <SectionHeader icon={MapPin} title="Territories around you" seeMoreTo="/network?tab=territories" />
+      <SectionHeader icon={MapPin} title={t("uiNetworkHub.territoriesAroundYou")} seeMoreTo="/network?tab=territories" />
       {territories.length === 0 && topics.length === 0 ? (
         <EmptyState icon={MapPin} message="Add territories and topics in your profile settings." cta="Edit profile" to="/profile/edit" />
       ) : (
@@ -333,6 +337,7 @@ function OverviewTerritories({ territories, topics, activity }: { territories: a
 const ExploreUsersMap = lazy(() => import("@/components/explore/ExploreUsersMap").catch(() => window.location.reload() as never).then(m => ({ default: m.ExploreUsersMap })));
 
 function PeopleTab({ people, loading }: { people: any[]; loading: boolean }) {
+  const { t } = useTranslation();
   const [sort, setSort] = useState<"interactions" | "recent">("interactions");
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const currentUser = useCurrentUser();
@@ -353,15 +358,15 @@ function PeopleTab({ people, loading }: { people: any[]; loading: boolean }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{people.length} people in your orbit</p>
+        <p className="text-sm text-muted-foreground">{people.length} {t("uiNetworkHub.peopleInYourOrbit2")}</p>
         <div className="flex gap-2">
           <div className="flex gap-1">
             <Button size="sm" variant={sort === "interactions" ? "default" : "outline"} onClick={() => setSort("interactions")} className="text-xs h-7">Most shared</Button>
             <Button size="sm" variant={sort === "recent" ? "default" : "outline"} onClick={() => setSort("recent")} className="text-xs h-7">Recent</Button>
           </div>
           <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as "grid" | "map")} className="border rounded-md">
-            <ToggleGroupItem value="grid" aria-label="Grid view" className="px-2 h-7"><LayoutGrid className="h-3.5 w-3.5" /></ToggleGroupItem>
-            <ToggleGroupItem value="map" aria-label="Map view" className="px-2 h-7"><MapPin className="h-3.5 w-3.5" /></ToggleGroupItem>
+            <ToggleGroupItem value="grid" aria-label={t("uiNetworkHub.gridView")} className="px-2 h-7"><LayoutGrid className="h-3.5 w-3.5" /></ToggleGroupItem>
+            <ToggleGroupItem value="map" aria-label={t("uiNetworkHub.mapView")} className="px-2 h-7"><MapPin className="h-3.5 w-3.5" /></ToggleGroupItem>
           </ToggleGroup>
         </div>
       </div>
@@ -386,6 +391,7 @@ function PeopleTab({ people, loading }: { people: any[]; loading: boolean }) {
 
 // ─── Guilds tab ──────────────────────────────────────────────
 function GuildsTab({ memberships, loading, label }: { memberships: any[]; loading: boolean; label: (k: string) => string }) {
+  const { t } = useTranslation();
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
 
   const adminGuilds = memberships.filter(m => ["admin", "steward", "owner"].includes(m.role));
@@ -416,7 +422,7 @@ function GuildsTab({ memberships, loading, label }: { memberships: any[]; loadin
       )}
 
       <div className="pt-2">
-        <Button variant="outline" asChild><Link to="/explore?tab=guilds">Discover more {label("guild.label").toLowerCase()} <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
+        <Button variant="outline" asChild><Link to="/explore?tab=guilds">{t("uiNetworkHub.discoverMore")} {label("guild.label").toLowerCase()} <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
       </div>
     </div>
   );
@@ -424,6 +430,7 @@ function GuildsTab({ memberships, loading, label }: { memberships: any[]; loadin
 
 // ─── Companies tab ───────────────────────────────────────────
 function CompaniesTab({ memberships, loading }: { memberships: any[]; loading: boolean }) {
+  const { t } = useTranslation();
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
 
   const adminComps = memberships.filter(m => ["admin", "owner"].includes(m.role));
@@ -433,7 +440,7 @@ function CompaniesTab({ memberships, loading }: { memberships: any[]; loading: b
     <div className="space-y-6">
       {adminComps.length > 0 && (
         <div>
-          <SectionHeader icon={Building2} title="Traditional Organizations you manage" count={adminComps.length} />
+          <SectionHeader icon={Building2} title={t("uiNetworkHub.traditionalOrganizationsYouManage")} count={adminComps.length} />
           <div className="grid gap-3 md:grid-cols-2">
             {adminComps.map((m, i) => <CompanyCard key={m.companyId} membership={m} index={i} />)}
           </div>
@@ -442,7 +449,7 @@ function CompaniesTab({ memberships, loading }: { memberships: any[]; loading: b
 
       {memberComps.length > 0 && (
         <div>
-          <SectionHeader icon={Users} title="Traditional Organizations you belong to" count={memberComps.length} />
+          <SectionHeader icon={Users} title={t("uiNetworkHub.traditionalOrganizationsYouBelongTo")} count={memberComps.length} />
           <div className="grid gap-3 md:grid-cols-2">
             {memberComps.map((m, i) => <CompanyCard key={m.companyId} membership={m} index={i} />)}
           </div>
@@ -454,7 +461,7 @@ function CompaniesTab({ memberships, loading }: { memberships: any[]; loading: b
       )}
 
       <div className="flex gap-2 pt-2">
-        <Button size="sm" asChild><Link to="/me/companies"><Plus className="h-4 w-4 mr-1" /> Create organization</Link></Button>
+        <Button size="sm" asChild><Link to="/me/companies"><Plus className="h-4 w-4 mr-1" /> {t("uiNetworkHub.createOrganization")}</Link></Button>
         <Button size="sm" variant="outline" asChild><Link to="/explore?tab=companies">Explore organizations <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
       </div>
     </div>
@@ -463,6 +470,7 @@ function CompaniesTab({ memberships, loading }: { memberships: any[]; loading: b
 
 // ─── Pods tab ────────────────────────────────────────────────
 function PodsTab({ memberships, loading, label }: { memberships: any[]; loading: boolean; label: (k: string) => string }) {
+  const { t } = useTranslation();
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
 
   return (
@@ -486,7 +494,7 @@ function PodsTab({ memberships, loading, label }: { memberships: any[]; loading:
       )}
 
       <div className="pt-2">
-        <Button variant="outline" asChild><Link to="/explore?tab=pods">Discover more {label("pod.label").toLowerCase()} <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
+        <Button variant="outline" asChild><Link to="/explore?tab=pods">{t("uiNetworkHub.discoverMore")} {label("pod.label").toLowerCase()} <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
       </div>
     </div>
   );
@@ -494,13 +502,14 @@ function PodsTab({ memberships, loading, label }: { memberships: any[]; loading:
 
 // ─── Territories tab ─────────────────────────────────────────
 function TerritoriesTab({ territories, topics, activity, loadingT, loadingH }: { territories: any[]; topics: any[]; activity: any; loadingT: boolean; loadingH: boolean }) {
+  const { t } = useTranslation();
   if (loadingT || loadingH) return <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
 
   return (
     <div className="space-y-8">
       {/* Territories */}
       <div>
-        <SectionHeader icon={MapPin} title="Your territories" count={territories.length} />
+        <SectionHeader icon={MapPin} title={t("uiNetworkHub.yourTerritories")} count={territories.length} />
         {territories.length === 0 ? (
           <EmptyState icon={MapPin} message="Add territories in your profile settings." cta="Edit profile" to="/profile/edit" />
         ) : (
@@ -627,16 +636,16 @@ function CompanyCard({ membership, index }: { membership: any; index: number }) 
 
 // ─── Following Feed Tab ──────────────────────────────────────
 const FEED_FILTERS = [
-  { key: "ALL", label: "All" },
+  { key: "ALL", get label() { return i18n.t("uiNetworkHub.all"); } },
   { key: "USER", label: "People" },
-  { key: "GUILD", label: "Guilds" },
+  { key: "GUILD", get label() { return i18n.t("uiNetworkHub.guilds"); } },
   { key: "COMPANY", label: "Companies" },
-  { key: "QUEST", label: "Quests" },
+  { key: "QUEST", get label() { return i18n.t("uiNetworkHub.quests"); } },
   { key: "SERVICE", label: "Services" },
   { key: "POD", label: "Pods" },
   { key: "COURSE", label: "Courses" },
-  { key: "EVENT", label: "Events" },
-  { key: "TERRITORY", label: "Territories" },
+  { key: "EVENT", get label() { return i18n.t("uiNetworkHub.events"); } },
+  { key: "TERRITORY", get label() { return i18n.t("uiNetworkHub.territories"); } },
 ] as const;
 
 const contextRoute: Record<string, string> = {
@@ -650,6 +659,7 @@ const contextRoute: Record<string, string> = {
 };
 
 function FollowingFeedTab() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState("ALL");
   const [sortMode, setSortMode] = useState<FeedSortMode>("recent");
   const currentUser = useCurrentUser();
@@ -693,10 +703,10 @@ function FollowingFeedTab() {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-            <Rss className="h-5 w-5 text-primary" /> Your network feed
+            <Rss className="h-5 w-5 text-primary" /> {t("uiNetworkHub.yourNetworkFeed")}
           </h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Posts and updates from people and units you follow.
+            {t("uiNetworkHub.postsAndUpdatesFromPeopleAnd")}
           </p>
         </div>
         <FeedDisplayToggle value={displayMode} onChange={handleDisplayChange} />

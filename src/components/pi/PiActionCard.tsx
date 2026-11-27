@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Lock, Check, Loader2, Clock, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ export function PiActionCard({
   priority,
   onExecute,
 }: ActionCardProps) {
+  const { t } = useTranslation();
   const isLocked = status === "locked";
   const isCompleted = status === "completed";
   const isInProgress = status === "in_progress";
@@ -132,7 +134,7 @@ export function PiActionCard({
         ) : isCompleted ? (
           <>
             <Check className="h-3 w-3 mr-1" />
-            Done
+            {t("uiPiActionCard.done")}
           </>
         ) : (
           buttonLabel
