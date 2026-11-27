@@ -8317,6 +8317,35 @@ export type Database = {
           },
         ]
       }
+      quest_need_external_links: {
+        Row: {
+          created_at: string
+          external_id: string
+          need_id: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          external_id: string
+          need_id: string
+          source: string
+        }
+        Update: {
+          created_at?: string
+          external_id?: string
+          need_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_need_external_links_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: true
+            referencedRelation: "quest_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quest_needs: {
         Row: {
           category: string | null
@@ -8639,6 +8668,35 @@ export type Database = {
             columns: ["topic_id"]
             isOneToOne: false
             referencedRelation: "topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quest_update_external_links: {
+        Row: {
+          created_at: string
+          external_id: string
+          source: string
+          update_id: string
+        }
+        Insert: {
+          created_at?: string
+          external_id: string
+          source: string
+          update_id: string
+        }
+        Update: {
+          created_at?: string
+          external_id?: string
+          source?: string
+          update_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_update_external_links_update_id_fkey"
+            columns: ["update_id"]
+            isOneToOne: true
+            referencedRelation: "quest_updates"
             referencedColumns: ["id"]
           },
         ]
@@ -11936,6 +11994,10 @@ export type Database = {
       }
       claim_auto_guild: { Args: { p_guild_id: string }; Returns: undefined }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
+      comment_target_quest: {
+        Args: { _target_id: string; _target_type: string }
+        Returns: string
+      }
       compute_contribution_fmv: {
         Args: {
           p_cash_multiplier: number
