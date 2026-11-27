@@ -25,6 +25,8 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState("");
+  // Lecture seule par défaut : un agent qui suit la guilde n'a pas à y écrire.
+  const [readOnly, setReadOnly] = useState(true);
   const [revealed, setRevealed] = useState<{ name: string; token: string } | null>(null);
 
   const mcpUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/guild-mcp`;
@@ -47,7 +49,7 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
     setCreating(true);
     const { data, error } = await supabase.functions.invoke("guild-mcp-tokens", {
       method: "POST",
-      body: { guild_id: guildId, name: name.trim() },
+      body: { guild_id: guildId, name: name.trim(), scopes: readOnly ? ["read"] : ["read", "write"] },
     });
     setCreating(false);
     if (error || (data as any)?.error) {
@@ -98,14 +100,19 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          Authenticate with header <code>Authorization: Bearer ctg_…</code> (your token).
-          Tools available: <code>list_quests</code>, <code>list_members</code>, <code>list_discussions</code>,
-          <code> create_post</code>, <code>log_contribution</code>.
+          Authenticate with header <code>Authorization: Bearer ctg_…</code> (your token), or, for a connector
+          added in the Claude app (no headers), with the address <code>{mcpUrl}?key=ctg_…</code> — use a
+          read-only token then. To follow everything in the guild (discussions, decisions, quests…), an agent calls
+          <code> get_guild_activity</code> with the <code>next_since</code> of its previous call.
         </p>
       </Card>
 
       <Card className="p-4 space-y-3">
         <div className="text-sm font-medium">Create a new token</div>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={readOnly} onChange={(e) => setReadOnly(e.target.checked)} className="accent-primary" />
+          Read only (recommended for an agent that follows the guild)
+        </label>
         <div className="flex gap-2">
           <Input
             value={name}
@@ -124,6 +131,15 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
                 {revealed.token}
               </code>
               <Button size="sm" variant="outline" onClick={() => copy(revealed.token)}>
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">Connector address for the Claude app:</p>
+            <div className="flex items-center gap-2">
+              <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono break-all">
+                {`${mcpUrl}?key=${revealed.token}`}
+              </code>
+              <Button size="sm" variant="outline" onClick={() => copy(`${mcpUrl}?key=${revealed.token}`)}>
                 <Copy className="h-4 w-4" />
               </Button>
             </div>

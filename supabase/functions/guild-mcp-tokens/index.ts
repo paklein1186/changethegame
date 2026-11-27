@@ -76,7 +76,9 @@ Deno.serve(async (req) => {
       const body = await req.json().catch(() => ({}));
       const guildId = body.guild_id as string | undefined;
       const name = (body.name as string | undefined)?.trim();
-      const scopes = (body.scopes as string[] | undefined) ?? ["read", "write"];
+      // Seulement « read » et « write » ; « read » toujours inclus.
+      const asked = Array.isArray(body.scopes) ? (body.scopes as unknown[]).filter((x) => x === "read" || x === "write") : ["read", "write"];
+      const scopes = [...new Set(["read", ...asked])] as string[];
       if (!guildId || !name) return json({ error: "guild_id and name required" }, 400);
 
       const raw = randomToken();

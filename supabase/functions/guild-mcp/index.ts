@@ -39,9 +39,13 @@ type TokenCtx = {
 
 async function authenticate(req: Request): Promise<TokenCtx | null> {
   const auth = req.headers.get("authorization") ?? "";
+  // La clé peut aussi venir de l'adresse (?key=ctg_…) : les connecteurs ajoutés dans l'application Claude ne
+  // savent pas envoyer d'en-tête. Préférer une clé en lecture seule dans ce cas (l'adresse peut être journalisée).
   const apiKey =
-    req.headers.get("x-api-key") ??
-    (auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "");
+    req.headers.get("x-api-key") ||
+    (auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "") ||
+    new URL(req.url).searchParams.get("key") ||
+    "";
   if (!apiKey || !apiKey.startsWith("ctg_")) return null;
 
   const hash = await sha256Hex(apiKey);
@@ -64,6 +68,203 @@ async function authenticate(req: Request): Promise<TokenCtx | null> {
     tokenId: data.id as string,
     scopes: (data.scopes as string[]) ?? ["read"],
     createdBy: data.created_by as string,
+  };
+}
+
+// ---------- Activité de la guilde (pour un agent qui suit tout : ex. le Pilote Trois-Tiers) ----------
+
+const BASE = "https://changethegame.xyz";
+const clip = (t: unknown, n = 1200) => {
+  const v = String(t ?? "").trim();
+  return v.length > n ? v.slice(0, n) + "…" : v;
+};
+
+/** Filtre PostgREST des messages de la guilde (discussion de la guilde ou un de ses salons). */
+async function guildPostScope(guildId: string): Promise<string> {
+  const roomIds = await guildRoomIds(guildId);
+  const or = [`and(context_type.in.(GUILD,GUILD_DISCUSSION,guild),context_id.eq.${guildId})`];
+  if (roomIds.length) or.push(`room_id.in.(${roomIds.join(",")})`);
+  return or.join(",");
+}
+
+async function guildRoomIds(guildId: string): Promise<string[]> {
+  const { data } = await admin.from("discussion_rooms").select("id").eq("scope_type", "GUILD").eq("scope_id", guildId);
+  return (data ?? []).map((r: any) => r.id);
+}
+
+/** Quêtes de la guilde : portées par elle, ou co-hébergées. */
+async function guildQuestIds(guildId: string): Promise<Map<string, string>> {
+  const [own, hosted] = await Promise.all([
+    admin.from("quests").select("id, title").eq("guild_id", guildId).eq("is_deleted", false),
+    admin.from("quest_hosts").select("quest_id").eq("entity_id", guildId).ilike("entity_type", "guild"),
+  ]);
+  const out = new Map<string, string>((own.data ?? []).map((q: any) => [q.id, q.title]));
+  const extra = (hosted.data ?? []).map((h: any) => h.quest_id).filter((id: string) => !out.has(id));
+  if (extra.length) {
+    const { data } = await admin.from("quests").select("id, title").in("id", extra).eq("is_deleted", false);
+    for (const q of data ?? []) out.set(q.id, q.title);
+  }
+  return out;
+}
+
+async function names(ids: string[]): Promise<Map<string, string>> {
+  const uniq = [...new Set(ids.filter(Boolean))];
+  if (!uniq.length) return new Map();
+  const { data } = await admin.from("profiles").select("user_id, name").in("user_id", uniq);
+  return new Map((data ?? []).map((p: any) => [p.user_id, p.name ?? "?"]));
+}
+
+/**
+ * Tout ce qui s'est passé dans la guilde depuis `since` : messages (salons, discussion de la guilde, discussions de
+ * ses quêtes) et réponses, décisions (ouvertes, modifiées, closes, avec le décompte des votes et l'issue), quêtes
+ * créées ou modifiées, actualités, besoins, contributions proposées, événements, nouveaux membres.
+ * Jamais les messages privés. Chaque section est plafonnée ; `truncated` le signale, `next_since` sert au passage
+ * suivant.
+ */
+async function guildActivity(guildId: string, since: string, until: string, cap: number) {
+  const quests = await guildQuestIds(guildId);
+  const questIds = [...quests.keys()];
+  // Projet du site partenaire relié à chaque quête (ex. projet Trois-Tiers ↔ mission du Pilote).
+  const { data: links } = questIds.length
+    ? await admin.from("quest_external_links").select("quest_id, source, external_id").in("quest_id", questIds)
+    : { data: [] as any[] };
+  const linkOf = new Map((links ?? []).map((l: any) => [l.quest_id, { source: l.source, projet_id: l.external_id }]));
+  const linked = (questId: string | null | undefined) => (questId && linkOf.get(questId)) || null;
+  const roomIds = await guildRoomIds(guildId);
+  const { data: rooms } = roomIds.length
+    ? await admin.from("discussion_rooms").select("id, name").in("id", roomIds)
+    : { data: [] as any[] };
+  const roomName = new Map((rooms ?? []).map((r: any) => [r.id, r.name]));
+  let truncated = false;
+  const capped = <T,>(rows: T[] | null | undefined): T[] => {
+    const r = rows ?? [];
+    if (r.length > cap) truncated = true;
+    return r.slice(0, cap);
+  };
+  const inWindow = (q: any, col = "created_at") => q.gte(col, since).lt(col, until);
+
+  const postScope = [`and(context_type.in.(GUILD,GUILD_DISCUSSION,guild),context_id.eq.${guildId})`];
+  if (roomIds.length) postScope.push(`room_id.in.(${roomIds.join(",")})`);
+  if (questIds.length) postScope.push(`and(context_type.in.(QUEST,QUEST_DISCUSSION),context_id.in.(${questIds.join(",")}))`);
+
+  const [posts, comments, polls, questRows, updates, needs, proposals, events, members] = await Promise.all([
+    inWindow(admin.from("feed_posts").select("id, content, author_user_id, created_at, context_type, context_id, room_id, visibility")
+      .or(postScope.join(",")).eq("is_deleted", false)).order("created_at").limit(cap + 1),
+    inWindow(admin.from("comments").select("id, content, author_id, created_at, target_id, parent_id")
+      .in("target_type", ["FEED_POST", "feed_post"]).eq("is_deleted", false)).order("created_at").limit(500),
+    admin.from("decision_polls").select("id, question, description, status, decision_type, options, outcome_summary, opens_at, closes_at, created_at, updated_at, entity_type, entity_id")
+      .or([`and(entity_type.eq.guild,entity_id.eq.${guildId})`,
+           ...(questIds.length ? [`and(entity_type.eq.quest,entity_id.in.(${questIds.join(",")}))`] : [])].join(","))
+      .gte("updated_at", since).lt("updated_at", until).order("updated_at").limit(cap + 1),
+    questIds.length
+      ? admin.from("quests").select("id, title, status, created_at, updated_at").in("id", questIds)
+          .gte("updated_at", since).lt("updated_at", until).order("updated_at").limit(cap + 1)
+      : { data: [] },
+    questIds.length
+      ? inWindow(admin.from("quest_updates").select("id, quest_id, title, content, author_id, created_at, type")
+          .in("quest_id", questIds).eq("is_deleted", false).eq("is_draft", false)).order("created_at").limit(cap + 1)
+      : { data: [] },
+    questIds.length
+      ? inWindow(admin.from("quest_needs").select("id, quest_id, title, category, status, created_at").in("quest_id", questIds))
+          .order("created_at").limit(cap + 1)
+      : { data: [] },
+    questIds.length
+      ? admin.from("quest_proposals").select("id, quest_id, title, description, proposer_type, proposer_id, status, created_at, updated_at")
+          .in("quest_id", questIds).gte("updated_at", since).lt("updated_at", until).order("updated_at").limit(cap + 1)
+      : { data: [] },
+    admin.from("guild_events").select("id, title, start_at, end_at, status, is_cancelled, created_at, updated_at")
+      .eq("guild_id", guildId).gte("updated_at", since).lt("updated_at", until).order("updated_at").limit(cap + 1),
+    inWindow(admin.from("guild_members").select("user_id, role, joined_at").eq("guild_id", guildId), "joined_at")
+      .order("joined_at").limit(cap + 1),
+  ]);
+
+  // Réponses : seulement celles qui portent sur un message de la guilde (même ancien).
+  const replyRows = comments.data ?? [];
+  let replyPosts = new Map<string, any>();
+  if (replyRows.length) {
+    const ids = [...new Set(replyRows.map((c: any) => c.target_id))];
+    const { data } = await admin.from("feed_posts").select("id, context_type, context_id, room_id").in("id", ids);
+    const inScope = (p: any) =>
+      (["GUILD", "GUILD_DISCUSSION", "guild"].includes(p.context_type) && p.context_id === guildId) ||
+      (p.room_id && roomIds.includes(p.room_id)) ||
+      (["QUEST", "QUEST_DISCUSSION"].includes(p.context_type) && quests.has(p.context_id));
+    replyPosts = new Map((data ?? []).filter(inScope).map((p: any) => [p.id, p]));
+  }
+  const replies = capped(replyRows.filter((c: any) => replyPosts.has(c.target_id)));
+
+  // Votes des décisions retenues.
+  const pollRows = capped(polls.data);
+  const votes = pollRows.length
+    ? (await admin.from("decision_poll_votes").select("poll_id, option_index, value, applied_weight").in("poll_id", pollRows.map((p: any) => p.id))).data ?? []
+    : [];
+
+  const postRows = capped(posts.data);
+  const proposalRows = capped(proposals.data);
+  const who = await names([
+    ...postRows.map((p: any) => p.author_user_id), ...replies.map((c: any) => c.author_id),
+    ...capped(updates.data).map((u: any) => u.author_id),
+    ...proposalRows.filter((p: any) => String(p.proposer_type).toUpperCase() === "USER").map((p: any) => p.proposer_id),
+    ...capped(members.data).map((m: any) => m.user_id),
+  ]);
+  const where = (p: any) => p.room_id && roomName.has(p.room_id) ? `salon « ${roomName.get(p.room_id)} »`
+    : ["QUEST", "QUEST_DISCUSSION"].includes(p.context_type) ? `quête « ${quests.get(p.context_id) ?? "?"} »` : "discussion de la guilde";
+  const link = (p: any) => ["QUEST", "QUEST_DISCUSSION"].includes(p.context_type) ? `${BASE}/quests/${p.context_id}` : `${BASE}/guilds/${guildId}`;
+
+  const { data: guild } = await admin.from("guilds").select("id, name").eq("id", guildId).maybeSingle();
+  return {
+    guild: { id: guildId, name: guild?.name ?? null, url: `${BASE}/guilds/${guildId}` },
+    since, until, next_since: until,
+    discussions: postRows.map((p: any) => ({
+      id: p.id, at: p.created_at, where: where(p), author: who.get(p.author_user_id) ?? "?",
+      visibility: p.visibility ?? "public", text: clip(p.content), url: link(p),
+      linked_project: ["QUEST", "QUEST_DISCUSSION"].includes(p.context_type) ? linked(p.context_id) : null,
+    })),
+    replies: replies.map((c: any) => ({
+      id: c.id, at: c.created_at, on_message: c.target_id, where: where(replyPosts.get(c.target_id)),
+      author: who.get(c.author_id) ?? "?", text: clip(c.content, 800),
+    })),
+    decisions: pollRows.map((p: any) => {
+      const opts: string[] = Array.isArray(p.options) ? p.options.map((o: any) => (typeof o === "string" ? o : o?.label ?? o?.text ?? String(o))) : [];
+      const tally: Record<string, number> = {};
+      for (const v of votes.filter((v: any) => v.poll_id === p.id)) {
+        const k = v.value ?? opts[v.option_index] ?? `option ${v.option_index}`;
+        tally[k] = Math.round(((tally[k] ?? 0) + Number(v.applied_weight ?? 1)) * 100) / 100;
+      }
+      return {
+        id: p.id, question: p.question, description: clip(p.description, 600), status: p.status, type: p.decision_type,
+        about: p.entity_type === "quest" ? `quête « ${quests.get(p.entity_id) ?? "?"} »` : "guilde",
+        opened_at: p.opens_at ?? p.created_at, closes_at: p.closes_at, changed_at: p.updated_at,
+        new: p.created_at >= since, votes: tally, outcome: p.outcome_summary ?? null,
+        linked_project: p.entity_type === "quest" ? linked(p.entity_id) : null,
+        url: `${BASE}/guilds/${guildId}?tab=decisions`,
+      };
+    }),
+    quests: capped(questRows.data).map((q: any) => ({
+      id: q.id, title: q.title, status: q.status, change: q.created_at >= since ? "created" : "updated", at: q.updated_at, url: `${BASE}/quests/${q.id}`,
+      linked_project: linked(q.id),
+    })),
+    quest_news: capped(updates.data).map((u: any) => ({
+      at: u.created_at, quest: quests.get(u.quest_id) ?? "?", title: u.title, type: u.type,
+      author: who.get(u.author_id) ?? "?", text: clip(u.content), url: `${BASE}/quests/${u.quest_id}`, linked_project: linked(u.quest_id),
+    })),
+    needs: capped(needs.data).map((n: any) => ({
+      at: n.created_at, quest: quests.get(n.quest_id) ?? "?", title: n.title, category: n.category, status: n.status, url: `${BASE}/quests/${n.quest_id}`,
+      linked_project: linked(n.quest_id),
+    })),
+    contributions: proposalRows.map((p: any) => ({
+      at: p.updated_at, quest: quests.get(p.quest_id) ?? "?", title: p.title, text: clip(p.description, 600), status: p.status,
+      by: String(p.proposer_type).toUpperCase() === "USER" ? who.get(p.proposer_id) ?? "?" : p.proposer_type,
+      new: p.created_at >= since, url: `${BASE}/quests/${p.quest_id}`, linked_project: linked(p.quest_id),
+    })),
+    events: capped(events.data).map((e: any) => ({
+      title: e.title, start_at: e.start_at, end_at: e.end_at, status: e.is_cancelled ? "cancelled" : e.status,
+      change: e.created_at >= since ? "created" : "updated", url: `${BASE}/guilds/${guildId}?tab=events`,
+    })),
+    new_members: capped(members.data).map((m: any) => ({ name: who.get(m.user_id) ?? "?", role: m.role, joined_at: m.joined_at })),
+    truncated,
+    note: truncated
+      ? "Some sections were capped: call again with a later `since` (the last `at` you processed) to get the rest."
+      : "Complete for this window. Use `next_since` as `since` next time.",
   };
 }
 
@@ -142,11 +343,11 @@ function buildServer(ctx: TokenCtx) {
       properties: { limit: { type: "number", default: 20, maximum: 50 } },
     },
     handler: async ({ limit = 20 }: { limit?: number }) => {
+      // Messages de la guilde : contexte GUILD / GUILD_DISCUSSION (majuscules en base) ou salon de la guilde.
       const { data, error } = await admin
         .from("feed_posts")
-        .select("id, content, author_user_id, created_at, context_type, context_id")
-        .eq("context_type", "guild")
-        .eq("context_id", ctx.guildId)
+        .select("id, content, author_user_id, created_at, context_type, context_id, room_id")
+        .or(await guildPostScope(ctx.guildId))
         .eq("is_deleted", false)
         .order("created_at", { ascending: false })
         .limit(Math.min(limit, 50));
@@ -441,6 +642,28 @@ function buildServer(ctx: TokenCtx) {
   });
 
   server.tool({
+    name: "get_guild_activity",
+    description:
+      "Everything that happened in this guild since a date, in one call: messages (rooms, guild discussion, its quests' discussions) and replies, decisions (with vote tally and outcome), quests created or updated, quest news, needs, proposed contributions, events, new members. Never private messages. Use `next_since` from the answer as `since` next time.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        since: { type: "string", description: "ISO date-time; default: 48 hours ago" },
+        until: { type: "string", description: "ISO date-time; default: now" },
+        max_per_section: { type: "number", default: 100, maximum: 200 },
+      },
+    },
+    handler: async ({ since, until, max_per_section = 100 }: { since?: string; until?: string; max_per_section?: number }) => {
+      const now = new Date();
+      const s0 = since && !isNaN(Date.parse(since)) ? new Date(since) : new Date(now.getTime() - 48 * 3600_000);
+      const u0 = until && !isNaN(Date.parse(until)) ? new Date(until) : now;
+      if (u0.getTime() - s0.getTime() > 31 * 86_400_000) throw new Error("Window too long: 31 days at most per call.");
+      const out = await guildActivity(ctx.guildId, s0.toISOString(), u0.toISOString(), Math.min(Math.max(Number(max_per_section) || 100, 1), 200));
+      return { content: [{ type: "text", text: JSON.stringify(out, null, 2) }] };
+    },
+  });
+
+  server.tool({
     name: "list_decisions",
     description: "List governance polls/decisions for this guild.",
     inputSchema: {
@@ -480,8 +703,7 @@ function buildServer(ctx: TokenCtx) {
       const { data, error } = await admin
         .from("feed_posts")
         .select("id, content, author_user_id, created_at")
-        .eq("context_type", "guild")
-        .eq("context_id", ctx.guildId)
+        .or(await guildPostScope(ctx.guildId))
         .eq("is_deleted", false)
         .ilike("content", `%${query.replace(/[%_]/g, "")}%`)
         .order("created_at", { ascending: false })
