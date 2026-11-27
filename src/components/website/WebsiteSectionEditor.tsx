@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,10 +17,10 @@ const SECTION_TYPES = [
   { value: "hero", label: "Hero" },
   { value: "text_block", label: "Text Block" },
   { value: "services_list", label: "Services List" },
-  { value: "quests_list", label: "Quests List" },
-  { value: "guilds_list", label: "Guilds List" },
+  { value: "quests_list", get label() { return i18n.t("uiWebsiteSectionEditor.questsList"); } },
+  { value: "guilds_list", get label() { return i18n.t("uiWebsiteSectionEditor.guildsList"); } },
   { value: "projects_list", label: "Projects List" },
-  { value: "cta", label: "Call to Action" },
+  { value: "cta", get label() { return i18n.t("uiWebsiteSectionEditor.callToAction"); } },
 ];
 
 const LIST_TYPES = ["services_list", "quests_list", "guilds_list", "projects_list"];
@@ -31,6 +33,7 @@ interface Props {
 }
 
 export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Props) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [type, setType] = useState(section.type);
   const [title, setTitle] = useState(section.title || "");
@@ -86,7 +89,7 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
           </Select>
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">Title</Label>
+          <Label className="text-xs">{t("uiWebsiteSectionEditor.title")}</Label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} className="h-8 text-sm" />
         </div>
         <div className="space-y-1">
@@ -188,7 +191,7 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
       )}
 
       <Button variant="outline" size="sm" onClick={() => save.mutate()}>
-        <Save className="h-3.5 w-3.5 mr-1" /> Save Section
+        <Save className="h-3.5 w-3.5 mr-1" /> {t("uiWebsiteSectionEditor.saveSection")}
       </Button>
     </div>
   );

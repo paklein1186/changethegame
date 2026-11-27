@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2, Circle, ArrowRight, Rocket } from "lucide-react";
@@ -13,6 +14,7 @@ const fadeUp = {
 };
 
 export default function OnboardingChecklist() {
+  const { t } = useTranslation();
   const { steps, progress, completedCount, totalSteps, percentage, isComplete } =
     useOnboardingProgress();
 
@@ -30,7 +32,7 @@ export default function OnboardingChecklist() {
             Getting Started
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Complete these steps to get the most out of the platform.
+            {t("uiOnboardingChecklist.completeTheseStepsToGetThe")}
           </p>
         </motion.div>
 
@@ -42,7 +44,7 @@ export default function OnboardingChecklist() {
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium">
-              {isComplete ? "🎉 All done!" : `${completedCount} of ${totalSteps} completed`}
+              {isComplete ? t("uiOnboardingChecklist.allDone") : `${completedCount} of ${totalSteps} completed`}
             </span>
             <span className="text-sm font-semibold text-primary">{percentage}%</span>
           </div>

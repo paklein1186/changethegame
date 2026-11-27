@@ -91,7 +91,7 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.email")}</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required autoComplete="email" />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("uiLogin.youExampleCom")} required autoComplete="email" />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">

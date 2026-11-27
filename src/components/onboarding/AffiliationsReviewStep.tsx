@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Check, X, Pencil, Building2, Users, Hash, Sparkles, Loader2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,7 @@ export function AffiliationsReviewStep({
   loading,
   guilds = [],
 }: Props) {
+  const { t } = useTranslation();
   const [editingService, setEditingService] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDesc, setEditDesc] = useState("");
@@ -121,9 +123,9 @@ export function AffiliationsReviewStep({
       <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
         <div>
-          <h2 className="font-display text-xl font-bold">Analyzing your profile…</h2>
+          <h2 className="font-display text-xl font-bold">{t("uiAffiliationsReviewStep.analyzingYourProfile")}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            We're looking at your links and info to suggest relevant connections.
+            {t("uiAffiliationsReviewStep.weReLookingAtYourLinks")}
           </p>
         </div>
       </div>
@@ -137,9 +139,9 @@ export function AffiliationsReviewStep({
       <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4">
         <Sparkles className="h-10 w-10 text-muted-foreground" />
         <div>
-          <h2 className="font-display text-xl font-bold">No suggestions this time</h2>
+          <h2 className="font-display text-xl font-bold">{t("uiAffiliationsReviewStep.noSuggestionsThisTime")}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            We couldn't generate suggestions from the information provided. You can always add affiliations and services later.
+            {t("uiAffiliationsReviewStep.weCouldnTGenerateSuggestionsFrom")}
           </p>
         </div>
       </div>
@@ -151,7 +153,7 @@ export function AffiliationsReviewStep({
       <div>
         <h2 className="font-display text-2xl font-bold">{title} ✨</h2>
         <p className="text-xs text-muted-foreground mt-1">
-          These are only suggestions. Change or delete anything that doesn't feel right.
+          {t("uiAffiliationsReviewStep.theseAreOnlySuggestionsChangeOr")}
         </p>
       </div>
 
@@ -179,7 +181,7 @@ export function AffiliationsReviewStep({
                       ? getLabel("guild.label_singular", persona)
                       : aff.matchedEntityType === "COMPANY"
                         ? getLabel("company.label_singular", persona)
-                        : "New"}
+                        : t("uiAffiliationsReviewStep.new")}
                   </Badge>
                   {aff.role && (
                     <span className="text-xs text-muted-foreground">{aff.role}</span>
@@ -189,11 +191,11 @@ export function AffiliationsReviewStep({
                       (aff.matchedEntityType === "GUILD" && guilds.find(g => g.id === aff.matchedEntityId)?.join_policy !== "OPEN");
                     return needsApproval ? (
                       <span className="text-[10px] text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
-                        <Clock className="h-3 w-3" /> Application sent to admins
+                        <Clock className="h-3 w-3" /> {t("uiAffiliationsReviewStep.applicationSentToAdmins")}
                       </span>
                     ) : (
                       <span className="text-[10px] text-primary">
-                        ✓ Instant join
+                        {t("uiAffiliationsReviewStep.instantJoin")}
                       </span>
                     );
                   })()}
@@ -219,7 +221,7 @@ export function AffiliationsReviewStep({
             <Hash className="h-4 w-4 text-primary" /> Additional {getLabel("houses.label", persona)}
           </h3>
           <p className="text-xs text-muted-foreground">
-            We've looked at your links and roles and think these might also fit you.
+            {t("uiAffiliationsReviewStep.weVeLookedAtYourLinks")}
           </p>
           {houses.map((house, i) => (
             <button
@@ -280,7 +282,7 @@ export function AffiliationsReviewStep({
                   className="h-7 text-xs"
                   onClick={() => toggleService(i)}
                 >
-                  {svc.accepted ? "Added as draft" : "Add as draft"}
+                  {svc.accepted ? t("uiAffiliationsReviewStep.addedAsDraft") : t("uiAffiliationsReviewStep.addAsDraft")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -288,7 +290,7 @@ export function AffiliationsReviewStep({
                   className="h-7 text-xs gap-1"
                   onClick={() => startEditService(i)}
                 >
-                  <Pencil className="h-3 w-3" /> Edit
+                  <Pencil className="h-3 w-3" /> {t("uiAffiliationsReviewStep.edit")}
                 </Button>
               </div>
             </div>
@@ -297,22 +299,22 @@ export function AffiliationsReviewStep({
       )}
 
       <p className="text-xs text-muted-foreground italic pt-2">
-        We won't publish anything without your confirmation. Draft {getLabel("service.label", persona).toLowerCase()} will be saved privately until you choose to publish them.
+        {t("uiAffiliationsReviewStep.weWonTPublishAnythingWithout")} {getLabel("service.label", persona).toLowerCase()} {t("uiAffiliationsReviewStep.willBeSavedPrivatelyUntilYou")}
       </p>
 
       {/* Edit service dialog */}
       <Dialog open={editingService !== null} onOpenChange={(open) => !open && setEditingService(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit {serviceLabel}</DialogTitle>
+            <DialogTitle>{t("uiAffiliationsReviewStep.edit")} {serviceLabel}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium mb-1 block">Title</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiAffiliationsReviewStep.title")}</label>
               <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} maxLength={120} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiAffiliationsReviewStep.description")}</label>
               <Textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} maxLength={500} className="min-h-[80px] resize-none text-sm" />
             </div>
             <div>
@@ -321,8 +323,8 @@ export function AffiliationsReviewStep({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingService(null)}>Cancel</Button>
-            <Button onClick={saveEditService}>Save</Button>
+            <Button variant="outline" onClick={() => setEditingService(null)}>{t("uiAffiliationsReviewStep.cancel")}</Button>
+            <Button onClick={saveEditService}>{t("uiAffiliationsReviewStep.save")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -68,6 +68,10 @@ export function scanFile(file: string, root: string): { findings: Finding[]; key
     if (ts.isCallExpression(n) && isStr(n.arguments[0]) && /(^|\.)t$/.test(n.expression.getText(sf)) && /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(n.arguments[0].text)) {
       keys.push({ key: n.arguments[0].text, line: line(n) });
     }
+    // Clés passées en propriété : titleKey="a.b", subtitleKey="a.b"…
+    if (ts.isJsxAttribute(n) && /Key$/.test(n.name.getText(sf)) && n.initializer && ts.isStringLiteral(n.initializer) && /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(n.initializer.text)) {
+      keys.push({ key: n.initializer.text, line: line(n) });
+    }
     if (ts.isJsxText(n) && looksEnglish(n.text)) hit(n, "texte", n.text);
     else if (ts.isJsxAttribute(n) && n.initializer && ts.isStringLiteral(n.initializer) && ATTRS.has(n.name.getText(sf)) && looksEnglish(n.initializer.text)) hit(n, n.name.getText(sf), n.initializer.text);
     else if (ts.isJsxExpression(n) && isStr(n.expression) && looksEnglish(n.expression.text) && n.parent && (ts.isJsxElement(n.parent) || ts.isJsxFragment(n.parent))) hit(n, "texte", n.expression.text);

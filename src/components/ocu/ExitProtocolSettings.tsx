@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -16,12 +18,13 @@ interface Props {
 }
 
 const DECISION_OPTIONS = [
-  { value: "admin", label: "Guild admin alone" },
+  { value: "admin", get label() { return i18n.t("uiExitProtocolSettings.guildAdminAlone"); } },
   { value: "vote", label: "Governance vote" },
   { value: "mediation_then_vote", label: "Mediation first, then vote" },
 ];
 
 export function ExitProtocolSettings({ guild, guildId }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -40,7 +43,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
       abandonment_threshold_days: threshold,
     } as any).eq("id", guildId);
     qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
-    toast({ title: "Exit protocol settings saved" });
+    toast({ title: t("uiExitProtocolSettings.exitProtocolSettingsSaved") });
   };
 
   const previewMatrix = [
@@ -63,7 +66,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
         <div>
           <Label className="text-sm font-medium mb-1 block">Good leaver settlement: {goodPct}%</Label>
           <p className="text-xs text-muted-foreground mb-2">
-            A contributor who leaves voluntarily receives this % of their FMV.
+            {t("uiExitProtocolSettings.aContributorWhoLeavesVoluntarilyReceives")}
           </p>
           <Slider
             value={[goodPct]}
@@ -79,7 +82,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
         <div>
           <Label className="text-sm font-medium mb-1 block">Graceful withdrawal settlement: {gracefulPct}%</Label>
           <p className="text-xs text-muted-foreground mb-2">
-            A contributor who commits to a handover receives full FMV.
+            {t("uiExitProtocolSettings.aContributorWhoCommitsToA")}
           </p>
           <Slider
             value={[gracefulPct]}
@@ -95,7 +98,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
         <div>
           <Label className="text-sm font-medium mb-1 block">Bad leaver settlement: {badPct}%</Label>
           <p className="text-xs text-muted-foreground mb-2">
-            A contributor removed for cause receives this % of their FMV.
+            {t("uiExitProtocolSettings.aContributorRemovedForCauseReceives")}
           </p>
           <Slider
             value={[badPct]}
@@ -124,7 +127,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
         <div>
           <Label className="text-sm font-medium mb-1 block">Abandonment threshold (days)</Label>
           <p className="text-xs text-muted-foreground mb-2">
-            Auto-flag contributors with no approved contribution after this many days.
+            {t("uiExitProtocolSettings.autoFlagContributorsWithNoApproved")}
           </p>
           <Input
             type="number"
@@ -165,7 +168,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
       </div>
 
       <Button onClick={handleSave} className="gap-1.5">
-        <Save className="h-4 w-4" /> Save Exit Protocol
+        <Save className="h-4 w-4" /> {t("uiExitProtocolSettings.saveExitProtocol")}
       </Button>
     </div>
   );

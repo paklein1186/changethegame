@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Dialog,
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, currentConfig }: Props) {
+  const { t } = useTranslation();
   const [type, setType] = useState<string>(currentConfig?.type ?? "http_api");
   const [endpoint, setEndpoint] = useState<string>(currentConfig?.endpoint ?? "");
   const [metric, setMetric] = useState<string>(currentConfig?.metric ?? "");
@@ -64,7 +66,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
       toast({ title: "Live config saved" });
       onOpenChange(false);
     } catch (e: any) {
-      toast({ title: "Error", description: e.message, variant: "destructive" });
+      toast({ title: t("uiNsLiveConfigEditor.error"), description: e.message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -76,7 +78,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
         <DialogHeader>
           <DialogTitle>Configure Live Data Source</DialogTitle>
           <DialogDescription>
-            Set up how this natural system pulls live data from external APIs or web pages.
+            {t("uiNsLiveConfigEditor.setUpHowThisNaturalSystem")}
           </DialogDescription>
         </DialogHeader>
 
@@ -108,7 +110,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
                 placeholder='{ "external_field": "internal_metric" }'
               />
               <p className="text-[10px] text-muted-foreground mt-1">
-                Maps external JSON field paths to internal metric names.
+                {t("uiNsLiveConfigEditor.mapsExternalJsonFieldPathsTo")}
               </p>
             </div>
           )}
@@ -121,7 +123,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label>Metric name</Label>
+                  <Label>{t("uiNsLiveConfigEditor.metricName")}</Label>
                   <Input value={metric} onChange={e => setMetric(e.target.value)} placeholder="water_level" />
                 </div>
                 <div>
@@ -138,9 +140,9 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiNsLiveConfigEditor.cancel")}</Button>
             <Button onClick={handleSave} disabled={saving || !endpoint}>
-              {saving ? "Saving…" : "Save config"}
+              {saving ? "Saving…" : t("uiNsLiveConfigEditor.saveConfig")}
             </Button>
           </div>
         </div>

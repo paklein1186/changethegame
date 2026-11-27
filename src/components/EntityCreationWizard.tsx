@@ -206,7 +206,7 @@ export function EntityCreationWizard({ open, onOpenChange, initialKind }: Entity
       }
     } catch (err) {
       console.error("Scrape error:", err);
-      toast({ title: "Could not extract data", description: "You can fill in the details manually.", variant: "destructive" });
+      toast({ title: t("uiEntityCreationWizard.couldNotExtractData"), description: t("uiEntityCreationWizard.youCanFillInTheDetails"), variant: "destructive" });
     } finally {
       setScraping(false);
     }
@@ -256,12 +256,12 @@ Respond ONLY in this exact JSON format, no markdown:
           const parsed = JSON.parse(jsonMatch[0]);
           if (parsed.name && !name) setName(parsed.name);
           if (parsed.description) setDescription(parsed.description);
-          toast({ title: "AI suggestions applied!", description: "Review and adjust the pre-filled fields." });
+          toast({ title: "AI suggestions applied!", description: t("uiEntityCreationWizard.reviewAndAdjustThePreFilled") });
         }
       }
     } catch (err) {
       console.error("AI assist error:", err);
-      toast({ title: "AI assist unavailable", description: "You can fill in the details manually.", variant: "destructive" });
+      toast({ title: "AI assist unavailable", description: t("uiEntityCreationWizard.youCanFillInTheDetails"), variant: "destructive" });
     } finally {
       setAiLoading(false);
     }
@@ -339,7 +339,7 @@ Respond ONLY in this exact JSON format, no markdown:
           sort_order: 0,
         } as any);
 
-        toast({ title: "Guild created!", description: `${name} is ready.` });
+        toast({ title: t("uiEntityCreationWizard.guildCreated"), description: `${name} is ready.` });
         handleOpenChange(false);
         navigate(`/guilds/${guild.id}`);
       } else if (kind === "pod") {
@@ -396,7 +396,7 @@ Respond ONLY in this exact JSON format, no markdown:
         navigate(`/companies/${newCompany.id}`);
       }
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiEntityCreationWizard.error"), description: err.message, variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -498,7 +498,7 @@ Respond ONLY in this exact JSON format, no markdown:
               </div>
             )}
             <div>
-              <label className="text-sm font-medium mb-1 block">Name *</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.name")}</label>
               <Input
                 value={name}
                 onChange={e => setName(e.target.value)}
@@ -507,11 +507,11 @@ Respond ONLY in this exact JSON format, no markdown:
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.description")}</label>
               <Textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                placeholder="What does this entity do? What's its mission?"
+                placeholder={t("uiEntityCreationWizard.whatDoesThisEntityDoWhat")}
                 maxLength={500}
                 className="resize-none min-h-[100px]"
               />
@@ -526,7 +526,7 @@ Respond ONLY in this exact JSON format, no markdown:
                 disabled={aiLoading}
               >
                 {aiLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-                {aiLoading ? "AI is thinking..." : "Let AI suggest name & description"}
+                {aiLoading ? t("uiEntityCreationWizard.aiIsThinking") : t("uiEntityCreationWizard.letAiSuggestNameDescription")}
               </Button>
             )}
             {kind === "guild" && (
@@ -535,7 +535,7 @@ Respond ONLY in this exact JSON format, no markdown:
                 <Select value={guildType} onValueChange={v => setGuildType(v as GuildType)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={GuildType.GUILD}>Guild</SelectItem>
+                    <SelectItem value={GuildType.GUILD}>{t("uiEntityCreationWizard.guild")}</SelectItem>
                     <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
                     <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
                   </SelectContent>
@@ -549,18 +549,18 @@ Respond ONLY in this exact JSON format, no markdown:
                   <Select value={podType} onValueChange={v => setPodType(v as PodType)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={PodType.QUEST_POD}>Quest Pod</SelectItem>
+                      <SelectItem value={PodType.QUEST_POD}>{t("uiEntityCreationWizard.questPod")}</SelectItem>
                       <SelectItem value={PodType.STUDY_POD}>Study Pod</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 {podType === PodType.QUEST_POD && (
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Linked Quest</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.linkedQuest")}</label>
                     <Select value={questId} onValueChange={setQuestId}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">No quest</SelectItem>
+                        <SelectItem value="none">{t("uiEntityCreationWizard.noQuest")}</SelectItem>
                         {quests.map(q => <SelectItem key={q.id} value={q.id}>{q.title}</SelectItem>)}
                       </SelectContent>
                     </Select>
@@ -568,11 +568,11 @@ Respond ONLY in this exact JSON format, no markdown:
                 )}
                 {podType === PodType.STUDY_POD && (
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Topic focus</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.topicFocus")}</label>
                     <Select value={podTopicId} onValueChange={setPodTopicId}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">No topic</SelectItem>
+                        <SelectItem value="none">{t("uiEntityCreationWizard.noTopic")}</SelectItem>
                         {topics.map(topic => <SelectItem key={topic.id} value={topic.id}>{translateTopicName(topic.name, t)}</SelectItem>)}
                       </SelectContent>
                     </Select>
@@ -585,10 +585,10 @@ Respond ONLY in this exact JSON format, no markdown:
                 <div>
                   <label className="text-sm font-medium mb-1 block">Type</label>
                   <Select value={orgType} onValueChange={setOrgType}>
-                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t("uiEntityCreationWizard.selectType")} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="public">Public</SelectItem>
-                      <SelectItem value="private">Private</SelectItem>
+                      <SelectItem value="public">{t("uiEntityCreationWizard.public")}</SelectItem>
+                      <SelectItem value="private">{t("uiEntityCreationWizard.private")}</SelectItem>
                       <SelectItem value="ngo">NGO</SelectItem>
                       <SelectItem value="academics">Academics</SelectItem>
                       <SelectItem value="company">Company</SelectItem>
@@ -619,11 +619,11 @@ Respond ONLY in this exact JSON format, no markdown:
             {(scrapedTopicIds.length > 0 || scrapedTerritoryIds.length > 0) && (
               <div className="flex items-center gap-2 p-2.5 rounded-lg bg-primary/5 border border-primary/20 text-xs text-primary">
                 <Sparkles className="h-3.5 w-3.5 shrink-0" />
-                <span>Pre-selected based on your website — adjust as needed.</span>
+                <span>{t("uiEntityCreationWizard.preSelectedBasedOnYourWebsite")}</span>
               </div>
             )}
             <SearchableTagPicker
-              label="Topics"
+              label={t("uiEntityCreationWizard.topics")}
               items={topics.map(topic => ({
                 id: topic.id,
                 name: topic.name,
@@ -635,7 +635,7 @@ Respond ONLY in this exact JSON format, no markdown:
             />
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium">Don't see your territory?</span>
+                <span className="text-sm font-medium">{t("uiEntityCreationWizard.donTSeeYourTerritory")}</span>
                 <AddTerritoryDialog
                   onCreated={(id) => {
                     if (!selectedTerritoryIds.includes(id)) toggleTerritory(id);
@@ -643,7 +643,7 @@ Respond ONLY in this exact JSON format, no markdown:
                 />
               </div>
               <SearchableTagPicker
-                label="Territories"
+                label={t("uiEntityCreationWizard.territories")}
                 items={territories.map(territory => ({
                   id: territory.id,
                   name: territory.name,
@@ -662,14 +662,14 @@ Respond ONLY in this exact JSON format, no markdown:
           <div className="space-y-5">
             <div>
               <label className="text-sm font-medium mb-2 block flex items-center gap-1.5">
-                <Lock className="h-3.5 w-3.5" /> Join policy
+                <Lock className="h-3.5 w-3.5" /> {t("uiEntityCreationWizard.joinPolicy")}
               </label>
               <p className="text-xs text-muted-foreground mb-3">{t(KIND_CONFIG[kind!].labelKey)}</p>
               <div className="space-y-2">
                 {[
-                  { value: GuildJoinPolicy.OPEN, label: "Open", desc: "Anyone can join immediately", icon: Users },
-                  { value: GuildJoinPolicy.APPROVAL_REQUIRED, label: "Approval required", desc: "Members must apply and be approved", icon: Eye },
-                  { value: GuildJoinPolicy.INVITE_ONLY, label: "Invite only", desc: "Only invited members can join", icon: Lock },
+                  { value: GuildJoinPolicy.OPEN, label: t("uiEntityCreationWizard.open"), desc: t("uiEntityCreationWizard.anyoneCanJoinImmediately"), icon: Users },
+                  { value: GuildJoinPolicy.APPROVAL_REQUIRED, label: "Approval required", desc: t("uiEntityCreationWizard.membersMustApplyAndBeApproved"), icon: Eye },
+                  { value: GuildJoinPolicy.INVITE_ONLY, label: t("uiEntityCreationWizard.inviteOnly"), desc: t("uiEntityCreationWizard.onlyInvitedMembersCanJoin"), icon: Lock },
                 ].map(opt => (
                   <button
                     key={opt.value}
@@ -702,8 +702,8 @@ Respond ONLY in this exact JSON format, no markdown:
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg border border-border">
               <div>
-                <label className="text-sm font-medium">Save as draft</label>
-                <p className="text-xs text-muted-foreground">Keep it private until you're ready to launch</p>
+                <label className="text-sm font-medium">{t("uiEntityCreationWizard.saveAsDraft")}</label>
+                <p className="text-xs text-muted-foreground">{t("uiEntityCreationWizard.keepItPrivateUntilYouRe")}</p>
               </div>
               <Switch checked={isDraft} onCheckedChange={setIsDraft} />
             </div>
@@ -715,7 +715,7 @@ Respond ONLY in this exact JSON format, no markdown:
           <div className="space-y-4">
             <p className="text-xs text-muted-foreground">
               {scraped && logoUrl
-                ? "We imported a logo from your website. You can replace it or add a banner."
+                ? t("uiEntityCreationWizard.weImportedALogoFromYour")
                 : t(KIND_CONFIG[kind!].labelKey)}
             </p>
             <ImageUpload
@@ -775,9 +775,9 @@ Respond ONLY in this exact JSON format, no markdown:
               <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   {joinPolicy === GuildJoinPolicy.OPEN ? <Users className="h-3 w-3" /> : joinPolicy === GuildJoinPolicy.INVITE_ONLY ? <Lock className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                  {joinPolicy === GuildJoinPolicy.OPEN ? "Open" : joinPolicy === GuildJoinPolicy.INVITE_ONLY ? "Invite only" : "Approval required"}
+                  {joinPolicy === GuildJoinPolicy.OPEN ? t("uiEntityCreationWizard.open") : joinPolicy === GuildJoinPolicy.INVITE_ONLY ? t("uiEntityCreationWizard.inviteOnly") : "Approval required"}
                 </span>
-                {isDraft && <Badge variant="outline" className="text-xs">Draft</Badge>}
+                {isDraft && <Badge variant="outline" className="text-xs">{t("uiEntityCreationWizard.draft")}</Badge>}
               </div>
             </div>
           </div>
@@ -840,7 +840,7 @@ Respond ONLY in this exact JSON format, no markdown:
             {isLastStep ? (
               <Button onClick={handleSubmit} disabled={!name.trim() || isSubmitting}>
                 {isSubmitting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
-                Create {kind && t(KIND_CONFIG[kind].labelKey)}
+                {t("uiEntityCreationWizard.create")} {kind && t(KIND_CONFIG[kind].labelKey)}
               </Button>
             ) : (
               <Button onClick={goNext} disabled={!canProceed()}>
@@ -852,7 +852,7 @@ Respond ONLY in this exact JSON format, no markdown:
         {step === "source" && (
           <div className="flex items-center justify-start pt-2">
             <Button variant="ghost" size="sm" onClick={goBack}>
-              <ChevronLeft className="h-4 w-4 mr-1" /> Back
+              <ChevronLeft className="h-4 w-4 mr-1" /> {t("uiEntityCreationWizard.back")}
             </Button>
           </div>
         )}

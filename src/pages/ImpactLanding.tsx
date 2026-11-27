@@ -348,7 +348,7 @@ export default function ImpactLanding() {
           )}
           <Button variant="outline" size="sm" asChild>
             <Link to="/explore/houses">
-              {userHouses.length > 0 ? "Manage your Houses" : "Discover Houses"} <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              {userHouses.length > 0 ? t("uiImpactLanding.manageYourHouses") : "Discover Houses"} <ArrowRight className="h-3.5 w-3.5 ml-1" />
             </Link>
           </Button>
         </div>

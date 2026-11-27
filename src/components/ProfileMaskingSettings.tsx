@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +33,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export function ProfileMaskingSettings() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const { toast } = useToast();
@@ -88,7 +90,7 @@ export function ProfileMaskingSettings() {
       target_name: item.name,
     } as any);
     if (error) {
-      toast({ title: "Failed to add", description: error.message, variant: "destructive" });
+      toast({ title: t("uiProfileMaskingSettings.failedToAdd"), description: error.message, variant: "destructive" });
       return;
     }
     setResults((r) => r.filter((x) => !(x.id === item.id && x.type === item.type)));
@@ -105,8 +107,7 @@ export function ProfileMaskingSettings() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Search for guilds, pods, organizations, quests, or users you want to hide from your public profile. 
-        These will not appear in your profile stats, entities, or following lists for other visitors.
+        {t("uiProfileMaskingSettings.searchForGuildsPodsOrganizationsQuests")}
       </p>
 
       {/* Search bar */}
@@ -114,7 +115,7 @@ export function ProfileMaskingSettings() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name..."
+            placeholder={t("uiProfileMaskingSettings.searchByName")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -122,7 +123,7 @@ export function ProfileMaskingSettings() {
           />
         </div>
         <Button variant="outline" size="sm" onClick={handleSearch} disabled={searching || search.trim().length < 2}>
-          Search
+          {t("uiProfileMaskingSettings.search")}
         </Button>
       </div>
 
@@ -172,7 +173,7 @@ export function ProfileMaskingSettings() {
       )}
 
       {!isLoading && maskedItems.length === 0 && results.length === 0 && (
-        <p className="text-xs text-muted-foreground">No items hidden yet. Use the search above to find items to hide.</p>
+        <p className="text-xs text-muted-foreground">{t("uiProfileMaskingSettings.noItemsHiddenYetUseThe")}</p>
       )}
     </div>
   );

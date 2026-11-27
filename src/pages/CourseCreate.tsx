@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { notifyEntityFollowersAndMembers } from "@/lib/notifyEntityActivity";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,7 @@ import {
 } from "@/data/mock";
 
 export default function CourseCreate() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const isEdit = !!id;
   const existingCourse = id ? getCourseById(id) : null;
@@ -183,8 +185,8 @@ export default function CourseCreate() {
 
   const handlePublish = () => {
     if (!existingCourse) return;
-    if (courseLessons.length === 0) { toast({ title: "Add at least one lesson before publishing", variant: "destructive" }); return; }
-    if (!title.trim() || !description.trim()) { toast({ title: "Title and description are required", variant: "destructive" }); return; }
+    if (courseLessons.length === 0) { toast({ title: t("uiCourseCreate.addAtLeastOneLessonBefore"), variant: "destructive" }); return; }
+    if (!title.trim() || !description.trim()) { toast({ title: t("uiCourseCreate.titleAndDescriptionAreRequired"), variant: "destructive" }); return; }
     const target = courses.find((c) => c.id === existingCourse.id);
     if (target) {
       target.isPublished = !target.isPublished;
@@ -264,13 +266,13 @@ export default function CourseCreate() {
   return (
     <PageShell>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={isEdit ? `/courses/${id}` : "/work"}><ArrowLeft className="h-4 w-4 mr-1" /> Back</Link>
+        <Link to={isEdit ? `/courses/${id}` : "/work"}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCourseCreate.back")}</Link>
       </Button>
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display text-2xl font-bold flex items-center gap-2">
-            <GraduationCap className="h-6 w-6 text-primary" /> {isEdit ? "Edit Course" : "Create Course"}
+            <GraduationCap className="h-6 w-6 text-primary" /> {isEdit ? t("uiCourseCreate.editCourse") : t("uiCourseCreate.createCourse")}
           </h1>
           {isEdit && existingCourse && (
             <Button variant={existingCourse.isPublished ? "outline" : "default"} onClick={handlePublish}>
@@ -282,10 +284,10 @@ export default function CourseCreate() {
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Left: Course details */}
           <div className="space-y-5">
-            <div><label className="text-sm font-medium mb-1 block">Title *</label><Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Course title" maxLength={120} /></div>
+            <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.title")}</label><Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("uiCourseCreate.courseTitle")} maxLength={120} /></div>
             <div><label className="text-sm font-medium mb-1 block">Subtitle</label><Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="Short subtitle" maxLength={200} /></div>
             <ImageUpload label="Cover Image" currentImageUrl={coverImageUrl} onChange={setCoverImageUrl} aspectRatio="16/9" description="Wide cover, recommended 1200×600" />
-            <div><label className="text-sm font-medium mb-1 block">Description *</label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Course description (supports markdown)" className="resize-none min-h-[150px]" /></div>
+            <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.description")}</label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("uiCourseCreate.courseDescriptionSupportsMarkdown")} className="resize-none min-h-[150px]" /></div>
 
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Free course</label>
@@ -298,9 +300,9 @@ export default function CourseCreate() {
             )}
 
             <div className="grid grid-cols-2 gap-3">
-              <div><label className="text-sm font-medium mb-1 block">Level</label>
+              <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.level")}</label>
                 <Select value={level} onValueChange={setLevel}>
-                  <SelectTrigger><SelectValue placeholder="Select level" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t("uiCourseCreate.selectLevel")} /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value={CourseLevel.BEGINNER}>Beginner</SelectItem>
                     <SelectItem value={CourseLevel.INTERMEDIATE}>Intermediate</SelectItem>
@@ -317,19 +319,19 @@ export default function CourseCreate() {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="self">As myself</SelectItem>
-                  {adminGuilds.length > 0 && <SelectItem value="guild">Under a Guild</SelectItem>}
-                  {adminCompanies.length > 0 && <SelectItem value="company">Under a Company</SelectItem>}
+                  {adminGuilds.length > 0 && <SelectItem value="guild">{t("uiCourseCreate.underAGuild")}</SelectItem>}
+                  {adminCompanies.length > 0 && <SelectItem value="company">{t("uiCourseCreate.underACompany")}</SelectItem>}
                 </SelectContent>
               </Select>
               {providerType === "guild" && (
                 <Select value={providerGuildId} onValueChange={setProviderGuildId}>
-                  <SelectTrigger className="mt-2"><SelectValue placeholder="Select guild" /></SelectTrigger>
+                  <SelectTrigger className="mt-2"><SelectValue placeholder={t("uiCourseCreate.selectGuild")} /></SelectTrigger>
                   <SelectContent>{adminGuilds.map((g) => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}</SelectContent>
                 </Select>
               )}
               {providerType === "company" && (
                 <Select value={providerCompanyId} onValueChange={setProviderCompanyId}>
-                  <SelectTrigger className="mt-2"><SelectValue placeholder="Select company" /></SelectTrigger>
+                  <SelectTrigger className="mt-2"><SelectValue placeholder={t("uiCourseCreate.selectCompany")} /></SelectTrigger>
                   <SelectContent>{adminCompanies.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                 </Select>
               )}
@@ -338,7 +340,7 @@ export default function CourseCreate() {
             <Separator />
 
             <SearchableTagPicker
-              label="Topics (Houses)"
+              label={t("uiCourseCreate.topicsHouses")}
               items={topics.map((t) => ({ id: t.id, name: t.name }))}
               selectedIds={selectedTopics}
               onToggle={toggleTopic}
@@ -348,7 +350,7 @@ export default function CourseCreate() {
             />
 
             <SearchableTagPicker
-              label="Territories"
+              label={t("uiCourseCreate.territories")}
               items={territories.map((t) => ({ id: t.id, name: t.name }))}
               selectedIds={selectedTerritories}
               onToggle={toggleTerritory}
@@ -357,7 +359,7 @@ export default function CourseCreate() {
               variant="checkboxes"
             />
 
-            <Button onClick={handleSave} disabled={!title.trim()} className="w-full"><Save className="h-4 w-4 mr-2" /> Save course</Button>
+            <Button onClick={handleSave} disabled={!title.trim()} className="w-full"><Save className="h-4 w-4 mr-2" /> {t("uiCourseCreate.saveCourse")}</Button>
           </div>
 
           {/* Right: Lessons management (edit mode only) */}
@@ -365,11 +367,11 @@ export default function CourseCreate() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-display text-lg font-semibold flex items-center gap-2"><BookOpen className="h-5 w-5" /> Lessons ({courseLessons.length})</h2>
               {isEdit && (
-                <Button size="sm" onClick={() => openLessonDialog()}><Plus className="h-4 w-4 mr-1" /> Add lesson</Button>
+                <Button size="sm" onClick={() => openLessonDialog()}><Plus className="h-4 w-4 mr-1" /> {t("uiCourseCreate.addLesson")}</Button>
               )}
             </div>
-            {!isEdit && <p className="text-sm text-muted-foreground">Save the course first, then add lessons.</p>}
-            {isEdit && courseLessons.length === 0 && <p className="text-sm text-muted-foreground">No lessons yet. Click "Add lesson" to get started.</p>}
+            {!isEdit && <p className="text-sm text-muted-foreground">{t("uiCourseCreate.saveTheCourseFirstThenAdd")}</p>}
+            {isEdit && courseLessons.length === 0 && <p className="text-sm text-muted-foreground">{t("uiCourseCreate.noLessonsYetClickAddLesson")}</p>}
             <div className="space-y-2">
               {courseLessons.map((lesson, i) => (
                 <div key={lesson.id} className="flex items-center gap-2 rounded-lg border border-border bg-card p-3">
@@ -385,7 +387,7 @@ export default function CourseCreate() {
                       {lesson.videoUrl && <Badge variant="secondary" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />Video</Badge>}
                     </div>
                   </div>
-                  <Button size="sm" variant="ghost" onClick={() => openLessonDialog(lesson)} className="h-7 text-xs">Edit</Button>
+                  <Button size="sm" variant="ghost" onClick={() => openLessonDialog(lesson)} className="h-7 text-xs">{t("uiCourseCreate.edit")}</Button>
                   <Button size="sm" variant="ghost" onClick={() => deleteLesson(lesson.id)} className="h-7 text-xs text-destructive"><Trash2 className="h-3 w-3" /></Button>
                 </div>
               ))}
@@ -397,17 +399,17 @@ export default function CourseCreate() {
       {/* Lesson dialog */}
       <Dialog open={lessonDialogOpen} onOpenChange={setLessonDialogOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto max-w-2xl">
-          <DialogHeader><DialogTitle>{editingLesson ? "Edit Lesson" : "Add Lesson"}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editingLesson ? t("uiCourseCreate.editLesson") : t("uiCourseCreate.addLesson2")}</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
-            <div><label className="text-sm font-medium mb-1 block">Title *</label><Input value={lesTitle} onChange={(e) => setLesTitle(e.target.value)} maxLength={120} /></div>
+            <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.title")}</label><Input value={lesTitle} onChange={(e) => setLesTitle(e.target.value)} maxLength={120} /></div>
             <div><label className="text-sm font-medium mb-1 block">Summary</label><Input value={lesSummary} onChange={(e) => setLesSummary(e.target.value)} maxLength={200} /></div>
             <div><label className="text-sm font-medium mb-1 block">Content (Markdown)</label><Textarea value={lesContent} onChange={(e) => setLesContent(e.target.value)} className="resize-none min-h-[200px] font-mono text-sm" placeholder="# Lesson content&#10;&#10;Write in markdown..." /></div>
             <div><label className="text-sm font-medium mb-1 block">Video URL (optional)</label><Input value={lesVideoUrl} onChange={(e) => setLesVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." /></div>
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Allow preview (non-enrolled users can see this lesson)</label>
+              <label className="text-sm font-medium">{t("uiCourseCreate.allowPreviewNonEnrolledUsersCan")}</label>
               <Switch checked={lesIsPreview} onCheckedChange={setLesIsPreview} />
             </div>
-            <Button onClick={saveLesson} disabled={!lesTitle.trim()} className="w-full">{editingLesson ? "Update Lesson" : "Add Lesson"}</Button>
+            <Button onClick={saveLesson} disabled={!lesTitle.trim()} className="w-full">{editingLesson ? t("uiCourseCreate.updateLesson") : t("uiCourseCreate.addLesson2")}</Button>
           </div>
         </DialogContent>
       </Dialog>

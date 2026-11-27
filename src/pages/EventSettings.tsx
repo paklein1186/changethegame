@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ import { ArrowLeft, Save, Trash2, XCircle, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function EventSettings() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -54,15 +56,15 @@ export default function EventSettings() {
     }
   }, [event]);
 
-  if (isLoading) return <PageShell><FrenchTextOverlay><p>Loading…</p></FrenchTextOverlay></PageShell>;
-  if (!event) return <PageShell><FrenchTextOverlay><p>Event not found.</p></FrenchTextOverlay></PageShell>;
+  if (isLoading) return <PageShell><FrenchTextOverlay><p>{t("uiEventSettings.loading")}</p></FrenchTextOverlay></PageShell>;
+  if (!event) return <PageShell><FrenchTextOverlay><p>{t("uiEventSettings.eventNotFound")}</p></FrenchTextOverlay></PageShell>;
   if (!canManage) {
     return (
       <PageShell><FrenchTextOverlay>
         <div className="text-center py-16">
           <h2 className="text-xl font-bold mb-2">Access Denied</h2>
-          <p className="text-muted-foreground mb-4">You don't have permission to manage this event.</p>
-          <Button asChild><Link to={`/events/${id}`}>Back to Event</Link></Button>
+          <p className="text-muted-foreground mb-4">{t("uiEventSettings.youDonTHavePermissionTo")}</p>
+          <Button asChild><Link to={`/events/${id}`}>{t("uiEventSettings.backToEvent")}</Link></Button>
         </div>
       </FrenchTextOverlay></PageShell>
     );
@@ -91,7 +93,7 @@ export default function EventSettings() {
     const { error } = await supabase.from("guild_events" as any).update(updates).eq("id", id);
     setSaving(false);
     if (error) { toast.error("Failed to save: " + error.message); return; }
-    toast.success("Settings saved");
+    toast.success(t("uiEventSettings.settingsSaved"));
     qc.invalidateQueries({ queryKey: ["event-detail", id] });
   };
 
@@ -109,42 +111,42 @@ export default function EventSettings() {
       await supabase.from("guild_event_attendees" as any).update(update).eq("id", reg.id);
     }
     setCancelDialogOpen(false);
-    toast.success("Event cancelled. Participants will be notified.");
+    toast.success(t("uiEventSettings.eventCancelledParticipantsWillBeNotified"));
     qc.invalidateQueries({ queryKey: ["event-detail", id] });
     navigate(`/events/${id}`);
   };
 
   const deleteEvent = async () => {
     const { error } = await supabase.from("guild_events" as any).delete().eq("id", id);
-    if (error) { toast.error("Failed to delete event"); return; }
+    if (error) { toast.error(t("uiEventSettings.failedToDeleteEvent")); return; }
     setDeleteDialogOpen(false);
-    toast.success("Event deleted");
+    toast.success(t("uiEventSettings.eventDeleted"));
     navigate(event.guild_id ? `/guilds/${event.guild_id}` : "/calendar");
   };
 
   return (
     <PageShell><FrenchTextOverlay>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/events/${id}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to Event</Link>
+        <Link to={`/events/${id}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiEventSettings.backToEvent")}</Link>
       </Button>
 
       <div className="max-w-2xl space-y-8">
         <div className="flex items-center gap-3">
-          <h1 className="font-display text-2xl font-bold">Event Settings</h1>
-          {isCancelled && <Badge variant="destructive">Cancelled</Badge>}
+          <h1 className="font-display text-2xl font-bold">{t("uiEventSettings.eventSettings")}</h1>
+          {isCancelled && <Badge variant="destructive">{t("uiEventSettings.cancelled")}</Badge>}
         </div>
 
         {/* Visibility */}
         <section className="space-y-4">
           <h2 className="text-lg font-semibold">Visibility</h2>
           <div>
-            <Label>Who can see this event?</Label>
+            <Label>{t("uiEventSettings.whoCanSeeThisEvent")}</Label>
             <Select value={visibility} onValueChange={setVisibility} disabled={isCancelled}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="PUBLIC">Public — Anyone</SelectItem>
-                <SelectItem value="FOLLOWERS">Followers — Only followers of the host</SelectItem>
-                <SelectItem value="INTERNAL">Internal — Only guild members & participants</SelectItem>
+                <SelectItem value="PUBLIC">{t("uiEventSettings.publicAnyone")}</SelectItem>
+                <SelectItem value="FOLLOWERS">{t("uiEventSettings.followersOnlyFollowersOfTheHost")}</SelectItem>
+                <SelectItem value="INTERNAL">{t("uiEventSettings.internalOnlyGuildMembersParticipants")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -156,12 +158,12 @@ export default function EventSettings() {
         <section className="space-y-4">
           <h2 className="text-lg font-semibold">Participation Mode</h2>
           <div>
-            <Label>How are participants accepted?</Label>
+            <Label>{t("uiEventSettings.howAreParticipantsAccepted")}</Label>
             <Select value={acceptanceMode} onValueChange={setAcceptanceMode} disabled={isCancelled}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="AUTO">Automatic — First-come, first-served</SelectItem>
-                <SelectItem value="MANUAL">Manual — Host reviews and accepts</SelectItem>
+                <SelectItem value="MANUAL">{t("uiEventSettings.manualHostReviewsAndAccepts")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -178,11 +180,11 @@ export default function EventSettings() {
               onCheckedChange={setIsPaid}
               disabled={isCancelled || hasPaidRegistrations}
             />
-            <Label>This is a paid event</Label>
+            <Label>{t("uiEventSettings.thisIsAPaidEvent")}</Label>
           </div>
           {hasPaidRegistrations && isPaid && (
             <p className="text-xs text-amber-600 flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3" /> Ticket price cannot be changed after purchases have been made.
+              <AlertTriangle className="h-3 w-3" /> {t("uiEventSettings.ticketPriceCannotBeChangedAfter")}
             </p>
           )}
           {isPaid && (
@@ -219,7 +221,7 @@ export default function EventSettings() {
         {!isCancelled && (
           <div className="flex gap-3 pt-2">
             <Button onClick={handleSave} disabled={saving}>
-              <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : "Save Settings"}
+              <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : t("uiEventSettings.saveSettings")}
             </Button>
           </div>
         )}
@@ -233,11 +235,11 @@ export default function EventSettings() {
             {!isCancelled && (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">Cancel event</p>
-                  <p className="text-xs text-muted-foreground">All participants will be notified. Refunds will be initiated for paid tickets.</p>
+                  <p className="text-sm font-medium">{t("uiEventSettings.cancelEvent")}</p>
+                  <p className="text-xs text-muted-foreground">{t("uiEventSettings.allParticipantsWillBeNotifiedRefunds")}</p>
                 </div>
                 <Button variant="destructive" size="sm" onClick={() => setCancelDialogOpen(true)}>
-                  <XCircle className="h-4 w-4 mr-1" /> Cancel Event
+                  <XCircle className="h-4 w-4 mr-1" /> {t("uiEventSettings.cancelEvent2")}
                 </Button>
               </div>
             )}
@@ -246,17 +248,17 @@ export default function EventSettings() {
                 {!isCancelled && <Separator className="bg-destructive/20" />}
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium">Delete event</p>
-                    <p className="text-xs text-muted-foreground">Permanently remove this draft event. This cannot be undone.</p>
+                    <p className="text-sm font-medium">{t("uiEventSettings.deleteEvent")}</p>
+                    <p className="text-xs text-muted-foreground">{t("uiEventSettings.permanentlyRemoveThisDraftEventThis")}</p>
                   </div>
                   <Button variant="destructive" size="sm" onClick={() => setDeleteDialogOpen(true)}>
-                    <Trash2 className="h-4 w-4 mr-1" /> Delete Event
+                    <Trash2 className="h-4 w-4 mr-1" /> {t("uiEventSettings.deleteEvent2")}
                   </Button>
                 </div>
               </>
             )}
             {isCancelled && !canDelete && (
-              <p className="text-sm text-muted-foreground">This event has been cancelled.</p>
+              <p className="text-sm text-muted-foreground">{t("uiEventSettings.thisEventHasBeenCancelled")}</p>
             )}
           </div>
         </section>
@@ -266,20 +268,20 @@ export default function EventSettings() {
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel this event?</AlertDialogTitle>
+            <AlertDialogTitle>{t("uiEventSettings.cancelThisEvent")}</AlertDialogTitle>
             <AlertDialogDescription>
-              All participants will be notified. For paid events, refunds will be initiated for all paid registrations.
+              {t("uiEventSettings.allParticipantsWillBeNotifiedFor")}
               {hasPaidRegistrations && (
                 <span className="block mt-2 font-medium text-destructive">
-                  {registrations.filter((r: any) => r.payment_status === "PAID").length} paid registration(s) will be marked for refund.
+                  {registrations.filter((r: any) => r.payment_status === "PAID").length} {t("uiEventSettings.paidRegistrationSWillBeMarked")}
                 </span>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep Event</AlertDialogCancel>
+            <AlertDialogCancel>{t("uiEventSettings.keepEvent")}</AlertDialogCancel>
             <AlertDialogAction onClick={cancelEvent} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Cancel Event
+              {t("uiEventSettings.cancelEvent2")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -289,15 +291,15 @@ export default function EventSettings() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this event permanently?</AlertDialogTitle>
+            <AlertDialogTitle>{t("uiEventSettings.deleteThisEventPermanently")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. The event and all associated data will be removed.
+              {t("uiEventSettings.thisActionCannotBeUndoneThe")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep Event</AlertDialogCancel>
+            <AlertDialogCancel>{t("uiEventSettings.keepEvent")}</AlertDialogCancel>
             <AlertDialogAction onClick={deleteEvent} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete Permanently
+              {t("uiEventSettings.deletePermanently")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

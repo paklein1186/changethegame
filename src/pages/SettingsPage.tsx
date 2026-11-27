@@ -295,11 +295,11 @@ export default function SettingsPage() {
   // ── Handlers ──
   const handleChangePassword = async () => {
     if (newPw !== confirmPw) { toast({ title: "Passwords don't match", variant: "destructive" }); return; }
-    if (newPw.length < 6) { toast({ title: "Password must be at least 6 characters", variant: "destructive" }); return; }
+    if (newPw.length < 6) { toast({ title: t("uiSettingsPage.passwordMustBeAtLeast6"), variant: "destructive" }); return; }
     setPwLoading(true);
     const { error } = await updatePassword(newPw);
     setPwLoading(false);
-    if (error) toast({ title: "Error", description: error, variant: "destructive" });
+    if (error) toast({ title: t("uiSettingsPage.error"), description: error, variant: "destructive" });
     else { toast({ title: "Password updated!" }); setCurrentPw(""); setNewPw(""); setConfirmPw(""); }
   };
 
@@ -330,7 +330,7 @@ export default function SettingsPage() {
       .eq("user_id", authUser.id);
     setProfileSaving(false);
     if (error) {
-      toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      toast({ title: t("uiSettingsPage.saveFailed"), description: error.message, variant: "destructive" });
       return;
     }
     // Save topic/territory relations to DB
@@ -369,7 +369,7 @@ export default function SettingsPage() {
     }
     // Refresh auth context so nav reflects updated name/avatar
     await refreshProfile();
-    toast({ title: "Profile updated!" });
+    toast({ title: t("uiSettingsPage.profileUpdated") });
   };
 
   const toggleTopic = (id: string) => setSelectedTopics((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);
@@ -422,13 +422,13 @@ export default function SettingsPage() {
               {/* ── Persona ── */}
               {activeTab === "persona" && (
                 <div className="space-y-6">
-                  <Section title="How do you primarily use this space?" icon={<Compass className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-4">This adapts labels and suggestions across the platform to match your style. It doesn't change permissions or features.</p>
+                  <Section title={t("uiSettingsPage.howDoYouPrimarilyUseThis")} icon={<Compass className="h-5 w-5" />}>
+                    <p className="text-sm text-muted-foreground mb-4">{t("uiSettingsPage.thisAdaptsLabelsAndSuggestionsAcross")}</p>
                     <div className="space-y-2 max-w-md">
                       {([
-                        { value: "IMPACT" as PersonaType, label: "Mainly for impact work & missions", desc: "Labels like Services, Guilds, Quests & Missions" },
-                        { value: "CREATIVE" as PersonaType, label: "Mainly for creative projects & art", desc: "Labels like Skill Sessions, Collectives, Quests & Creations" },
-                        { value: "HYBRID" as PersonaType, label: "Both", desc: "A mix of impact and creative language" },
+                        { value: "IMPACT" as PersonaType, label: t("uiSettingsPage.mainlyForImpactWorkMissions"), desc: t("uiSettingsPage.labelsLikeServicesGuildsQuestsMissions") },
+                        { value: "CREATIVE" as PersonaType, label: t("uiSettingsPage.mainlyForCreativeProjectsArt"), desc: t("uiSettingsPage.labelsLikeSkillSessionsCollectivesQuests") },
+                        { value: "HYBRID" as PersonaType, label: "Both", desc: t("uiSettingsPage.aMixOfImpactAndCreative") },
                       ]).map((opt) => (
                         <button
                           key={opt.value}
@@ -450,14 +450,14 @@ export default function SettingsPage() {
                       ))}
                     </div>
                     {persona === "UNSET" && (
-                      <p className="text-xs text-muted-foreground mt-3">No persona set yet. Complete onboarding or select one above.</p>
+                      <p className="text-xs text-muted-foreground mt-3">{t("uiSettingsPage.noPersonaSetYetCompleteOnboarding")}</p>
                     )}
                    </Section>
 
                   <Separator />
 
                   <Section title="World / Lexicon Toggle" icon={<Globe className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-4">Override the UI language without changing your persona. This only affects labels and display.</p>
+                    <p className="text-sm text-muted-foreground mb-4">{t("uiSettingsPage.overrideTheUiLanguageWithoutChanging")}</p>
                     <div className="space-y-2 max-w-md">
                       {LEXICON_MODES.map((mode) => {
                         const isActive = lexiconOverride === mode.value || (!lexiconOverride && (
@@ -493,17 +493,17 @@ export default function SettingsPage() {
                       })}
                     </div>
                     {lexiconOverride && (
-                      <button onClick={() => { setLexiconOverride(null); toast({ title: "Reset to persona default" }); }}
+                      <button onClick={() => { setLexiconOverride(null); toast({ title: t("uiSettingsPage.resetToPersonaDefault") }); }}
                         className="text-xs text-primary hover:underline mt-3">
-                        Reset to persona default
+                        {t("uiSettingsPage.resetToPersonaDefault")}
                       </button>
                     )}
                   </Section>
 
                   <Separator />
 
-                  <Section title="Auto-filter by your Topics" icon={<Hash className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-3">When enabled, Explore, Feed, and Search will prioritize content from your selected Topics.</p>
+                  <Section title={t("uiSettingsPage.autoFilterByYourTopics")} icon={<Hash className="h-5 w-5" />}>
+                    <p className="text-sm text-muted-foreground mb-3">{t("uiSettingsPage.whenEnabledExploreFeedAndSearch")}</p>
                     <div className="flex items-center gap-3">
                       <Switch
                         checked={usePrefs}
@@ -511,13 +511,13 @@ export default function SettingsPage() {
                           setUsePrefs(checked);
                           if (authUser?.id) {
                             await supabase.from("profiles").update({ filter_by_houses: checked } as any).eq("user_id", authUser.id);
-                            toast({ title: checked ? "Topic filter enabled" : "Topic filter disabled" });
+                            toast({ title: checked ? t("uiSettingsPage.topicFilterEnabled") : t("uiSettingsPage.topicFilterDisabled") });
                           }
                         }}
                       />
-                      <span className="text-sm font-medium">Use my Topics as default filters across the platform</span>
+                      <span className="text-sm font-medium">{t("uiSettingsPage.useMyTopicsAsDefaultFilters")}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">You can always override this with "Show all" in any section.</p>
+                    <p className="text-xs text-muted-foreground mt-2">{t("uiSettingsPage.youCanAlwaysOverrideThisWith")}</p>
                   </Section>
                 </div>
               )}
@@ -530,7 +530,7 @@ export default function SettingsPage() {
                       <Input value={authUser?.email || ""} disabled className="max-w-sm" />
                       <Badge variant="secondary">Verified</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Contact support to change your email address.</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t("uiSettingsPage.contactSupportToChangeYourEmail")}</p>
                   </Section>
 
                   <Separator />
@@ -538,10 +538,10 @@ export default function SettingsPage() {
                   <Section title="Change Password" icon={<Lock className="h-5 w-5" />}>
                     <div className="space-y-3 max-w-sm">
                       <Input type="password" placeholder="Current password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} />
-                      <Input type="password" placeholder="New password" value={newPw} onChange={(e) => setNewPw(e.target.value)} />
-                      <Input type="password" placeholder="Confirm new password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} />
+                      <Input type="password" placeholder={t("uiSettingsPage.newPassword")} value={newPw} onChange={(e) => setNewPw(e.target.value)} />
+                      <Input type="password" placeholder={t("uiSettingsPage.confirmNewPassword")} value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} />
                       <Button onClick={handleChangePassword} disabled={pwLoading || !newPw}>
-                        {pwLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />} Update password
+                        {pwLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />} {t("uiSettingsPage.updatePassword")}
                       </Button>
                     </div>
                   </Section>
@@ -549,13 +549,13 @@ export default function SettingsPage() {
                   <Separator />
 
                   <Section title="Linked Accounts" icon={<Plug className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground">Email & password sign-in is currently active. Social logins can be configured in Connected Apps.</p>
+                    <p className="text-sm text-muted-foreground">{t("uiSettingsPage.emailPasswordSignInIsCurrently")}</p>
                   </Section>
 
                   <Separator />
 
-                  <Section title="Export My Data" icon={<Download className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-3">Download a copy of all your data in JSON format (profile, quests, comments, services, bookings, XP transactions).</p>
+                  <Section title={t("uiSettingsPage.exportMyData")} icon={<Download className="h-5 w-5" />}>
+                    <p className="text-sm text-muted-foreground mb-3">{t("uiSettingsPage.downloadACopyOfAllYour")}</p>
                     <Button variant="outline" size="sm" disabled={exportLoading} onClick={async () => {
                       setExportLoading(true);
                       try {
@@ -583,43 +583,43 @@ export default function SettingsPage() {
                         a.click();
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
-                        toast({ title: "Data exported!", description: "Your data has been downloaded." });
+                        toast({ title: "Data exported!", description: t("uiSettingsPage.yourDataHasBeenDownloaded") });
                       } finally {
                         setExportLoading(false);
                       }
                     }}>
-                      {exportLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Download className="h-4 w-4 mr-1" />} Export my data
+                      {exportLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Download className="h-4 w-4 mr-1" />} {t("uiSettingsPage.exportMyData2")}
                     </Button>
                   </Section>
 
                   <Separator />
 
                   <Section title="Danger Zone" icon={<Trash2 className="h-5 w-5 text-destructive" />}>
-                    <p className="text-sm text-muted-foreground mb-3">Permanently delete your account and all associated data. This action cannot be undone.</p>
+                    <p className="text-sm text-muted-foreground mb-3">{t("uiSettingsPage.permanentlyDeleteYourAccountAndAll")}</p>
                     <Button variant="destructive" size="sm" onClick={() => { setDeleteDialogOpen(true); setDeleteStep(0); setDeleteConfirmText(""); }}>
-                      <Trash2 className="h-4 w-4 mr-1" /> Delete my account
+                      <Trash2 className="h-4 w-4 mr-1" /> {t("uiSettingsPage.deleteMyAccount")}
                     </Button>
 
                     <Dialog open={deleteDialogOpen} onOpenChange={(o) => { setDeleteDialogOpen(o); if (!o) { setDeleteStep(0); setDeleteConfirmText(""); } }}>
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2 text-destructive">
-                            <AlertTriangle className="h-5 w-5" /> Delete Account
+                            <AlertTriangle className="h-5 w-5" /> {t("uiSettingsPage.deleteAccount")}
                           </DialogTitle>
-                          <DialogDescription>This will permanently remove your account and data.</DialogDescription>
+                          <DialogDescription>{t("uiSettingsPage.thisWillPermanentlyRemoveYourAccount")}</DialogDescription>
                         </DialogHeader>
 
                         {deleteStep === 0 && (
                           <div className="space-y-4">
-                            <p className="text-sm text-muted-foreground">This will:</p>
+                            <p className="text-sm text-muted-foreground">{t("uiSettingsPage.thisWill")}</p>
                             <ul className="text-sm text-muted-foreground space-y-1 list-disc pl-5">
-                              <li>Delete your profile, services, and bookings</li>
-                              <li>Remove your quests and XP history</li>
-                              <li>Replace your name with "Deleted User" on authored content</li>
-                              <li>Remove you from all guilds and pods</li>
+                              <li>{t("uiSettingsPage.deleteYourProfileServicesAndBookings")}</li>
+                              <li>{t("uiSettingsPage.removeYourQuestsAndXpHistory")}</li>
+                              <li>{t("uiSettingsPage.replaceYourNameWithDeletedUser")}</li>
+                              <li>{t("uiSettingsPage.removeYouFromAllGuildsAnd")}</li>
                             </ul>
                             <Button variant="destructive" className="w-full" onClick={() => setDeleteStep(1)}>
-                              Delete my data
+                              {t("uiSettingsPage.deleteMyData")}
                             </Button>
                           </div>
                         )}
@@ -627,12 +627,12 @@ export default function SettingsPage() {
                         {deleteStep === 1 && (
                           <div className="space-y-4">
                             <p className="text-sm text-muted-foreground">
-                              Type <span className="font-mono font-semibold text-destructive">DELETE</span> to confirm you understand this is irreversible.
+                              Type <span className="font-mono font-semibold text-destructive">DELETE</span> {t("uiSettingsPage.toConfirmYouUnderstandThisIs")}
                             </p>
                             <Input
                               value={deleteConfirmText}
                               onChange={(e) => setDeleteConfirmText(e.target.value)}
-                              placeholder="Type DELETE"
+                              placeholder={t("uiSettingsPage.typeDelete")}
                               className="font-mono"
                             />
                             <Button
@@ -642,11 +642,11 @@ export default function SettingsPage() {
                               onClick={async () => {
                                 // Sign out and let the user know — actual deletion requires backend support
                                 setDeleteDialogOpen(false);
-                                toast({ title: "Account deletion requested", description: "Your data will be removed. You will be signed out." });
+                                toast({ title: t("uiSettingsPage.accountDeletionRequested"), description: t("uiSettingsPage.yourDataWillBeRemovedYou") });
                                 await signOut();
                               }}
                             >
-                              I understand — delete permanently
+                              {t("uiSettingsPage.iUnderstandDeletePermanently")}
                             </Button>
                           </div>
                         )}
@@ -659,15 +659,15 @@ export default function SettingsPage() {
               {/* ── Profile & Identity ── */}
               {activeTab === "profile" && (
                 <div className="space-y-6 max-w-lg">
-                  <Section title="Profile" icon={<UserCircle className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.profile")} icon={<UserCircle className="h-5 w-5" />}>
                     <div className="flex items-center gap-4 mb-4 p-3 rounded-lg bg-muted/50 border border-border">
                       <span className="flex items-center gap-1 text-sm font-semibold text-primary"><Zap className="h-4 w-4" /> {limits.userXp} XP</span>
-                      <span className="text-sm text-muted-foreground">Credits: {limits.userCredits}</span>
+                      <span className="text-sm text-muted-foreground">{t("uiSettingsPage.credits")} {limits.userCredits}</span>
                     </div>
 
                     <div className="space-y-4">
                       <ImageUpload label="Avatar" currentImageUrl={avatarUrl || undefined} onChange={(url) => setAvatarUrl(url ?? "")} aspectRatio="1/1" description="Square image works best" />
-                      <div><label className="text-sm font-medium mb-1 block">Name</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiSettingsPage.name")}</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
                       <div><label className="text-sm font-medium mb-1 block">Headline</label><Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Community Builder" maxLength={120} /></div>
                       <div>
                         <div className="flex items-center justify-between mb-1">
@@ -679,15 +679,15 @@ export default function SettingsPage() {
                             onAccept={(text) => setBio(text)}
                           />
                         </div>
-                        <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell us about yourself…" maxLength={1300} className="min-h-[140px]" />
+                        <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t("uiSettingsPage.tellUsAboutYourself")} maxLength={1300} className="min-h-[140px]" />
                         <span className="text-xs text-muted-foreground text-right block mt-1">{bio?.length || 0}/1300</span>
                       </div>
                     <Button onClick={handleSaveProfile} disabled={profileSaving} className="w-full">
-                        {profileSaving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />} Save profile
+                        {profileSaving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />} {t("uiSettingsPage.saveProfile")}
                        </Button>
                        {authUser?.id && (
                          <Button variant="ghost" size="sm" asChild className="w-full mt-2">
-                           <Link to={`/users/${authUser.id}`}><ExternalLink className="h-4 w-4 mr-1" /> View my public profile</Link>
+                           <Link to={`/users/${authUser.id}`}><ExternalLink className="h-4 w-4 mr-1" /> {t("uiSettingsPage.viewMyPublicProfile")}</Link>
                          </Button>
                        )}
                     </div>
@@ -705,21 +705,21 @@ export default function SettingsPage() {
                         else if (key === "instagramUrl") setInstagramUrl(value);
                       }}
                     />
-                    <p className="text-xs text-muted-foreground mt-2">Links are saved when you click "Save profile" above.</p>
+                    <p className="text-xs text-muted-foreground mt-2">{t("uiSettingsPage.linksAreSavedWhenYouClick")}</p>
                   </Section>
 
                   <Separator />
 
                   <Section title="Onboarding Wizard" icon={<Compass className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-3">Reopen the onboarding wizard to review or update your profile, interests, and territories.</p>
+                    <p className="text-sm text-muted-foreground mb-3">{t("uiSettingsPage.reopenTheOnboardingWizardToReview")}</p>
                     <Button variant="outline" asChild>
-                      <Link to="/onboarding"><Sparkles className="h-4 w-4 mr-1" /> Open wizard</Link>
+                      <Link to="/onboarding"><Sparkles className="h-4 w-4 mr-1" /> {t("uiSettingsPage.openWizard")}</Link>
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => setEconomyOpen(true)}>
                       Re-watch economy tour
                     </Button>
                     <Button variant="ghost" size="sm" onClick={async () => { await clearAllHints(currentUser.id); window.location.reload(); }}>
-                      Reset all page hints
+                      {t("uiSettingsPage.resetAllPageHints")}
                     </Button>
                   </Section>
                 </div>
@@ -730,11 +730,11 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                   <Section title="Starred Excerpts" icon={<Star className="h-5 w-5 text-yellow-500" />}>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Your saved highlights from AI and human messages across all units.
+                      {t("uiSettingsPage.yourSavedHighlightsFromAiAnd")}
                     </p>
                     <Link to="/me/starred-excerpts">
                       <Button variant="outline" size="sm">
-                        <Star className="h-3.5 w-3.5 mr-1" /> Open My Starred Excerpts
+                        <Star className="h-3.5 w-3.5 mr-1" /> {t("uiSettingsPage.openMyStarredExcerpts")}
                       </Button>
                     </Link>
                   </Section>
@@ -744,17 +744,17 @@ export default function SettingsPage() {
               {/* ── Topics & Territories ── */}
               {activeTab === "houses" && (
                 <div className="space-y-6">
-                  <Section title="Topics" icon={<Hash className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.topics")} icon={<Hash className="h-5 w-5" />}>
                     {(persona === "CREATIVE" || persona === "HYBRID") && (
                       <p className="text-sm text-muted-foreground mb-3">
                         {persona === "CREATIVE"
-                          ? "Topics are shown with creative labels. Your selections will also include related impact topics in navigation filters."
-                          : "Topics are shown with hybrid labels. Your selections include both creative and impact perspectives."}
+                          ? t("uiSettingsPage.topicsAreShownWithCreativeLabels")
+                          : t("uiSettingsPage.topicsAreShownWithHybridLabels")}
                       </p>
                     )}
                     <div className="flex items-center gap-2 mb-2">
-                      <Button variant="outline" size="sm" onClick={() => setSelectedTopics(dbTopics.map((t) => t.id))}>Select all</Button>
-                      <Button variant="ghost" size="sm" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>Clear all</Button>
+                      <Button variant="outline" size="sm" onClick={() => setSelectedTopics(dbTopics.map((t) => t.id))}>{t("uiSettingsPage.selectAll")}</Button>
+                      <Button variant="ghost" size="sm" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>{t("uiSettingsPage.clearAll")}</Button>
                     </div>
                     <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-card max-h-64 overflow-y-auto">
                       {dbTopics.map((t) => {
@@ -774,13 +774,13 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground mt-1">{selectedTopics.length} selected</p>
                   </Section>
 
-                  <Section title="Territories" icon={<MapPin className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.territories")} icon={<MapPin className="h-5 w-5" />}>
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
-                      <Button variant="outline" size="sm" onClick={() => setSelectedTerritories(dbTerritories.map((t) => t.id))}>Select all</Button>
-                      <Button variant="ghost" size="sm" onClick={() => setSelectedTerritories([])} disabled={selectedTerritories.length === 0}>Clear all</Button>
+                      <Button variant="outline" size="sm" onClick={() => setSelectedTerritories(dbTerritories.map((t) => t.id))}>{t("uiSettingsPage.selectAll")}</Button>
+                      <Button variant="ghost" size="sm" onClick={() => setSelectedTerritories([])} disabled={selectedTerritories.length === 0}>{t("uiSettingsPage.clearAll")}</Button>
                       <AddTerritoryDialog onCreated={(id) => setSelectedTerritories((prev) => prev.includes(id) ? prev : [...prev, id])} />
                       <Button variant="outline" size="sm" asChild>
-                        <Link to="/create/bioregion"><Leaf className="h-3.5 w-3.5 mr-1" /> Add Bioregion</Link>
+                        <Link to="/create/bioregion"><Leaf className="h-3.5 w-3.5 mr-1" /> {t("uiSettingsPage.addBioregion")}</Link>
                       </Button>
                     </div>
                     <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-card">
@@ -797,13 +797,13 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card">
                     <div>
                       <p className="text-sm font-medium">Personalize feed & suggestions</p>
-                      <p className="text-xs text-muted-foreground">Use your Topics & Territories to personalize your Home feed and Explore recommendations.</p>
+                      <p className="text-xs text-muted-foreground">{t("uiSettingsPage.useYourTopicsTerritoriesToPersonalize")}</p>
                     </div>
                     <Switch checked={usePrefs} onCheckedChange={setUsePrefs} />
                   </div>
 
-                  <p className="text-xs text-muted-foreground italic">⚠ These choices influence your Home feed and Explore recommendations.</p>
-                  <Button onClick={handleSaveProfile}><Save className="h-4 w-4 mr-1" /> Save Houses & Territories</Button>
+                  <p className="text-xs text-muted-foreground italic">{t("uiSettingsPage.theseChoicesInfluenceYourHomeFeed")}</p>
+                  <Button onClick={handleSaveProfile}><Save className="h-4 w-4 mr-1" /> {t("uiSettingsPage.saveHousesTerritories")}</Button>
                 </div>
               )}
 
@@ -834,10 +834,10 @@ export default function SettingsPage() {
 
               {activeTab === "bookings" && (
                 <div className="space-y-4">
-                  <h3 className="font-display text-lg font-semibold flex items-center gap-2"><CalendarCheck className="h-5 w-5" /> My Bookings</h3>
+                  <h3 className="font-display text-lg font-semibold flex items-center gap-2"><CalendarCheck className="h-5 w-5" /> {t("uiSettingsPage.myBookings")}</h3>
                   <div className="flex gap-2">
-                    <Button asChild variant="outline"><Link to="/me/bookings">View bookings I made</Link></Button>
-                    <Button asChild variant="outline"><Link to="/me/requests">View booking requests</Link></Button>
+                    <Button asChild variant="outline"><Link to="/me/bookings">{t("uiSettingsPage.viewBookingsIMade")}</Link></Button>
+                    <Button asChild variant="outline"><Link to="/me/requests">{t("uiSettingsPage.viewBookingRequests")}</Link></Button>
                   </div>
                 </div>
               )}
@@ -856,29 +856,29 @@ export default function SettingsPage() {
               {/* ── Privacy & Visibility ── */}
               {activeTab === "privacy" && (
                 <div className="space-y-6">
-                  <Section title="Profile Visibility" icon={<Eye className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.profileVisibility")} icon={<Eye className="h-5 w-5" />}>
                     <div className="space-y-3">
-                      <NotifToggle label="Show my XP publicly on my profile" checked={showXp} onChange={(v) => updatePrivacy("showXpPublicly", v, setShowXp)} />
-                      <NotifToggle label="Show my contribution index on my profile" checked={showCi} onChange={(v) => updatePrivacy("showContributionIndexPublicly", v, setShowCi)} />
-                      <NotifToggle label="Show my achievements on my profile" checked={showAchievements} onChange={(v) => updatePrivacy("showAchievementsPublicly", v, setShowAchievements)} />
-                      <NotifToggle label="Show services I offer on my public profile" checked={showServices} onChange={(v) => updatePrivacy("showServicesPublicly", v, setShowServices)} />
+                      <NotifToggle label={t("uiSettingsPage.showMyXpPubliclyOnMy")} checked={showXp} onChange={(v) => updatePrivacy("showXpPublicly", v, setShowXp)} />
+                      <NotifToggle label={t("uiSettingsPage.showMyContributionIndexOnMy")} checked={showCi} onChange={(v) => updatePrivacy("showContributionIndexPublicly", v, setShowCi)} />
+                      <NotifToggle label={t("uiSettingsPage.showMyAchievementsOnMyProfile")} checked={showAchievements} onChange={(v) => updatePrivacy("showAchievementsPublicly", v, setShowAchievements)} />
+                      <NotifToggle label={t("uiSettingsPage.showServicesIOfferOnMy")} checked={showServices} onChange={(v) => updatePrivacy("showServicesPublicly", v, setShowServices)} />
                     </div>
                   </Section>
 
                   <Section title="Social & Privacy" icon={<Shield className="h-5 w-5" />}>
                     <div className="space-y-3">
-                      <NotifToggle label="Allow people to follow me" checked={allowFollow} onChange={(v) => updatePrivacy("allowFollows", v, setAllowFollow)} />
-                      <NotifToggle label="Allow comments on my profile wall" checked={allowWallComments} onChange={(v) => updatePrivacy("allowProfileComments", v, setAllowWallComments, "allow_wall_comments")} />
+                      <NotifToggle label={t("uiSettingsPage.allowPeopleToFollowMe")} checked={allowFollow} onChange={(v) => updatePrivacy("allowFollows", v, setAllowFollow)} />
+                      <NotifToggle label={t("uiSettingsPage.allowCommentsOnMyProfileWall")} checked={allowWallComments} onChange={(v) => updatePrivacy("allowProfileComments", v, setAllowWallComments, "allow_wall_comments")} />
                     </div>
                   </Section>
 
                   <Separator />
 
-                  <Section title="Hidden Profile Activity" icon={<EyeOff className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.hiddenProfileActivity")} icon={<EyeOff className="h-5 w-5" />}>
                     <ProfileMaskingSettings />
                   </Section>
 
-                  <Button onClick={() => toast({ title: "Privacy settings saved!" })}><Save className="h-4 w-4 mr-1" /> Save privacy settings</Button>
+                  <Button onClick={() => toast({ title: t("uiSettingsPage.privacySettingsSaved") })}><Save className="h-4 w-4 mr-1" /> {t("uiSettingsPage.savePrivacySettings")}</Button>
                 </div>
               )}
 
@@ -946,6 +946,7 @@ function NotifToggle({ label, checked, onChange }: { label: string; checked: boo
 }
 
 function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { label } = usePersona();
   const { isAdmin: isSuperAdmin } = useUserRoles(session?.user?.id);
@@ -974,7 +975,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
     if (enabled) {
       const granted = await requestPushPermissionFn();
       if (!granted) {
-        toast({ title: "Push notifications blocked", description: "Please enable notifications in your browser settings.", variant: "destructive" });
+        toast({ title: "Push notifications blocked", description: t("uiSettingsPage.pleaseEnableNotificationsInYourBrowser"), variant: "destructive" });
         return;
       }
       setPushPermission("granted");
@@ -1037,7 +1038,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
       {/* Superadmin section */}
       {isSuperAdmin && (
         <Section title="Superadmin Notifications" icon={<Shield className="h-5 w-5" />}>
-          <p className="text-xs text-muted-foreground mb-3">Platform-level alerts visible only to superadmins.</p>
+          <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.platformLevelAlertsVisibleOnlyTo")}</p>
           <div className="space-y-3">
             {toggle("notify_new_user_registrations", "New user registrations")}
             {toggle("notify_new_bug_reports", "Bug reports")}
@@ -1050,8 +1051,8 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
 
       {/* Unit admin section */}
       {(isUnitAdmin || isSuperAdmin) && (
-        <Section title="Unit Admin Notifications" icon={<Users className="h-5 w-5" />}>
-          <p className="text-xs text-muted-foreground mb-3">Notifications for entities you manage ({label("guild.label")}s, {label("pod.label")}s, organizations, {label("quest.label")}s).</p>
+        <Section title={t("uiSettingsPage.unitAdminNotifications")} icon={<Users className="h-5 w-5" />}>
+          <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.notificationsForEntitiesYouManage")}{label("guild.label")}s, {label("pod.label")}s, organizations, {label("quest.label")}s).</p>
           <div className="space-y-3">
             {toggle("notify_new_join_requests_guilds", `New join requests (${label("guild.label")}s)`)}
             {toggle("notify_new_join_requests_pods", `New join requests (${label("pod.label")}s)`)}
@@ -1066,8 +1067,8 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
       )}
 
        {/* Personal in-app notifications */}
-       <Section title="My Activity" icon={<Bell className="h-5 w-5" />}>
-         <p className="text-xs text-muted-foreground mb-3">In-app notification toggles for your personal activity.</p>
+       <Section title={t("uiSettingsPage.myActivity")} icon={<Bell className="h-5 w-5" />}>
+         <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.inAppNotificationTogglesForYour")}</p>
          <div className="space-y-3">
            {toggle("notify_booking_status_changes", "Booking status changes")}
            {toggle("notify_quest_updates_from_followed", `Updates from ${label("quest.label")}s I follow`)}
@@ -1080,8 +1081,8 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
        </Section>
 
        {/* Followed Activity */}
-       <Section title="Followed Activity" icon={<Rss className="h-5 w-5" />}>
-         <p className="text-xs text-muted-foreground mb-3">In-app notifications when people or entities you follow publish new content.</p>
+       <Section title={t("uiSettingsPage.followedActivity")} icon={<Rss className="h-5 w-5" />}>
+         <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.inAppNotificationsWhenPeopleOr")}</p>
          <div className="space-y-3">
            {toggle("notify_new_posts_from_followed" as any, "New posts from people & entities I follow")}
            {toggle("notify_new_quests_from_followed" as any, `New ${label("quest.label")}s from entities I follow`)}
@@ -1095,7 +1096,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
 
        {/* Direct Messages */}
        <Section title="Direct Messages" icon={<MessageSquare className="h-5 w-5" />}>
-         <p className="text-xs text-muted-foreground mb-3">Control how you're notified when you receive private messages.</p>
+         <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.controlHowYouReNotifiedWhen")}</p>
          <div className="space-y-3">
            {toggle("notify_direct_messages_in_app" as any, "In-app notification for new messages")}
            {toggle("notify_direct_messages_email" as any, "Email notification when I receive a message")}
@@ -1109,9 +1110,9 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
             <div>
               <p className="text-sm font-medium">Browser push notifications</p>
               <p className="text-xs text-muted-foreground">
-                {pushPermission === "unsupported" ? "Not supported in this browser" :
-                 pushPermission === "denied" ? "Blocked by browser — enable in browser settings" :
-                 "Receive desktop notifications for new activity"}
+                {pushPermission === "unsupported" ? t("uiSettingsPage.notSupportedInThisBrowser") :
+                 pushPermission === "denied" ? t("uiSettingsPage.blockedByBrowserEnableInBrowser") :
+                 t("uiSettingsPage.receiveDesktopNotificationsForNewActivity")}
               </p>
             </div>
             <Switch
@@ -1126,14 +1127,14 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
       {/* Email Digest & Instant Emails — simplified */}
       <Section title="Email Digest" icon={<Rss className="h-5 w-5" />}>
         <p className="text-xs text-muted-foreground mb-3">
-          Most notifications are bundled into a curated AI-powered digest email. Only time-sensitive items (bookings, invites) can be sent instantly.
+          {t("uiSettingsPage.mostNotificationsAreBundledIntoA")}
         </p>
         <div className="space-y-4">
           {/* Digest frequency */}
           <div className="flex items-center justify-between py-2">
             <div>
               <p className="text-sm font-medium">Digest frequency</p>
-              <p className="text-xs text-muted-foreground">How often you receive your network digest email</p>
+              <p className="text-xs text-muted-foreground">{t("uiSettingsPage.howOftenYouReceiveYourNetwork")}</p>
             </div>
             <Select
               value={prefs.digest_frequency ?? "twice_weekly"}
@@ -1141,7 +1142,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
             >
               <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="twice_weekly">Twice a week (Mon & Thu)</SelectItem>
+                <SelectItem value="twice_weekly">{t("uiSettingsPage.twiceAWeekMonThu")}</SelectItem>
                 <SelectItem value="weekly">Weekly</SelectItem>
                 <SelectItem value="never">Never</SelectItem>
               </SelectContent>
@@ -1152,7 +1153,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
           {nextDigest && (
             <div className="rounded-lg border border-border bg-muted/30 p-3">
               <p className="text-xs text-muted-foreground">
-                📬 Next digest: <span className="font-medium text-foreground">{nextDigest}</span>
+                {t("uiSettingsPage.nextDigest")} <span className="font-medium text-foreground">{nextDigest}</span>
                 {unreadCount > 0 && (
                   <> · <span className="font-medium text-primary">{unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}</span> queued</>
                 )}
@@ -1171,13 +1172,13 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
       {/* Instant email overrides */}
       <Section title="Instant Emails" icon={<Mail className="h-5 w-5" />}>
         <p className="text-xs text-muted-foreground mb-3">
-          These time-sensitive notifications are sent as instant emails, not bundled in the digest.
+          {t("uiSettingsPage.theseTimeSensitiveNotificationsAreSent")}
         </p>
         <div className="space-y-3">
           <div className="flex items-center justify-between py-1.5">
             <div>
               <p className="text-sm font-medium">Booking confirmations & updates</p>
-              <p className="text-xs text-muted-foreground">Get immediate email when a booking is confirmed, updated, or cancelled</p>
+              <p className="text-xs text-muted-foreground">{t("uiSettingsPage.getImmediateEmailWhenABooking")}</p>
             </div>
             <Switch
               checked={(prefs as any).instant_email_for_bookings !== false}
@@ -1187,7 +1188,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
           <div className="flex items-center justify-between py-1.5">
             <div>
               <p className="text-sm font-medium">Invitations & applications</p>
-              <p className="text-xs text-muted-foreground">Get immediate email when you're invited to a guild, quest, or pod</p>
+              <p className="text-xs text-muted-foreground">{t("uiSettingsPage.getImmediateEmailWhenYouRe")}</p>
             </div>
             <Switch
               checked={(prefs as any).instant_email_for_invites !== false}
@@ -1205,6 +1206,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
 }
 
 function ReferralsSection({ userId }: { userId: string }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const { data: myReferrals = [] } = useQuery({
@@ -1231,20 +1233,20 @@ function ReferralsSection({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-6">
-      <Section title="Your Referral Link" icon={<UserCircle className="h-5 w-5" />}>
+      <Section title={t("uiSettingsPage.yourReferralLink")} icon={<UserCircle className="h-5 w-5" />}>
         <p className="text-sm text-muted-foreground mb-3">
-          Share your referral link. When someone signs up and completes onboarding, you earn <strong>+50 XP</strong>.
+          {t("uiSettingsPage.shareYourReferralLinkWhenSomeone")} <strong>{t("uiSettingsPage.50Xp")}</strong>.
         </p>
         {referralLink ? (
           <div className="flex items-center gap-2">
             <Input value={referralLink} readOnly className="font-mono text-xs" />
             <Button size="sm" variant="outline" onClick={() => copyLink(referralLink)}>
-              Copy
+              {t("uiSettingsPage.copy")}
             </Button>
           </div>
         ) : (
           <Button size="sm" onClick={createCode}>
-            <Plus className="h-4 w-4 mr-1" /> Generate referral link
+            <Plus className="h-4 w-4 mr-1" /> {t("uiSettingsPage.generateReferralLink")}
           </Button>
         )}
       </Section>
@@ -1257,7 +1259,7 @@ function ReferralsSection({ userId }: { userId: string }) {
                 <div>
                   <p className="text-sm font-medium font-mono">{r.code}</p>
                   <p className="text-xs text-muted-foreground">
-                    {r.used_by_user_id ? "Signed up ✓" : "Pending"}
+                    {r.used_by_user_id ? "Signed up ✓" : t("uiSettingsPage.pending")}
                   </p>
                 </div>
                 <Badge variant={r.is_used ? "default" : "secondary"}>

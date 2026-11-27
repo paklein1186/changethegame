@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link, useSearchParams } from "react-router-dom";
 import { Loader2, Check, CalendarClock, ArrowRight, Video, Briefcase, Users } from "lucide-react";
@@ -18,6 +19,7 @@ import { autoFollowEntity } from "@/hooks/useFollow";
 import { WebVisibilityEditor } from "@/components/website/WebVisibilityEditor";
 
 export default function ServiceCreate() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -222,7 +224,7 @@ export default function ServiceCreate() {
       }
     },
     onError: (err: any) => {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiServiceCreate.error"), description: err.message, variant: "destructive" });
     },
   });
 
@@ -233,16 +235,15 @@ export default function ServiceCreate() {
   return (
     <PageShell>
       <div className="max-w-xl mx-auto py-10 px-4 space-y-6">
-        <h1 className="text-2xl font-display font-bold">{isEditMode ? "Edit Service" : "Create Service"}</h1>
+        <h1 className="text-2xl font-display font-bold">{isEditMode ? t("uiServiceCreate.editService") : t("uiServiceCreate.createService")}</h1>
 
         {hasNoGlobalAvailability && (
           <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
             <CalendarClock className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">No availability slots configured</p>
+              <p className="text-sm font-medium">{t("uiServiceCreate.noAvailabilitySlotsConfigured")}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                You don't have global availability rules yet. Set up your weekly schedule first so clients can book time with you.
-                A default Mon–Fri 9:00–17:00 schedule will be created for this service, but you can customize it.
+                {t("uiServiceCreate.youDonTHaveGlobalAvailability")}
               </p>
               <Link to="/me/availability">
                 <Button variant="outline" size="sm" className="mt-2 gap-1.5">
@@ -268,7 +269,7 @@ export default function ServiceCreate() {
         )}
         <ImageUpload
           label="Cover image"
-          description="Add a visual to make your service stand out"
+          description={t("uiServiceCreate.addAVisualToMakeYour")}
           currentImageUrl={imageUrl}
           onChange={setImageUrl}
           aspectRatio="16/9"
@@ -279,8 +280,8 @@ export default function ServiceCreate() {
           <div className="grid grid-cols-3 gap-3">
             {([
               { value: "online_call" as const, icon: Video, label: "Online Call", desc: "Video session via Jitsi/Zoom" },
-              { value: "service_mission" as const, icon: Briefcase, label: "Service / Mission", desc: "Deliverable or engagement" },
-              { value: "event_attendance" as const, icon: Users, label: "Event / Attendance", desc: "In-person or hybrid event" },
+              { value: "service_mission" as const, icon: Briefcase, label: "Service / Mission", desc: t("uiServiceCreate.deliverableOrEngagement") },
+              { value: "event_attendance" as const, icon: Users, label: t("uiServiceCreate.eventAttendance"), desc: t("uiServiceCreate.inPersonOrHybridEvent") },
             ]).map(opt => (
               <button
                 key={opt.value}
@@ -304,18 +305,18 @@ export default function ServiceCreate() {
           </div>
           {serviceType !== "online_call" && (
             <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
-              ⚠️ Bookings for this type require admin approval from the hosting entity.
+              {t("uiServiceCreate.bookingsForThisTypeRequireAdmin")}
             </p>
           )}
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">Title</label>
+          <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.title")}</label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Strategy Workshop" maxLength={120} />
         </div>
         <div>
-          <label className="text-sm font-medium mb-1 block">Description</label>
-          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What this service includes…" maxLength={500} className="resize-none" />
+          <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.description")}</label>
+          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("uiServiceCreate.whatThisServiceIncludes")} maxLength={500} className="resize-none" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -323,19 +324,18 @@ export default function ServiceCreate() {
             <Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} min={15} max={480} />
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Price (€) — shown as 🟩 Coins to clients</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.priceShownAsCoinsToClients")}</label>
             <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} min={0} step={5} />
             <p className="text-[11px] text-muted-foreground mt-1">
-              A price of €{price || 45} displays as 🟩 {Math.round(Number(price || 45) / 0.04).toLocaleString()} Coins to clients.
+              {t("uiServiceCreate.priceDisplaysAs", { price: price || 45, coins: Math.round(Number(price || 45) / 0.04).toLocaleString() })}
             </p>
             <div className="rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/20 p-3 mt-2">
               <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400 mb-1">
-                🌱 You also earn $CTG on delivery
+                {t("uiServiceCreate.youAlsoEarnCtgOnDelivery")}
               </p>
               <p className="text-xs text-muted-foreground">
-                Each time you deliver a confirmed session, you automatically earn{" "}
-                <strong>20 🌱 $CTG</strong> — your contribution to the commons.
-                This is separate from your fiat/Coins payment.
+                {t("uiServiceCreate.eachTimeYouDeliverAConfirmed")}{" "}
+                <strong>20 🌱 $CTG</strong> {t("uiServiceCreate.yourContributionToTheCommonsThis")}
               </p>
             </div>
           </div>
@@ -350,7 +350,7 @@ export default function ServiceCreate() {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="online">Online</SelectItem>
-                  <SelectItem value="in_person">In person</SelectItem>
+                  <SelectItem value="in_person">{t("uiServiceCreate.inPerson")}</SelectItem>
                   <SelectItem value="hybrid">Hybrid</SelectItem>
                 </SelectContent>
               </Select>
@@ -381,19 +381,19 @@ export default function ServiceCreate() {
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium">Topics</label>
+            <label className="text-sm font-medium">{t("uiServiceCreate.topics")}</label>
             <div className="flex gap-2">
               <button
                 onClick={() => setSelectedTopicIds(topics.map(t => t.id))}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
               >
-                Select all
+                {t("uiServiceCreate.selectAll")}
               </button>
               <button
                 onClick={() => setSelectedTopicIds([])}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
               >
-                Deselect all
+                {t("uiServiceCreate.deselectAll")}
               </button>
             </div>
           </div>
@@ -419,7 +419,7 @@ export default function ServiceCreate() {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block">Territories</label>
+          <label className="text-sm font-medium mb-2 block">{t("uiServiceCreate.territories")}</label>
           <div className="flex flex-wrap gap-2">
             {territories.map(territory => {
               const isSelected = selectedTerritoryIds.includes(territory.id);
@@ -444,12 +444,12 @@ export default function ServiceCreate() {
         {isEditMode && (
           <div className="space-y-3 rounded-lg border p-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Draft mode</label>
+              <label className="text-sm font-medium">{t("uiServiceCreate.draftMode")}</label>
               <Switch checked={isDraft} onCheckedChange={(v) => { setIsDraft(v); if (v) setIsActive(false); }} />
             </div>
             {!isDraft && (
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Active (visible to public)</label>
+                <label className="text-sm font-medium">{t("uiServiceCreate.activeVisibleToPublic")}</label>
                 <Switch checked={isActive} onCheckedChange={setIsActive} />
               </div>
             )}
@@ -468,7 +468,7 @@ export default function ServiceCreate() {
         )}
         <Button onClick={() => saveMutation.mutate()} disabled={!title.trim() || saveMutation.isPending} className="w-full" size="lg">
           {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
-          {isEditMode ? "Save changes" : "Create service"}
+          {isEditMode ? t("uiServiceCreate.saveChanges") : t("uiServiceCreate.createService2")}
         </Button>
       </div>
     </PageShell>

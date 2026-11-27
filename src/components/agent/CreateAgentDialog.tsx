@@ -671,16 +671,7 @@ export function CreateAgentDialog({ open, onOpenChange, userId, defaultOwner, at
                 <div className="rounded-lg border border-border bg-muted/50 p-3 text-xs text-muted-foreground space-y-1.5">
                   <p className="font-medium text-foreground text-sm">{t("agentForm.expectedFormat")}</p>
                   <p><strong>POST</strong> · JSON</p>
-                  <pre className="bg-background rounded p-2 overflow-x-auto text-[11px]">{`{
-  "messages": [{ "role": "user", "content": "..." }],
-  "context": {
-    "unit_type": "guild",
-    "unit_id": "uuid",
-    "unit_context": "...",
-    "agent_id": "uuid",
-    "user_id": "uuid"
-  }
-}`}</pre>
+                  <pre className="bg-background rounded p-2 overflow-x-auto text-[11px]">{t("uiCreateAgentDialog.messagesRoleUserContentContextUnit")}</pre>
                   <p><strong>{t("agentForm.response")}</strong></p>
                   <pre className="bg-background rounded p-2 overflow-x-auto text-[11px]">{`{ "content": "agent answer" }
 // ${t("agentForm.orSse")} (text/event-stream)`}</pre>

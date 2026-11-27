@@ -5,7 +5,7 @@ export default function CommunityGuidelinesPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.community.title")} subtitle={t("pages.community.subtitle")}>
-      <ContentSection title="Our Standards">
+      <ContentSection title={t("uiCommunityGuidelinesPage.ourStandards")}>
         <ContentList items={[
           "Respect and kindness in all interactions",
           "Zero tolerance for harassment or discrimination",

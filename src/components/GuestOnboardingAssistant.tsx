@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useCallback, useEffect } from "react";
 import { decodeHtmlEntities } from "@/lib/htmlEntities";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -42,18 +44,18 @@ const QUICK_STEPS: Step[] = ["signup"];
 const STEP_LABELS = ["Goal", "World", "Topics", "Connect", "Account"];
 
 const GOALS = [
-  { key: "create", label: "Launch a project", icon: Rocket, desc: "Start a quest, mission, or creation" },
-  { key: "collaborate", label: "Find my people", icon: Users, desc: "Join a guild, circle, or pod" },
-  { key: "learn", label: "Learn & grow", icon: BookOpen, desc: "Take courses, attend events" },
-  { key: "offer", label: "Offer my skills", icon: Briefcase, desc: "Publish services or sessions" },
-  { key: "explore", label: "Just browsing", icon: Compass, desc: "See what's possible first" },
+  { key: "create", get label() { return i18n.t("uiGuestOnboardingAssistant.launchAProject"); }, icon: Rocket, get desc() { return i18n.t("uiGuestOnboardingAssistant.startAQuestMissionOrCreation"); } },
+  { key: "collaborate", get label() { return i18n.t("uiGuestOnboardingAssistant.findMyPeople"); }, icon: Users, get desc() { return i18n.t("uiGuestOnboardingAssistant.joinAGuildCircleOrPod"); } },
+  { key: "learn", get label() { return i18n.t("uiGuestOnboardingAssistant.learnGrow"); }, icon: BookOpen, get desc() { return i18n.t("uiGuestOnboardingAssistant.takeCoursesAttendEvents"); } },
+  { key: "offer", get label() { return i18n.t("uiGuestOnboardingAssistant.offerMySkills"); }, icon: Briefcase, get desc() { return i18n.t("uiGuestOnboardingAssistant.publishServicesOrSessions"); } },
+  { key: "explore", label: "Just browsing", icon: Compass, get desc() { return i18n.t("uiGuestOnboardingAssistant.seeWhatSPossibleFirst"); } },
 ];
 
 const PERSONAS = [
   { key: "creative", label: "Creator", icon: Palette, desc: "Artist, designer, writer, performer", color: "text-purple-500", bg: "bg-purple-500/10 border-purple-500/20" },
   { key: "impact", label: "Impact Builder", icon: Shield, desc: "Consultant, facilitator, ecosystem builder", color: "text-emerald-500", bg: "bg-emerald-500/10 border-emerald-500/20" },
   { key: "hybrid", label: "Both", icon: Blend, desc: "Creative meets strategic", color: "text-amber-500", bg: "bg-amber-500/10 border-amber-500/20" },
-  { key: "org_rep", label: "Organization Representative", icon: Building2, desc: "Company, institution, foundation, or NGO", color: "text-blue-500", bg: "bg-blue-500/10 border-blue-500/20" },
+  { key: "org_rep", label: "Organization Representative", icon: Building2, get desc() { return i18n.t("uiGuestOnboardingAssistant.companyInstitutionFoundationOrNgo"); }, color: "text-blue-500", bg: "bg-blue-500/10 border-blue-500/20" },
 ];
 
 interface TopicItem {
@@ -93,6 +95,7 @@ function getUniverseForPersona(persona: string | null): UniverseMode {
 }
 
 export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "perform this action", quickSignup = false, skipPostSignupNavigation = false }: Props) {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -288,7 +291,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
       );
     } catch (err) {
       console.error("Scrape error:", err);
-      toast({ title: "Could not analyze URL", description: "Check the URL and try again.", variant: "destructive" });
+      toast({ title: t("uiGuestOnboardingAssistant.couldNotAnalyzeUrl"), description: t("uiGuestOnboardingAssistant.checkTheUrlAndTryAgain"), variant: "destructive" });
     } finally {
       setScraping(false);
     }
@@ -314,7 +317,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
       return;
     }
     if (password.length < 6) {
-      toast({ title: "Password must be at least 6 characters", variant: "destructive" });
+      toast({ title: t("uiGuestOnboardingAssistant.passwordMustBeAtLeast6"), variant: "destructive" });
       return;
     }
     setSigningUp(true);
@@ -328,10 +331,10 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
     if (error) {
       if (/already (registered|exists)|user_already_exists/i.test(error)) {
         setSignupError("This email is already registered. Please use a different one or log in.");
-        toast({ title: "Email already in use", description: "Try a different email address or log in.", variant: "destructive" });
+        toast({ title: t("uiGuestOnboardingAssistant.emailAlreadyInUse"), description: t("uiGuestOnboardingAssistant.tryADifferentEmailAddressOr"), variant: "destructive" });
       } else {
         setSignupError(error);
-        toast({ title: "Signup failed", description: error, variant: "destructive" });
+        toast({ title: t("uiGuestOnboardingAssistant.signupFailed"), description: error, variant: "destructive" });
       }
     } else {
       setSignupError(null);
@@ -402,8 +405,8 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
           // and just want to keep reading/interacting. The reminder banner will
           // nudge them to complete onboarding later.
           toast({
-            title: "Welcome aboard!",
-            description: "You can complete your profile anytime from the banner at the top.",
+            title: t("uiGuestOnboardingAssistant.welcomeAboard"),
+            description: t("uiGuestOnboardingAssistant.youCanCompleteYourProfileAnytime"),
           });
         } else {
           // Navigate to onboarding wizard
@@ -423,10 +426,10 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
     setLoggingIn(false);
     if (error) {
       setLoginError(error);
-      toast({ title: "Login failed", description: error, variant: "destructive" });
+      toast({ title: t("uiGuestOnboardingAssistant.loginFailed"), description: error, variant: "destructive" });
     } else {
       handleOpenChange(false);
-      toast({ title: "Welcome back!" });
+      toast({ title: t("uiGuestOnboardingAssistant.welcomeBack") });
     }
   };
 
@@ -462,7 +465,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <p className="font-display font-semibold text-sm">{quickSignup ? "Quick Signup" : "Get Started"}</p>
+              <p className="font-display font-semibold text-sm">{quickSignup ? "Quick Signup" : t("uiGuestOnboardingAssistant.getStarted")}</p>
             </div>
             <p className="text-xs text-muted-foreground">
               Step {stepIndex + 1} of {totalSteps}
@@ -485,8 +488,8 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
             {/* ─── Step 1: Goal ─── */}
             {step === "goal" && (
               <motion.div key="goal" {...motionProps} className="p-5">
-                <h2 className="font-display font-semibold text-base mb-1">What brings you here?</h2>
-                <p className="text-xs text-muted-foreground mb-4">Pick what resonates most — you can do everything later.</p>
+                <h2 className="font-display font-semibold text-base mb-1">{t("uiGuestOnboardingAssistant.whatBringsYouHere")}</h2>
+                <p className="text-xs text-muted-foreground mb-4">{t("uiGuestOnboardingAssistant.pickWhatResonatesMostYouCan")}</p>
                 <div className="space-y-2">
                   {GOALS.map((g) => {
                     const Icon = g.icon;
@@ -519,8 +522,8 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
             {/* ─── Step 2: Persona ─── */}
             {step === "persona" && (
               <motion.div key="persona" {...motionProps} className="p-5">
-                <h2 className="font-display font-semibold text-base mb-1">Which world fits you?</h2>
-                <p className="text-xs text-muted-foreground mb-4">This shapes your vocabulary & experience. Changeable anytime.</p>
+                <h2 className="font-display font-semibold text-base mb-1">{t("uiGuestOnboardingAssistant.whichWorldFitsYou")}</h2>
+                <p className="text-xs text-muted-foreground mb-4">{t("uiGuestOnboardingAssistant.thisShapesYourVocabularyExperienceChangeable")}</p>
                 <div className="space-y-3">
                   {PERSONAS.map((p) => {
                     const Icon = p.icon;
@@ -553,7 +556,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
               <motion.div key="interests" {...motionProps} className="p-5">
                 <h2 className="font-display font-semibold text-base mb-1">{interestsHeading}</h2>
                 <p className="text-xs text-muted-foreground mb-4">
-                  Pick up to 7 — helps us personalize your feed. <span className="italic">Optional.</span>
+                  {t("uiGuestOnboardingAssistant.pickUpTo7HelpsUs")} <span className="italic">Optional.</span>
                 </p>
 
                 {loadingTopics ? (
@@ -600,7 +603,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                       <div>
                         {universe === "both" && (
                           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                            Impact Topics
+                            {t("uiGuestOnboardingAssistant.impactTopics")}
                           </p>
                         )}
                         <div className="flex flex-wrap gap-2">
@@ -638,9 +641,9 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
             {/* ─── Step 4: Connect (Org URL) ─── */}
             {step === "connect" && (
               <motion.div key="connect" {...motionProps} className="p-5">
-                <h2 className="font-display font-semibold text-base mb-1">Your project or organization</h2>
+                <h2 className="font-display font-semibold text-base mb-1">{t("uiGuestOnboardingAssistant.yourProjectOrOrganization")}</h2>
                 <p className="text-xs text-muted-foreground mb-4">
-                  Paste a website to discover relevant communities, people, and pre-fill services. <span className="italic">Optional.</span>
+                  {t("uiGuestOnboardingAssistant.pasteAWebsiteToDiscoverRelevant")} <span className="italic">Optional.</span>
                 </p>
 
                 {!scrapedOrg ? (
@@ -666,7 +669,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground mt-2">
-                      We'll look for matching communities, users with similar expertise, and suggest services you could offer.
+                      {t("uiGuestOnboardingAssistant.weLlLookForMatchingCommunities")}
                     </p>
                   </div>
                 ) : (
@@ -700,7 +703,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                     {suggestedGuilds.length > 0 && (
                       <div>
                         <p className="text-xs font-medium text-foreground mb-2 flex items-center gap-1.5">
-                          <UsersRound className="h-3.5 w-3.5" /> Communities to join
+                          <UsersRound className="h-3.5 w-3.5" /> {t("uiGuestOnboardingAssistant.communitiesToJoin")}
                         </p>
                         <ScrollArea className="max-h-[120px]">
                           <div className="space-y-1.5">
@@ -735,7 +738,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                     {suggestedUsers.length > 0 && (
                       <div>
                         <p className="text-xs font-medium text-foreground mb-2 flex items-center gap-1.5">
-                          <UserCheck className="h-3.5 w-3.5" /> People to follow
+                          <UserCheck className="h-3.5 w-3.5" /> {t("uiGuestOnboardingAssistant.peopleToFollow")}
                         </p>
                         <ScrollArea className="max-h-[120px]">
                           <div className="space-y-1.5">
@@ -768,7 +771,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
 
                     {suggestedGuilds.length === 0 && suggestedUsers.length === 0 && (
                       <p className="text-xs text-muted-foreground text-center py-2">
-                        No matching communities found yet — you'll be able to create or join after signing up.
+                        {t("uiGuestOnboardingAssistant.noMatchingCommunitiesFoundYetYou")}
                       </p>
                     )}
                   </div>
@@ -779,8 +782,8 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
             {/* ─── Step 5: Signup ─── */}
             {step === "signup" && (
               <motion.div key="signup" {...motionProps} className="p-5">
-                <h2 className="font-display font-semibold text-base mb-1">Create your account</h2>
-                <p className="text-xs text-muted-foreground mb-4">One last step — then we'll personalize everything for you.</p>
+                <h2 className="font-display font-semibold text-base mb-1">{t("uiGuestOnboardingAssistant.createYourAccount")}</h2>
+                <p className="text-xs text-muted-foreground mb-4">{t("uiGuestOnboardingAssistant.oneLastStepThenWeLl")}</p>
 
                 {/* Summary chips */}
                 {(selectedGoal || selectedPersona || selectedInterests.length > 0 || scrapedOrg) && (
@@ -818,12 +821,12 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
 
                 <form onSubmit={handleSignup} className="space-y-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="guest-name" className="text-xs">Full name</Label>
-                    <Input id="guest-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required autoComplete="name" />
+                    <Label htmlFor="guest-name" className="text-xs">{t("uiGuestOnboardingAssistant.fullName")}</Label>
+                    <Input id="guest-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiGuestOnboardingAssistant.yourName")} required autoComplete="name" />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="guest-email" className="text-xs">Email</Label>
-                    <Input id="guest-email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setSignupError(null); }} placeholder="you@example.com" required autoComplete="email" className={signupError ? "border-destructive" : ""} />
+                    <Input id="guest-email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setSignupError(null); }} placeholder={t("uiGuestOnboardingAssistant.youExampleCom")} required autoComplete="email" className={signupError ? "border-destructive" : ""} />
                     {signupError && <p className="text-[11px] text-destructive">{signupError}</p>}
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -832,7 +835,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                       <Input id="guest-pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 chars" required minLength={6} autoComplete="new-password" />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="guest-pw2" className="text-xs">Confirm</Label>
+                      <Label htmlFor="guest-pw2" className="text-xs">{t("uiGuestOnboardingAssistant.confirm")}</Label>
                       <Input id="guest-pw2" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat" required autoComplete="new-password" />
                     </div>
                   </div>
@@ -845,22 +848,22 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                       className="mt-0.5 h-3.5 w-3.5 rounded border-border accent-primary cursor-pointer"
                     />
                     <span className="flex-1 leading-snug">
-                      <span className="font-medium text-foreground">Skip personalization for now</span>
+                      <span className="font-medium text-foreground">{t("uiGuestOnboardingAssistant.skipPersonalizationForNow")}</span>
                       <br />
-                      Just create my account and take me back to where I was. I'll personalize my profile later.
+                      {t("uiGuestOnboardingAssistant.justCreateMyAccountAndTake")}
                     </span>
                   </label>
 
                   <Button type="submit" className="w-full" disabled={signingUp}>
                     {signingUp ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <UserPlus className="h-4 w-4 mr-2" />}
-                    {skipPersonalization ? "Create account & continue" : "Create account"}
+                    {skipPersonalization ? t("uiGuestOnboardingAssistant.createAccountContinue") : t("uiGuestOnboardingAssistant.createAccount")}
                   </Button>
                 </form>
 
                 <p className="text-center text-xs text-muted-foreground mt-4">
-                  Already have an account?{" "}
+                  {t("uiGuestOnboardingAssistant.alreadyHaveAnAccount")}{" "}
                   <button onClick={() => setStep("login")} className="text-primary font-medium hover:underline">
-                    Log in
+                    {t("uiGuestOnboardingAssistant.logIn")}
                   </button>
                 </p>
               </motion.div>
@@ -869,30 +872,30 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
             {/* ─── Login Step ─── */}
             {step === "login" && (
               <motion.div key="login" {...motionProps} className="p-5">
-                <h2 className="font-display font-semibold text-base mb-1">Welcome back</h2>
-                <p className="text-xs text-muted-foreground mb-4">Log in to continue with your booking.</p>
+                <h2 className="font-display font-semibold text-base mb-1">{t("uiGuestOnboardingAssistant.welcomeBack2")}</h2>
+                <p className="text-xs text-muted-foreground mb-4">{t("uiGuestOnboardingAssistant.logInToContinueWithYour")}</p>
 
                 <form onSubmit={handleLogin} className="space-y-3">
                   <div className="space-y-1.5">
                     <Label htmlFor="login-email" className="text-xs">Email</Label>
-                    <Input id="login-email" type="email" value={loginEmail} onChange={(e) => { setLoginEmail(e.target.value); setLoginError(null); }} placeholder="you@example.com" required autoComplete="email" className={loginError ? "border-destructive" : ""} />
+                    <Input id="login-email" type="email" value={loginEmail} onChange={(e) => { setLoginEmail(e.target.value); setLoginError(null); }} placeholder={t("uiGuestOnboardingAssistant.youExampleCom")} required autoComplete="email" className={loginError ? "border-destructive" : ""} />
                     {loginError && <p className="text-[11px] text-destructive">{loginError}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="login-pw" className="text-xs">Password</Label>
-                    <Input id="login-pw" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder="Your password" required autoComplete="current-password" />
+                    <Input id="login-pw" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder={t("uiGuestOnboardingAssistant.yourPassword")} required autoComplete="current-password" />
                   </div>
 
                   <Button type="submit" className="w-full" disabled={loggingIn}>
                     {loggingIn ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
-                    Log in
+                    {t("uiGuestOnboardingAssistant.logIn")}
                   </Button>
                 </form>
 
                 <p className="text-center text-xs text-muted-foreground mt-4">
-                  Don't have an account?{" "}
+                  {t("uiGuestOnboardingAssistant.donTHaveAnAccount")}{" "}
                   <button onClick={() => setStep("signup")} className="text-primary font-medium hover:underline">
-                    Sign up
+                    {t("uiGuestOnboardingAssistant.signUp")}
                   </button>
                 </p>
               </motion.div>
@@ -904,18 +907,18 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
         <div className="p-3 border-t flex items-center justify-between">
           {stepIndex > 0 && step !== "login" ? (
             <Button variant="ghost" size="sm" onClick={goBack}>
-              <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back
+              <ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t("uiGuestOnboardingAssistant.back")}
             </Button>
           ) : step === "login" ? (
             <Button variant="ghost" size="sm" onClick={() => setStep("signup")}>
-              <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back
+              <ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t("uiGuestOnboardingAssistant.back")}
             </Button>
           ) : (
             <div />
           )}
           {step !== "signup" && step !== "login" && (
             <Button size="sm" onClick={goNext} disabled={!canProceed}>
-              {step === "connect" ? "Create account" : "Continue"} <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              {step === "connect" ? t("uiGuestOnboardingAssistant.createAccount") : t("uiGuestOnboardingAssistant.continue")} <ArrowRight className="h-3.5 w-3.5 ml-1" />
             </Button>
           )}
         </div>

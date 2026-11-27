@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,8 +16,8 @@ type MassMode = "private" | "public" | "custom";
 
 const UNIT_TYPES: { key: UnitType; label: string; unitTable?: string }[] = [
   { key: "services", label: "Services", unitTable: "services" },
-  { key: "quests", label: "Quests", unitTable: "quests" },
-  { key: "guilds", label: "Guilds" },
+  { key: "quests", get label() { return i18n.t("uiFeedpointVisibilitySettings.quests"); }, unitTable: "quests" },
+  { key: "guilds", get label() { return i18n.t("uiFeedpointVisibilitySettings.guilds"); } },
   { key: "partner_entities", label: "Partner Entities" },
   { key: "posts", label: "Posts", unitTable: "feed_posts" },
 ];
@@ -57,6 +59,7 @@ function getOwnerField(ownerType: string, unitType: UnitType): string | null {
 /* ─── Component ─── */
 
 export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
+  const { t } = useTranslation();
   const { table, idCol } = getOwnerConfig(ownerType);
 
   const [defaults, setDefaults] = useState<Record<UnitType, boolean>>({
@@ -281,7 +284,7 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
           <Rss className="h-4 w-4 text-primary" /> Website feedpoint visibility
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Decide which types of items appear on your external website via the site code. You can still adjust visibility item by item.
+          {t("uiFeedpointVisibilitySettings.decideWhichTypesOfItemsAppear")}
         </p>
       </div>
 
@@ -319,7 +322,7 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                         : "border-border hover:border-foreground/50 text-muted-foreground"
                     }`}
                   >
-                    <EyeOff className="h-3.5 w-3.5" /> Hide all
+                    <EyeOff className="h-3.5 w-3.5" /> {t("uiFeedpointVisibilitySettings.hideAll")}
                   </button>
                   <button
                     type="button"
@@ -331,7 +334,7 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                         : "border-border hover:border-foreground/50 text-muted-foreground"
                     }`}
                   >
-                    <Eye className="h-3.5 w-3.5" /> Show all
+                    <Eye className="h-3.5 w-3.5" /> {t("uiFeedpointVisibilitySettings.showAll")}
                   </button>
                   {mode === "custom" && (
                     <Button
@@ -352,14 +355,14 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                       className="ml-auto text-muted-foreground"
                     >
                       <Settings2 className="h-3.5 w-3.5 mr-1" />
-                      {isExpanded ? "Collapse" : "Edit per item"}
+                      {isExpanded ? "Collapse" : t("uiFeedpointVisibilitySettings.editPerItem")}
                     </Button>
                   )}
                 </div>
 
                 {!ut.unitTable && (
                   <p className="text-xs text-muted-foreground mt-2">
-                    This type doesn't support per-item overrides yet.
+                    {t("uiFeedpointVisibilitySettings.thisTypeDoesnTSupportPer")}
                   </p>
                 )}
               </div>
@@ -369,12 +372,12 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                 <div className="border-t border-border bg-muted/30 px-4 py-3 space-y-1.5">
                   {items.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-4">
-                      No {ut.label.toLowerCase()} found.
+                      {t("uiFeedpointVisibilitySettings.no")} {ut.label.toLowerCase()} found.
                     </p>
                   ) : (
                     <>
                       <p className="text-xs text-muted-foreground mb-2">
-                        Default: <strong>{defaults[ut.key] ? "Show all" : "Hide all"}</strong>. Toggle individual items to override.
+                        Default: <strong>{defaults[ut.key] ? t("uiFeedpointVisibilitySettings.showAll") : t("uiFeedpointVisibilitySettings.hideAll")}</strong>{t("uiFeedpointVisibilitySettings.toggleIndividualItemsToOverride")}
                       </p>
                       {items.map(item => {
                         const isVisible = getEffectiveVisibility(item, ut.key);

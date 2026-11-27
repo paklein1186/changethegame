@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,7 +38,7 @@ const ENTITY_CONFIG: Record<EntityType, {
     columns: ["name", "email", "role", "xp", "created_at"],
   },
   guilds: {
-    label: "Guilds",
+    get label() { return i18n.t("uiAdminEntityEditor.guilds"); },
     searchField: "name",
     nameField: "name",
     idField: "id",
@@ -52,7 +54,7 @@ const ENTITY_CONFIG: Record<EntityType, {
     columns: ["name", "sector", "size", "is_deleted", "created_at"],
   },
   quests: {
-    label: "Quests",
+    get label() { return i18n.t("uiAdminEntityEditor.quests"); },
     searchField: "title",
     nameField: "title",
     idField: "id",
@@ -117,6 +119,7 @@ function maskEmail(email: string): string {
 }
 
 export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
+  const { t } = useTranslation();
   const [entityType, setEntityType] = useState<EntityType>("profiles");
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -234,7 +237,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
     if (typeof value === "boolean") {
       return value
         ? <Badge variant="default" className="text-[10px]">Yes</Badge>
-        : <Badge variant="outline" className="text-[10px]">No</Badge>;
+        : <Badge variant="outline" className="text-[10px]">{t("uiAdminEntityEditor.no")}</Badge>;
     }
     if (key === "created_at" || key === "updated_at") {
       return new Date(value).toLocaleDateString();
@@ -265,7 +268,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
           </Select>
         </div>
         <div className="flex-1 min-w-[200px]">
-          <Label className="text-xs mb-1 block">Search by {config.searchField}</Label>
+          <Label className="text-xs mb-1 block">{t("uiAdminEntityEditor.searchBy")} {config.searchField}</Label>
           <div className="flex gap-2">
             <Input
               value={search}
@@ -274,14 +277,14 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
               onKeyDown={(e) => e.key === "Enter" && doSearch()}
             />
             <Button onClick={doSearch} disabled={loading} size="sm">
-              <Search className="h-4 w-4 mr-1" /> Search
+              <Search className="h-4 w-4 mr-1" /> {t("uiAdminEntityEditor.search")}
             </Button>
           </div>
         </div>
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Leave search empty and click Search to browse all records (limited to 50).
+        {t("uiAdminEntityEditor.leaveSearchEmptyAndClickSearch")}
       </p>
 
       {/* Results table */}
@@ -338,7 +341,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
                         {isEditing ? (
                           <>
                             <Button size="sm" variant="default" onClick={() => saveEdit(record)} disabled={saving}>
-                              <Save className="h-3.5 w-3.5 mr-1" /> Save
+                              <Save className="h-3.5 w-3.5 mr-1" /> {t("uiAdminEntityEditor.save")}
                             </Button>
                             <Button size="sm" variant="ghost" onClick={cancelEdit}>
                               <X className="h-3.5 w-3.5" />
@@ -346,7 +349,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
                           </>
                         ) : (
                           <>
-                            <Button size="sm" variant="ghost" onClick={() => startEdit(record)} title="Edit">
+                            <Button size="sm" variant="ghost" onClick={() => startEdit(record)} title={t("uiAdminEntityEditor.edit")}>
                               <Pencil className="h-3.5 w-3.5" />
                             </Button>
                             {"is_deleted" in record && (
@@ -361,21 +364,21 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
                             )}
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button size="sm" variant="ghost" title="Delete permanently">
+                                <Button size="sm" variant="ghost" title={t("uiAdminEntityEditor.deletePermanently")}>
                                   <Trash2 className="h-3.5 w-3.5 text-destructive" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>Permanently delete this record?</AlertDialogTitle>
+                                  <AlertDialogTitle>{t("uiAdminEntityEditor.permanentlyDeleteThisRecord")}</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    This will permanently remove <strong>{record[config.nameField]}</strong> from the database. This action cannot be undone.
+                                    {t("uiAdminEntityEditor.thisWillPermanentlyRemove")} <strong>{record[config.nameField]}</strong> {t("uiAdminEntityEditor.fromTheDatabaseThisActionCannot")}
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogCancel>{t("uiAdminEntityEditor.cancel")}</AlertDialogCancel>
                                   <AlertDialogAction onClick={() => hardDelete(record)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                    Delete forever
+                                    {t("uiAdminEntityEditor.deleteForever")}
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
@@ -404,7 +407,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
                 <ShieldAlert className="h-4 w-4 text-primary" />
-                Additional fields for: {maskPII ? maskString(record[config.nameField]) : record[config.nameField]}
+                {t("uiAdminEntityEditor.additionalFieldsFor")} {maskPII ? maskString(record[config.nameField]) : record[config.nameField]}
               </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -433,7 +436,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
 
       {results.length === 0 && !loading && (
         <p className="text-sm text-muted-foreground text-center py-8">
-          Use the search above to find and manage records.
+          {t("uiAdminEntityEditor.useTheSearchAboveToFind")}
         </p>
       )}
     </div>

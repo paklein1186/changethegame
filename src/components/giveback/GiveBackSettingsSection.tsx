@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Heart, Users, Globe, Loader2, Save, Plus, Trash2, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ interface DistributionRow {
 }
 
 export function GiveBackSettingsSection() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const { toast } = useToast();
@@ -112,7 +114,7 @@ export function GiveBackSettingsSection() {
 
     if (mode === "DISTRIBUTE") {
       if (rows.length === 0) {
-        toast({ title: "Add at least one recipient", variant: "destructive" });
+        toast({ title: t("uiGiveBackSettingsSection.addAtLeastOneRecipient"), variant: "destructive" });
         return;
       }
       if (totalPercent !== 100) {
@@ -121,7 +123,7 @@ export function GiveBackSettingsSection() {
       }
       for (const r of rows) {
         if (r.target_type === "GUILD" && !r.guild_id) {
-          toast({ title: "Please select a guild for each row", variant: "destructive" });
+          toast({ title: t("uiGiveBackSettingsSection.pleaseSelectAGuildForEach"), variant: "destructive" });
           return;
         }
       }
@@ -149,11 +151,11 @@ export function GiveBackSettingsSection() {
         default_give_back_guild_id: mode === "NONE" ? null : rows[0]?.target_type === "GUILD" ? rows[0]?.guild_id : null,
       } as any).eq("user_id", userId);
 
-      toast({ title: "Give-back preferences saved!" });
+      toast({ title: t("uiGiveBackSettingsSection.giveBackPreferencesSaved") });
       qc.invalidateQueries({ queryKey: ["giveback-distribution"] });
       qc.invalidateQueries({ queryKey: ["giveback-settings"] });
     } catch (err: any) {
-      toast({ title: "Save failed", description: err.message, variant: "destructive" });
+      toast({ title: t("uiGiveBackSettingsSection.saveFailed"), description: err.message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -165,10 +167,10 @@ export function GiveBackSettingsSection() {
     <div className="space-y-4">
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-1">
-          <Heart className="h-5 w-5 text-primary" /> Give-back preferences
+          <Heart className="h-5 w-5 text-primary" /> {t("uiGiveBackSettingsSection.giveBackPreferences")}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Set a default give-back distribution when you receive revenue from services. You can still adjust it per transaction.
+          {t("uiGiveBackSettingsSection.setADefaultGiveBackDistribution")}
         </p>
       </div>
 
@@ -184,15 +186,15 @@ export function GiveBackSettingsSection() {
         <div className="flex items-center gap-3 rounded-lg border border-border p-3 hover:border-primary/30 transition-colors">
           <RadioGroupItem value="NONE" id="gb-none" />
           <Label htmlFor="gb-none" className="cursor-pointer flex-1">
-            <p className="text-sm font-medium">None</p>
-            <p className="text-xs text-muted-foreground">No default give-back</p>
+            <p className="text-sm font-medium">{t("uiGiveBackSettingsSection.none")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiGiveBackSettingsSection.noDefaultGiveBack")}</p>
           </Label>
         </div>
         <div className="flex items-center gap-3 rounded-lg border border-border p-3 hover:border-primary/30 transition-colors">
           <RadioGroupItem value="DISTRIBUTE" id="gb-dist" />
           <Label htmlFor="gb-dist" className="cursor-pointer flex-1">
-            <p className="text-sm font-medium flex items-center gap-1"><Heart className="h-3.5 w-3.5" /> Distribute to recipients</p>
-            <p className="text-xs text-muted-foreground">Split give-back across one or more guilds and/or the platform</p>
+            <p className="text-sm font-medium flex items-center gap-1"><Heart className="h-3.5 w-3.5" /> {t("uiGiveBackSettingsSection.distributeToRecipients")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiGiveBackSettingsSection.splitGiveBackAcrossOneOr")}</p>
           </Label>
         </div>
       </RadioGroup>
@@ -212,11 +214,11 @@ export function GiveBackSettingsSection() {
                 }}
               >
                 <SelectTrigger className="h-9 text-sm flex-1 min-w-[160px]">
-                  <SelectValue placeholder="Choose recipient…" />
+                  <SelectValue placeholder={t("uiGiveBackSettingsSection.chooseRecipient")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="platform">
-                    <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> The platform</span>
+                    <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {t("uiGiveBackSettingsSection.thePlatform")}</span>
                   </SelectItem>
                   {myGuilds.map((g: any) => (
                     <SelectItem key={g.id} value={`guild:${g.id}`}>
@@ -259,14 +261,14 @@ export function GiveBackSettingsSection() {
           </div>
 
           <Button variant="outline" size="sm" onClick={addRow} className="gap-1">
-            <Plus className="h-3.5 w-3.5" /> Add recipient
+            <Plus className="h-3.5 w-3.5" /> {t("uiGiveBackSettingsSection.addRecipient")}
           </Button>
         </div>
       )}
 
       <Button onClick={handleSave} disabled={saving} size="sm">
         {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />}
-        Save preferences
+        {t("uiGiveBackSettingsSection.savePreferences")}
       </Button>
     </div>
   );

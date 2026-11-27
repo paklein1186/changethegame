@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { attachEmails } from "@/lib/profileEmails";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { notifyEntityFollowersAndMembers } from "@/lib/notifyEntityActivity";
@@ -67,19 +68,19 @@ import { GuildAgentSettingsPanel } from "@/components/guild/GuildAgentSettingsPa
 import { ExitProtocolSettings } from "@/components/ocu/ExitProtocolSettings";
 
 const TABS = [
-  { key: "identity", label: "Identity & Profile", icon: Shield },
+  { key: "identity", get label() { return i18n.t("uiGuildSettings.identityProfile"); }, icon: Shield },
   { key: "features", label: "Features", icon: Puzzle },
   { key: "governance", label: "Governance", icon: Vote },
   { key: "membership", label: "Membership Policy", icon: ClipboardList },
-  { key: "membership-contributions", label: "Membership & Contributions", icon: Users },
+  { key: "membership-contributions", get label() { return i18n.t("uiGuildSettings.membershipContributions"); }, icon: Users },
   { key: "applications", label: "Applications", icon: Users },
-  { key: "members", label: "Members & Roles", icon: Users },
-  { key: "roles", label: "Custom Roles", icon: Tag },
+  { key: "members", get label() { return i18n.t("uiGuildSettings.membersRoles"); }, icon: Users },
+  { key: "roles", get label() { return i18n.t("uiGuildSettings.customRoles"); }, icon: Tag },
   { key: "services", label: "Services", icon: Briefcase },
   { key: "services-display", label: "Services Display", icon: Briefcase },
   { key: "availability", label: "Availability", icon: CalendarDays },
-  { key: "access", label: "Quest Access & Co-admins", icon: KeyRound },
-  { key: "defaults", label: "Quests & Pods Defaults", icon: Settings },
+  { key: "access", get label() { return i18n.t("uiGuildSettings.questAccessCoAdmins"); }, icon: KeyRound },
+  { key: "defaults", get label() { return i18n.t("uiGuildSettings.questsPodsDefaults"); }, icon: Settings },
   { key: "partnerships", label: "Partnerships", icon: Handshake },
   { key: "documents", label: "Documents", icon: Briefcase },
   { key: "billing", label: "Unit Wallet", icon: CreditCard },
@@ -89,6 +90,7 @@ const TABS = [
 ];
 
 export default function GuildSettings() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const currentUser = useCurrentUser();
 
@@ -116,20 +118,21 @@ export default function GuildSettings() {
   });
 
   if (guildLoading || adminLoading) return <PageShell><FrenchTextOverlay><Loader2 className="h-6 w-6 animate-spin mx-auto mt-16" /></FrenchTextOverlay></PageShell>;
-  if (!guild) return <PageShell><FrenchTextOverlay><p>Guild not found.</p></FrenchTextOverlay></PageShell>;
+  if (!guild) return <PageShell><FrenchTextOverlay><p>{t("uiGuildSettings.guildNotFound")}</p></FrenchTextOverlay></PageShell>;
 
   const currentMembership = guild.guild_members?.find(
     (gm: any) => gm.user_id === currentUser.id
   );
   // Admin direct, ou admin d'une entité qui administre la guilde (règle de la base).
   if (currentMembership?.role !== "ADMIN" && guild.created_by_user_id !== currentUser.id && !isEntityAdmin) {
-    return <PageShell><FrenchTextOverlay><p>You must be an admin of this guild to access settings.</p></FrenchTextOverlay></PageShell>;
+    return <PageShell><FrenchTextOverlay><p>{t("uiGuildSettings.youMustBeAnAdminOf")}</p></FrenchTextOverlay></PageShell>;
   }
 
   return <GuildSettingsInner guildId={guild.id} guild={guild} />;
 }
 
 function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { notifyGuildMemberAdded, notifyGuildRoleChanged } = useNotifications();
   const { toast } = useToast();
@@ -234,7 +237,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
   const handleSaveFeatures = async () => {
     const { error } = await supabase.from("guilds").update({ features_config: featuresConfig as any }).eq("id", guildId);
-    if (error) { toast({ title: "Failed to save features", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildSettings.failedToSaveFeatures"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
     qc.invalidateQueries({ queryKey: ["guild", guildId] });
     toast({ title: "Features saved!" });
@@ -266,7 +269,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
         instagram_url: normalizeUrl(guildInstagramUrl) ?? null,
       } as any)
       .eq("id", guildId);
-    if (error) { toast({ title: "Failed to save", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildSettings.failedToSave"), variant: "destructive" }); return; }
 
     // Sync topics
     await supabase.from("guild_topics").delete().eq("guild_id", guildId);
@@ -313,17 +316,17 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
         followersOnly: true,
       });
     }
-    toast({ title: "Guild identity updated!" });
+    toast({ title: t("uiGuildSettings.guildIdentityUpdated") });
   };
 
   const inviteMember = async (selectedUserId: string) => {
     if (!selectedUserId) return;
     const already = members.some((m: any) => m.user_id === selectedUserId);
-    if (already) { toast({ title: "Already a member", variant: "destructive" }); return; }
+    if (already) { toast({ title: t("uiGuildSettings.alreadyAMember"), variant: "destructive" }); return; }
     const { error } = await supabase.from("guild_members").insert({
       guild_id: guildId, user_id: selectedUserId, role: "MEMBER" as any,
     });
-    if (error) { toast({ title: "Failed to add member", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildSettings.failedToAddMember"), variant: "destructive" }); return; }
     sendInviteNotification({ invitedUserId: selectedUserId, inviterName: currentUser.name, entityType: "guild", entityId: guildId!, entityName: guild?.name || "Guild" });
     notifyGuildMemberAdded({ guildId: guildId!, userId: selectedUserId });
     setInviteOpen(false);
@@ -333,13 +336,13 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
       notifyEntityFollowersAndMembers({
         entityType: "GUILD", entityId: guildId, entityName: guild.name,
         actorUserId: currentUser.id, notifType: "FOLLOWED_ENTITY_NEW_MEMBER",
-        title: "New member joined a guild you follow",
+        title: t("uiGuildSettings.newMemberJoinedAGuildYou"),
         body: `${guild.name} has a new member`,
         deepLinkUrl: `/guilds/${guildId}`,
         followersOnly: true,
       });
     }
-    toast({ title: "Member added!" });
+    toast({ title: t("uiGuildSettings.memberAdded") });
   };
 
   const toggleMemberRole = async (memberId: string) => {
@@ -347,12 +350,12 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
     if (!gm) return;
     const admins = members.filter((m: any) => m.role === "ADMIN");
     if (gm.role === "ADMIN" && admins.length <= 1) {
-      toast({ title: "Cannot demote", description: "At least one admin must exist.", variant: "destructive" });
+      toast({ title: "Cannot demote", description: t("uiGuildSettings.atLeastOneAdminMustExist"), variant: "destructive" });
       return;
     }
     const newRole = gm.role === "ADMIN" ? "MEMBER" : "ADMIN";
     const { error } = await supabase.from("guild_members").update({ role: newRole as any }).eq("id", memberId);
-    if (error) { toast({ title: "Failed to update role", description: error.message, variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildSettings.failedToUpdateRole"), description: error.message, variant: "destructive" }); return; }
     notifyGuildRoleChanged({ guildId: guildId!, userId: gm.user_id, newRole });
     refetchMembers();
     toast({ title: `Role changed to ${newRole.toLowerCase()}` });
@@ -363,11 +366,11 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
     if (!gm || gm.user_id === currentUser.id) return;
     if (gm.role === "ADMIN") {
       const admins = members.filter((m: any) => m.role === "ADMIN");
-      if (admins.length <= 1) { toast({ title: "Cannot remove the last admin", variant: "destructive" }); return; }
+      if (admins.length <= 1) { toast({ title: t("uiGuildSettings.cannotRemoveTheLastAdmin"), variant: "destructive" }); return; }
     }
     await supabase.from("guild_members").delete().eq("id", memberId);
     refetchMembers();
-    toast({ title: "Member removed" });
+    toast({ title: t("uiGuildSettings.memberRemoved") });
   };
 
   const createGuildService = async () => {
@@ -385,7 +388,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
       is_active: true,
       image_url: svcImageUrl || null,
     } as any);
-    if (error) { toast({ title: "Failed to create service", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildSettings.failedToCreateService"), variant: "destructive" }); return; }
     notifyEntityFollowersAndMembers({
       entityType: "GUILD", entityId: guildId, entityName: guild.name,
       actorUserId: currentUser.id, notifType: "FOLLOWED_ENTITY_NEW_SERVICE",
@@ -396,7 +399,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
     setSvcLocationType(OnlineLocationType.JITSI); setSvcImageUrl(undefined);
     setCreateSvcOpen(false);
     refetchServices();
-    toast({ title: "Guild service created" });
+    toast({ title: t("uiGuildSettings.guildServiceCreated") });
   };
 
   const toggleServiceActive = async (svc: any) => {
@@ -408,14 +411,14 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
   return (
     <PageShell><FrenchTextOverlay>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/guilds/${guildId}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to guild</Link>
+        <Link to={`/guilds/${guildId}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiGuildSettings.backToGuild")}</Link>
       </Button>
 
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           {guild.logo_url && <img src={guild.logo_url} className="h-10 w-10 rounded-lg" alt="" />}
           <div>
-            <h1 className="font-display text-2xl font-bold">Guild Settings</h1>
+            <h1 className="font-display text-2xl font-bold">{t("uiGuildSettings.guildSettings")}</h1>
             <p className="text-sm text-muted-foreground">{guild.name}</p>
           </div>
           {guild.is_approved ? (
@@ -451,14 +454,14 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {/* ── Identity & Profile ── */}
               {activeTab === "identity" && (
                 <div className="space-y-5 max-w-lg">
-                  <Section title="Guild Identity" icon={<Shield className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.guildIdentity")} icon={<Shield className="h-5 w-5" />}>
                     <div className="space-y-4">
-                      <div><label className="text-sm font-medium mb-1 block">Name</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.name")}</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
                       <ImageUpload label="Logo" currentImageUrl={logoUrl || undefined} onChange={(url) => setLogoUrl(url ?? "")} aspectRatio="1/1" description="Square logo, recommended 256×256" />
                       <ImageUpload label="Banner (optional)" currentImageUrl={bannerUrl || undefined} onChange={(url) => setBannerUrl(url ?? "")} aspectRatio="16/9" description="Wide banner, recommended 1200×400" />
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <label className="text-sm font-medium">Description</label>
+                          <label className="text-sm font-medium">{t("uiGuildSettings.description")}</label>
                           <AIWriterButton
                             type="guild_identity"
                             context={{ title: name, guildType: type, memberCount: guild.guild_members?.length || 0 }}
@@ -472,7 +475,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         <Select value={type} onValueChange={(v) => setType(v as GuildType)}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={GuildType.GUILD}>Guild</SelectItem>
+                            <SelectItem value={GuildType.GUILD}>{t("uiGuildSettings.guild")}</SelectItem>
                             <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
                             <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
                           </SelectContent>
@@ -483,9 +486,9 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
                   <Separator />
 
-                  <Section title="Topics (Houses)" icon={<Hash className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.topicsHouses")} icon={<Hash className="h-5 w-5" />}>
                     <SearchableTagPicker
-                      label="Topics"
+                      label={t("uiGuildSettings.topics")}
                       items={allTopics.map((t: any) => ({ id: t.id, name: t.name }))}
                       selectedIds={selectedTopics}
                       onToggle={toggleTopic}
@@ -495,9 +498,9 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                     />
                   </Section>
 
-                  <Section title="Territories" icon={<MapPin className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.territories")} icon={<MapPin className="h-5 w-5" />}>
                     <SearchableTagPicker
-                      label="Territories"
+                      label={t("uiGuildSettings.territories")}
                       items={allTerritories.map((t: any) => ({ id: t.id, name: t.name, subtitle: t.level?.toLowerCase() }))}
                       selectedIds={selectedTerritories}
                       onToggle={toggleTerritory}
@@ -509,7 +512,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
                   <Section title="Universe Visibility" icon={<Settings className="h-5 w-5" />}>
                     <p className="text-xs text-muted-foreground mb-2">
-                      Control in which universe this guild appears when users filter by Creative or Impact.
+                      {t("uiGuildSettings.controlInWhichUniverseThisGuild")}
                     </p>
                     <Select value={universeVisibility} onValueChange={setUniverseVisibility}>
                       <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
@@ -521,7 +524,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                     </Select>
                   </Section>
 
-                  <Button onClick={handleSaveIdentity} className="w-full"><Save className="h-4 w-4 mr-2" /> Save identity</Button>
+                  <Button onClick={handleSaveIdentity} className="w-full"><Save className="h-4 w-4 mr-2" /> {t("uiGuildSettings.saveIdentity")}</Button>
 
                   <Separator />
 
@@ -535,7 +538,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         else if (key === "instagramUrl") setGuildInstagramUrl(value);
                       }}
                     />
-                    <p className="text-xs text-muted-foreground mt-2">Links are saved when you click "Save identity" above.</p>
+                    <p className="text-xs text-muted-foreground mt-2">{t("uiGuildSettings.linksAreSavedWhenYouClick")}</p>
                   </Section>
 
                   <WebVisibilityEditor
@@ -560,16 +563,16 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {activeTab === "features" && (
                 <div className="space-y-5 max-w-lg">
                   <Section title="Collaboration Features" icon={<Puzzle className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-4">Enable or disable tools for this guild. Disabled tools will be hidden from the guild page.</p>
+                    <p className="text-sm text-muted-foreground mb-4">{t("uiGuildSettings.enableOrDisableToolsForThis")}</p>
                     <div className="space-y-4">
                       {[
-                        { key: "kanbanBoard", label: "Kanban Board", desc: "Visual board to track quest status", icon: LayoutGrid },
-                        { key: "subtasks", label: "Subtasks", desc: "Break quests into smaller tasks with assignees", icon: ListChecks },
-                        { key: "docsSpace", label: "Docs Space", desc: "Notion-like documents for guild knowledge", icon: FileText },
-                        { key: "events", label: "Events", desc: "Create online/offline events with attendees", icon: CalendarDays },
-                        { key: "applicationProcess", label: "Application Process", desc: "Require applications for new members", icon: ClipboardList },
-                        { key: "showMemberServices", label: "Member Services", desc: "Display services offered by guild members in the Services tab", icon: Briefcase },
-                        { key: "rituals", label: "Rituals", desc: "Recurring sessions with video calls, notes, and attendance tracking", icon: CalendarDays },
+                        { key: "kanbanBoard", label: "Kanban Board", desc: t("uiGuildSettings.visualBoardToTrackQuestStatus"), icon: LayoutGrid },
+                        { key: "subtasks", label: t("uiGuildSettings.subtasks"), desc: t("uiGuildSettings.breakQuestsIntoSmallerTasksWith"), icon: ListChecks },
+                        { key: "docsSpace", label: "Docs Space", desc: t("uiGuildSettings.notionLikeDocumentsForGuildKnowledge"), icon: FileText },
+                        { key: "events", label: t("uiGuildSettings.events"), desc: t("uiGuildSettings.createOnlineOfflineEventsWithAttendees"), icon: CalendarDays },
+                        { key: "applicationProcess", label: "Application Process", desc: t("uiGuildSettings.requireApplicationsForNewMembers"), icon: ClipboardList },
+                        { key: "showMemberServices", label: t("uiGuildSettings.memberServices"), desc: t("uiGuildSettings.displayServicesOfferedByGuildMembers"), icon: Briefcase },
+                        { key: "rituals", label: "Rituals", desc: t("uiGuildSettings.recurringSessionsWithVideoCallsNotes"), icon: CalendarDays },
                       ].map(({ key, label, desc, icon: Icon }) => (
                         <div key={key} className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
                           <div className="flex items-center gap-3">
@@ -583,13 +586,13 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         </div>
                       ))}
                     </div>
-                    <Button onClick={handleSaveFeatures} className="w-full mt-4"><Save className="h-4 w-4 mr-2" /> Save features</Button>
+                    <Button onClick={handleSaveFeatures} className="w-full mt-4"><Save className="h-4 w-4 mr-2" /> {t("uiGuildSettings.saveFeatures")}</Button>
                   </Section>
 
                   {/* Discussion settings */}
                   <Section title="Discussion Tab" icon={<CalendarDays className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Configure the guild's discussion board where members can post and discuss.
+                      {t("uiGuildSettings.configureTheGuildSDiscussionBoard")}
                     </p>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
@@ -597,7 +600,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                           <CalendarDays className="h-5 w-5 text-muted-foreground" />
                           <div>
                             <Label className="text-sm font-medium">Enable Discussion Tab</Label>
-                            <p className="text-xs text-muted-foreground">Show a dedicated discussion feed on the guild page</p>
+                            <p className="text-xs text-muted-foreground">{t("uiGuildSettings.showADedicatedDiscussionFeedOn")}</p>
                           </div>
                         </div>
                         <Switch checked={(featuresConfig as any).discussionTab} onCheckedChange={() => toggleFeature("discussionTab")} />
@@ -606,9 +609,9 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                       {(featuresConfig as any).discussionTab && (
                         <>
                           <div>
-                            <Label className="text-sm font-medium mb-1 block">Who can access the Discussion tab?</Label>
+                            <Label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.whoCanAccessTheDiscussionTab")}</Label>
                             <p className="text-xs text-muted-foreground mb-2">
-                              Control whether the tab is visible only to validated members or to the wider public.
+                              {t("uiGuildSettings.controlWhetherTheTabIsVisible")}
                             </p>
                             <Select
                               value={(featuresConfig as any).discussionAccess || "members"}
@@ -616,15 +619,15 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             >
                               <SelectTrigger><SelectValue /></SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="members">Members only (validated)</SelectItem>
-                                <SelectItem value="public">Public (anyone can view)</SelectItem>
+                                <SelectItem value="members">{t("uiGuildSettings.membersOnlyValidated")}</SelectItem>
+                                <SelectItem value="public">{t("uiGuildSettings.publicAnyoneCanView")}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div>
-                            <Label className="text-sm font-medium mb-1 block">Who can create posts?</Label>
+                            <Label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.whoCanCreatePosts")}</Label>
                             <p className="text-xs text-muted-foreground mb-2">
-                              Choose whether all members or only admins can publish posts in the discussion tab.
+                              {t("uiGuildSettings.chooseWhetherAllMembersOrOnly")}
                             </p>
                             <Select
                               value={(featuresConfig as any).discussionPostPermission || "MEMBER"}
@@ -633,14 +636,14 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                               <SelectTrigger><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="ADMIN">Admins only</SelectItem>
-                                <SelectItem value="MEMBER">All members</SelectItem>
+                                <SelectItem value="MEMBER">{t("uiGuildSettings.allMembers")}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                         </>
                       )}
                     </div>
-                    <Button onClick={handleSaveFeatures} className="w-full mt-4"><Save className="h-4 w-4 mr-2" /> Save discussion settings</Button>
+                    <Button onClick={handleSaveFeatures} className="w-full mt-4"><Save className="h-4 w-4 mr-2" /> {t("uiGuildSettings.saveDiscussionSettings")}</Button>
                   </Section>
 
                   <GuildFeatureSuggestionBox guildId={guildId} userId={currentUser.id} />
@@ -652,13 +655,13 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                 <div className="space-y-5 max-w-lg">
                   <Section title="Governance & Decisions" icon={<Vote className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Control how decisions and proposals work within this guild.
+                      {t("uiGuildSettings.controlHowDecisionsAndProposalsWork")}
                     </p>
                     <div className="space-y-4">
                       <div>
                         <Label className="text-sm font-medium mb-1 block">Who can propose decisions?</Label>
                         <p className="text-xs text-muted-foreground mb-2">
-                          Choose which members are allowed to create new decision proposals.
+                          {t("uiGuildSettings.chooseWhichMembersAreAllowedTo")}
                         </p>
                         <Select
                           value={(featuresConfig as any).decisionProposerRole || "ADMIN"}
@@ -667,27 +670,27 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="ADMIN">Admins only</SelectItem>
-                            <SelectItem value="MEMBER">All members</SelectItem>
+                            <SelectItem value="MEMBER">{t("uiGuildSettings.allMembers")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                     <Button onClick={handleSaveFeatures} className="w-full mt-4">
-                      <Save className="h-4 w-4 mr-2" /> Save governance settings
+                      <Save className="h-4 w-4 mr-2" /> {t("uiGuildSettings.saveGovernanceSettings")}
                     </Button>
                   </Section>
 
                   <Separator />
 
                   {/* ── Contribution Accounting ── */}
-                  <Section title="Contribution Accounting" icon={<Settings className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.contributionAccounting")} icon={<Settings className="h-5 w-5" />}>
                     <div className="space-y-4">
                       <div>
                         <div className="flex items-center gap-1.5 mb-1">
                           <Label className="text-sm font-medium">FMV Rate (€ per half-day)</Label>
                           <span
                             className="text-muted-foreground cursor-help"
-                            title="Fair Market Value rate used to calculate contribution value in the OCU system."
+                            title={t("uiGuildSettings.fairMarketValueRateUsedTo")}
                           >
                             <AlertCircle className="h-3.5 w-3.5" />
                           </span>
@@ -712,7 +715,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                           <Label className="text-sm font-medium">Governance Model</Label>
                           <span
                             className="text-muted-foreground cursor-help"
-                            title="This governs how contribution % translates to voting power in guild decisions, contract amendments, and distribution proposals."
+                            title={t("uiGuildSettings.thisGovernsHowContributionTranslatesTo")}
                           >
                             <AlertCircle className="h-3.5 w-3.5" />
                           </span>
@@ -734,7 +737,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                           </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Controls how contribution share translates to voting weight.
+                          {t("uiGuildSettings.controlsHowContributionShareTranslatesTo")}
                         </p>
                       </div>
 
@@ -745,13 +748,13 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             <div>
                               <Label className="text-sm font-medium">Weighted amendment threshold</Label>
                               <p className="text-xs text-muted-foreground">
-                                Use &gt;50% of weighted vote instead of unanimous consensus for contract amendments.
+                                {t("uiGuildSettings.use50OfWeightedVoteInstead")}
                               </p>
                             </div>
                             <Switch
                               defaultChecked={false}
                               onCheckedChange={async (checked) => {
-                                toast({ title: checked ? "Weighted threshold enabled" : "Unanimous consensus restored", description: "Apply this per-quest in Quest OCU settings." });
+                                toast({ title: checked ? "Weighted threshold enabled" : "Unanimous consensus restored", description: t("uiGuildSettings.applyThisPerQuestInQuest") });
                               }}
                             />
                           </div>
@@ -760,14 +763,14 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
                       {/* ── Contribution type settings ── */}
                       <div className="space-y-4 border-t border-border/40 pt-4 mt-4">
-                        <p className="text-sm font-semibold">Contribution type settings</p>
+                        <p className="text-sm font-semibold">{t("uiGuildSettings.contributionTypeSettings")}</p>
 
                         {/* Cash multiplier */}
                         <div>
                           <Label className="text-sm font-medium">
                             Cash-equivalent multiplier
                             <span className="text-xs text-muted-foreground font-normal ml-2">
-                              (applies to Expenses, Supplies, Equipment, Facilities)
+                              {t("uiGuildSettings.appliesToExpensesSuppliesEquipmentFacilities")}
                             </span>
                           </Label>
                           <div className="flex items-center gap-2 mt-1">
@@ -787,20 +790,19 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             <span className="text-sm text-muted-foreground">× FMV</span>
                             {((guild as any).cash_multiplier ?? 2) !== 2 && (
                               <Badge variant="secondary" className="text-[10px]">
-                                Slicing Pie default is 2×
+                                {t("uiGuildSettings.slicingPieDefaultIs2")}
                               </Badge>
                             )}
                           </div>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Cash contributions carry higher risk than time — the multiplier compensates for this.
-                            2× is the Slicing Pie standard. Lower for risk-tolerant cooperatives.
+                            {t("uiGuildSettings.cashContributionsCarryHigherRiskThan")}
                           </p>
                         </div>
 
                         {/* Default commission % */}
                         <div>
                           <Label className="text-sm font-medium">
-                            Default commission % for Sales & Finder's Fee
+                            {t("uiGuildSettings.defaultCommissionForSalesFinderS")}
                           </Label>
                           <div className="flex items-center gap-2 mt-1">
                             <Input
@@ -819,7 +821,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             <span className="text-sm text-muted-foreground">%</span>
                           </div>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Contributors can override this per entry. This is just the pre-filled default.
+                            {t("uiGuildSettings.contributorsCanOverrideThisPerEntry")}
                           </p>
                         </div>
 
@@ -841,10 +843,10 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             <SelectTrigger className="w-full mt-1"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="default">
-                                Default — required for Expenses, Supplies, Equipment
+                                {t("uiGuildSettings.defaultRequiredForExpensesSuppliesEquipment")}
                               </SelectItem>
                               <SelectItem value="all">
-                                Strict — required for all contribution types
+                                {t("uiGuildSettings.strictRequiredForAllContributionTypes")}
                               </SelectItem>
                               <SelectItem value="none">
                                 Relaxed — never required (trust-based cooperative)
@@ -905,15 +907,15 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <Section title={`Members (${members.length})`} icon={<Users className="h-5 w-5" />}><span /></Section>
                     <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-                      <DialogTrigger asChild><Button size="sm"><UserPlus className="h-4 w-4 mr-1" /> Add member</Button></DialogTrigger>
+                      <DialogTrigger asChild><Button size="sm"><UserPlus className="h-4 w-4 mr-1" /> {t("uiGuildSettings.addMember")}</Button></DialogTrigger>
                       <DialogContent className="sm:max-w-xl overflow-visible">
-                        <DialogHeader><DialogTitle>Add Member</DialogTitle></DialogHeader>
+                        <DialogHeader><DialogTitle>{t("uiGuildSettings.addMember2")}</DialogTitle></DialogHeader>
                         <div className="space-y-4 mt-2">
                           <div>
-                            <label className="text-sm font-medium mb-1 block">Search by name</label>
+                            <label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.searchByName")}</label>
                             <UserSearchInput
                               onSelect={(user) => inviteMember(user.user_id)}
-                              placeholder="Type a member name…"
+                              placeholder={t("uiGuildSettings.typeAMemberName")}
                               excludeUserIds={members.map((m: any) => m.user_id)}
                             />
                           </div>
@@ -926,9 +928,9 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                     <table className="block w-full text-sm xl:table xl:table-fixed">
                       <thead className="hidden bg-muted/50 xl:table-header-group">
                         <tr>
-                          <th className="w-[42%] text-left px-4 py-2 font-medium">User</th>
-                          <th className="text-left px-4 py-2 font-medium">Role</th>
-                          <th className="w-24 text-right px-4 py-2 font-medium">Actions</th>
+                          <th className="w-[42%] text-left px-4 py-2 font-medium">{t("uiGuildSettings.user")}</th>
+                          <th className="text-left px-4 py-2 font-medium">{t("uiGuildSettings.role")}</th>
+                          <th className="w-24 text-right px-4 py-2 font-medium">{t("uiGuildSettings.actions")}</th>
                         </tr>
                       </thead>
                       <tbody className="block xl:table-row-group">
@@ -963,16 +965,16 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             <td className="order-2 block xl:table-cell xl:px-3 xl:py-3 xl:align-top">
                               <div className="flex shrink-0 justify-end gap-1">
                                 {m.role === "ADMIN" ? (
-                                  <Button size="icon" variant="outline" className="h-8 w-8 shrink-0" onClick={() => toggleMemberRole(m.id)} title="Demote to member" aria-label={`Demote to member: ${m.user?.name}`}>
+                                  <Button size="icon" variant="outline" className="h-8 w-8 shrink-0" onClick={() => toggleMemberRole(m.id)} title={t("uiGuildSettings.demoteToMember")} aria-label={`${t("uiGuildSettings.demoteToMember")} : ${m.user?.name}`}>
                                     <ChevronDown className="h-4 w-4" />
                                   </Button>
                                 ) : (
-                                  <Button size="icon" variant="outline" className="h-8 w-8 shrink-0 border-primary/30 text-primary hover:bg-primary/10" onClick={() => toggleMemberRole(m.id)} title="Promote to admin" aria-label={`Promote to admin: ${m.user?.name}`}>
+                                  <Button size="icon" variant="outline" className="h-8 w-8 shrink-0 border-primary/30 text-primary hover:bg-primary/10" onClick={() => toggleMemberRole(m.id)} title={t("uiGuildSettings.promoteToAdmin")} aria-label={`${t("uiGuildSettings.promoteToAdmin")} : ${m.user?.name}`}>
                                     <ChevronUp className="h-4 w-4" />
                                   </Button>
                                 )}
                                 {m.user_id !== currentUser.id && (
-                                  <Button size="icon" variant="ghost" className="h-8 w-8 shrink-0 text-destructive hover:text-destructive" onClick={() => removeMember(m.id)} title="Remove member" aria-label={`Remove member: ${m.user?.name}`}>
+                                  <Button size="icon" variant="ghost" className="h-8 w-8 shrink-0 text-destructive hover:text-destructive" onClick={() => removeMember(m.id)} title={t("uiGuildSettings.removeMember")} aria-label={`${t("uiGuildSettings.removeMember")} : ${m.user?.name}`}>
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </Button>
                                 )}
@@ -999,16 +1001,16 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                   <div className="flex items-center justify-between">
                     <Section title={`Guild Services (${guildServices.length})`} icon={<Briefcase className="h-5 w-5" />}><span /></Section>
                     <Dialog open={createSvcOpen} onOpenChange={setCreateSvcOpen}>
-                      <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" /> New Service</Button></DialogTrigger>
+                      <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" /> {t("uiGuildSettings.newService")}</Button></DialogTrigger>
                       <DialogContent>
-                        <DialogHeader><DialogTitle>Create Service for {guild.name}</DialogTitle></DialogHeader>
+                        <DialogHeader><DialogTitle>{t("uiGuildSettings.createServiceFor")} {guild.name}</DialogTitle></DialogHeader>
                         <div className="space-y-4 mt-2">
-                          <div><label className="text-sm font-medium mb-1 block">Title</label><Input value={svcTitle} onChange={(e) => setSvcTitle(e.target.value)} placeholder="Service title" maxLength={120} /></div>
-                          <div><label className="text-sm font-medium mb-1 block">Description</label><Textarea value={svcDesc} onChange={(e) => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
+                          <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.title")}</label><Input value={svcTitle} onChange={(e) => setSvcTitle(e.target.value)} placeholder={t("uiGuildSettings.serviceTitle")} maxLength={120} /></div>
+                          <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.description")}</label><Textarea value={svcDesc} onChange={(e) => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
                           <ImageUpload label="Image (optional)" currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" description="Service cover image" />
                           <div className="grid grid-cols-2 gap-3">
                             <div><label className="text-sm font-medium mb-1 block">Duration (min)</label><Input type="number" value={svcDuration} onChange={(e) => setSvcDuration(e.target.value)} min={15} /></div>
-                            <div><label className="text-sm font-medium mb-1 block">Price (€) — shown as 🟩 Coins to clients</label><Input type="number" value={svcPrice} onChange={(e) => setSvcPrice(e.target.value)} min={0} /></div>
+                            <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.priceShownAsCoinsToClients")}</label><Input type="number" value={svcPrice} onChange={(e) => setSvcPrice(e.target.value)} min={0} /></div>
                           </div>
                           <div><label className="text-sm font-medium mb-1 block">Online location</label>
                             <Select value={svcLocationType} onValueChange={(v) => setSvcLocationType(v as OnlineLocationType)}>
@@ -1020,14 +1022,14 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                               </SelectContent>
                             </Select>
                           </div>
-                          <Button onClick={createGuildService} disabled={!svcTitle.trim()} className="w-full">Create service</Button>
+                          <Button onClick={createGuildService} disabled={!svcTitle.trim()} className="w-full">{t("uiGuildSettings.createService")}</Button>
                         </div>
                       </DialogContent>
                     </Dialog>
                   </div>
 
                   {guildServices.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No services yet. Create one above.</p>
+                    <p className="text-sm text-muted-foreground">{t("uiGuildSettings.noServicesYetCreateOneAbove")}</p>
                   ) : (
                     <div className="space-y-3">
                       {guildServices.map((svc: any) => (
@@ -1042,7 +1044,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                           </div>
                           <div className="flex items-center gap-3">
                             <Badge className={svc.is_active ? "bg-primary/10 text-primary border-0" : "bg-muted text-muted-foreground border-0"}>
-                              {svc.is_active ? "Active" : "Paused"}
+                              {svc.is_active ? t("uiGuildSettings.active") : "Paused"}
                             </Badge>
                             <Switch checked={svc.is_active} onCheckedChange={() => toggleServiceActive(svc)} />
                           </div>
@@ -1063,7 +1065,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                 <div className="space-y-5 max-w-lg">
                   <Section title="Unit Availability" icon={<CalendarDays className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Configure when this guild is available for bookings. This schedule applies to all guild-hosted services.
+                      {t("uiGuildSettings.configureWhenThisGuildIsAvailable")}
                     </p>
                     <UnitAvailabilityEditor unitType="GUILD" unitId={guildId} />
                   </Section>
@@ -1074,21 +1076,21 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {activeTab === "defaults" && (
                 <div className="space-y-6 max-w-lg">
                   <Section title="Pod Access Policy" icon={<Settings className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-3">When pods are created from this guild, who can join?</p>
+                    <p className="text-sm text-muted-foreground mb-3">{t("uiGuildSettings.whenPodsAreCreatedFromThis")}</p>
                     <Select value={podAccessPolicy} onValueChange={(v) => setPodAccessPolicy(v as any)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="OPEN">Open to all users</SelectItem>
-                        <SelectItem value="GUILD_MEMBERS">Only guild members</SelectItem>
-                        <SelectItem value="INVITE_ONLY">Invite-only</SelectItem>
+                        <SelectItem value="OPEN">{t("uiGuildSettings.openToAllUsers")}</SelectItem>
+                        <SelectItem value="GUILD_MEMBERS">{t("uiGuildSettings.onlyGuildMembers")}</SelectItem>
+                        <SelectItem value="INVITE_ONLY">{t("uiGuildSettings.inviteOnly")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </Section>
 
                   <Separator />
 
-                  <Section title="Default Quest Topics" icon={<Hash className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-2">Pre-select these topics when creating quests from this guild.</p>
+                  <Section title={t("uiGuildSettings.defaultQuestTopics")} icon={<Hash className="h-5 w-5" />}>
+                    <p className="text-sm text-muted-foreground mb-2">{t("uiGuildSettings.preSelectTheseTopicsWhenCreating")}</p>
                     <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-card max-h-40 overflow-y-auto">
                       {allTopics.map((t: any) => (
                         <label key={t.id} className="flex items-center gap-1.5 cursor-pointer">
@@ -1100,8 +1102,8 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                     <p className="text-xs text-muted-foreground mt-1">{defaultQuestTopics.length} selected</p>
                   </Section>
 
-                  <Section title="Default Quest Territories" icon={<MapPin className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-2">Pre-select these territories when creating quests from this guild.</p>
+                  <Section title={t("uiGuildSettings.defaultQuestTerritories")} icon={<MapPin className="h-5 w-5" />}>
+                    <p className="text-sm text-muted-foreground mb-2">{t("uiGuildSettings.preSelectTheseTerritoriesWhenCreating")}</p>
                     <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-card">
                       {allTerritories.map((t: any) => (
                         <label key={t.id} className="flex items-center gap-1.5 cursor-pointer">
@@ -1115,14 +1117,14 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
                   <Separator />
 
-                  <Section title="OCU Default for New Quests" icon={<Settings className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.ocuDefaultForNewQuests")} icon={<Settings className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-3">
-                      When enabled, all new quests created from this guild will have the Open Contributive Unit (OCU) module activated by default.
+                      {t("uiGuildSettings.whenEnabledAllNewQuestsCreated")}
                     </p>
                     <div className="flex items-center justify-between rounded-lg border border-border p-3 bg-card">
                       <div>
-                        <p className="text-sm font-medium">🧮 Enable OCU by default</p>
-                        <p className="text-xs text-muted-foreground">Homogenize contribution tracking across guild quests</p>
+                        <p className="text-sm font-medium">{t("uiGuildSettings.enableOcuByDefault")}</p>
+                        <p className="text-xs text-muted-foreground">{t("uiGuildSettings.homogenizeContributionTrackingAcrossGuildQuests")}</p>
                       </div>
                       <Switch checked={ocuDefaultEnabled} onCheckedChange={setOcuDefaultEnabled} />
                     </div>
@@ -1131,16 +1133,16 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                   <Button onClick={async () => {
                     await supabase.from("guilds").update({ ocu_default_enabled: ocuDefaultEnabled } as any).eq("id", guildId);
                     qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
-                    toast({ title: "Quest & pod defaults saved!" });
-                  }}><Save className="h-4 w-4 mr-2" /> Save defaults</Button>
+                    toast({ title: t("uiGuildSettings.questPodDefaultsSaved") });
+                  }}><Save className="h-4 w-4 mr-2" /> {t("uiGuildSettings.saveDefaults")}</Button>
                 </div>
               )}
 
               {/* ── Documents ── */}
               {activeTab === "documents" && (
                 <div className="space-y-6 max-w-lg">
-                  <Section title="Guild Documents" icon={<Briefcase className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-4">Upload documents, resources, and files for guild members.</p>
+                  <Section title={t("uiGuildSettings.guildDocuments")} icon={<Briefcase className="h-5 w-5" />}>
+                    <p className="text-sm text-muted-foreground mb-4">{t("uiGuildSettings.uploadDocumentsResourcesAndFilesFor")}</p>
                     <AttachmentList targetType={AttachmentTargetType.GUILD} targetId={guild.id} />
                     <div className="mt-4">
                       <AttachmentUpload targetType={AttachmentTargetType.GUILD} targetId={guild.id} />
@@ -1242,6 +1244,7 @@ function Section({ title, icon, children }: { title: string; icon: React.ReactNo
 
 // ── Guild Feature Suggestion Box ──
 function GuildFeatureSuggestionBox({ guildId, userId }: { guildId: string; userId: string }) {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const { toast } = useToast();
@@ -1258,7 +1261,7 @@ function GuildFeatureSuggestionBox({ guildId, userId }: { guildId: string; userI
         user_explicit: true,
         tags: [guildId],
       } as any);
-      toast({ title: "Suggestion sent — thank you!" });
+      toast({ title: t("uiGuildSettings.suggestionSentThankYou") });
       setText("");
     } catch {
       toast({ title: "Something went wrong", variant: "destructive" });
@@ -1268,14 +1271,14 @@ function GuildFeatureSuggestionBox({ guildId, userId }: { guildId: string; userI
   };
 
   return (
-    <Section title="Suggest a Feature" icon={<Puzzle className="h-5 w-5" />}>
+    <Section title={t("uiGuildSettings.suggestAFeature")} icon={<Puzzle className="h-5 w-5" />}>
       <p className="text-sm text-muted-foreground mb-3">
-        Have an idea to improve this guild's collaboration tools? Share it with the builders.
+        {t("uiGuildSettings.haveAnIdeaToImproveThis")}
       </p>
       <Textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Describe a feature you'd like to see…"
+        placeholder={t("uiGuildSettings.describeAFeatureYouDLike")}
         className="min-h-[100px] resize-none"
         maxLength={1000}
       />
@@ -1286,7 +1289,7 @@ function GuildFeatureSuggestionBox({ guildId, userId }: { guildId: string; userI
         size="sm"
         className="mt-3"
       >
-        {sending ? "Sending…" : "Submit suggestion"}
+        {sending ? "Sending…" : t("uiGuildSettings.submitSuggestion")}
       </Button>
     </Section>
   );
@@ -1294,6 +1297,7 @@ function GuildFeatureSuggestionBox({ guildId, userId }: { guildId: string; userI
 
 /** Services Display settings — toggle visibility of member services with search */
 function GuildServicesDisplayTab({ guildId, members }: { guildId: string; members: any[] }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
@@ -1347,7 +1351,7 @@ function GuildServicesDisplayTab({ guildId, members }: { guildId: string; member
         { onConflict: "guild_id,service_id" }
       );
     if (error) {
-      toast({ title: "Failed to update visibility", variant: "destructive" });
+      toast({ title: t("uiGuildSettings.failedToUpdateVisibility"), variant: "destructive" });
       return;
     }
     refetchVis();
@@ -1366,9 +1370,9 @@ function GuildServicesDisplayTab({ guildId, members }: { guildId: string; member
 
   return (
     <div className="space-y-5 max-w-lg">
-      <Section title="Member Services Display" icon={<ShoppingBag className="h-5 w-5" />}>
+      <Section title={t("uiGuildSettings.memberServicesDisplay")} icon={<ShoppingBag className="h-5 w-5" />}>
         <p className="text-sm text-muted-foreground mb-4">
-          Services from guild members are eligible to appear on the guild's Services tab. Toggle each service on or off.
+          {t("uiGuildSettings.servicesFromGuildMembersAreEligible")}
         </p>
 
         {services.length > 3 && (
@@ -1377,16 +1381,16 @@ function GuildServicesDisplayTab({ guildId, members }: { guildId: string; member
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search services or providers…"
+              placeholder={t("uiGuildSettings.searchServicesOrProviders")}
               className="pl-9"
             />
           </div>
         )}
 
         {services.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No eligible member services found.</p>
+          <p className="text-sm text-muted-foreground">{t("uiGuildSettings.noEligibleMemberServicesFound")}</p>
         ) : filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No services match your search.</p>
+          <p className="text-sm text-muted-foreground">{t("uiGuildSettings.noServicesMatchYourSearch")}</p>
         ) : (
           <div className="space-y-2">
             {filtered.map((svc: any) => {

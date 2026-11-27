@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 /**
  * CreateBioregion.tsx — Multi-step wizard for creating a bioregion territory.
  * Steps: 1) Identity  2) Select towns  3) Link natural systems  4) Draw boundary
@@ -113,24 +114,25 @@ function StepIdentity({
   name: string; setName: (v: string) => void;
   description: string; setDescription: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-5">
       <div>
-        <label className="text-sm font-medium text-foreground mb-1.5 block">Bioregion name *</label>
+        <label className="text-sm font-medium text-foreground mb-1.5 block">{t("uiCreateBioregion.bioregionName")}</label>
         <Input
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="e.g. Senne River Basin, Flemish Ardennes…"
           maxLength={100}
         />
-        <p className="text-xs text-muted-foreground mt-1">Choose a name that reflects the ecological identity of this area</p>
+        <p className="text-xs text-muted-foreground mt-1">{t("uiCreateBioregion.chooseANameThatReflectsThe")}</p>
       </div>
       <div>
-        <label className="text-sm font-medium text-foreground mb-1.5 block">Description</label>
+        <label className="text-sm font-medium text-foreground mb-1.5 block">{t("uiCreateBioregion.description")}</label>
         <Textarea
           value={description}
           onChange={e => setDescription(e.target.value)}
-          placeholder="Describe the ecological and cultural character of this bioregion…"
+          placeholder={t("uiCreateBioregion.describeTheEcologicalAndCulturalCharacter")}
           rows={4}
           maxLength={1000}
         />
@@ -145,6 +147,7 @@ function CreateTownInline({
 }: {
   onCreated: (t: { id: string; name: string; level: string }) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [townName, setTownName] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -168,10 +171,10 @@ function CreateTownInline({
       if (data?.[0]) {
         setGeocoded({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), display: data[0].display_name });
       } else {
-        toast.error("Could not find location", { description: "Try a different name or postal code" });
+        toast.error(t("uiCreateBioregion.couldNotFindLocation"), { description: t("uiCreateBioregion.tryADifferentNameOrPostal") });
       }
     } catch {
-      toast.error("Geocoding failed");
+      toast.error(t("uiCreateBioregion.geocodingFailed"));
     } finally {
       setGeocoding(false);
     }
@@ -206,7 +209,7 @@ function CreateTownInline({
       setGeocoded(null);
       setOpen(false);
     } catch (err: any) {
-      toast.error("Failed to create town", { description: err.message });
+      toast.error(t("uiCreateBioregion.failedToCreateTown"), { description: err.message });
     } finally {
       setCreating(false);
     }
@@ -215,7 +218,7 @@ function CreateTownInline({
   if (!open) {
     return (
       <Button variant="outline" size="sm" onClick={() => setOpen(true)} className="gap-1.5 text-xs w-full">
-        <MapPin className="h-3.5 w-3.5" /> Create a new town
+        <MapPin className="h-3.5 w-3.5" /> {t("uiCreateBioregion.createANewTown")}
       </Button>
     );
   }
@@ -223,7 +226,7 @@ function CreateTownInline({
   return (
     <div className="border border-dashed border-primary/30 rounded-xl p-4 space-y-3 bg-primary/5">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-foreground">Create a new town</p>
+        <p className="text-xs font-medium text-foreground">{t("uiCreateBioregion.createANewTown")}</p>
         <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
           <X className="h-4 w-4" />
         </button>
@@ -231,7 +234,7 @@ function CreateTownInline({
       <Input
         value={townName}
         onChange={e => setTownName(e.target.value)}
-        placeholder="Town name *"
+        placeholder={t("uiCreateBioregion.townName")}
         className="text-sm"
         maxLength={100}
       />
@@ -267,7 +270,7 @@ function CreateTownInline({
         className="w-full text-xs gap-1.5"
       >
         {creating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
-        Add town to bioregion
+        {t("uiCreateBioregion.addTownToBioregion")}
       </Button>
     </div>
   );
@@ -280,18 +283,19 @@ function StepTowns({
   selected: Array<{ id: string; name: string; level: string }>;
   onToggle: (t: { id: string; name: string; level: string }) => void;
 }) {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const { data: results = [], isLoading } = useSearchTerritories(q);
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Search for existing towns or create new ones to include in this bioregion.</p>
+      <p className="text-sm text-muted-foreground">{t("uiCreateBioregion.searchForExistingTownsOrCreate")}</p>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           value={q}
           onChange={e => setQ(e.target.value)}
-          placeholder="Search territories…"
+          placeholder={t("uiCreateBioregion.searchTerritories")}
           className="pl-9"
         />
       </div>
@@ -316,7 +320,7 @@ function StepTowns({
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
           ) : results.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">No territories found</p>
+            <p className="text-sm text-muted-foreground py-4 text-center">{t("uiCreateBioregion.noTerritoriesFound")}</p>
           ) : (
             results.map(t => {
               const isSelected = selected.some(s => s.id === t.id);
@@ -343,7 +347,7 @@ function StepTowns({
       )}
 
       <div className="pt-2 border-t border-border">
-        <p className="text-xs text-muted-foreground mb-2">Can't find a town? Create it here:</p>
+        <p className="text-xs text-muted-foreground mb-2">{t("uiCreateBioregion.canTFindATownCreate")}</p>
         <CreateTownInline onCreated={(t) => onToggle(t)} />
       </div>
     </div>
@@ -357,18 +361,19 @@ function StepNaturalSystems({
   selected: Array<{ id: string; name: string; system_type: string | null }>;
   onToggle: (ns: { id: string; name: string; system_type: string | null }) => void;
 }) {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const { data: results = [], isLoading } = useSearchNaturalSystems(q);
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Link watersheds, forests, soil systems, and other living systems to this bioregion.</p>
+      <p className="text-sm text-muted-foreground">{t("uiCreateBioregion.linkWatershedsForestsSoilSystemsAnd")}</p>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           value={q}
           onChange={e => setQ(e.target.value)}
-          placeholder="Search natural systems…"
+          placeholder={t("uiCreateBioregion.searchNaturalSystems")}
           className="pl-9"
         />
       </div>
@@ -393,7 +398,7 @@ function StepNaturalSystems({
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
           ) : results.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">No natural systems found</p>
+            <p className="text-sm text-muted-foreground py-4 text-center">{t("uiCreateBioregion.noNaturalSystemsFound")}</p>
           ) : (
             results.map(ns => {
               const isSelected = selected.some(s => s.id === ns.id);
@@ -456,9 +461,10 @@ function StepBoundary({
   setPoints: (pts: [number, number][]) => void;
   center: [number, number];
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Click on the map to place boundary points. Place at least 3 points to define the bioregion perimeter.</p>
+      <p className="text-sm text-muted-foreground">{t("uiCreateBioregion.clickOnTheMapToPlace")}</p>
       {points.length > 0 && (
         <div className="flex items-center gap-2">
           <Badge variant="outline">{points.length} points</Badge>
@@ -503,6 +509,7 @@ function toSlug(name: string): string {
 
 /* ── Main page ── */
 export default function CreateBioregion() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const currentUser = useCurrentUser();
   const queryClient = useQueryClient();
@@ -646,7 +653,7 @@ export default function CreateBioregion() {
       navigate(`/territories/${result.slug ?? result.id}`);
     },
     onError: (err: any) => {
-      toast.error("Failed to create bioregion", { description: err.message });
+      toast.error(t("uiCreateBioregion.failedToCreateBioregion"), { description: err.message });
     },
   });
 
@@ -657,8 +664,8 @@ export default function CreateBioregion() {
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center space-y-3">
             <Mountain className="h-10 w-10 text-muted-foreground mx-auto" />
-            <p className="text-muted-foreground">Please sign in to create a bioregion.</p>
-            <Button onClick={() => navigate("/login")}>Sign in</Button>
+            <p className="text-muted-foreground">{t("uiCreateBioregion.pleaseSignInToCreateA")}</p>
+            <Button onClick={() => navigate("/login")}>{t("uiCreateBioregion.signIn")}</Button>
           </CardContent>
         </Card>
       </div>
@@ -673,9 +680,9 @@ export default function CreateBioregion() {
             <Mountain className="h-10 w-10 text-muted-foreground mx-auto" />
              <h2 className="text-lg font-semibold">Experience required</h2>
              <p className="text-sm text-muted-foreground">
-               You need to be at least <strong>Level 1</strong> to create a bioregion. Sign up and start contributing to unlock this!
+               {t("uiCreateBioregion.youNeedToBeAtLeast")} <strong>{t("uiCreateBioregion.level1")}</strong> {t("uiCreateBioregion.toCreateABioregionSignUp")}
              </p>
-            <Badge variant="outline">Your level: {xpLevel}</Badge>
+            <Badge variant="outline">{t("uiCreateBioregion.yourLevel")} {xpLevel}</Badge>
           </CardContent>
         </Card>
       </div>
@@ -698,9 +705,9 @@ export default function CreateBioregion() {
           <div>
             <h1 className="text-xl font-display font-bold text-foreground flex items-center gap-2">
               <Mountain className="h-5 w-5 text-primary" />
-              Create a Bioregion
+              {t("uiCreateBioregion.createABioregion")}
             </h1>
-            <p className="text-sm text-muted-foreground">Define an ecological territory that crosses administrative boundaries</p>
+            <p className="text-sm text-muted-foreground">{t("uiCreateBioregion.defineAnEcologicalTerritoryThatCrosses")}</p>
           </div>
         </div>
 
@@ -736,7 +743,7 @@ export default function CreateBioregion() {
             disabled={step === 0}
             className="gap-1.5"
           >
-            <ArrowLeft className="h-4 w-4" /> Back
+            <ArrowLeft className="h-4 w-4" /> {t("uiCreateBioregion.back")}
           </Button>
 
           {step < STEPS.length - 1 ? (
@@ -745,7 +752,7 @@ export default function CreateBioregion() {
               disabled={!canNext}
               className="gap-1.5"
             >
-              Next <ArrowRight className="h-4 w-4" />
+              {t("uiCreateBioregion.next")} <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
             <Button
@@ -758,7 +765,7 @@ export default function CreateBioregion() {
               ) : (
                 <Check className="h-4 w-4" />
               )}
-              Create Bioregion
+              {t("uiCreateBioregion.createBioregion")}
             </Button>
           )}
         </div>

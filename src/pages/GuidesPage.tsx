@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { PageShell } from "@/components/PageShell";
 import {
   Accordion,
@@ -27,101 +29,102 @@ import { useEffect, useState } from "react";
 
 const sections = [
   { id: "quickstart", label: "Quickstart", icon: Rocket },
-  { id: "indepth", label: "In‑depth Guides", icon: BookOpen },
+  { id: "indepth", get label() { return i18n.t("uiGuidesPage.inDepthGuides"); }, icon: BookOpen },
   { id: "troubleshooting", label: "Troubleshooting", icon: AlertCircle },
-  { id: "help", label: "Ask for Help", icon: LifeBuoy },
+  { id: "help", get label() { return i18n.t("uiGuidesPage.askForHelp"); }, icon: LifeBuoy },
 ] as const;
 
 const quickstartItems = [
   {
-    title: "How to create your profile",
+    get title() { return i18n.t("uiGuidesPage.howToCreateYourProfile"); },
     icon: Users,
-    text: "Set your name, picture, bio, creative mediums or roles, and choose your preferred notification channel (WhatsApp / Telegram / Email). Save once and you're ready.",
+    get text() { return i18n.t("uiGuidesPage.setYourNamePictureBioCreative"); },
   },
   {
-    title: "How to launch a quest",
+    get title() { return i18n.t("uiGuidesPage.howToLaunchAQuest"); },
     icon: Swords,
-    text: "Go to Explore → Quests → Create. Add a title, description, images, and choose whether it belongs to a Guild/Company or to you.",
+    get text() { return i18n.t("uiGuidesPage.goToExploreQuestsCreateAdd"); },
   },
   {
-    title: "How to join a guild",
+    get title() { return i18n.t("uiGuidesPage.howToJoinAGuild"); },
     icon: Users,
-    text: "Visit any guild page and click Join or Apply. Some guilds accept instantly, others require a short application.",
+    get text() { return i18n.t("uiGuidesPage.visitAnyGuildPageAndClick"); },
   },
   {
-    title: "How to offer a service",
+    get title() { return i18n.t("uiGuidesPage.howToOfferAService"); },
     icon: BriefcaseBusiness,
-    text: "Open Profile → Services. Set your pricing, availability, and what you teach or provide.",
+    get text() { return i18n.t("uiGuidesPage.openProfileServicesSetYourPricing"); },
   },
   {
-    title: "How to use AI agents",
+    get title() { return i18n.t("uiGuidesPage.howToUseAiAgents"); },
     icon: Sparkles,
-    text: "Anywhere you see the ✨ icon, the AI can help write bios, launch quests, generate ideas, or guide onboarding.",
+    get text() { return i18n.t("uiGuidesPage.anywhereYouSeeTheIconThe"); },
   },
 ];
 
 const indepthItems = [
   {
-    title: "XP, credits & contribution index",
+    get title() { return i18n.t("uiGuidesPage.xpCreditsContributionIndex"); },
     icon: Compass,
-    text: "XP tracks participation and creativity. Credits allow boosts and unlocks. Contribution Index measures long‑term activity.",
+    get text() { return i18n.t("uiGuidesPage.xpTracksParticipationAndCreativityCredits"); },
   },
   {
-    title: "Pods and collaboration tools",
+    get title() { return i18n.t("uiGuidesPage.podsAndCollaborationTools"); },
     icon: Users,
-    text: "Pods are small groups for collaboration or jams. They include chat, notes, calls, and a shared calendar.",
+    get text() { return i18n.t("uiGuidesPage.podsAreSmallGroupsForCollaboration"); },
   },
   {
-    title: "Guild governance",
+    get title() { return i18n.t("uiGuidesPage.guildGovernance"); },
     icon: ShieldCheck,
-    text: "Guilds have admins, core members, guests, and approval systems. Admins manage membership and events.",
+    get text() { return i18n.t("uiGuidesPage.guildsHaveAdminsCoreMembersGuests"); },
   },
   {
-    title: "Territory activation",
+    get title() { return i18n.t("uiGuidesPage.territoryActivation"); },
     icon: MapPin,
-    text: "Territories surface events near you. Join more than one if you travel or belong to multiple communities.",
+    get text() { return i18n.t("uiGuidesPage.territoriesSurfaceEventsNearYouJoin"); },
   },
   {
     title: "Courses & learning modules",
     icon: GraduationCap,
-    text: "Courses include lessons, files, or videos. Some are free, others paid. Users can also create courses.",
+    get text() { return i18n.t("uiGuidesPage.coursesIncludeLessonsFilesOrVideos"); },
   },
   {
-    title: "How AI works and where data goes",
+    get title() { return i18n.t("uiGuidesPage.howAiWorksAndWhereData"); },
     icon: ShieldCheck,
-    text: "AI only uses the data you choose to share (profile, quests, sessions, interactions). Private messages are never read.",
+    get text() { return i18n.t("uiGuidesPage.aiOnlyUsesTheDataYou"); },
   },
 ];
 
 const troubleshootingItems = [
   {
-    title: "I can't create a quest",
+    get title() { return i18n.t("uiGuidesPage.iCanTCreateAQuest"); },
     icon: Wrench,
-    text: "Check you're logged in and fields are filled. Try refreshing.",
+    get text() { return i18n.t("uiGuidesPage.checkYouReLoggedInAnd"); },
   },
   {
-    title: "My guild doesn't display properly",
+    get title() { return i18n.t("uiGuidesPage.myGuildDoesnTDisplayProperly"); },
     icon: Wrench,
-    text: "Your application may still be pending, or visibility is restricted.",
+    get text() { return i18n.t("uiGuidesPage.yourApplicationMayStillBePending"); },
   },
   {
-    title: "My company isn't attached",
+    get title() { return i18n.t("uiGuidesPage.myCompanyIsnTAttached"); },
     icon: Wrench,
-    text: "Go to Profile → Companies and attach/create. Some require admin approval.",
+    get text() { return i18n.t("uiGuidesPage.goToProfileCompaniesAndAttach"); },
   },
   {
-    title: "Bookings don't open",
+    get title() { return i18n.t("uiGuidesPage.bookingsDonTOpen"); },
     icon: Wrench,
-    text: "Ensure slots exist. Try switching device or browser.",
+    get text() { return i18n.t("uiGuidesPage.ensureSlotsExistTrySwitchingDevice"); },
   },
   {
     title: "Notifications don't appear",
     icon: Wrench,
-    text: "Enable notifications in Settings → Notifications and check your channel link.",
+    get text() { return i18n.t("uiGuidesPage.enableNotificationsInSettingsNotificationsAnd"); },
   },
 ];
 
 export default function GuidesPage() {
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState("quickstart");
 
   useEffect(() => {
@@ -151,7 +154,7 @@ export default function GuidesPage() {
             Guides &amp; Support
           </h1>
           <p className="mt-2 text-muted-foreground text-lg">
-            Everything you need to get started, learn, and grow.
+            {t("uiGuidesPage.everythingYouNeedToGetStarted")}
           </p>
         </div>
 
@@ -213,7 +216,7 @@ export default function GuidesPage() {
             <section id="indepth">
               <div className="flex items-center gap-2 mb-4">
                 <BookOpen className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold text-foreground">In‑depth Guides</h2>
+                <h2 className="text-xl font-semibold text-foreground">{t("uiGuidesPage.inDepthGuides")}</h2>
               </div>
               <Accordion type="multiple" className="space-y-2">
                 {indepthItems.map((item, i) => {
@@ -270,11 +273,11 @@ export default function GuidesPage() {
             <section id="help" className="pb-16">
               <div className="flex items-center gap-2 mb-4">
                 <LifeBuoy className="h-5 w-5 text-accent" />
-                <h2 className="text-xl font-semibold text-foreground">Ask for Help</h2>
+                <h2 className="text-xl font-semibold text-foreground">{t("uiGuidesPage.askForHelp")}</h2>
               </div>
               <div className="rounded-lg border bg-card p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <p className="text-muted-foreground flex-1">
-                  Stuck? The team will support you personally.
+                  {t("uiGuidesPage.stuckTheTeamWillSupportYou")}
                 </p>
                 <Button asChild>
                   <Link to="/contact">Contact Support</Link>

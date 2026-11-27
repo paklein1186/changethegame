@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 /**
  * Economy Onboarding — Option C
  *
@@ -61,7 +63,7 @@ const ECONOMY_LAYERS: EconomyLayer[] = [
   {
     key: "xp",
     emoji: "⭐",
-    label: "XP — Reputation",
+    get label() { return i18n.t("uiEconomyOnboarding.xpReputation"); },
     color: "bg-violet-100 dark:bg-violet-950/40",
     textColor: "text-violet-700 dark:text-violet-300",
     borderColor: "border-violet-200 dark:border-violet-800",
@@ -75,7 +77,7 @@ const ECONOMY_LAYERS: EconomyLayer[] = [
   {
     key: "ctg",
     emoji: "🌱",
-    label: "$CTG — Contribution Token",
+    get label() { return i18n.t("uiEconomyOnboarding.ctgContributionToken"); },
     color: "bg-emerald-100 dark:bg-emerald-950/40",
     textColor: "text-emerald-700 dark:text-emerald-300",
     borderColor: "border-emerald-200 dark:border-emerald-800",
@@ -89,7 +91,7 @@ const ECONOMY_LAYERS: EconomyLayer[] = [
   {
     key: "coins",
     emoji: "🟩",
-    label: "Coins — Fiat-Backed Mission Value",
+    get label() { return i18n.t("uiEconomyOnboarding.coinsFiatBackedMissionValue"); },
     color: "bg-teal-100 dark:bg-teal-950/40",
     textColor: "text-teal-700 dark:text-teal-300",
     borderColor: "border-teal-200 dark:border-teal-800",
@@ -103,7 +105,7 @@ const ECONOMY_LAYERS: EconomyLayer[] = [
   {
     key: "credits",
     emoji: "🔷",
-    label: "Platform Credits",
+    get label() { return i18n.t("uiEconomyOnboarding.platformCredits"); },
     color: "bg-cyan-100 dark:bg-cyan-950/40",
     textColor: "text-cyan-700 dark:text-cyan-300",
     borderColor: "border-cyan-200 dark:border-cyan-800",
@@ -165,33 +167,34 @@ interface EconomyModalProps {
 
 const PERSONA_CTA: Record<PersonaType | "DEFAULT", { label: string; to: string; description: string }> = {
   IMPACT: {
-    label: "Find an open mission",
+    get label() { return i18n.t("uiEconomyOnboarding.findAnOpenMission"); },
     to: "/explore?tab=quests",
-    description: "Join a quest to earn your first XP and $CTG.",
+    get description() { return i18n.t("uiEconomyOnboarding.joinAQuestToEarnYour"); },
   },
   CREATIVE: {
     label: "Explore creations",
     to: "/explore?tab=quests",
-    description: "Join a creation or launch your own project.",
+    get description() { return i18n.t("uiEconomyOnboarding.joinACreationOrLaunchYour"); },
   },
   HYBRID: {
-    label: "Explore the network",
+    get label() { return i18n.t("uiEconomyOnboarding.exploreTheNetwork"); },
     to: "/explore",
-    description: "Discover quests, guilds, and territories relevant to your work.",
+    get description() { return i18n.t("uiEconomyOnboarding.discoverQuestsGuildsAndTerritoriesRelevant"); },
   },
   UNSET: {
-    label: "Explore the network",
+    get label() { return i18n.t("uiEconomyOnboarding.exploreTheNetwork"); },
     to: "/explore",
-    description: "Discover quests, guilds, and territories to start contributing.",
+    get description() { return i18n.t("uiEconomyOnboarding.discoverQuestsGuildsAndTerritoriesTo"); },
   },
   DEFAULT: {
-    label: "Explore the network",
+    get label() { return i18n.t("uiEconomyOnboarding.exploreTheNetwork"); },
     to: "/explore",
-    description: "Discover quests, guilds, and territories to start contributing.",
+    get description() { return i18n.t("uiEconomyOnboarding.discoverQuestsGuildsAndTerritoriesTo"); },
   },
 };
 
 export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }: EconomyModalProps) {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
 
@@ -237,7 +240,7 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
             <button
               onClick={onClose}
               className="absolute top-4 right-4 z-10 p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-              aria-label="Close"
+              aria-label={t("uiEconomyOnboarding.close")}
             >
               <X className="h-5 w-5" />
             </button>
@@ -247,17 +250,17 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">💎</span>
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {isWhatsNew ? "What's new — March 2026" : "How value works"}
+                  {isWhatsNew ? t("uiEconomyOnboarding.whatSNewMarch2026") : "How value works"}
                 </span>
               </div>
               <h2 className="text-xl font-bold text-foreground">
                 {isWhatsNew
-                  ? "Meet $CTG — your contribution token"
-                  : "The 5-layer value system"}
+                  ? t("uiEconomyOnboarding.meetCtgYourContributionToken")
+                  : t("uiEconomyOnboarding.the5LayerValueSystem")}
               </h2>
               {!isWhatsNew && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Each layer serves a different purpose. None replaces the others.
+                  {t("uiEconomyOnboarding.eachLayerServesADifferentPurpose")}
                 </p>
               )}
             </div>
@@ -293,11 +296,11 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
                 {/* Grid */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">How you earn it</p>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">{t("uiEconomyOnboarding.howYouEarnIt")}</p>
                     <p className="text-sm text-foreground leading-relaxed">{layer.howEarned}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">What you do with it</p>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">{t("uiEconomyOnboarding.whatYouDoWithIt")}</p>
                     <p className="text-sm text-foreground leading-relaxed">{layer.howSpent}</p>
                   </div>
                 </div>
@@ -306,7 +309,7 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
                 <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-border/50">
                   {layer.withdrawable && (
                     <span className="text-xs text-muted-foreground">
-                      🟩 → 💶 Withdrawable to fiat
+                      {t("uiEconomyOnboarding.withdrawableToFiat")}
                     </span>
                   )}
                   {layer.decays && (
@@ -316,7 +319,7 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
                   )}
                   {!layer.withdrawable && !layer.decays && (
                     <span className="text-xs text-muted-foreground">
-                      🔒 Not purchasable or traded
+                      {t("uiEconomyOnboarding.notPurchasableOrTraded")}
                     </span>
                   )}
                 </div>
@@ -359,7 +362,7 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
                     onClick={onClose}
                     className="block w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Skip for now — I'll explore on my own
+                    {t("uiEconomyOnboarding.skipForNowILlExplore")}
                   </button>
                 </div>
               ) : (
@@ -368,10 +371,10 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
                     onClick={onClose}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Skip
+                    {t("uiEconomyOnboarding.skip")}
                   </button>
                   <Button size="sm" onClick={() => setStep((s) => s + 1)}>
-                    Next <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                    {t("uiEconomyOnboarding.next")} <ArrowRight className="h-3.5 w-3.5 ml-1" />
                   </Button>
                 </div>
               )}
@@ -443,6 +446,7 @@ const STEP_ICONS: Record<string, React.ReactNode> = {
 };
 
 export function PathwayCards({ persona, progress, steps, className }: PathwayCardsProps) {
+  const { t } = useTranslation();
   const { dismissed, dismiss } = useIsDismissed("pathway_cards");
   const order = PERSONA_STEP_ORDER[persona] ?? PERSONA_STEP_ORDER.UNSET;
   const personaLabels = PERSONA_CARD_LABELS[persona] ?? {};
@@ -469,7 +473,7 @@ export function PathwayCards({ persona, progress, steps, className }: PathwayCar
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <span className="text-lg">🗺️</span>
-            <span className="text-sm font-semibold text-foreground">Your next steps</span>
+            <span className="text-sm font-semibold text-foreground">{t("uiEconomyOnboarding.yourNextSteps")}</span>
           </div>
           <Badge variant="secondary" className="text-xs">
             {completedCount} of {steps.length} completed
@@ -533,7 +537,7 @@ export function PathwayCards({ persona, progress, steps, className }: PathwayCar
       {/* See all link */}
       <div className="text-center">
         <Link to="/me/onboarding" className="text-xs text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
-          See all steps <ArrowRight className="h-3 w-3" />
+          {t("uiEconomyOnboarding.seeAllSteps")} <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
     </div>
