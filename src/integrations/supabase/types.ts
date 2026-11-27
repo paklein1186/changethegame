@@ -10775,6 +10775,7 @@ export type Database = {
           membership_expires_at: string | null
           payer_user_id: string | null
           plan_code: string | null
+          renewal_reminder_sent_for: string | null
           role: string
           status: string
           stripe_customer_id: string | null
@@ -10794,6 +10795,7 @@ export type Database = {
           membership_expires_at?: string | null
           payer_user_id?: string | null
           plan_code?: string | null
+          renewal_reminder_sent_for?: string | null
           role?: string
           status?: string
           stripe_customer_id?: string | null
@@ -10813,6 +10815,7 @@ export type Database = {
           membership_expires_at?: string | null
           payer_user_id?: string | null
           plan_code?: string | null
+          renewal_reminder_sent_for?: string | null
           role?: string
           status?: string
           stripe_customer_id?: string | null
