@@ -3,7 +3,7 @@
 //   POST /functions/v1/guild-quest-sync
 //   X-Site-Key: <clé du site>                                (toujours)
 //   Authorization: Bearer <jeton CTG de la personne>         (création seulement : admin de la guilde)
-//   { "action": "create" | "update" | "withdraw" | "status" | "guild_quests" | "news" | "needs" | "needs_push" | "proposals" | "proposal_decide", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
+//   { "action": "create" | "update" | "withdraw" | "status" | "guild_quests" | "create_auto" | "news" | "needs" | "needs_push" | "proposals" | "proposal_decide", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
 //     "visibilite"?: { "mode": "public" } | { "mode": "membres", "niveau_minimum": "N2" | "N3" } }
 //
 // Chaque réponse porte "visibilite_appliquee_par_la_base" : vrai seulement si la base empêche vraiment la lecture
@@ -82,6 +82,20 @@ serve(async (req) => {
         return reply({ error: "only a public or members-only face can be published" }, 422);
       }
       return reply(await createQuest(admin, guildId, user.id, projetId, fields));
+    }
+    // Création automatique (décision de PA du 28/11, option C) : seulement une face PUBLIQUE (projet transparent, résumé
+    // validé), avec la clé du site seule. Auteur : la personne indiquée si elle administre la guilde, sinon la personne
+    // qui a créé la guilde. Une face réservée aux membres passe toujours par « create » (jeton d'un·e admin).
+    if (body?.action === "create_auto") {
+      if (body?.visibilite?.mode !== "public" || fields.public_visibility !== "public" || fields.access_mode !== "public") {
+        return reply({ error: "public_only", detail: "seule une face publique peut être créée automatiquement" }, 422);
+      }
+      const auteur = typeof body?.auteur === "string" && UUID.test(body.auteur) && (await isGuildAdmin(admin, guildId, body.auteur))
+        ? body.auteur : null;
+      const { data: g } = await admin.from("guilds").select("created_by_user_id").eq("id", guildId).maybeSingle();
+      const author = auteur ?? g?.created_by_user_id;
+      if (!author) return reply({ error: "no_author", detail: "guilde sans créateur" }, 409);
+      return reply(await createQuest(admin, guildId, author, projetId, fields));
     }
     if (body?.action === "update") {
       const questId = String(body?.quest_id ?? "");

@@ -118,3 +118,11 @@ tout le monde, même pour une quête réservée).
 (brouillons compris, champs d'administration) avec `projet_id`, le projet du site auquel chacune est reliée par la
 publication automatique. Le site range les autres dans sa file « à classer » : la coordination les relie à un projet,
 les accueille comme projet ou les écarte. Rien n'est adopté sans décision, et aucune quête n'est jamais recréée.
+
+## Création automatique des projets transparents (décision de PA du 28/11, option C)
+
+`guild-quest-sync` `{ "action": "create_auto", "projet_id", "face", "visibilite": { "mode": "public" }, "auteur"? }`,
+clé du site seule : crée la quête d'un projet **transparent** dont le résumé est validé, sans clic de la coordination.
+Refusé (422 `public_only`) pour toute face qui n'est pas publique : une quête réservée aux membres passe toujours par
+`create`, avec le jeton d'un·e admin de la guilde. Auteur : `auteur` s'il administre la guilde, sinon la personne qui a
+créé la guilde. Jamais de doublon (même lien `quest_external_links` que `create`).
