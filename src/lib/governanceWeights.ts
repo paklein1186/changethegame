@@ -3,19 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const GOVERNANCE_MODELS = {
   "1h1v": {
-    label: "1 Human, 1 Vote",
+    get label() { return i18n.t("uiGovernanceWeights.1Human1Vote"); },
     get description() { return i18n.t("uiGovernanceWeights.equalEveryMemberHasOneVote"); },
   },
   soft_log: {
-    label: "Soft Logarithmic",
+    get label() { return i18n.t("uiGovernanceWeights.softLogarithmic"); },
     get description() { return i18n.t("uiGovernanceWeights.logarithmicSoftContributionsInfluenceVotesBut"); },
   },
   strong_log: {
-    label: "Logarithmic (strong)",
+    get label() { return i18n.t("uiGovernanceWeights.logarithmicStrong"); },
     get description() { return i18n.t("uiGovernanceWeights.logarithmicStrongContributionsHaveMoreInfluence"); },
   },
   pure_pct: {
-    label: "Proportional",
+    get label() { return i18n.t("uiGovernanceWeights.proportional"); },
     get description() { return i18n.t("uiGovernanceWeights.proportionalVotingPowerDirectlyMirrorsContribution"); },
   },
 } as const;

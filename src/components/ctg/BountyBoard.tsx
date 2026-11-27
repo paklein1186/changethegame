@@ -73,7 +73,7 @@ export function BountyBoard() {
         .insert({ bounty_id: bounty.id, user_id: userId } as any);
       if (error) {
         if (error.code === "23505") {
-          toast({ title: "Already claimed" });
+          toast({ title: t("uiBountyBoard.alreadyClaimed") });
         } else {
           throw error;
         }
@@ -125,7 +125,7 @@ export function BountyBoard() {
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <Pin className="h-4 w-4 text-amber-600" />
-        <h3 className="font-display text-sm font-semibold">Bounty Board</h3>
+        <h3 className="font-display text-sm font-semibold">{t("uiBountyBoard.bountyBoard")}</h3>
         <Badge variant="secondary" className="text-[10px]">{bounties.length} active</Badge>
       </div>
 
@@ -172,9 +172,9 @@ export function BountyBoard() {
 
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" /> Ends {endsIn}
+                  <Clock className="h-3 w-3" /> {t("uiBountyBoard.ends")} {endsIn}
                 </span>
-                <span>{slotsLeft}/{bounty.total_slots} slots left</span>
+                <span>{slotsLeft}/{bounty.total_slots} {t("uiBountyBoard.slotsLeft")}</span>
               </div>
 
               <Progress value={slotPercent} className="h-1.5" />
@@ -183,7 +183,7 @@ export function BountyBoard() {
                 {isClaimed ? (
                   <Badge variant="outline" className="text-xs text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700">
                     <Check className="h-3 w-3 mr-1" />
-                    {claim?.verified ? "Verified ✓" : t("uiBountyBoard.claimedPendingVerification")}
+                    {claim?.verified ? t("uiBountyBoard.verified") : t("uiBountyBoard.claimedPendingVerification")}
                   </Badge>
                 ) : (
                   <Button
@@ -197,7 +197,7 @@ export function BountyBoard() {
                     ) : (
                       <Sprout className="h-3.5 w-3.5" />
                     )}
-                    Claim Bounty
+                    {t("uiBountyBoard.claimBounty")}
                   </Button>
                 )}
               </div>

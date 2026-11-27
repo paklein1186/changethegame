@@ -296,7 +296,7 @@ export default function RitualCallRoom() {
       } as any);
     }
     qc.invalidateQueries({ queryKey: ["ritual-call-attendees", occurrenceId] });
-    toast({ title: status === "attending" ? t("uiRitualCallRoom.youReAttending") : "Declined" });
+    toast({ title: status === "attending" ? t("uiRitualCallRoom.youReAttending") : t("uiRitualCallRoom.declined") });
   };
 
   // Jitsi room name
@@ -364,12 +364,12 @@ export default function RitualCallRoom() {
       {/* Breadcrumb bar */}
       <div className="border-b border-border bg-card px-4 py-2 flex items-center gap-2 text-sm">
         <Link to={backUrl} className="text-muted-foreground hover:text-foreground transition-colors">
-          {ritual?.guild_id ? t("uiRitualCallRoom.guild") : ritual?.quest_id ? t("uiRitualCallRoom.quest") : "Work"}
+          {ritual?.guild_id ? t("uiRitualCallRoom.guild") : ritual?.quest_id ? t("uiRitualCallRoom.quest") : t("uiRitualCallRoom.work")}
         </Link>
         <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="text-muted-foreground">Rituals</span>
+        <span className="text-muted-foreground">{t("uiRitualCallRoom.rituals")}</span>
         <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="font-medium text-foreground">{ritual?.title || "Call"}</span>
+        <span className="font-medium text-foreground">{ritual?.title || t("uiRitualCallRoom.call")}</span>
         <div className="ml-auto flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
@@ -396,7 +396,7 @@ export default function RitualCallRoom() {
           </Popover>
           <Badge variant="default" className="text-xs">
             <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />
-            {occurrence.status === "scheduled" ? "Scheduled" : occurrence.status}
+            {occurrence.status === "scheduled" ? t("uiRitualCallRoom.scheduled") : occurrence.status}
           </Badge>
           <Button variant="ghost" size="sm" asChild>
             <Link to={backUrl}><ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t("uiRitualCallRoom.back")}</Link>
@@ -422,7 +422,7 @@ export default function RitualCallRoom() {
 
             {/* Session header */}
             <div>
-              <h2 className="font-display text-lg font-semibold">{ritual?.title || "Ritual"}</h2>
+              <h2 className="font-display text-lg font-semibold">{ritual?.title || t("uiRitualCallRoom.ritual")}</h2>
               {config && (
                 <p className="text-sm text-muted-foreground">{config.label} — {config.subtitle}</p>
               )}
@@ -431,13 +431,13 @@ export default function RitualCallRoom() {
             {/* Date/time */}
             <div className="space-y-1">
               <h3 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" /> Schedule
+                <Clock className="h-3.5 w-3.5" /> {t("uiRitualCallRoom.schedule")}
               </h3>
               <p className="text-sm">
                 {format(new Date(occurrence.scheduled_at), "EEEE, MMMM d · HH:mm")}
               </p>
               {ritual?.duration_minutes && (
-                <p className="text-xs text-muted-foreground">{ritual.duration_minutes} min session</p>
+                <p className="text-xs text-muted-foreground">{ritual.duration_minutes} {t("uiRitualCallRoom.minSession")}</p>
               )}
             </div>
 
@@ -467,7 +467,7 @@ export default function RitualCallRoom() {
                   onClick={() => handleRsvp("attending")}
                 >
                   <ThumbsUp className="h-3.5 w-3.5 mr-1" />
-                  {myRsvp?.status === "attending" ? "Attending" : "Attend"}
+                  {myRsvp?.status === "attending" ? t("uiRitualCallRoom.attending") : t("uiRitualCallRoom.attend")}
                 </Button>
                 <Button
                   size="sm"
@@ -476,7 +476,7 @@ export default function RitualCallRoom() {
                   onClick={() => handleRsvp("declined")}
                 >
                   <ThumbsDown className="h-3.5 w-3.5 mr-1" />
-                  {myRsvp?.status === "declined" ? "Declined" : "Decline"}
+                  {myRsvp?.status === "declined" ? t("uiRitualCallRoom.declined") : t("uiRitualCallRoom.decline")}
                 </Button>
               </div>
             </div>
@@ -484,7 +484,7 @@ export default function RitualCallRoom() {
             {/* Participants */}
             <div className="space-y-2">
               <h3 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-1">
-                <Users className="h-3.5 w-3.5" /> Participants ({attending.length})
+                <Users className="h-3.5 w-3.5" /> {t("uiRitualCallRoom.participants")}{attending.length})
               </h3>
               <div className="space-y-1">
                 {attending.map((a: any) => {
@@ -514,7 +514,7 @@ export default function RitualCallRoom() {
             {ritual?.program_segments && Array.isArray(ritual.program_segments) && (ritual.program_segments as any[]).length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" /> Program
+                  <Calendar className="h-3.5 w-3.5" /> {t("uiRitualCallRoom.program")}
                 </h3>
                 <div className="space-y-1">
                   {(ritual.program_segments as any[]).map((seg: any, i: number) => (
@@ -531,10 +531,10 @@ export default function RitualCallRoom() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-1">
-                  <FileText className="h-3.5 w-3.5" /> Session Notes
+                  <FileText className="h-3.5 w-3.5" /> {t("uiRitualCallRoom.sessionNotes")}
                 </h3>
                 <span className="text-[10px] text-muted-foreground">
-                  {notesSaved ? "✓ Saved" : "Saving…"}
+                  {notesSaved ? t("uiRitualCallRoom.saved") : t("uiRitualCallRoom.saving")}
                 </span>
               </div>
               <Textarea

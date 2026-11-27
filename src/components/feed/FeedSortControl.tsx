@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Button } from "@/components/ui/button";
 import { ArrowDownWideNarrow, Flame, Sparkles } from "lucide-react";
 
@@ -9,9 +10,9 @@ interface FeedSortControlProps {
 }
 
 const modes: { key: FeedSortMode; label: string; icon: React.ReactNode }[] = [
-  { key: "recent", label: "Most recent", icon: <ArrowDownWideNarrow className="h-3.5 w-3.5" /> },
-  { key: "popular", label: "Most popular", icon: <Flame className="h-3.5 w-3.5" /> },
-  { key: "relevant", label: "Most relevant", icon: <Sparkles className="h-3.5 w-3.5" /> },
+  { key: "recent", get label() { return i18n.t("uiFeedSortControl.mostRecent"); }, icon: <ArrowDownWideNarrow className="h-3.5 w-3.5" /> },
+  { key: "popular", get label() { return i18n.t("uiFeedSortControl.mostPopular"); }, icon: <Flame className="h-3.5 w-3.5" /> },
+  { key: "relevant", get label() { return i18n.t("uiFeedSortControl.mostRelevant"); }, icon: <Sparkles className="h-3.5 w-3.5" /> },
 ];
 
 export function FeedSortControl({ value, onChange }: FeedSortControlProps) {

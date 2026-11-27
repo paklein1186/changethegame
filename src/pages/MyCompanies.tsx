@@ -79,7 +79,7 @@ export default function MyCompanies({ bare }: { bare?: boolean }) {
     setLogoUrl(undefined); setBannerUrl(undefined);
     setWebsiteUrl(""); setTwitterUrl(""); setLinkedinUrl(""); setInstagramUrl("");
     qc.invalidateQueries({ queryKey: ["my-companies"] });
-    toast({ title: "Traditional Organization created!" });
+    toast({ title: t("uiMyCompanies.traditionalOrganizationCreated") });
     navigate(`/companies/${newCompany.id}`);
   };
 
@@ -108,26 +108,26 @@ export default function MyCompanies({ bare }: { bare?: boolean }) {
                 <label className="text-sm font-medium mb-1 block">{t("uiMyCompanies.name")}</label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiMyCompanies.organizationName")} maxLength={80} />
               </div>
-              <ImageUpload label="Logo" currentImageUrl={logoUrl} onChange={setLogoUrl} aspectRatio="1/1" description="Square logo, 256×256 recommended" />
-              <ImageUpload label="Banner (optional)" currentImageUrl={bannerUrl} onChange={setBannerUrl} aspectRatio="16/9" description="Wide banner, 1200×400 recommended" />
+              <ImageUpload label={t("uiMyCompanies.logo")} currentImageUrl={logoUrl} onChange={setLogoUrl} aspectRatio="1/1" description={t("uiMyCompanies.squareLogo256256Recommended")} />
+              <ImageUpload label={t("uiMyCompanies.bannerOptional")} currentImageUrl={bannerUrl} onChange={setBannerUrl} aspectRatio="16/9" description={t("uiMyCompanies.wideBanner1200400Recommended")} />
               <div>
                 <label className="text-sm font-medium mb-1 block">{t("uiMyCompanies.description")}</label>
                 <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("uiMyCompanies.whatDoesThisOrganizationDo")} maxLength={500} className="resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Sector</label>
-                  <Input value={sector} onChange={(e) => setSector(e.target.value)} placeholder="e.g. Sustainability" maxLength={50} />
+                  <label className="text-sm font-medium mb-1 block">{t("uiMyCompanies.sector")}</label>
+                  <Input value={sector} onChange={(e) => setSector(e.target.value)} placeholder={t("uiMyCompanies.eGSustainability")} maxLength={50} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Size</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiMyCompanies.size")}</label>
                   <Select value={size} onValueChange={(v) => setSize(v as CompanySize)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={CompanySize.MICRO}>Micro</SelectItem>
+                      <SelectItem value={CompanySize.MICRO}>{t("uiMyCompanies.micro")}</SelectItem>
                       <SelectItem value={CompanySize.SME}>SME</SelectItem>
-                      <SelectItem value={CompanySize.LARGE}>Large</SelectItem>
-                      <SelectItem value={CompanySize.OTHER}>Other</SelectItem>
+                      <SelectItem value={CompanySize.LARGE}>{t("uiMyCompanies.large")}</SelectItem>
+                      <SelectItem value={CompanySize.OTHER}>{t("uiMyCompanies.other")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

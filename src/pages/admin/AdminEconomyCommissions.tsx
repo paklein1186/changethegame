@@ -78,7 +78,7 @@ export default function AdminEconomyCommissions() {
     }
     qc.invalidateQueries({ queryKey: ["admin-commission-rules"] });
     setSaving(false); setEditOpen(false);
-    toast({ title: editId ? "Rule updated" : "Rule added" });
+    toast({ title: editId ? t("uiAdminEconomyCommissions.ruleUpdated") : t("uiAdminEconomyCommissions.ruleAdded") });
   };
 
   const toggleActive = async (r: CommissionRule) => {
@@ -89,13 +89,13 @@ export default function AdminEconomyCommissions() {
   const deleteRule = async (id: string) => {
     await (supabase.from("commission_rules" as any) as any).delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-commission-rules"] });
-    toast({ title: "Rule deleted" });
+    toast({ title: t("uiAdminEconomyCommissions.ruleDeleted") });
   };
 
   const savePlanDiscount = async (planId: string, discount: number) => {
     await supabase.from("subscription_plans").update({ commission_discount_percentage: discount } as any).eq("id", planId);
     qc.invalidateQueries({ queryKey: ["admin-plans-commission"] });
-    toast({ title: "Plan discount updated" });
+    toast({ title: t("uiAdminEconomyCommissions.planDiscountUpdated") });
   };
 
   // Calculator
@@ -110,13 +110,13 @@ export default function AdminEconomyCommissions() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-          <TrendingDown className="h-6 w-6 text-primary" /> Commission Rules
+          <TrendingDown className="h-6 w-6 text-primary" /> {t("uiAdminEconomyCommissions.commissionRules")}
         </h2>
         <Button onClick={openAdd} size="sm"><Plus className="h-4 w-4 mr-1" /> {t("uiAdminEconomyCommissions.addTier")}</Button>
       </div>
 
       <p className="text-sm text-muted-foreground">
-        {t("uiAdminEconomyCommissions.degressiveCommissionTiersAppliedToMission")} {COMMISSION_FLOOR}% minimum.
+        {t("uiAdminEconomyCommissions.degressiveCommissionTiersAppliedToMission")} {COMMISSION_FLOOR}{t("uiAdminEconomyCommissions.minimum")}
       </p>
 
       {/* Rules table */}
@@ -127,11 +127,11 @@ export default function AdminEconomyCommissions() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="text-left p-3 font-medium">Range (€)</th>
-                <th className="text-left p-3 font-medium">Commission %</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminEconomyCommissions.range")}</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminEconomyCommissions.commission")}</th>
                 <th className="text-left p-3 font-medium">{t("uiAdminEconomyCommissions.description")}</th>
                 <th className="text-center p-3 font-medium">{t("uiAdminEconomyCommissions.active")}</th>
-                <th className="text-right p-3 font-medium">Actions</th>
+                <th className="text-right p-3 font-medium">{t("uiAdminEconomyCommissions.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -156,7 +156,7 @@ export default function AdminEconomyCommissions() {
 
       {/* Plan-based discounts */}
       <Card className="p-5 space-y-4">
-        <h3 className="font-semibold text-sm">Plan-Based Commission Discounts</h3>
+        <h3 className="font-semibold text-sm">{t("uiAdminEconomyCommissions.planBasedCommissionDiscounts")}</h3>
         <p className="text-xs text-muted-foreground">{t("uiAdminEconomyCommissions.eachPlanCanReduceTheBase")}</p>
         <div className="space-y-2">
           {plans.map((p: any) => (
@@ -170,7 +170,7 @@ export default function AdminEconomyCommissions() {
                 max={99}
                 onBlur={(e) => savePlanDiscount(p.id, Number(e.target.value) || 0)}
               />
-              <span className="text-xs text-muted-foreground">% discount</span>
+              <span className="text-xs text-muted-foreground">{t("uiAdminEconomyCommissions.discount")}</span>
             </div>
           ))}
         </div>
@@ -179,7 +179,7 @@ export default function AdminEconomyCommissions() {
       {/* Commission Calculator */}
       <Card className="p-5 space-y-4">
         <h3 className="font-semibold text-sm flex items-center gap-2">
-          <Calculator className="h-4 w-4 text-primary" /> Commission Calculator
+          <Calculator className="h-4 w-4 text-primary" /> {t("uiAdminEconomyCommissions.commissionCalculator")}
         </h3>
         <div className="flex items-center gap-3">
           <div>
@@ -187,37 +187,37 @@ export default function AdminEconomyCommissions() {
             <Input type="number" value={calcAmount} onChange={e => setCalcAmount(e.target.value)} className="w-32" />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground">Plan</label>
+            <label className="text-xs text-muted-foreground">{t("uiAdminEconomyCommissions.plan")}</label>
             <select value={calcPlan} onChange={e => setCalcPlan(e.target.value)} className="rounded-md border border-input bg-background px-3 py-2 text-sm">
               {plans.map((p: any) => <option key={p.code} value={p.code}>{p.name}</option>)}
             </select>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-          <div className="rounded-md bg-muted/50 p-3"><p className="text-xs text-muted-foreground">Base Rate</p><p className="font-bold">{calcResult.baseRate}%</p></div>
-          <div className="rounded-md bg-muted/50 p-3"><p className="text-xs text-muted-foreground">After Plan</p><p className="font-bold">{calcResult.afterPlanDiscount}%</p></div>
-          <div className="rounded-md bg-primary/5 p-3"><p className="text-xs text-muted-foreground">Final Rate</p><p className="font-bold text-primary">{calcResult.finalRate}%</p></div>
-          <div className="rounded-md bg-primary/5 p-3"><p className="text-xs text-muted-foreground">Payout</p><p className="font-bold text-primary">€{calcResult.payoutAmount.toLocaleString()}</p></div>
+          <div className="rounded-md bg-muted/50 p-3"><p className="text-xs text-muted-foreground">{t("uiAdminEconomyCommissions.baseRate")}</p><p className="font-bold">{calcResult.baseRate}%</p></div>
+          <div className="rounded-md bg-muted/50 p-3"><p className="text-xs text-muted-foreground">{t("uiAdminEconomyCommissions.afterPlan")}</p><p className="font-bold">{calcResult.afterPlanDiscount}%</p></div>
+          <div className="rounded-md bg-primary/5 p-3"><p className="text-xs text-muted-foreground">{t("uiAdminEconomyCommissions.finalRate")}</p><p className="font-bold text-primary">{calcResult.finalRate}%</p></div>
+          <div className="rounded-md bg-primary/5 p-3"><p className="text-xs text-muted-foreground">{t("uiAdminEconomyCommissions.payout")}</p><p className="font-bold text-primary">€{calcResult.payoutAmount.toLocaleString()}</p></div>
         </div>
       </Card>
 
       {/* Edit/Add dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>{editId ? t("uiAdminEconomyCommissions.edit") : t("uiAdminEconomyCommissions.add")} Commission Tier</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{editId ? t("uiAdminEconomyCommissions.edit") : t("uiAdminEconomyCommissions.add")} {t("uiAdminEconomyCommissions.commissionTier")}</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div className="grid grid-cols-2 gap-3">
               <div><label className="text-sm font-medium">{t("uiAdminEconomyCommissions.minAmount")}</label><Input type="number" value={editMin} onChange={e => setEditMin(e.target.value)} min={0} /></div>
-              <div><label className="text-sm font-medium">{t("uiAdminEconomyCommissions.maxAmountEmpty")}</label><Input type="number" value={editMax} onChange={e => setEditMax(e.target.value)} min={0} placeholder="Unlimited" /></div>
+              <div><label className="text-sm font-medium">{t("uiAdminEconomyCommissions.maxAmountEmpty")}</label><Input type="number" value={editMax} onChange={e => setEditMax(e.target.value)} min={0} placeholder={t("uiAdminEconomyCommissions.unlimited")} /></div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div><label className="text-sm font-medium">Commission %</label><Input type="number" value={editPct} onChange={e => setEditPct(e.target.value)} min={1} max={100} step={0.5} /></div>
-              <div><label className="text-sm font-medium">Sort Order</label><Input type="number" value={editOrder} onChange={e => setEditOrder(e.target.value)} min={0} /></div>
+              <div><label className="text-sm font-medium">{t("uiAdminEconomyCommissions.commission")}</label><Input type="number" value={editPct} onChange={e => setEditPct(e.target.value)} min={1} max={100} step={0.5} /></div>
+              <div><label className="text-sm font-medium">{t("uiAdminEconomyCommissions.sortOrder")}</label><Input type="number" value={editOrder} onChange={e => setEditOrder(e.target.value)} min={0} /></div>
             </div>
-            <div><label className="text-sm font-medium">{t("uiAdminEconomyCommissions.description")}</label><Input value={editDesc} onChange={e => setEditDesc(e.target.value)} placeholder="e.g. Small missions" /></div>
+            <div><label className="text-sm font-medium">{t("uiAdminEconomyCommissions.description")}</label><Input value={editDesc} onChange={e => setEditDesc(e.target.value)} placeholder={t("uiAdminEconomyCommissions.eGSmallMissions")} /></div>
             <Button onClick={saveRule} disabled={saving} className="w-full">
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />}
-              {editId ? t("uiAdminEconomyCommissions.update") : t("uiAdminEconomyCommissions.create")} Rule
+              {editId ? t("uiAdminEconomyCommissions.update") : t("uiAdminEconomyCommissions.create")} {t("uiAdminEconomyCommissions.rule")}
             </Button>
           </div>
         </DialogContent>

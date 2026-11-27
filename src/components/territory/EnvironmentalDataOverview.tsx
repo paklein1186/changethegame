@@ -24,9 +24,9 @@ interface Props {
 }
 
 const MATCH_LEVEL_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-  STRICT_MATCH: { label: "Strict", color: "bg-blue-500/15 text-blue-600 border-blue-500/30", icon: "🎯" },
-  PERIMETER_MATCH: { label: "Perimeter", color: "bg-amber-500/15 text-amber-600 border-amber-500/30", icon: "📐" },
-  BIOREGIONAL_MATCH: { label: "Bioregional", color: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30", icon: "🌍" },
+  STRICT_MATCH: { get label() { return i18n.t("uiEnvironmentalDataOverview.strict"); }, color: "bg-blue-500/15 text-blue-600 border-blue-500/30", icon: "🎯" },
+  PERIMETER_MATCH: { get label() { return i18n.t("uiEnvironmentalDataOverview.perimeter"); }, color: "bg-amber-500/15 text-amber-600 border-amber-500/30", icon: "📐" },
+  BIOREGIONAL_MATCH: { get label() { return i18n.t("uiEnvironmentalDataOverview.bioregional"); }, color: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30", icon: "🌍" },
 };
 
 const DATASET_TYPE_ICONS: Record<string, typeof TreePine> = {
@@ -37,16 +37,16 @@ const DATASET_TYPE_ICONS: Record<string, typeof TreePine> = {
 };
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
-  ok: { label: "Live", className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
-  unavailable: { label: "Unavailable", className: "bg-destructive/15 text-destructive border-destructive/30" },
+  ok: { get label() { return i18n.t("uiEnvironmentalDataOverview.live"); }, className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
+  unavailable: { get label() { return i18n.t("uiEnvironmentalDataOverview.unavailable"); }, className: "bg-destructive/15 text-destructive border-destructive/30" },
   no_data: { get label() { return i18n.t("uiEnvironmentalDataOverview.noData"); }, className: "bg-muted text-muted-foreground border-border" },
 };
 
 const INDICATOR_LABELS: Record<string, { label: string; unit: string; icon: typeof TreePine }> = {
-  forest_cover: { label: "Forest Cover", unit: "%", icon: TreePine },
-  carbon_stock: { label: "Carbon Stock", unit: "tC/ha", icon: Layers },
-  forest_change_rate: { label: "Change Rate", unit: "%/yr", icon: Thermometer },
-  disturbances_index: { label: "Disturbances", unit: "idx", icon: Droplets },
+  forest_cover: { get label() { return i18n.t("uiEnvironmentalDataOverview.forestCover"); }, unit: "%", icon: TreePine },
+  carbon_stock: { get label() { return i18n.t("uiEnvironmentalDataOverview.carbonStock"); }, unit: "tC/ha", icon: Layers },
+  forest_change_rate: { get label() { return i18n.t("uiEnvironmentalDataOverview.changeRate"); }, unit: "%/yr", icon: Thermometer },
+  disturbances_index: { get label() { return i18n.t("uiEnvironmentalDataOverview.disturbances"); }, unit: "idx", icon: Droplets },
 };
 
 export function EnvironmentalDataOverview({ territoryId, territoryName }: Props) {
@@ -66,7 +66,7 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
     try {
       await matchMutation.mutateAsync(territoryId);
       await refreshMutation.mutateAsync(territoryId);
-      toast({ title: "Environmental data refreshed!" });
+      toast({ title: t("uiEnvironmentalDataOverview.environmentalDataRefreshed") });
     } catch {
       toast({ title: t("uiEnvironmentalDataOverview.failedToRefreshDatasets"), variant: "destructive" });
     }
@@ -92,7 +92,7 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
               {t("uiEnvironmentalDataOverview.environmentalDataOverview")}
             </h3>
             <p className="text-[11px] text-muted-foreground">
-              {matches?.length ?? 0} datasets linked · Matching: {config.label}
+              {matches?.length ?? 0} {t("uiEnvironmentalDataOverview.datasetsLinkedMatching")} {config.label}
               {indicators?.eco_region && ` · Eco: ${indicators.eco_region.eco_region_name}`}
             </p>
           </div>
@@ -101,7 +101,7 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
 
         <Button size="sm" variant="outline" onClick={handleRefresh} disabled={isRefreshing} className="text-xs">
           <RefreshCw className={cn("h-3.5 w-3.5 mr-1", isRefreshing && "animate-spin")} />
-          Refresh Data
+          {t("uiEnvironmentalDataOverview.refreshData")}
         </Button>
       </div>
 
@@ -110,11 +110,11 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
           {/* Badges */}
           <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="outline" className={cn("text-[10px] gap-1", config.color)}>
-              {config.icon} {config.label} Match
+              {config.icon} {config.label} {t("uiEnvironmentalDataOverview.match")}
             </Badge>
             {settings?.granularity && (
               <Badge variant="secondary" className="text-[10px]">
-                Granularity: {settings.granularity.replace(/_/g, " ")}
+                {t("uiEnvironmentalDataOverview.granularity")} {settings.granularity.replace(/_/g, " ")}
               </Badge>
             )}
             {indicators?.eco_region && (
@@ -209,7 +209,7 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
               </p>
               <Button size="sm" variant="outline" className="mt-2 text-xs" onClick={handleRefresh} disabled={isRefreshing}>
                 <RefreshCw className={cn("h-3 w-3 mr-1", isRefreshing && "animate-spin")} />
-                Fetch Indicators
+                {t("uiEnvironmentalDataOverview.fetchIndicators")}
               </Button>
             </div>
           ) : (

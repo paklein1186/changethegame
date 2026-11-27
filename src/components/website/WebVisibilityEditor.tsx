@@ -14,25 +14,25 @@ import { toast } from "sonner";
 
 const VISIBILITY_OPTIONS = [
   { value: "private", get label() { return i18n.t("uiWebVisibilityEditor.private"); }, get desc() { return i18n.t("uiWebVisibilityEditor.notVisibleOnAnyPublicWebsite"); } },
-  { value: "unlisted", label: "Unlisted", get desc() { return i18n.t("uiWebVisibilityEditor.accessibleViaDirectLinkOnly"); } },
+  { value: "unlisted", get label() { return i18n.t("uiWebVisibilityEditor.unlisted"); }, get desc() { return i18n.t("uiWebVisibilityEditor.accessibleViaDirectLinkOnly"); } },
   { value: "public", get label() { return i18n.t("uiWebVisibilityEditor.public"); }, get desc() { return i18n.t("uiWebVisibilityEditor.visibleOnPublicWebsites"); } },
 ] as const;
 
 const WEB_SCOPES = [
-  { value: "personal_site", label: "Personal site", desc: "Individual user websites" },
+  { value: "personal_site", get label() { return i18n.t("uiWebVisibilityEditor.personalSite"); }, get desc() { return i18n.t("uiWebVisibilityEditor.individualUserWebsites"); } },
   { value: "guild_site", get label() { return i18n.t("uiWebVisibilityEditor.guildSite"); }, get desc() { return i18n.t("uiWebVisibilityEditor.guildOrganisationWebsites"); } },
-  { value: "territory_site", get label() { return i18n.t("uiWebVisibilityEditor.territorySite"); }, desc: "Territorial entity websites" },
-  { value: "program_site", label: "Program site", get desc() { return i18n.t("uiWebVisibilityEditor.programLevelWebsitesLibraErasmus"); } },
+  { value: "territory_site", get label() { return i18n.t("uiWebVisibilityEditor.territorySite"); }, get desc() { return i18n.t("uiWebVisibilityEditor.territorialEntityWebsites"); } },
+  { value: "program_site", get label() { return i18n.t("uiWebVisibilityEditor.programSite"); }, get desc() { return i18n.t("uiWebVisibilityEditor.programLevelWebsitesLibraErasmus"); } },
 ] as const;
 
 const PLACEMENT_TAGS = [
-  { value: "flagship", label: "Flagship", get desc() { return i18n.t("uiWebVisibilityEditor.top35ItemsOnHome"); } },
-  { value: "portfolio", label: "Portfolio", get desc() { return i18n.t("uiWebVisibilityEditor.pastWorkToShowcaseOnProjects"); } },
-  { value: "ongoing", label: "Ongoing", get desc() { return i18n.t("uiWebVisibilityEditor.currentlyActiveWork"); } },
-  { value: "secondary", label: "Secondary", get desc() { return i18n.t("uiWebVisibilityEditor.showOnListingPagesNotFirst"); } },
-  { value: "archived", label: "Archived", get desc() { return i18n.t("uiWebVisibilityEditor.historicalHiddenByDefault"); } },
-  { value: "community", label: "Community", get desc() { return i18n.t("uiWebVisibilityEditor.showOnCommonsCommunitySections"); } },
-  { value: "program", label: "Program", get desc() { return i18n.t("uiWebVisibilityEditor.partOfANamedProgram"); } },
+  { value: "flagship", get label() { return i18n.t("uiWebVisibilityEditor.flagship"); }, get desc() { return i18n.t("uiWebVisibilityEditor.top35ItemsOnHome"); } },
+  { value: "portfolio", get label() { return i18n.t("uiWebVisibilityEditor.portfolio"); }, get desc() { return i18n.t("uiWebVisibilityEditor.pastWorkToShowcaseOnProjects"); } },
+  { value: "ongoing", get label() { return i18n.t("uiWebVisibilityEditor.ongoing"); }, get desc() { return i18n.t("uiWebVisibilityEditor.currentlyActiveWork"); } },
+  { value: "secondary", get label() { return i18n.t("uiWebVisibilityEditor.secondary"); }, get desc() { return i18n.t("uiWebVisibilityEditor.showOnListingPagesNotFirst"); } },
+  { value: "archived", get label() { return i18n.t("uiWebVisibilityEditor.archived"); }, get desc() { return i18n.t("uiWebVisibilityEditor.historicalHiddenByDefault"); } },
+  { value: "community", get label() { return i18n.t("uiWebVisibilityEditor.community"); }, get desc() { return i18n.t("uiWebVisibilityEditor.showOnCommonsCommunitySections"); } },
+  { value: "program", get label() { return i18n.t("uiWebVisibilityEditor.program"); }, get desc() { return i18n.t("uiWebVisibilityEditor.partOfANamedProgram"); } },
 ] as const;
 
 const SCOPE_VALUES = WEB_SCOPES.map(s => s.value);
@@ -136,7 +136,7 @@ export function WebVisibilityEditor({
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Web visibility saved");
+      toast.success(t("uiWebVisibilityEditor.webVisibilitySaved"));
       onSaved?.();
     }
   };
@@ -149,7 +149,7 @@ export function WebVisibilityEditor({
     <div className="rounded-xl border border-border bg-card p-5 space-y-5">
       <div>
         <h3 className="font-display font-semibold flex items-center gap-2 text-base">
-          <Globe className="h-4 w-4 text-primary" /> Web Visibility & Tags
+          <Globe className="h-4 w-4 text-primary" /> {t("uiWebVisibilityEditor.webVisibilityTags")}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
           {t("uiWebVisibilityEditor.controlHowThisItemAppearsOn")}
@@ -217,7 +217,7 @@ export function WebVisibilityEditor({
       {/* Web Scopes */}
       <div className="space-y-2">
         <Label className="flex items-center gap-1.5 text-sm font-medium">
-          <Globe className="h-3.5 w-3.5" /> Web Scopes
+          <Globe className="h-3.5 w-3.5" /> {t("uiWebVisibilityEditor.webScopes")}
         </Label>
         <p className="text-xs text-muted-foreground">
           {t("uiWebVisibilityEditor.whoShouldBeAllowedToShow")}
@@ -252,7 +252,7 @@ export function WebVisibilityEditor({
       {/* Web Tags */}
       <div className="space-y-2">
         <Label className="flex items-center gap-1.5 text-sm font-medium">
-          <Tag className="h-3.5 w-3.5" /> Web Tags
+          <Tag className="h-3.5 w-3.5" /> {t("uiWebVisibilityEditor.webTags")}
         </Label>
         <p className="text-xs text-muted-foreground">
           {t("uiWebVisibilityEditor.howShouldThisItemBeUsed")}
@@ -287,13 +287,13 @@ export function WebVisibilityEditor({
       {/* Featured order */}
       {tags.includes("flagship") && (
         <div className="space-y-1">
-          <Label className="text-sm font-medium">Featured Order</Label>
+          <Label className="text-sm font-medium">{t("uiWebVisibilityEditor.featuredOrder")}</Label>
           <Input
             type="number"
             value={featuredOrder ?? ""}
             onChange={e => setFeaturedOrder(e.target.value ? parseInt(e.target.value) : null)}
             className="w-32"
-            placeholder="Auto"
+            placeholder={t("uiWebVisibilityEditor.auto")}
             min={0}
           />
           <p className="text-xs text-muted-foreground">{t("uiWebVisibilityEditor.lowerNumbersAppearFirstLeaveEmpty")}</p>
@@ -302,7 +302,7 @@ export function WebVisibilityEditor({
 
       <Button variant="outline" size="sm" onClick={save} disabled={saving}>
         <Save className="h-3.5 w-3.5 mr-1" />
-        {saving ? "Saving…" : t("uiWebVisibilityEditor.saveWebSettings")}
+        {saving ? t("uiWebVisibilityEditor.saving") : t("uiWebVisibilityEditor.saveWebSettings")}
       </Button>
     </div>
   );

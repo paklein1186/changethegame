@@ -121,10 +121,10 @@ export function CreditTransfersMonitor() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">{t("uiCreditTransfersMonitor.allTypes")}</SelectItem>
-              <SelectItem value="GIFT_SENT">Transfers sent</SelectItem>
-              <SelectItem value="GIFT_RECEIVED">Transfers received</SelectItem>
-              <SelectItem value="PURCHASE">Purchases</SelectItem>
-              <SelectItem value="DEMURRAGE_FADE">Demurrage</SelectItem>
+              <SelectItem value="GIFT_SENT">{t("uiCreditTransfersMonitor.transfersSent")}</SelectItem>
+              <SelectItem value="GIFT_RECEIVED">{t("uiCreditTransfersMonitor.transfersReceived")}</SelectItem>
+              <SelectItem value="PURCHASE">{t("uiCreditTransfersMonitor.purchases")}</SelectItem>
+              <SelectItem value="DEMURRAGE_FADE">{t("uiCreditTransfersMonitor.demurrage")}</SelectItem>
               <SelectItem value="INITIAL_GRANT">{t("uiCreditTransfersMonitor.welcomeBonus")}</SelectItem>
               <SelectItem value="QUEST_REWARD">{t("uiCreditTransfersMonitor.questRewards")}</SelectItem>
               <SelectItem value="ADMIN_GRANT">{t("uiCreditTransfersMonitor.adminGrants")}</SelectItem>
@@ -153,7 +153,7 @@ export function CreditTransfersMonitor() {
           <CardContent className="p-4 flex flex-col items-center text-center gap-1">
             <ArrowRightLeft className="h-5 w-5 text-amber-500" />
             <p className="text-xl font-bold">{loadingTx ? "…" : recentTx.length}</p>
-            <p className="text-[10px] text-muted-foreground">Recent transactions</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiCreditTransfersMonitor.recentTransactions")}</p>
           </CardContent>
         </Card>
       </div>
@@ -164,7 +164,7 @@ export function CreditTransfersMonitor() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2">
-              <User className="h-4 w-4" /> User Balances
+              <User className="h-4 w-4" /> {t("uiCreditTransfersMonitor.userBalances")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -179,8 +179,8 @@ export function CreditTransfersMonitor() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/50 sticky top-0">
-                      <th className="text-left p-3 font-medium">User</th>
-                      <th className="text-right p-3 font-medium">Balance</th>
+                      <th className="text-left p-3 font-medium">{t("uiCreditTransfersMonitor.user")}</th>
+                      <th className="text-right p-3 font-medium">{t("uiCreditTransfersMonitor.balance")}</th>
                     </tr>
                   </thead>
                   <tbody>

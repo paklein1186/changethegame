@@ -51,8 +51,8 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
         <Tabs defaultValue="overview" className="mt-2">
           <TabsList className="w-full grid grid-cols-4">
             <TabsTrigger value="overview" className="text-xs">{t("uiXpLadderModal.overview")}</TabsTrigger>
-            <TabsTrigger value="levels" className="text-xs">Levels</TabsTrigger>
-            <TabsTrigger value="governance" className="text-xs">Governance</TabsTrigger>
+            <TabsTrigger value="levels" className="text-xs">{t("uiXpLadderModal.levels")}</TabsTrigger>
+            <TabsTrigger value="governance" className="text-xs">{t("uiXpLadderModal.governance")}</TabsTrigger>
             <TabsTrigger value="how" className="text-xs">{t("uiXpLadderModal.howXpWorks")}</TabsTrigger>
           </TabsList>
 
@@ -62,9 +62,9 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
               {t("uiXpLadderModal.xpIsYour")} <strong className="text-foreground">{t("uiXpLadderModal.reputationOnThePlatform")}</strong> {t("uiXpLadderModal.aPermanentCumulativeRecordOfYour")}
             </p>
             <div className="rounded-lg border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/30 p-3 text-xs text-muted-foreground space-y-1">
-              <p><strong className="text-foreground">{t("uiXpLadderModal.xp")}</strong> — permanent · individual · non-transferable · unlocks governance</p>
-              <p><strong className="text-foreground">🌱 $CTG</strong> — circulatory · collective · transferable · fades 1%/month</p>
-              <p className="text-[10px] pt-1 border-t border-border">{t("uiXpLadderModal.xpTracks")} <em>{t("uiXpLadderModal.whoYouAre")}</em>. $CTG tracks <em>{t("uiXpLadderModal.whatYouProduceForTheCommons")}</em>.</p>
+              <p><strong className="text-foreground">{t("uiXpLadderModal.xp")}</strong> {t("uiXpLadderModal.permanentIndividualNonTransferableUnlocksGovernance")}</p>
+              <p><strong className="text-foreground">🌱 $CTG</strong> {t("uiXpLadderModal.circulatoryCollectiveTransferableFades1Month")}</p>
+              <p className="text-[10px] pt-1 border-t border-border">{t("uiXpLadderModal.xpTracks")} <em>{t("uiXpLadderModal.whoYouAre")}</em>{t("uiXpLadderModal.ctgTracks")} <em>{t("uiXpLadderModal.whatYouProduceForTheCommons")}</em>.</p>
             </div>
 
             {currentLevel != null && currentXp != null && (
@@ -154,7 +154,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                       {GOVERNANCE_BODIES.map(b => (
                         <Badge key={b.name} variant="outline" className="text-[10px] bg-primary/5">
                           <CheckCircle2 className="h-2.5 w-2.5 mr-1 text-primary" />
-                          {b.name} Eligible
+                          {b.name} {t("uiXpLadderModal.eligible")}
                         </Badge>
                       ))}
                     </div>
@@ -163,11 +163,11 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
 
                 {/* Rights by level phase */}
                 {[
-                  { title: "🌱 Emergence (Lv 1–3)", levels: [1, 2, 3] },
-                  { title: "🌿 Rooting (Lv 4–6)", levels: [4, 5, 6] },
-                  { title: "🌼 Collaboration (Lv 7–9)", levels: [7, 8, 9] },
-                  { title: "🌊 Structuring (Lv 10–12)", levels: [10, 11, 12] },
-                  { title: "🏛 Stewardship (Lv 13–15)", levels: [13, 14, 15] },
+                  { title: t("uiXpLadderModal.emergenceLv13"), levels: [1, 2, 3] },
+                  { title: t("uiXpLadderModal.rootingLv46"), levels: [4, 5, 6] },
+                  { title: t("uiXpLadderModal.collaborationLv79"), levels: [7, 8, 9] },
+                  { title: t("uiXpLadderModal.structuringLv1012"), levels: [10, 11, 12] },
+                  { title: t("uiXpLadderModal.stewardshipLv1315"), levels: [13, 14, 15] },
                 ].map(phase => {
                   const rights = GOVERNANCE_RIGHTS.filter(r => phase.levels.includes(r.minLevel));
                   if (!rights.length) return null;
@@ -198,7 +198,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
 
                 {/* Voting thresholds */}
                 <div>
-                  <p className="text-xs font-semibold mb-1.5">🗳 Voting Thresholds</p>
+                  <p className="text-xs font-semibold mb-1.5">{t("uiXpLadderModal.votingThresholds")}</p>
                   <div className="grid grid-cols-2 gap-2">
                     {Object.entries(VOTING_THRESHOLDS).map(([sphere, minLvl]) => (
                       <div key={sphere} className="flex items-center gap-2 text-[10px]">
@@ -216,7 +216,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
 
                 {/* Anti-centralization */}
                 <div className="rounded-xl border border-border bg-muted/30 p-3">
-                  <p className="text-xs font-semibold mb-1">🔒 Anti-Centralization Safeguards</p>
+                  <p className="text-xs font-semibold mb-1">{t("uiXpLadderModal.antiCentralizationSafeguards")}</p>
                   <ul className="text-[10px] text-muted-foreground space-y-0.5 list-disc list-inside">
                     <li>{t("uiXpLadderModal.noUserCanHoldMoreThan")}</li>
                     <li>{t("uiXpLadderModal.level15ActionsRequireCoSignature")}</li>
@@ -289,9 +289,9 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                 <div>
                   <h4 className="text-sm font-semibold mb-2">{t("uiXpLadderModal.xpIsNotEarnedThrough")}</h4>
                   <ul className="text-sm text-muted-foreground space-y-1.5 list-disc list-inside">
-                    <li>Payments</li>
-                    <li>Donations</li>
-                    <li>Shareholding</li>
+                    <li>{t("uiXpLadderModal.payments")}</li>
+                    <li>{t("uiXpLadderModal.donations")}</li>
+                    <li>{t("uiXpLadderModal.shareholding")}</li>
                     <li>{t("uiXpLadderModal.buyingCredits")}</li>
                     <li>{t("uiXpLadderModal.purchasingAnythingNeitherXpNorCtg")}</li>
                     <li>{t("uiXpLadderModal.ctgFadingDemurrageDoesNotReduce")}</li>
@@ -300,7 +300,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
 
                 {/* Cross-Territory Multipliers */}
                 <div>
-                  <h4 className="text-sm font-semibold mb-2">🌍 Territorial Impact Multipliers</h4>
+                  <h4 className="text-sm font-semibold mb-2">{t("uiXpLadderModal.territorialImpactMultipliers")}</h4>
                   <p className="text-xs text-muted-foreground mb-2">
                     {t("uiXpLadderModal.collaborationAcrossTerritoriesIncreasesYourXp")}
                   </p>
@@ -308,17 +308,17 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="border-b border-border bg-muted/30">
-                          <th className="text-left px-3 py-1.5 font-medium">Collaboration Type</th>
-                          <th className="text-right px-3 py-1.5 font-medium">Multiplier</th>
+                          <th className="text-left px-3 py-1.5 font-medium">{t("uiXpLadderModal.collaborationType")}</th>
+                          <th className="text-right px-3 py-1.5 font-medium">{t("uiXpLadderModal.multiplier")}</th>
                         </tr>
                       </thead>
                       <tbody className="text-muted-foreground">
                         <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.sameGuild")}</td><td className="text-right px-3 py-1.5">×1.0</td></tr>
                         <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.differentGuildSameTerritory")}</td><td className="text-right px-3 py-1.5">×1.1</td></tr>
                         <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.differentTerritorySameRegion")}</td><td className="text-right px-3 py-1.5">×1.2</td></tr>
-                        <tr className="border-b border-border"><td className="px-3 py-1.5">Different Region (same country)</td><td className="text-right px-3 py-1.5">×1.3</td></tr>
-                        <tr className="border-b border-border"><td className="px-3 py-1.5">Different Country</td><td className="text-right px-3 py-1.5">×1.5</td></tr>
-                        <tr><td className="px-3 py-1.5">Multi-country (3+)</td><td className="text-right px-3 py-1.5">×1.8</td></tr>
+                        <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.differentRegionSameCountry")}</td><td className="text-right px-3 py-1.5">×1.3</td></tr>
+                        <tr className="border-b border-border"><td className="px-3 py-1.5">{t("uiXpLadderModal.differentCountry")}</td><td className="text-right px-3 py-1.5">×1.5</td></tr>
+                        <tr><td className="px-3 py-1.5">{t("uiXpLadderModal.multiCountry3")}</td><td className="text-right px-3 py-1.5">×1.8</td></tr>
                       </tbody>
                     </table>
                   </div>
@@ -333,7 +333,7 @@ export function XpLadderModal({ open, onOpenChange, currentLevel, currentXp }: X
                   <div className="grid grid-cols-3 gap-3 text-xs text-muted-foreground">
                     <div className="space-y-0.5">
                       <p className="font-medium text-foreground">{t("uiXpLadderModal.xp")}</p>
-                      <p>Non-monetary reputation · permanent · unlocks governance</p>
+                      <p>{t("uiXpLadderModal.nonMonetaryReputationPermanentUnlocksGovernance")}</p>
                     </div>
                     <div className="space-y-0.5">
                       <p className="font-medium text-foreground">🌱 $CTG</p>

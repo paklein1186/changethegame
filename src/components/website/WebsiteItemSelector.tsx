@@ -53,7 +53,7 @@ export function WebsiteItemSelector({ itemType, ownerType, ownerId, selectedIds,
     <div className="space-y-1.5 max-h-48 overflow-y-auto p-2 bg-muted/50 rounded-md">
       <Label className="text-xs font-medium">{t("uiWebsiteItemSelector.select")} {itemType}s</Label>
       {(!items || items.length === 0) && (
-        <p className="text-xs text-muted-foreground">{t("uiWebsiteItemSelector.no")} {itemType}s found.</p>
+        <p className="text-xs text-muted-foreground">{t("uiWebsiteItemSelector.no")} {itemType}{t("uiWebsiteItemSelector.sFound")}</p>
       )}
       {(items || []).map((item: any) => (
         <label key={item.id} className="flex items-center gap-2 text-sm cursor-pointer py-0.5">

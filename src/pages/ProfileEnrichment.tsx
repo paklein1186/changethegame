@@ -219,7 +219,7 @@ export default function ProfileEnrichment() {
                   {t("uiProfileEnrichment.startEnrichment")} <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
                 <Button variant="ghost" onClick={() => navigate(-1)}>
-                  Maybe later
+                  {t("uiProfileEnrichment.maybeLater")}
                 </Button>
               </div>
             </motion.div>
@@ -362,7 +362,7 @@ export default function ProfileEnrichment() {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <Lightbulb className="h-4 w-4" /> Suggested Headline
+                    <Lightbulb className="h-4 w-4" /> {t("uiProfileEnrichment.suggestedHeadline")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -387,7 +387,7 @@ export default function ProfileEnrichment() {
                       }`}
                     >
                       <span className="text-xs font-medium uppercase text-muted-foreground block mb-1">
-                        {variant === "short" ? "Short (3 lines)" : variant === "medium" ? t("uiProfileEnrichment.mediumAboutSection") : "Narrative (storytelling)"}
+                        {variant === "short" ? t("uiProfileEnrichment.short3Lines") : variant === "medium" ? t("uiProfileEnrichment.mediumAboutSection") : t("uiProfileEnrichment.narrativeStorytelling")}
                       </span>
                       <p className="text-foreground leading-relaxed">{result.bioVariants[variant]}</p>
                     </button>
@@ -452,7 +452,7 @@ export default function ProfileEnrichment() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Building2 className="h-4 w-4" /> Organizations Detected
+                      <Building2 className="h-4 w-4" /> {t("uiProfileEnrichment.organizationsDetected")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
@@ -460,7 +460,7 @@ export default function ProfileEnrichment() {
                       <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
                         <div>
                           <p className="text-sm font-medium">{org.name}</p>
-                          <p className="text-xs text-muted-foreground">{org.role} · {org.type}{org.isCurrent ? " · Current" : ""}</p>
+                          <p className="text-xs text-muted-foreground">{org.role} · {org.type}{org.isCurrent ? ` ${t("uiProfileEnrichment.current")}` : ""}</p>
                         </div>
                         <Button
                           size="sm"
@@ -487,7 +487,7 @@ export default function ProfileEnrichment() {
                     {result.suggestedCompletedQuests.map((q, i) => (
                       <div key={`c-${i}`} className="p-2 rounded-lg bg-muted/50">
                         <div className="flex items-center gap-2 mb-1">
-                          <Badge variant="secondary" className="text-xs">Past</Badge>
+                          <Badge variant="secondary" className="text-xs">{t("uiProfileEnrichment.past")}</Badge>
                           <span className="text-sm font-medium">{q.title}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{q.description}</p>

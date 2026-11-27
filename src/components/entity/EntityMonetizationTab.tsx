@@ -27,9 +27,9 @@ interface Props {
 
 const VALUE_FACTORS = [
   { value: "0.5", get label() { return i18n.t("uiEntityMonetizationTab.open05"); } },
-  { value: "1", label: "Normal (1×)" },
-  { value: "2", label: "High value (2×)" },
-  { value: "3", label: "Premium (3×)" },
+  { value: "1", get label() { return i18n.t("uiEntityMonetizationTab.normal1"); } },
+  { value: "2", get label() { return i18n.t("uiEntityMonetizationTab.highValue2"); } },
+  { value: "3", get label() { return i18n.t("uiEntityMonetizationTab.premium3"); } },
 ];
 
 export default function EntityMonetizationTab({
@@ -82,13 +82,13 @@ export default function EntityMonetizationTab({
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <Bot className="h-4 w-4" /> Agent Actions
+            <Bot className="h-4 w-4" /> {t("uiEntityMonetizationTab.agentActions")}
           </div>
           <p className="text-2xl font-bold">{revenue?.length || 0}</p>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <TrendingUp className="h-4 w-4" /> Value Factor
+            <TrendingUp className="h-4 w-4" /> {t("uiEntityMonetizationTab.valueFactor")}
           </div>
           <p className="text-2xl font-bold">{currentValueFactor}×</p>
         </Card>
@@ -100,7 +100,7 @@ export default function EntityMonetizationTab({
           <h3 className="text-sm font-semibold">{t("uiEntityMonetizationTab.monetizationSettings")}</h3>
 
           <div>
-            <label className="text-xs text-muted-foreground">Data Value Factor</label>
+            <label className="text-xs text-muted-foreground">{t("uiEntityMonetizationTab.dataValueFactor")}</label>
             <Select value={vf} onValueChange={setVf}>
               <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -113,7 +113,7 @@ export default function EntityMonetizationTab({
 
           <div className="flex items-center gap-3">
             <Switch checked={crawling} onCheckedChange={setCrawling} />
-            <span className="text-sm">Allow agent crawling</span>
+            <span className="text-sm">{t("uiEntityMonetizationTab.allowAgentCrawling")}</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -139,7 +139,7 @@ export default function EntityMonetizationTab({
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
-                  <th className="text-left py-2">Agent</th>
+                  <th className="text-left py-2">{t("uiEntityMonetizationTab.agent")}</th>
                   <th className="text-right py-2">{t("uiEntityMonetizationTab.amount")}</th>
                   <th className="text-right py-2">{t("uiEntityMonetizationTab.date")}</th>
                 </tr>

@@ -254,7 +254,7 @@ export function GiveBackSettingsSection() {
 
           {/* Total indicator */}
           <div className="flex items-center justify-between px-3 text-sm">
-            <span className="text-muted-foreground">Total</span>
+            <span className="text-muted-foreground">{t("uiGiveBackSettingsSection.total")}</span>
             <span className={`font-semibold ${totalPercent === 100 ? "text-primary" : "text-destructive"}`}>
               {totalPercent}%
             </span>

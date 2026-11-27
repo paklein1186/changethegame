@@ -90,7 +90,7 @@ export function UserSearchInput({ onSelect, placeholder = "Search by name…", e
                   {user.display_name?.[0]?.toUpperCase() || <User className="h-3 w-3" />}
                 </AvatarFallback>
               </Avatar>
-              <span className="truncate">{user.display_name || "Unnamed user"}</span>
+              <span className="truncate">{user.display_name || t("uiUserSearchInput.unnamedUser")}</span>
             </button>
           ))}
         </div>

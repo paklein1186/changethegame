@@ -153,7 +153,7 @@ export default function CompanyDetail() {
     qc.invalidateQueries({ queryKey: ["services-for-company", id] });
     setSvcOpen(false); setSvcTitle(""); setSvcDesc(""); setSvcDuration("60"); setSvcPrice("0");
     setSvcLocationType(OnlineLocationType.JITSI); setSvcImageUrl(undefined); setSvcDraft(false);
-    toast({ title: "Organization service created" });
+    toast({ title: t("uiCompanyDetail.organizationServiceCreated") });
   };
 
   const openEdit = () => {
@@ -170,7 +170,7 @@ export default function CompanyDetail() {
       logo_url: editLogoUrl || null, banner_url: editBannerUrl || null,
     }).eq("id", company.id);
     qc.invalidateQueries({ queryKey: ["company", id] });
-    setEditOpen(false); toast({ title: "Organization updated" });
+    setEditOpen(false); toast({ title: t("uiCompanyDetail.organizationUpdated") });
   };
 
   return (
@@ -202,7 +202,7 @@ export default function CompanyDetail() {
               <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => {
                 if (!isLoggedIn) { setAuthPromptAction("follow this organization"); setAuthPromptOpen(true); return; }
                 toggleFollow();
-              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? "Unfollow" : t("uiCompanyDetail.follow")}</Button>
+              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? t("uiCompanyDetail.unfollow") : t("uiCompanyDetail.follow")}</Button>
               {!isMember && (
                 isLoggedIn ? (
                   <EntityJoinButton entityType="company" entityId={company.id} joinPolicy="APPROVAL_REQUIRED" applicationQuestions={[]} currentUserId={currentUser.id} onJoined={() => { qc.invalidateQueries({ queryKey: ["company", id] }); qc.invalidateQueries({ queryKey: ["company-members-profiles", id] }); }} />
@@ -237,10 +237,10 @@ export default function CompanyDetail() {
             <div className="space-y-4 mt-2">
               <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.name")}</label><Input value={editName} onChange={e => setEditName(e.target.value)} maxLength={80} /></div>
               <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.description")}</label><Textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
-              <ImageUpload label="Logo" currentImageUrl={editLogoUrl} onChange={setEditLogoUrl} aspectRatio="1/1" description="Square logo" />
-              <ImageUpload label="Banner" currentImageUrl={editBannerUrl} onChange={setEditBannerUrl} aspectRatio="16/9" />
-              <div><label className="text-sm font-medium mb-1 block">Sector</label><Input value={editSector} onChange={e => setEditSector(e.target.value)} maxLength={50} /></div>
-              <div><label className="text-sm font-medium mb-1 block">Website URL</label><Input value={editWebsite} onChange={e => setEditWebsite(e.target.value)} placeholder="https://…" /></div>
+              <ImageUpload label={t("uiCompanyDetail.logo")} currentImageUrl={editLogoUrl} onChange={setEditLogoUrl} aspectRatio="1/1" description={t("uiCompanyDetail.squareLogo")} />
+              <ImageUpload label={t("uiCompanyDetail.banner")} currentImageUrl={editBannerUrl} onChange={setEditBannerUrl} aspectRatio="16/9" />
+              <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.sector")}</label><Input value={editSector} onChange={e => setEditSector(e.target.value)} maxLength={50} /></div>
+              <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.websiteUrl")}</label><Input value={editWebsite} onChange={e => setEditWebsite(e.target.value)} placeholder="https://…" /></div>
               <Button onClick={saveEdit} className="w-full">{t("uiCompanyDetail.saveChanges")}</Button>
             </div>
           </DialogContent>
@@ -252,12 +252,12 @@ export default function CompanyDetail() {
           <TabsTrigger value="overview"><Building2 className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.overview")}</TabsTrigger>
           <TabsTrigger value="members"><Users className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.members")}{members.length})</TabsTrigger>
           <TabsTrigger value="quests"><Compass className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.quests")}{quests.length})</TabsTrigger>
-          <TabsTrigger value="services"><Briefcase className="h-4 w-4 mr-1" /> Services ({services.length})</TabsTrigger>
-          <TabsTrigger value="jobs"><Briefcase className="h-4 w-4 mr-1" /> Jobs ({(companyJobs ?? []).length})</TabsTrigger>
-          <TabsTrigger value="partnerships"><Handshake className="h-4 w-4 mr-1" /> Partners</TabsTrigger>
-          <TabsTrigger value="trust"><Shield className="h-4 w-4 mr-1" /> Trust</TabsTrigger>
-          <TabsTrigger value="wall">Wall</TabsTrigger>
-          {isMember && <TabsTrigger value="ai-chat"><Bot className="h-4 w-4 mr-1" /> Chat & AI</TabsTrigger>}
+          <TabsTrigger value="services"><Briefcase className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.services")}{services.length})</TabsTrigger>
+          <TabsTrigger value="jobs"><Briefcase className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.jobs")}{(companyJobs ?? []).length})</TabsTrigger>
+          <TabsTrigger value="partnerships"><Handshake className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.partners")}</TabsTrigger>
+          <TabsTrigger value="trust"><Shield className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.trust")}</TabsTrigger>
+          <TabsTrigger value="wall">{t("uiCompanyDetail.wall")}</TabsTrigger>
+          {isMember && <TabsTrigger value="ai-chat"><Bot className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.chatAi")}</TabsTrigger>}
         </TabsList>
 
         {/* Overview */}
@@ -278,8 +278,8 @@ export default function CompanyDetail() {
             <h3 className="font-display font-semibold mb-2">{t("uiCompanyDetail.details")}</h3>
             <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Membership policy</span>
-                <Badge variant="secondary" className="capitalize text-xs">approval required</Badge>
+                <span className="text-sm text-muted-foreground">{t("uiCompanyDetail.membershipPolicy")}</span>
+                <Badge variant="secondary" className="capitalize text-xs">{t("uiCompanyDetail.approvalRequired")}</Badge>
               </div>
               {company.sector && (
                 <div className="flex items-center justify-between">
@@ -295,7 +295,7 @@ export default function CompanyDetail() {
               )}
               {contact && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Contact</span>
+                  <span className="text-sm text-muted-foreground">{t("uiCompanyDetail.contact")}</span>
                   <Link to={`/users/${contact.user_id}`} className="flex items-center gap-1.5 text-sm font-medium hover:text-primary transition-colors">
                     <Avatar className="h-5 w-5"><AvatarImage src={contact.avatar_url ?? undefined} /><AvatarFallback className="text-[10px]">{contact.name?.[0]}</AvatarFallback></Avatar>
                     {contact.name}
@@ -307,7 +307,7 @@ export default function CompanyDetail() {
                 if (admins.length === 0) return null;
                 return (
                   <div>
-                    <span className="text-sm text-muted-foreground block mb-1.5">Admins</span>
+                    <span className="text-sm text-muted-foreground block mb-1.5">{t("uiCompanyDetail.admins")}</span>
                     <div className="flex flex-wrap gap-2">
                       {admins.map((m: any) => (
                         <Link key={m.id} to={`/users/${m.user_id}`} className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-xs font-medium hover:border-primary/30 transition-colors">
@@ -320,7 +320,7 @@ export default function CompanyDetail() {
                 );
               })()}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Created</span>
+                <span className="text-sm text-muted-foreground">{t("uiCompanyDetail.created")}</span>
                 <span className="text-sm">{formatDistanceToNow(new Date(company.created_at), { addSuffix: true })}</span>
               </div>
             </div>
@@ -330,7 +330,7 @@ export default function CompanyDetail() {
             <EntityFollowersCount entityId={company.id} entityType="COMPANY" />
             <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{members.length}</p><p className="text-sm text-muted-foreground">{t("uiCompanyDetail.members2")}</p></div>
             <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{quests.length}</p><p className="text-sm text-muted-foreground">{t("uiCompanyDetail.quests2")}</p></div>
-            <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{services.length}</p><p className="text-sm text-muted-foreground">Services</p></div>
+            <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{services.length}</p><p className="text-sm text-muted-foreground">{t("uiCompanyDetail.services2")}</p></div>
           </div>
           <PartnersBlock entityType="COMPANY" entityId={company.id} />
         </TabsContent>
@@ -359,7 +359,7 @@ export default function CompanyDetail() {
               <Link key={m.id} to={`/users/${m.user_id}`} className="flex items-center gap-3 rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-all">
                 <Avatar className="h-10 w-10"><AvatarImage src={m.user?.avatar_url} /><AvatarFallback>{m.user?.name?.[0]}</AvatarFallback></Avatar>
                 <div className="flex-1"><p className="text-sm font-medium">{m.user?.name}</p><p className="text-xs text-muted-foreground capitalize">{m.role}</p></div>
-                <span className="text-xs text-muted-foreground">Joined {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</span>
+                <span className="text-xs text-muted-foreground">{t("uiCompanyDetail.joined")} {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</span>
               </Link>
             ))}
           </div>
@@ -423,21 +423,21 @@ export default function CompanyDetail() {
               <DialogContent>
                 <DialogHeader><DialogTitle>{t("uiCompanyDetail.createOrganizationService2")}</DialogTitle></DialogHeader>
                 <div className="space-y-4 mt-2">
-                  <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.title")}</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder="e.g. Consulting Session" maxLength={120} /></div>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.title")}</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder={t("uiCompanyDetail.eGConsultingSession")} maxLength={120} /></div>
                   <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.description")}</label><Textarea value={svcDesc} onChange={e => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
-                  <ImageUpload label="Image (optional)" currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" />
+                  <ImageUpload label={t("uiCompanyDetail.imageOptional")} currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" />
                   <div className="grid grid-cols-2 gap-3">
-                    <div><label className="text-sm font-medium mb-1 block">Duration (min)</label><Input type="number" value={svcDuration} onChange={e => setSvcDuration(e.target.value)} min={15} max={480} /></div>
-                    <div><label className="text-sm font-medium mb-1 block">Price (€)</label><Input type="number" value={svcPrice} onChange={e => setSvcPrice(e.target.value)} min={0} step={5} /></div>
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.durationMin")}</label><Input type="number" value={svcDuration} onChange={e => setSvcDuration(e.target.value)} min={15} max={480} /></div>
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.price")}</label><Input type="number" value={svcPrice} onChange={e => setSvcPrice(e.target.value)} min={0} step={5} /></div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Location type</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.locationType")}</label>
                     <Select value={svcLocationType} onValueChange={v => setSvcLocationType(v as OnlineLocationType)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value={OnlineLocationType.JITSI}>Jitsi</SelectItem>
-                        <SelectItem value={OnlineLocationType.ZOOM}>Zoom</SelectItem>
-                        <SelectItem value={OnlineLocationType.OTHER}>Other</SelectItem>
+                        <SelectItem value={OnlineLocationType.ZOOM}>{t("uiCompanyDetail.zoom")}</SelectItem>
+                        <SelectItem value={OnlineLocationType.OTHER}>{t("uiCompanyDetail.other")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -449,10 +449,10 @@ export default function CompanyDetail() {
           )}
           <ServicesList services={services} isAdmin={isAdmin} onToggleActive={async (svc: any) => {
             const { error } = await supabase.from("services").update({ is_active: !svc.is_active }).eq("id", svc.id);
-            if (!error) { qc.invalidateQueries({ queryKey: ["services-for-company", id] }); toast({ title: svc.is_active ? "Service paused" : "Service resumed" }); }
+            if (!error) { qc.invalidateQueries({ queryKey: ["services-for-company", id] }); toast({ title: svc.is_active ? t("uiCompanyDetail.servicePaused") : t("uiCompanyDetail.serviceResumed") }); }
           }} onDelete={async (svc: any) => {
             const { error } = await supabase.from("services").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", svc.id);
-            if (!error) { qc.invalidateQueries({ queryKey: ["services-for-company", id] }); toast({ title: "Service deleted" }); }
+            if (!error) { qc.invalidateQueries({ queryKey: ["services-for-company", id] }); toast({ title: t("uiCompanyDetail.serviceDeleted") }); }
           }} />
         </TabsContent>
 

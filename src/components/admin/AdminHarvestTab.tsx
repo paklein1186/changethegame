@@ -60,7 +60,7 @@ export function AdminHarvestTab() {
         ends_at: new Date(form.ends_at).toISOString(),
       } as any);
       if (error) throw error;
-      toast.success("Harvest Window created!");
+      toast.success(t("uiAdminHarvestTab.harvestWindowCreated"));
       setForm({ label: "", multiplier: 1.5, starts_at: new Date().toISOString().slice(0, 16), ends_at: "" });
       invalidateAll();
     } catch (e: any) {
@@ -75,19 +75,19 @@ export function AdminHarvestTab() {
     await supabase.from("harvest_windows" as any).update({ is_active: false } as any).neq("id", id);
     await supabase.from("harvest_windows" as any).update({ is_active: true } as any).eq("id", id);
     invalidateAll();
-    toast.success("Window activated (others deactivated)");
+    toast.success(t("uiAdminHarvestTab.windowActivatedOthersDeactivated"));
   };
 
   const deactivate = async (id: string) => {
     await supabase.from("harvest_windows" as any).update({ is_active: false } as any).eq("id", id);
     invalidateAll();
-    toast.success("Window deactivated");
+    toast.success(t("uiAdminHarvestTab.windowDeactivated"));
   };
 
   const deleteWindow = async (id: string) => {
     await supabase.from("harvest_windows" as any).delete().eq("id", id);
     invalidateAll();
-    toast.success("Window deleted");
+    toast.success(t("uiAdminHarvestTab.windowDeleted"));
   };
 
   return (
@@ -99,10 +99,10 @@ export function AdminHarvestTab() {
             <span className="text-2xl">🌾</span>
             <div>
               <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
-                {t("uiAdminHarvestTab.harvestInProgress")} {activeWindow.multiplier}× boost
+                {t("uiAdminHarvestTab.harvestInProgress")} {activeWindow.multiplier}{t("uiAdminHarvestTab.boost")}
               </p>
               <p className="text-xs text-emerald-600 dark:text-emerald-400">
-                {activeWindow.label} — ends {format(new Date(activeWindow.ends_at), "PPP p")}
+                {activeWindow.label} {t("uiAdminHarvestTab.ends")} {format(new Date(activeWindow.ends_at), "PPP p")}
               </p>
             </div>
           </div>
@@ -127,11 +127,11 @@ export function AdminHarvestTab() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Label *</Label>
-              <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder='e.g. "Spring Sprint 2026"' />
+              <Label className="text-xs">{t("uiAdminHarvestTab.label")}</Label>
+              <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder={t("uiAdminHarvestTab.eGSpringSprint2026")} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Multiplier: {form.multiplier}×</Label>
+              <Label className="text-xs">{t("uiAdminHarvestTab.multiplier")} {form.multiplier}×</Label>
               <Slider
                 value={[form.multiplier]}
                 onValueChange={([v]) => setForm({ ...form, multiplier: Math.round(v * 10) / 10 })}
@@ -141,7 +141,7 @@ export function AdminHarvestTab() {
                 className="mt-2"
               />
               <p className="text-[11px] text-muted-foreground">
-                {form.multiplier}× means contributors earn {Math.round((form.multiplier - 1) * 100)}{t("uiAdminHarvestTab.moreCtgDuringThisWindow")}
+                {form.multiplier}{t("uiAdminHarvestTab.meansContributorsEarn")} {Math.round((form.multiplier - 1) * 100)}{t("uiAdminHarvestTab.moreCtgDuringThisWindow")}
               </p>
             </div>
           </div>
@@ -178,11 +178,11 @@ export function AdminHarvestTab() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t("uiAdminHarvestTab.name")}</TableHead>
-                    <TableHead className="text-right">Multiplier</TableHead>
+                    <TableHead className="text-right">{t("uiAdminHarvestTab.multiplier2")}</TableHead>
                     <TableHead>{t("uiAdminHarvestTab.start")}</TableHead>
-                    <TableHead>End</TableHead>
+                    <TableHead>{t("uiAdminHarvestTab.end")}</TableHead>
                     <TableHead>{t("uiAdminHarvestTab.status")}</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="text-right">{t("uiAdminHarvestTab.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -201,25 +201,25 @@ export function AdminHarvestTab() {
                         </TableCell>
                         <TableCell>
                           {isLive ? (
-                            <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 text-[10px]">🌾 LIVE</Badge>
+                            <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 text-[10px]">{t("uiAdminHarvestTab.live")}</Badge>
                           ) : ended ? (
-                            <Badge variant="secondary" className="text-[10px]">Ended</Badge>
+                            <Badge variant="secondary" className="text-[10px]">{t("uiAdminHarvestTab.ended")}</Badge>
                           ) : w.is_active ? (
-                            <Badge variant="outline" className="text-[10px] border-emerald-300 text-emerald-600">Scheduled</Badge>
+                            <Badge variant="outline" className="text-[10px] border-emerald-300 text-emerald-600">{t("uiAdminHarvestTab.scheduled")}</Badge>
                           ) : (
-                            <Badge variant="outline" className="text-[10px]">Inactive</Badge>
+                            <Badge variant="outline" className="text-[10px]">{t("uiAdminHarvestTab.inactive")}</Badge>
                           )}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
                             {!ended && !w.is_active && (
                               <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => activateExclusive(w.id)}>
-                                <Zap className="h-3 w-3" /> Activate
+                                <Zap className="h-3 w-3" /> {t("uiAdminHarvestTab.activate")}
                               </Button>
                             )}
                             {w.is_active && (
                               <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => deactivate(w.id)}>
-                                Deactivate
+                                {t("uiAdminHarvestTab.deactivate")}
                               </Button>
                             )}
                             <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive hover:text-destructive" onClick={() => deleteWindow(w.id)}>

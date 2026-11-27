@@ -35,7 +35,7 @@ export default function CreditEconomyPage({ embedded }: { embedded?: boolean }) 
 
   const content = (
     <>
-      <title>Hybrid Sovereign Economy — changethegame</title>
+      <title>{t("uiCreditEconomyPage.hybridSovereignEconomyChangethegame")}</title>
       <meta name="description" content="How the five-value system works on changethegame: Coins (fiat-backed), $CTG (contribution commons), XP (reputation), Platform Credits (feature fuel), and Shares (stewardship)." />
 
       <div className="max-w-4xl mx-auto">
@@ -68,8 +68,8 @@ export default function CreditEconomyPage({ embedded }: { embedded?: boolean }) 
         </div>
 
         <CalloutBox>
-          {t("uiCreditEconomyPage.xpTracks")} <strong>{t("uiCreditEconomyPage.whoYouAre")}</strong> — permanent, individual, non-transferable.{" "}
-          🌱 $CTG tracks <strong>{t("uiCreditEconomyPage.whatYouProduceForTheCommons")}</strong> — circulatory, collective, fades 1%/month.{" "}
+          {t("uiCreditEconomyPage.xpTracks")} <strong>{t("uiCreditEconomyPage.whoYouAre")}</strong> {t("uiCreditEconomyPage.permanentIndividualNonTransferable")}{" "}
+          {t("uiCreditEconomyPage.ctgTracks")} <strong>{t("uiCreditEconomyPage.whatYouProduceForTheCommons")}</strong> {t("uiCreditEconomyPage.circulatoryCollectiveFades1Month")}{" "}
           {t("uiCreditEconomyPage.theseTwoSystemsAreComplementaryNot")}
         </CalloutBox>
 

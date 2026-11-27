@@ -106,11 +106,11 @@ function CTGOverviewTab() {
 
   const stats = [
     { label: t("uiAdminEconomyCTG.ctgInCirculation"), value: metrics?.totalCirculation ?? 0, icon: Wallet, color: "text-emerald-600" },
-    { label: "Total emitted", value: metrics?.totalEmitted ?? 0, icon: TrendingUp, color: "text-blue-600" },
-    { label: "Commons Wallet", value: metrics?.commonsBalance ?? 0, icon: Globe, color: "text-amber-600" },
+    { label: t("uiAdminEconomyCTG.totalEmitted"), value: metrics?.totalEmitted ?? 0, icon: TrendingUp, color: "text-blue-600" },
+    { label: t("uiAdminEconomyCTG.commonsWallet"), value: metrics?.commonsBalance ?? 0, icon: Globe, color: "text-amber-600" },
     { label: t("uiAdminEconomyCTG.activeWallets"), value: metrics?.activeWallets ?? 0, icon: Users, color: "text-violet-600", isCount: true },
-    { label: "Exchange rate", value: metrics?.exchangeRate ?? 0, icon: ArrowLeftRight, color: "text-cyan-600", suffix: " credits/$CTG" },
-    { label: "Exchange volume 30d", value: metrics?.exchangeVolume ?? 0, icon: BarChart3, color: "text-rose-600" },
+    { label: t("uiAdminEconomyCTG.exchangeRate"), value: metrics?.exchangeRate ?? 0, icon: ArrowLeftRight, color: "text-cyan-600", suffix: " credits/$CTG" },
+    { label: t("uiAdminEconomyCTG.exchangeVolume30d"), value: metrics?.exchangeVolume ?? 0, icon: BarChart3, color: "text-rose-600" },
   ];
 
   return (
@@ -119,7 +119,7 @@ function CTGOverviewTab() {
         <h3 className="text-lg font-semibold">{t("uiAdminEconomyCTG.overview")}</h3>
         <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
           <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
-          Refresh
+          {t("uiAdminEconomyCTG.refresh")}
         </Button>
       </div>
 
@@ -145,7 +145,7 @@ function CTGOverviewTab() {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Daily $CTG Emissions — Last 30 days</CardTitle>
+          <CardTitle className="text-sm font-medium">{t("uiAdminEconomyCTG.dailyCtgEmissionsLast30Days")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-64">
@@ -290,7 +290,7 @@ function CTGExchangeRatesTab() {
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
             <ArrowLeftRight className="h-5 w-5 text-primary" />
-            Current Rate
+            {t("uiAdminEconomyCTG.currentRate")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -364,7 +364,7 @@ function CTGExchangeRatesTab() {
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button disabled={!canSubmit || submitting}>
-                {submitting ? "Applying..." : t("uiAdminEconomyCTG.applyNewRate")}
+                {submitting ? t("uiAdminEconomyCTG.applying") : t("uiAdminEconomyCTG.applyNewRate")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -386,16 +386,16 @@ function CTGExchangeRatesTab() {
       {/* History table */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Rate History</CardTitle>
+          <CardTitle className="text-base">{t("uiAdminEconomyCTG.rateHistory")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                  <TableHead>{t("uiAdminEconomyCTG.date")}</TableHead>
-                <TableHead className="text-right">Rate</TableHead>
+                <TableHead className="text-right">{t("uiAdminEconomyCTG.rate")}</TableHead>
                 <TableHead>{t("uiAdminEconomyCTG.setBy")}</TableHead>
-                <TableHead>Reason</TableHead>
+                <TableHead>{t("uiAdminEconomyCTG.reason")}</TableHead>
                 <TableHead>{t("uiAdminEconomyCTG.status")}</TableHead>
               </TableRow>
             </TableHeader>
@@ -416,7 +416,7 @@ function CTGExchangeRatesTab() {
                         <Check className="h-3 w-3" /> {t("uiAdminEconomyCTG.active")}
                       </Badge>
                     ) : (
-                      <Badge variant="secondary">Archived</Badge>
+                      <Badge variant="secondary">{t("uiAdminEconomyCTG.archived")}</Badge>
                     )}
                   </TableCell>
                 </TableRow>
@@ -433,7 +433,7 @@ function CTGExchangeRatesTab() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-4">
               <p className="text-xs text-muted-foreground">
-                Page {page + 1} / {totalPages}
+                {t("uiAdminEconomyCTG.page")} {page + 1} / {totalPages}
               </p>
               <div className="flex gap-1">
                 <Button variant="outline" size="icon" className="h-8 w-8" disabled={page === 0} onClick={() => setPage(page - 1)}>
@@ -462,7 +462,7 @@ export default function AdminEconomyCTG() {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Sprout className="h-6 w-6 text-emerald-600" />
-        <h2 className="font-display text-2xl font-bold">$CTG Token</h2>
+        <h2 className="font-display text-2xl font-bold">{t("uiAdminEconomyCTG.ctgToken")}</h2>
       </div>
       <p className="text-sm text-muted-foreground max-w-xl">
         {t("uiAdminEconomyCTG.ctgTokenAdministrationGlobalMetricsExchange")}
@@ -471,11 +471,11 @@ export default function AdminEconomyCTG() {
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">{t("uiAdminEconomyCTG.overview")}</TabsTrigger>
-          <TabsTrigger value="rates">Exchange Rates</TabsTrigger>
-          <TabsTrigger value="wallets">User Wallets</TabsTrigger>
-          <TabsTrigger value="rules">Emission Rules</TabsTrigger>
-          <TabsTrigger value="bounties">Bounties</TabsTrigger>
-          <TabsTrigger value="harvest">Harvest</TabsTrigger>
+          <TabsTrigger value="rates">{t("uiAdminEconomyCTG.exchangeRates")}</TabsTrigger>
+          <TabsTrigger value="wallets">{t("uiAdminEconomyCTG.userWallets")}</TabsTrigger>
+          <TabsTrigger value="rules">{t("uiAdminEconomyCTG.emissionRules")}</TabsTrigger>
+          <TabsTrigger value="bounties">{t("uiAdminEconomyCTG.bounties")}</TabsTrigger>
+          <TabsTrigger value="harvest">{t("uiAdminEconomyCTG.harvest")}</TabsTrigger>
         </TabsList>
         <TabsContent value="overview"><CTGOverviewTab /></TabsContent>
         <TabsContent value="rates"><CTGExchangeRatesTab /></TabsContent>

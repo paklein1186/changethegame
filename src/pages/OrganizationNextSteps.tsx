@@ -42,7 +42,7 @@ const ACTIONS = [
   },
   {
     icon: Handshake,
-    title: "Offer Services",
+    get title() { return i18n.t("uiOrganizationNextSteps.offerServices"); },
     get desc() { return i18n.t("uiOrganizationNextSteps.provideConsultingResearchFundingMentorshipConnect"); },
     link: (_id: string) => "/services/new",
     color: "text-amber-500",
@@ -64,7 +64,7 @@ export default function OrganizationNextSteps() {
             <PartyPopper className="h-8 w-8 text-primary" />
           </div>
           <h1 className="font-display text-3xl font-bold mb-2">
-            {company?.name ? `${company.name} is live!` : "Organization created!"}
+            {company?.name ? `${company.name} is live!` : t("uiOrganizationNextSteps.organizationCreated")}
           </h1>
           <p className="text-muted-foreground">
             {t("uiOrganizationNextSteps.yourOrganizationProfileIsNowPart")}

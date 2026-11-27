@@ -343,49 +343,49 @@ export interface HouseOfArt {
 export const HOUSES_OF_ART: Record<string, HouseOfArt> = {
   "house-of-light": {
     creativeLabel: "House of Light",
-    description: "Visual arts — painting, illustration, photography, film",
+    get description() { return i18n.t("uiPersonaLabels.visualArtsPaintingIllustrationPhotographyFilm"); },
     museName: "The Prism",
     museDescription: "Visual, colorful, metaphorical. Speaks in imagery and aesthetics.",
     icon: "🎨",
   },
   "house-of-sound": {
     creativeLabel: "House of Sound",
-    description: "Musical arts — composition, performance, soundscapes",
+    get description() { return i18n.t("uiPersonaLabels.musicalArtsCompositionPerformanceSoundscapes"); },
     museName: "The Echo",
     museDescription: "Rhythmic, harmonic, sound-based. Thinks in patterns and resonance.",
     icon: "🎵",
   },
   "house-of-story": {
     creativeLabel: "House of Story",
-    description: "Writing, narrative, dramaturgy, mythology",
+    get description() { return i18n.t("uiPersonaLabels.writingNarrativeDramaturgyMythology"); },
     museName: "The Storykeeper",
     museDescription: "Narrative, mythic. Weaves meaning through arcs and characters.",
     icon: "📖",
   },
   "house-of-movement": {
     creativeLabel: "House of Movement",
-    description: "Dance, performance, theatre, body-based arts",
+    get description() { return i18n.t("uiPersonaLabels.dancePerformanceTheatreBodyBasedArts"); },
     museName: "The Mover",
     museDescription: "Embodied, flow-based. Thinks through gesture and presence.",
     icon: "💃",
   },
   "house-of-form": {
     creativeLabel: "House of Form",
-    description: "Design, craft, sculpture, architecture",
+    get description() { return i18n.t("uiPersonaLabels.designCraftSculptureArchitecture"); },
     museName: "The Shaper",
     museDescription: "Structural, constructive. Builds meaning through form and function.",
     icon: "🏗️",
   },
   "house-of-nature": {
     creativeLabel: "House of Nature",
-    description: "Eco-art, land art, nature-inspired creation",
+    get description() { return i18n.t("uiPersonaLabels.ecoArtLandArtNatureInspired"); },
     museName: "The Green One",
     museDescription: "Ecological, grounded, regenerative. Rooted in living systems.",
     icon: "🌿",
   },
   "house-of-ritual": {
     creativeLabel: "House of Ritual",
-    description: "Facilitation, ceremonies, immersive experiences",
+    get description() { return i18n.t("uiPersonaLabels.facilitationCeremoniesImmersiveExperiences"); },
     museName: "The Threshold",
     museDescription: "Liminal, experiential, ceremonial. Holds space for transformation.",
     icon: "🔮",
@@ -421,11 +421,11 @@ export function getMuseForTopics(topicNames: string[]): HouseOfArt | null {
 // ── Creative onboarding options ──────────────────────────────
 export const CREATIVE_INTENTION_OPTIONS = [
   { key: "make", get label() { return i18n.t("uiPersonaLabels.iWantToMakeSomethingNew"); }, icon: "🎨", get desc() { return i18n.t("uiPersonaLabels.bringAnIdeaIntoTheWorld"); } },
-  { key: "write", get label() { return i18n.t("uiPersonaLabels.iWantToWriteComposeExplore"); }, icon: "✍️", desc: "Words, music, concepts" },
-  { key: "experiment", get label() { return i18n.t("uiPersonaLabels.iWantToExperimentAndSee"); }, icon: "🧪", desc: "Play, explore, discover" },
-  { key: "collab", get label() { return i18n.t("uiPersonaLabels.iWantToCreateWithOthers"); }, icon: "🤝", desc: "Collaborative creativity" },
+  { key: "write", get label() { return i18n.t("uiPersonaLabels.iWantToWriteComposeExplore"); }, icon: "✍️", get desc() { return i18n.t("uiPersonaLabels.wordsMusicConcepts"); } },
+  { key: "experiment", get label() { return i18n.t("uiPersonaLabels.iWantToExperimentAndSee"); }, icon: "🧪", get desc() { return i18n.t("uiPersonaLabels.playExploreDiscover"); } },
+  { key: "collab", get label() { return i18n.t("uiPersonaLabels.iWantToCreateWithOthers"); }, icon: "🤝", get desc() { return i18n.t("uiPersonaLabels.collaborativeCreativity"); } },
   { key: "inspire", get label() { return i18n.t("uiPersonaLabels.iMLookingForInspiration"); }, icon: "✨", get desc() { return i18n.t("uiPersonaLabels.feedTheCreativeFire"); } },
-  { key: "unsure", get label() { return i18n.t("uiPersonaLabels.iMNotSureYetGuide"); }, icon: "🧭", desc: "Let's figure it out together" },
+  { key: "unsure", get label() { return i18n.t("uiPersonaLabels.iMNotSureYetGuide"); }, icon: "🧭", get desc() { return i18n.t("uiPersonaLabels.letSFigureItOutTogether"); } },
 ];
 
 export const CREATIVE_BIO_SUGGESTIONS = [
@@ -436,8 +436,8 @@ export const CREATIVE_BIO_SUGGESTIONS = [
 
 /** Available world/lexicon modes for the toggle */
 export const LEXICON_MODES: { value: LexiconMode; label: string; description: string }[] = [
-  { value: "IMPACT", label: "Impact World", get description() { return i18n.t("uiPersonaLabels.guildsMissionsServicesXp"); } },
-  { value: "CREATIVE", label: "Creative World", description: "Circles, Creations, Skill Sessions, Resonance" },
-  { value: "HYBRID", label: "Hybrid World", get description() { return i18n.t("uiPersonaLabels.guildsQuestsServicesXp"); } },
-  { value: "NEUTRAL", label: "Neutral Mode", get description() { return i18n.t("uiPersonaLabels.guildsQuestsServicesXp"); } },
+  { value: "IMPACT", get label() { return i18n.t("uiPersonaLabels.impactWorld"); }, get description() { return i18n.t("uiPersonaLabels.guildsMissionsServicesXp"); } },
+  { value: "CREATIVE", get label() { return i18n.t("uiPersonaLabels.creativeWorld"); }, get description() { return i18n.t("uiPersonaLabels.circlesCreationsSkillSessionsResonance"); } },
+  { value: "HYBRID", get label() { return i18n.t("uiPersonaLabels.hybridWorld"); }, get description() { return i18n.t("uiPersonaLabels.guildsQuestsServicesXp"); } },
+  { value: "NEUTRAL", get label() { return i18n.t("uiPersonaLabels.neutralMode"); }, get description() { return i18n.t("uiPersonaLabels.guildsQuestsServicesXp"); } },
 ];

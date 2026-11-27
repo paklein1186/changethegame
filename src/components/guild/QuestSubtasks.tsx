@@ -391,7 +391,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
                   className="h-7 gap-1.5 text-xs"
                   onClick={() => undoSubtaskDone(subtask.id)}
                 >
-                  <Undo2 className="h-3 w-3" /> Undo
+                  <Undo2 className="h-3 w-3" /> {t("uiQuestSubtasks.undo")}
                 </Button>
               </div>
             );

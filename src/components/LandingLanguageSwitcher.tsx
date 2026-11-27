@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/config";
 
 const FLAGS = [
-  { lang: "en", flag: "🇬🇧", label: "English" },
+  { lang: "en", flag: "🇬🇧", get label() { return i18n.t("uiLandingLanguageSwitcher.english"); } },
   { lang: "fr", flag: "🇫🇷", label: "Français" },
 ];
 

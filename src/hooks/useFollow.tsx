@@ -56,7 +56,7 @@ export function useFollow(targetType: FollowTargetType, targetId: string) {
       toast.error(t("uiUseFollow.failedToFollow"));
     },
     onSuccess: () => {
-      toast.success("Following!");
+      toast.success(t("uiUseFollow.following"));
       // Notify the target if it's a user
       if (targetType === FollowTargetType.USER && userId) {
         notifyNewFollower({ followerId: userId, targetUserId: targetId });
@@ -91,7 +91,7 @@ export function useFollow(targetType: FollowTargetType, targetId: string) {
       toast.error(t("uiUseFollow.failedToUnfollow"));
     },
     onSuccess: () => {
-      toast.success("Unfollowed");
+      toast.success(t("uiUseFollow.unfollowed"));
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey });

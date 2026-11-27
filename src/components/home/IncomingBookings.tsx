@@ -58,7 +58,7 @@ export function IncomingBookings({ userId }: IncomingBookingsProps) {
   const handleAccept = (bookingId: string) => {
     updateStatus.mutate({ bookingId, status: "ACCEPTED" }, {
       onSuccess: () => {
-        toast({ title: "Booking accepted ✅" });
+        toast({ title: t("uiIncomingBookings.bookingAccepted") });
         const booking = bookings.find((b: any) => b.id === bookingId);
         if (booking?.requester_id) {
           insertBookingNotification({ bookingId, serviceTitle: booking.services?.title || "your session", recipientUserId: booking.requester_id, action: "accepted", startDateTime: booking.start_date_time });
@@ -70,7 +70,7 @@ export function IncomingBookings({ userId }: IncomingBookingsProps) {
   const handleDecline = (bookingId: string) => {
     updateStatus.mutate({ bookingId, status: "CANCELLED" }, {
       onSuccess: () => {
-        toast({ title: "Booking declined" });
+        toast({ title: t("uiIncomingBookings.bookingDeclined") });
         const booking = bookings.find((b: any) => b.id === bookingId);
         if (booking?.requester_id) {
           insertBookingNotification({ bookingId, serviceTitle: booking.services?.title || "your session", recipientUserId: booking.requester_id, action: "declined" });
@@ -83,7 +83,7 @@ export function IncomingBookings({ userId }: IncomingBookingsProps) {
     <section className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg font-semibold flex items-center gap-2">
-          <Briefcase className="h-5 w-5 text-primary" /> Booking Requests
+          <Briefcase className="h-5 w-5 text-primary" /> {t("uiIncomingBookings.bookingRequests")}
           {pending.length > 0 && (
             <Badge variant="default" className="text-[10px] px-1.5 py-0">{pending.length} pending</Badge>
           )}
@@ -111,23 +111,23 @@ export function IncomingBookings({ userId }: IncomingBookingsProps) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <Link to={`/bookings/${b.id}`} className="text-sm font-medium hover:text-primary transition-colors truncate block">
-                  {svc?.title || "Booking"}
+                  {svc?.title || t("uiIncomingBookings.booking")}
                 </Link>
                 <p className="text-[11px] text-muted-foreground truncate">
-                  {b.requester?.name || "Someone"} · {b.start_date_time ? new Date(b.start_date_time).toLocaleDateString() : formatDistanceToNow(new Date(b.created_at), { addSuffix: true })}
+                  {b.requester?.name || t("uiIncomingBookings.someone")} · {b.start_date_time ? new Date(b.start_date_time).toLocaleDateString() : formatDistanceToNow(new Date(b.created_at), { addSuffix: true })}
                 </p>
               </div>
               {isPending ? (
                 <div className="flex gap-1 shrink-0">
                   <Button size="sm" variant="default" className="h-7 px-2 text-xs" onClick={() => handleAccept(b.id)}>
-                    <Check className="h-3 w-3 mr-0.5" /> Accept
+                    <Check className="h-3 w-3 mr-0.5" /> {t("uiIncomingBookings.accept")}
                   </Button>
                   <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-destructive hover:text-destructive" onClick={() => handleDecline(b.id)}>
                     <X className="h-3 w-3" />
                   </Button>
                 </div>
               ) : (
-                <Badge className="bg-primary/10 text-primary border-0 text-[10px] shrink-0">Accepted</Badge>
+                <Badge className="bg-primary/10 text-primary border-0 text-[10px] shrink-0">{t("uiIncomingBookings.accepted")}</Badge>
               )}
             </motion.div>
           );

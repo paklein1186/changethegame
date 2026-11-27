@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, CreditCard, CalendarClock, Check, ExternalLink, Settings2, AlertTriangle } from "lucide-react";
@@ -35,6 +36,7 @@ const euros = (cents: number) =>
   (cents / 100).toLocaleString("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 2 });
 
 export function GuildEuroMembershipCard({ guild }: { guild: any }) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -219,7 +221,7 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
   return (
     <div ref={cardRef} className={`rounded-lg border bg-card p-4 space-y-3 transition-shadow ${highlight ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
       <div className="flex items-center justify-between gap-2">
-        <h3 className="font-semibold flex items-center gap-2"><CreditCard className="h-4 w-4" /> Cotisation</h3>
+        <h3 className="font-semibold flex items-center gap-2"><CreditCard className="h-4 w-4" /> {t("uiGuildEuroMembershipCard.cotisation")}</h3>
         {active && <Badge>Adhérent</Badge>}
       </div>
 
@@ -268,7 +270,7 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
               value={planCode}
               onChange={(e) => setPlanCode(e.target.value)}
             >
-              <option value="">Choisir…</option>
+              <option value="">{t("uiGuildEuroMembershipCard.choisir")}</option>
               {plans.map((p) => (
                 <option key={p.code} value={p.code}>
                   {p.label} — {euros(p.base_amount_cents)} / {p.billing_interval === "month" ? "mois" : "an"}
@@ -334,7 +336,7 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
                   </ul>
                 )}
                 <Button size="sm" variant={p.code === planCode ? "default" : "outline"} className="w-full" onClick={() => { setPlanCode(p.code); setCompareOpen(false); }}>
-                  {p.code === planCode ? "Formule choisie" : "Choisir cette formule"}
+                  {p.code === planCode ? t("uiGuildEuroMembershipCard.formuleChoisie") : "Choisir cette formule"}
                 </Button>
               </div>
             ))}

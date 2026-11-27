@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Handshake, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -11,6 +12,7 @@ interface Props {
 
 /** Compact partners block for the entity overview tab */
 export function PartnersBlock({ entityType, entityId }: Props) {
+  const { t } = useTranslation();
   const { data: partnerships } = usePartnershipsForEntity(entityType, entityId);
   const accepted = (partnerships ?? []).filter((p: any) => p.status === "ACCEPTED");
   const { data: entityMap } = usePartnerEntities(accepted);
@@ -29,7 +31,7 @@ export function PartnersBlock({ entityType, entityId }: Props) {
   return (
     <div>
       <h3 className="font-display font-semibold mb-2 flex items-center gap-1.5">
-        <Handshake className="h-4 w-4 text-primary" /> Partners
+        <Handshake className="h-4 w-4 text-primary" /> {t("uiPartnersBlock.partners")}
       </h3>
       <div className="flex flex-wrap gap-2">
         {accepted.map((p: any) => {
@@ -42,7 +44,7 @@ export function PartnersBlock({ entityType, entityId }: Props) {
                 <AvatarFallback className="rounded-md text-xs">{partner.name[0]}</AvatarFallback>
               </Avatar>
               <span className="text-sm font-medium">{partner.name}</span>
-              <Badge variant="outline" className="text-[9px]">{partner.type === "COMPANY" ? "Trad. Org." : partner.type.toLowerCase()}</Badge>
+              <Badge variant="outline" className="text-[9px]">{partner.type === "COMPANY" ? t("uiPartnersBlock.tradOrg") : partner.type.toLowerCase()}</Badge>
             </Link>
           );
         })}

@@ -449,7 +449,7 @@ export default function ExploreHouses({ bare }: Props) {
               className="text-xs gap-1.5"
             >
               {matchAll ? <ToggleRight className="h-3.5 w-3.5 text-primary" /> : <ToggleLeft className="h-3.5 w-3.5" />}
-              {matchAll ? t("uiExploreHouses.matchAll") : "Match ANY"}
+              {matchAll ? t("uiExploreHouses.matchAll") : t("uiExploreHouses.matchAny")}
             </Button>
           )}
           <div className="flex flex-wrap gap-1.5">
@@ -499,12 +499,12 @@ export default function ExploreHouses({ bare }: Props) {
           <TabsList className="flex-wrap">
             <TabsTrigger value="overview">{t("uiExploreHouses.overview")}</TabsTrigger>
             <TabsTrigger value="quests">{t("uiExploreHouses.quests")} {quests?.length ? `(${quests.length})` : ""}</TabsTrigger>
-            <TabsTrigger value="users">Users {users?.length ? `(${users.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="users">{t("uiExploreHouses.users")} {users?.length ? `(${users.length})` : ""}</TabsTrigger>
             <TabsTrigger value="guilds">{t("uiExploreHouses.guilds")} {guilds?.length ? `(${guilds.length})` : ""}</TabsTrigger>
-            <TabsTrigger value="pods">Pods {pods?.length ? `(${pods.length})` : ""}</TabsTrigger>
-            <TabsTrigger value="services">Services {services?.length ? `(${services.length})` : ""}</TabsTrigger>
-            <TabsTrigger value="courses">Courses {courses?.length ? `(${courses.length})` : ""}</TabsTrigger>
-            <TabsTrigger value="companies">Companies {companies?.length ? `(${companies.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="pods">{t("uiExploreHouses.pods")} {pods?.length ? `(${pods.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="services">{t("uiExploreHouses.services")} {services?.length ? `(${services.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="courses">{t("uiExploreHouses.courses")} {courses?.length ? `(${courses.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="companies">{t("uiExploreHouses.companies")} {companies?.length ? `(${companies.length})` : ""}</TabsTrigger>
           </TabsList>
 
           {/* Overview */}
@@ -520,7 +520,7 @@ export default function ExploreHouses({ bare }: Props) {
               </Link>
             )} />
 
-            <SectionPreview title="Users" icon={Users} items={users} loading={usersLoading} tab="users" setTab={setTab} renderItem={(u: any) => (
+            <SectionPreview title={t("uiExploreHouses.users")} icon={Users} items={users} loading={usersLoading} tab="users" setTab={setTab} renderItem={(u: any) => (
               <Link key={u.user_id} to={`/users/${u.user_id}`} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 hover:border-primary/30 transition-all">
                 <Avatar className="h-9 w-9"><AvatarImage src={u.avatar_url} /><AvatarFallback className="text-xs">{u.name?.[0]}</AvatarFallback></Avatar>
                 <div className="min-w-0">
@@ -540,7 +540,7 @@ export default function ExploreHouses({ bare }: Props) {
               </Link>
             )} />
 
-            <SectionPreview title="Services" icon={ShoppingBag} items={services} loading={servicesLoading} tab="services" setTab={setTab} renderItem={(s: any) => (
+            <SectionPreview title={t("uiExploreHouses.services")} icon={ShoppingBag} items={services} loading={servicesLoading} tab="services" setTab={setTab} renderItem={(s: any) => (
               <Link key={s.id} to={`/services/${s.id}`} className="block rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all">
                 <UnitCoverImage type="SERVICE" imageUrl={s.image_url} name={s.title} height="h-20" />
                 <div className="p-4">
@@ -550,7 +550,7 @@ export default function ExploreHouses({ bare }: Props) {
               </Link>
             )} />
 
-            <SectionPreview title="Companies" icon={Building2} items={companies} loading={companiesLoading} tab="companies" setTab={setTab} renderItem={(c: any) => (
+            <SectionPreview title={t("uiExploreHouses.companies")} icon={Building2} items={companies} loading={companiesLoading} tab="companies" setTab={setTab} renderItem={(c: any) => (
               <Link key={c.id} to={`/companies/${c.id}`} className="flex items-center gap-3 rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all">
                 <UnitCoverImage type="COMPANY" logoUrl={c.logo_url} name={c.name} height="h-full" className="w-16 shrink-0" />
                 <div className="min-w-0 py-3 pr-3">

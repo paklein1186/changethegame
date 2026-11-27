@@ -18,7 +18,7 @@ export default function AIInfoPage() {
         ]} />
       </ContentSection>
 
-      <ContentSection title="Contextual Memory">
+      <ContentSection title={t("uiAIInfoPage.contextualMemory")}>
         <p>{t("uiAIInfoPage.eachUnitGuildQuestCompanyTerritory")}</p>
       </ContentSection>
     </ContentPageShell>

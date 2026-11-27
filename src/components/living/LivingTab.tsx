@@ -103,7 +103,7 @@ export function LivingTab({ linkedType, linkedId, defaultTerritoryId }: LivingTa
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-display font-semibold text-lg flex items-center gap-2">
-            <Leaf className="h-5 w-5 text-emerald-600" /> Connected Natural Systems
+            <Leaf className="h-5 w-5 text-emerald-600" /> {t("uiLivingTab.connectedNaturalSystems")}
           </h3>
           <p className="text-sm text-muted-foreground mt-0.5">
             {t("uiLivingTab.ecosystemsLinkedToThis")} {linkedType === "entity" ? "guild" : linkedType}
@@ -140,11 +140,11 @@ export function LivingTab({ linkedType, linkedId, defaultTerritoryId }: LivingTa
       {/* ── Impact stats ── */}
       {systems && systems.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-4">
-          <h4 className="font-display font-semibold text-sm mb-3">Impact</h4>
+          <h4 className="font-display font-semibold text-sm mb-3">{t("uiLivingTab.impact")}</h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div className="text-center">
               <p className="text-2xl font-bold text-primary">{systems.length}</p>
-              <p className="text-xs text-muted-foreground">Natural Systems</p>
+              <p className="text-xs text-muted-foreground">{t("uiLivingTab.naturalSystems")}</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-emerald-600">{ecoQuestCount}</p>
@@ -156,7 +156,7 @@ export function LivingTab({ linkedType, linkedId, defaultTerritoryId }: LivingTa
                   ? Math.round(systems.reduce((sum, s) => sum + (s.health_index ?? 0), 0) / systems.length)
                   : "—"}
               </p>
-              <p className="text-xs text-muted-foreground">Avg Health Index</p>
+              <p className="text-xs text-muted-foreground">{t("uiLivingTab.avgHealthIndex")}</p>
             </div>
           </div>
         </div>

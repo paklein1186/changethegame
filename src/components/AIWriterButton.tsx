@@ -34,7 +34,7 @@ export function AIWriterButton({ type, context, currentText, onAccept, label = "
       });
       if (error) throw error;
       if (data?.error) {
-        toast({ title: "AI unavailable", description: data.error, variant: "destructive" });
+        toast({ title: t("uiAIWriterButton.aiUnavailable"), description: data.error, variant: "destructive" });
         return;
       }
       setResult(data);
@@ -50,7 +50,7 @@ export function AIWriterButton({ type, context, currentText, onAccept, label = "
     const { text, ...extra } = result;
     onAccept(text, extra);
     setResult(null);
-    toast({ title: "Applied!" });
+    toast({ title: t("uiAIWriterButton.applied") });
   };
 
   if (result) {
@@ -58,17 +58,17 @@ export function AIWriterButton({ type, context, currentText, onAccept, label = "
       <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-primary flex items-center gap-1">
-            <Sparkles className="h-3 w-3" /> AI Suggestion
+            <Sparkles className="h-3 w-3" /> {t("uiAIWriterButton.aiSuggestion")}
           </span>
           <div className="flex gap-1">
             <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" onClick={generate} disabled={loading}>
-              <RotateCcw className="h-3 w-3 mr-1" /> Redo
+              <RotateCcw className="h-3 w-3 mr-1" /> {t("uiAIWriterButton.redo")}
             </Button>
             <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setResult(null)}>
-              Dismiss
+              {t("uiAIWriterButton.dismiss")}
             </Button>
             <Button type="button" size="sm" className="h-7 text-xs" onClick={accept}>
-              <Check className="h-3 w-3 mr-1" /> Use
+              <Check className="h-3 w-3 mr-1" /> {t("uiAIWriterButton.use")}
             </Button>
           </div>
         </div>
@@ -90,7 +90,7 @@ export function AIWriterButton({ type, context, currentText, onAccept, label = "
       disabled={loading}
     >
       {loading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Sparkles className="h-3 w-3 mr-1" />}
-      {loading ? "Generating…" : label}
+      {loading ? t("uiAIWriterButton.generating") : label}
     </Button>
   );
 }

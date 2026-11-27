@@ -86,7 +86,7 @@ export function SearchableTagPicker({
               onClick={onClearAll}
               disabled={selectedCount === 0}
             >
-              Clear
+              {t("uiSearchableTagPicker.clear")}
             </Button>
           )}
           {selectedCount > 0 && (

@@ -92,6 +92,7 @@ function buildPreviewHtml(template: EmailTemplate, design: typeof DEFAULT_DESIGN
 
 // ─── Design Sidebar ───────────────────────────────────────────
 function DesignPanel({ design, onChange }: { design: typeof DEFAULT_DESIGN; onChange: (d: typeof DEFAULT_DESIGN) => void }) {
+  const { t } = useTranslation();
   const field = (label: string, key: keyof typeof DEFAULT_DESIGN) => (
     <div className="space-y-1">
       <label className="text-xs font-medium text-muted-foreground">{label}</label>
@@ -106,7 +107,7 @@ function DesignPanel({ design, onChange }: { design: typeof DEFAULT_DESIGN; onCh
   return (
     <div className="space-y-3 p-4 rounded-lg border border-border bg-muted/30">
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
-        <Palette className="h-3.5 w-3.5" /> Design Tokens
+        <Palette className="h-3.5 w-3.5" /> {t("uiAdminEmailTemplates.designTokens")}
       </p>
       {field("Primary Color (header + CTA)", "primaryColor")}
       {field("Accent Color", "accentColor")}
@@ -119,7 +120,7 @@ function DesignPanel({ design, onChange }: { design: typeof DEFAULT_DESIGN; onCh
       {field("Brand Name", "brandName")}
       {field("Preferences URL", "preferencesUrl")}
       <div className="space-y-1">
-        <label className="text-xs font-medium text-muted-foreground">Footer Text</label>
+        <label className="text-xs font-medium text-muted-foreground">{t("uiAdminEmailTemplates.footerText")}</label>
         <Textarea
           value={design.footerText}
           onChange={(e) => onChange({ ...design, footerText: e.target.value })}
@@ -165,7 +166,7 @@ function TemplateEditor({
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Template saved!");
+      toast.success(t("uiAdminEmailTemplates.templateSaved"));
       qc.invalidateQueries({ queryKey: ["admin-email-templates"] });
       onSaved();
     },
@@ -198,7 +199,7 @@ function TemplateEditor({
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? <EyeOff className="h-3.5 w-3.5 mr-1" /> : <Eye className="h-3.5 w-3.5 mr-1" />}
-            {showPreview ? t("uiAdminEmailTemplates.edit") : "Preview"}
+            {showPreview ? t("uiAdminEmailTemplates.edit") : t("uiAdminEmailTemplates.preview")}
           </Button>
           <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
             {save.isPending ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}
@@ -210,7 +211,7 @@ function TemplateEditor({
       {/* Variables hint */}
       {uniqueVars.length > 0 && (
         <div className="flex flex-wrap gap-1.5 items-center">
-          <span className="text-xs text-muted-foreground">Variables:</span>
+          <span className="text-xs text-muted-foreground">{t("uiAdminEmailTemplates.variables")}</span>
           {uniqueVars.map((v) => (
             <Badge key={v} variant="secondary" className="text-xs font-mono">{v}</Badge>
           ))}
@@ -221,14 +222,14 @@ function TemplateEditor({
         /* Live HTML preview — rendered as full email */
         <div className="rounded-lg border border-border overflow-hidden">
           <div className="bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground border-b border-border flex items-center gap-2">
-            <span className="font-medium text-foreground">Subject:</span> {subject}
+            <span className="font-medium text-foreground">{t("uiAdminEmailTemplates.subject")}</span> {subject}
           </div>
           <div className="bg-muted/20">
             <iframe
               srcDoc={buildPreviewHtml(previewTemplate, design)}
               className="w-full border-0"
               style={{ height: "520px" }}
-              title="Email preview"
+              title={t("uiAdminEmailTemplates.emailPreview")}
               sandbox="allow-same-origin"
             />
           </div>
@@ -238,14 +239,14 @@ function TemplateEditor({
         /* Edit fields */
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium">Subject line</label>
-            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Email subject…" />
+            <label className="text-xs font-medium">{t("uiAdminEmailTemplates.subjectLine")}</label>
+            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={t("uiAdminEmailTemplates.emailSubject")} />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium">Body HTML</label>
+            <label className="text-xs font-medium">{t("uiAdminEmailTemplates.bodyHtml")}</label>
             <p className="text-xs text-muted-foreground">
-              Write HTML directly. Use <code className="bg-muted px-1 rounded text-[10px]">{"{{variable}}"}</code> {t("uiAdminEmailTemplates.forDynamicValues")}
+              {t("uiAdminEmailTemplates.writeHtmlDirectlyUse")} <code className="bg-muted px-1 rounded text-[10px]">{"{{variable}}"}</code> {t("uiAdminEmailTemplates.forDynamicValues")}
             </p>
             <Textarea
               value={bodyHtml}
@@ -258,12 +259,12 @@ function TemplateEditor({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="text-xs font-medium flex items-center gap-1">
-                <Link2 className="h-3 w-3" /> CTA Button Label
+                <Link2 className="h-3 w-3" /> {t("uiAdminEmailTemplates.ctaButtonLabel")}
               </label>
               <Input value={ctaLabel} onChange={(e) => setCtaLabel(e.target.value)} placeholder={t("uiAdminEmailTemplates.eGGetStarted")} />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium">CTA Button URL</label>
+              <label className="text-xs font-medium">{t("uiAdminEmailTemplates.ctaButtonUrl")}</label>
               <Input value={ctaUrl} onChange={(e) => setCtaUrl(e.target.value)} placeholder="https://changethegame.xyz/…" />
             </div>
           </div>
@@ -300,7 +301,7 @@ export default function AdminEmailTemplates() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-            <Mail className="h-6 w-6 text-primary" /> Email Templates
+            <Mail className="h-6 w-6 text-primary" /> {t("uiAdminEmailTemplates.emailTemplates")}
           </h2>
           <p className="text-sm text-muted-foreground mt-0.5">
             {t("uiAdminEmailTemplates.editTheContentCtaLinksAnd")}
@@ -308,7 +309,7 @@ export default function AdminEmailTemplates() {
         </div>
         <Button variant="outline" size="sm" onClick={() => setShowDesign(!showDesign)}>
           <Palette className="h-3.5 w-3.5 mr-1" />
-          {showDesign ? "Hide" : "Design"} {t("uiAdminEmailTemplates.settings")}
+          {showDesign ? t("uiAdminEmailTemplates.hide") : t("uiAdminEmailTemplates.design")} {t("uiAdminEmailTemplates.settings")}
         </Button>
       </div>
 
@@ -321,7 +322,7 @@ export default function AdminEmailTemplates() {
         {/* Template list sidebar */}
         <div className="space-y-1">
           <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold px-2 mb-2">
-            Templates
+            {t("uiAdminEmailTemplates.templates")}
           </p>
           {isLoading ? (
             <div className="flex justify-center py-8">

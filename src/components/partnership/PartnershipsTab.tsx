@@ -52,7 +52,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
   const handleAction = async (id: string, status: "ACCEPTED" | "DECLINED" | "CANCELLED") => {
     try {
       await updateStatus.mutateAsync({ id, status });
-      toast({ title: status === "ACCEPTED" ? "Partnership accepted!" : status === "DECLINED" ? "Partnership declined" : t("uiPartnershipsTab.requestWithdrawn") });
+      toast({ title: status === "ACCEPTED" ? t("uiPartnershipsTab.partnershipAccepted") : status === "DECLINED" ? t("uiPartnershipsTab.partnershipDeclined") : t("uiPartnershipsTab.requestWithdrawn") });
 
       // Notify requesting entity admins when accepted
       if (status === "ACCEPTED") {
@@ -96,6 +96,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
   };
 
   const PartnerCard = ({ p, showActions }: { p: any; showActions?: "incoming" | "outgoing" }) => {
+  const { t } = useTranslation();
     const key = getPartnerKey(p);
     const entity = map[key];
     return (
@@ -107,10 +108,10 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
           </Avatar>
           <div className="flex-1 min-w-0">
             <Link to={getPartnerLink(p)} className="text-sm font-medium hover:text-primary transition-colors truncate block">
-              {entity?.name ?? "Unknown"}
+              {entity?.name ?? t("uiPartnershipsTab.unknown")}
             </Link>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <Badge variant="outline" className="text-[10px]">{(entity?.type ?? "") === "COMPANY" ? "Trad. Org." : (entity?.type ?? "").toLowerCase()}</Badge>
+              <Badge variant="outline" className="text-[10px]">{(entity?.type ?? "") === "COMPANY" ? t("uiPartnershipsTab.tradOrg") : (entity?.type ?? "").toLowerCase()}</Badge>
               {p.partnership_type && p.partnership_type !== "ALLY" && (
                 <Badge variant="secondary" className="text-[10px] capitalize">{p.partnership_type.toLowerCase()}</Badge>
               )}
@@ -123,21 +124,21 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
           {showActions === "incoming" && isAdmin && (
             <div className="flex gap-1.5 shrink-0">
               <Button size="sm" variant="default" onClick={() => handleAction(p.id, "ACCEPTED")} disabled={updateStatus.isPending}>
-                <CheckCircle className="h-3.5 w-3.5 mr-1" /> Accept
+                <CheckCircle className="h-3.5 w-3.5 mr-1" /> {t("uiPartnershipsTab.accept")}
               </Button>
               <Button size="sm" variant="outline" onClick={() => handleAction(p.id, "DECLINED")} disabled={updateStatus.isPending}>
-                <XCircle className="h-3.5 w-3.5 mr-1" /> Decline
+                <XCircle className="h-3.5 w-3.5 mr-1" /> {t("uiPartnershipsTab.decline")}
               </Button>
             </div>
           )}
           {showActions === "outgoing" && isAdmin && (
             <Button size="sm" variant="ghost" onClick={() => handleAction(p.id, "CANCELLED")} disabled={updateStatus.isPending}>
-              <X className="h-3.5 w-3.5 mr-1" /> Withdraw
+              <X className="h-3.5 w-3.5 mr-1" /> {t("uiPartnershipsTab.withdraw")}
             </Button>
           )}
           {!showActions && isAdmin && (
             <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive shrink-0" onClick={() => handleAction(p.id, "CANCELLED")} disabled={updateStatus.isPending}>
-              <X className="h-3.5 w-3.5 mr-1" /> End
+              <X className="h-3.5 w-3.5 mr-1" /> {t("uiPartnershipsTab.end")}
             </Button>
           )}
           {!showActions && !isAdmin && (
@@ -157,7 +158,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="font-display text-lg font-semibold flex items-center gap-2">
-          <Handshake className="h-5 w-5 text-primary" /> Partnerships
+          <Handshake className="h-5 w-5 text-primary" /> {t("uiPartnershipsTab.partnerships")}
         </h3>
         {isAdmin && (
           <Button size="sm" onClick={() => setProposeOpen(true)}>
@@ -170,7 +171,7 @@ export function PartnershipsTab({ entityType, entityId, isAdmin }: Props) {
       {isAdmin && incoming.length > 0 && (
         <div>
           <h4 className="text-sm font-medium flex items-center gap-1.5 mb-2">
-            <Inbox className="h-4 w-4" /> Incoming requests ({incoming.length})
+            <Inbox className="h-4 w-4" /> {t("uiPartnershipsTab.incomingRequests")}{incoming.length})
           </h4>
           <div className="space-y-2">
             {incoming.map((p: any) => <PartnerCard key={p.id} p={p} showActions="incoming" />)}

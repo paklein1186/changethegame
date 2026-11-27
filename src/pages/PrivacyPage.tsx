@@ -42,7 +42,7 @@ export default function PrivacyPage({ embedded }: { embedded?: boolean }) {
       <ContentSection title={t("privacyPage.s9Title")}>
         <p>
           {t("privacyPage.s9P").split("<a>")[0]}
-          <a href="mailto:privacy@changethegame.xyz" className="text-primary hover:underline">privacy@changethegame.xyz</a>
+          <a href="mailto:privacy@changethegame.xyz" className="text-primary hover:underline">{t("uiPrivacyPage.privacyChangethegameXyz")}</a>
           {t("privacyPage.s9P").split("</a>")[1] || "."}
         </p>
       </ContentSection>

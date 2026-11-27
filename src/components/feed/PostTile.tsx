@@ -130,7 +130,7 @@ export function PostTile({ post, hasUpvoted = false, size }: PostTileProps) {
               onClick={(e) => e.stopPropagation()}
               className="text-xs font-medium hover:underline truncate"
             >
-              {post.author?.name || "Unknown"}
+              {post.author?.name || t("uiPostTile.unknown")}
             </Link>
             <span className="text-[10px] text-muted-foreground ml-auto shrink-0">
               {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
@@ -201,7 +201,7 @@ export function PostTile({ post, hasUpvoted = false, size }: PostTileProps) {
                 <AvatarImage src={post.author?.avatar_url ?? undefined} />
                 <AvatarFallback className="text-[10px]">{post.author?.name?.[0] || "?"}</AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">{post.author?.name || "Unknown"}</span>
+              <span className="text-sm font-medium">{post.author?.name || t("uiPostTile.unknown")}</span>
               <span className="text-xs text-muted-foreground">
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
               </span>

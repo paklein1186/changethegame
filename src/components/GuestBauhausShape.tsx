@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, createContext, useContext } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -15,6 +16,7 @@ const GUEST_ROUTES = ["/welcome", "/landing/creative", "/landing/impact", "/land
 export const BauhausPausedContext = createContext(false);
 
 export function GuestBauhausShape() {
+  const { t } = useTranslation();
   const { session, loading } = useAuth();
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
@@ -35,8 +37,8 @@ export function GuestBauhausShape() {
       <button
         onClick={() => setPaused((p) => !p)}
         className="fixed top-4 left-4 z-50 flex items-center justify-center w-8 h-8 rounded-full bg-muted/60 backdrop-blur-sm text-muted-foreground/60 hover:text-foreground hover:bg-muted/90 transition-all duration-200"
-        aria-label={paused ? "Resume animation" : "Pause animation"}
-        title={paused ? "Resume animation" : "Pause animation"}
+        aria-label={paused ? t("uiGuestBauhausShape.resumeAnimation") : t("uiGuestBauhausShape.pauseAnimation")}
+        title={paused ? t("uiGuestBauhausShape.resumeAnimation") : t("uiGuestBauhausShape.pauseAnimation")}
       >
         {paused ? <Play size={14} /> : <Pause size={14} />}
       </button>

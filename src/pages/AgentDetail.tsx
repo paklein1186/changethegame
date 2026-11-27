@@ -74,7 +74,7 @@ function getContextualPages(messages: Msg[], agentCategory: string, agentSkills:
   const pages: RelatedPage[] = [];
   const kw = (words: string[]) => words.some(w => allText.includes(w));
   if (kw(["territoire", "territory", "région", "zone", "géograph", "local"])) {
-    pages.push({ label: "Territoires", path: "/explore?tab=territories", icon: <Map className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.territoires"); }, path: "/explore?tab=territories", icon: <Map className="h-3.5 w-3.5" /> });
   }
   if (kw(["compétence", "skill", "expertise", "savoir", "talent"])) {
     pages.push({ label: "Compétences", path: "/explore?tab=users", icon: <Users className="h-3.5 w-3.5" /> });
@@ -83,7 +83,7 @@ function getContextualPages(messages: Msg[], agentCategory: string, agentSkills:
     pages.push({ get label() { return i18n.t("uiAgentDetail.topics"); }, path: "/explore?tab=entities", icon: <Tag className="h-3.5 w-3.5" /> });
   }
   if (kw(["utilisateur", "user", "profil", "membre", "personne", "contact"])) {
-    pages.push({ label: "Utilisateurs", path: "/explore?tab=users", icon: <Users className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.utilisateurs"); }, path: "/explore?tab=users", icon: <Users className="h-3.5 w-3.5" /> });
   }
   if (kw(["quest", "mission", "projet", "défi", "challenge"])) {
     pages.push({ get label() { return i18n.t("uiAgentDetail.quests"); }, path: "/quests", icon: <Sparkles className="h-3.5 w-3.5" /> });
@@ -92,13 +92,13 @@ function getContextualPages(messages: Msg[], agentCategory: string, agentSkills:
     pages.push({ get label() { return i18n.t("uiAgentDetail.guilds"); }, path: "/guilds", icon: <Users className="h-3.5 w-3.5" /> });
   }
   if (kw(["service", "prestation", "offre", "booking"])) {
-    pages.push({ label: "Services", path: "/services", icon: <Briefcase className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.services"); }, path: "/services", icon: <Briefcase className="h-3.5 w-3.5" /> });
   }
   if (kw(["cours", "course", "formation", "apprentissage", "learn"])) {
-    pages.push({ label: "Cours", path: "/courses", icon: <BookOpen className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.cours"); }, path: "/courses", icon: <BookOpen className="h-3.5 w-3.5" /> });
   }
   if (kw(["agent", "ia", "ai", "intelligence", "automatisation"])) {
-    pages.push({ label: "Agents", path: "/agents", icon: <Bot className="h-3.5 w-3.5" /> });
+    pages.push({ get label() { return i18n.t("uiAgentDetail.agents"); }, path: "/agents", icon: <Bot className="h-3.5 w-3.5" /> });
   }
   if (kw(["réseau", "network", "connexion", "carte"])) {
     pages.push({ label: "Réseau", path: "/network", icon: <Globe className="h-3.5 w-3.5" /> });
@@ -182,21 +182,21 @@ export default function AgentDetail() {
             <Eye className="h-3.5 w-3.5" /> {t("uiAgentDetail.overview")}
           </TabsTrigger>
           <TabsTrigger value="chat" className="flex items-center gap-1">
-            <MessageSquare className="h-3.5 w-3.5" /> Chat
+            <MessageSquare className="h-3.5 w-3.5" /> {t("uiAgentDetail.chat")}
           </TabsTrigger>
           {canManage && (
             <TabsTrigger value="permissions" className="flex items-center gap-1">
-              <Shield className="h-3.5 w-3.5" /> Permissions
+              <Shield className="h-3.5 w-3.5" /> {t("uiAgentDetail.permissions")}
             </TabsTrigger>
           )}
           <TabsTrigger value="billing" className="flex items-center gap-1">
-            <CreditCard className="h-3.5 w-3.5" /> Billing
+            <CreditCard className="h-3.5 w-3.5" /> {t("uiAgentDetail.billing")}
           </TabsTrigger>
           <TabsTrigger value="activity" className="flex items-center gap-1">
             <Activity className="h-3.5 w-3.5" /> {t("uiAgentDetail.activity")}
           </TabsTrigger>
           <TabsTrigger value="trust" className="flex items-center gap-1">
-            <Star className="h-3.5 w-3.5" /> Trust
+            <Star className="h-3.5 w-3.5" /> {t("uiAgentDetail.trust")}
           </TabsTrigger>
         </TabsList>
 
@@ -232,11 +232,11 @@ export default function AgentDetail() {
                 <div className="space-y-2 text-sm text-muted-foreground mb-4">
                   {Number((agent as any).hire_price ?? 0) > 0 && (
                     <div className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4" /> Hire: {(agent as any).hire_price} credits
+                      <Sparkles className="h-4 w-4" /> {t("uiAgentDetail.hire")} {(agent as any).hire_price} credits
                     </div>
                   )}
                   <div className="flex items-center gap-2">
-                    <Zap className="h-4 w-4" /> Usage: {Number((agent as any).usage_price ?? agent.cost_per_use) > 0 ? `${(agent as any).usage_price ?? agent.cost_per_use} credits/msg` : "Free"}
+                    <Zap className="h-4 w-4" /> {t("uiAgentDetail.usage")} {Number((agent as any).usage_price ?? agent.cost_per_use) > 0 ? `${(agent as any).usage_price ?? agent.cost_per_use} credits/msg` : t("uiAgentDetail.free")}
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground">{agent.usage_count} interactions</div>
@@ -255,7 +255,7 @@ export default function AgentDetail() {
                     size="lg"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
-                    {hireMut.isPending ? "Hiring..." : Number((agent as any).hire_price ?? 0) > 0 ? `Hire for ${(agent as any).hire_price} credits` : t("uiAgentDetail.hireThisAgentFree")}
+                    {hireMut.isPending ? t("uiAgentDetail.hiring") : Number((agent as any).hire_price ?? 0) > 0 ? `Hire for ${(agent as any).hire_price} credits` : t("uiAgentDetail.hireThisAgentFree")}
                   </Button>
 
                   {/* Hire confirmation dialog */}
@@ -266,12 +266,12 @@ export default function AgentDetail() {
                           <DialogTitle>{t("uiAgentDetail.confirmHiring")}</DialogTitle>
                         </DialogHeader>
                         <p className="text-sm text-muted-foreground">
-                          Hiring <strong>{agent.name}</strong> costs <strong>{(agent as any).hire_price} credits</strong>{t("uiAgentDetail.planCreditsAreUsedFirstThen")}
+                          {t("uiAgentDetail.hiring2")} <strong>{agent.name}</strong> costs <strong>{(agent as any).hire_price} credits</strong>{t("uiAgentDetail.planCreditsAreUsedFirstThen")}
                         </p>
                         <div className="flex gap-2 justify-end mt-2">
                           <Button variant="outline" size="sm" onClick={() => setHireConfirmOpen(false)}>{t("uiAgentDetail.cancel")}</Button>
                           <Button size="sm" disabled={hireMut.isPending} onClick={() => hireMut.mutate()}>
-                            {hireMut.isPending ? "Processing..." : t("uiAgentDetail.confirmPay")}
+                            {hireMut.isPending ? t("uiAgentDetail.processing") : t("uiAgentDetail.confirmPay")}
                           </Button>
                         </div>
                       </DialogContent>
@@ -360,7 +360,7 @@ function AgentChat({ agentId, agentName, costPerUse, billingCurrency, userId, ag
       const { processAgentPayment } = await import("@/lib/agentPayment");
       const result = await processAgentPayment(userId, costPerUse, agentId, "usage");
       if (!result.success) {
-        toast.error(result.error || "Insufficient balance. Please top up.");
+        toast.error(result.error || t("uiAgentDetail.insufficientBalancePleaseTopUp"));
         return;
       }
     }
@@ -447,7 +447,7 @@ function AgentChat({ agentId, agentName, costPerUse, billingCurrency, userId, ag
         <span className="font-semibold">{agentName}</span>
         <Badge variant="secondary" className="text-[10px] ml-auto">
           <Zap className="h-3 w-3 mr-0.5" />
-          {billingCurrency === "free" ? "Free" : `${costPerUse} ${billingCurrency}/msg`}
+          {billingCurrency === "free" ? t("uiAgentDetail.free") : `${costPerUse} ${billingCurrency}/msg`}
         </Badge>
       </div>
 
@@ -511,7 +511,7 @@ function AgentChat({ agentId, agentName, costPerUse, billingCurrency, userId, ag
       <div className="border-t border-border">
         {contextualPages.length > 0 && (
           <div className="px-4 pt-3 flex flex-wrap gap-1.5">
-            <span className="text-[10px] text-muted-foreground mr-1 self-center">Explorer :</span>
+            <span className="text-[10px] text-muted-foreground mr-1 self-center">{t("uiAgentDetail.explorer")}</span>
             {contextualPages.map((page) => (
               <Link
                 key={page.path}

@@ -216,7 +216,7 @@ export default function ServiceCreate() {
       }
     },
     onSuccess: () => {
-      toast({ title: isEditMode ? "Service updated" : "Service created" });
+      toast({ title: isEditMode ? t("uiServiceCreate.serviceUpdated") : t("uiServiceCreate.serviceCreated") });
       if (isEditMode && editId) {
         navigate(`/services/${editId}`);
       } else {
@@ -247,7 +247,7 @@ export default function ServiceCreate() {
               </p>
               <Link to="/me/availability">
                 <Button variant="outline" size="sm" className="mt-2 gap-1.5">
-                  Set up availability <ArrowRight className="h-3.5 w-3.5" />
+                  {t("uiServiceCreate.setUpAvailability")} <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
             </div>
@@ -268,7 +268,7 @@ export default function ServiceCreate() {
           />
         )}
         <ImageUpload
-          label="Cover image"
+          label={t("uiServiceCreate.coverImage")}
           description={t("uiServiceCreate.addAVisualToMakeYour")}
           currentImageUrl={imageUrl}
           onChange={setImageUrl}
@@ -276,11 +276,11 @@ export default function ServiceCreate() {
         />
         {/* Service Type Selector */}
         <div>
-          <label className="text-sm font-medium mb-2 block">Service type</label>
+          <label className="text-sm font-medium mb-2 block">{t("uiServiceCreate.serviceType")}</label>
           <div className="grid grid-cols-3 gap-3">
             {([
-              { value: "online_call" as const, icon: Video, label: "Online Call", desc: "Video session via Jitsi/Zoom" },
-              { value: "service_mission" as const, icon: Briefcase, label: "Service / Mission", desc: t("uiServiceCreate.deliverableOrEngagement") },
+              { value: "online_call" as const, icon: Video, label: t("uiServiceCreate.onlineCall"), desc: t("uiServiceCreate.videoSessionViaJitsiZoom") },
+              { value: "service_mission" as const, icon: Briefcase, label: t("uiServiceCreate.serviceMission"), desc: t("uiServiceCreate.deliverableOrEngagement") },
               { value: "event_attendance" as const, icon: Users, label: t("uiServiceCreate.eventAttendance"), desc: t("uiServiceCreate.inPersonOrHybridEvent") },
             ]).map(opt => (
               <button
@@ -312,7 +312,7 @@ export default function ServiceCreate() {
 
         <div>
           <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.title")}</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Strategy Workshop" maxLength={120} />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("uiServiceCreate.eGStrategyWorkshop")} maxLength={120} />
         </div>
         <div>
           <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.description")}</label>
@@ -320,7 +320,7 @@ export default function ServiceCreate() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-sm font-medium mb-1 block">Duration (min)</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.durationMin")}</label>
             <Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} min={15} max={480} />
           </div>
           <div>
@@ -345,19 +345,19 @@ export default function ServiceCreate() {
         {serviceType !== "online_call" && (
           <div className="space-y-3">
             <div>
-              <label className="text-sm font-medium mb-1 block">Location mode</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.locationMode")}</label>
               <Select value={locationTypeMode} onValueChange={(v: "online" | "in_person" | "hybrid") => setLocationTypeMode(v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="online">Online</SelectItem>
+                  <SelectItem value="online">{t("uiServiceCreate.online")}</SelectItem>
                   <SelectItem value="in_person">{t("uiServiceCreate.inPerson")}</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                  <SelectItem value="hybrid">{t("uiServiceCreate.hybrid")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {locationTypeMode !== "online" && (
               <div>
-                <label className="text-sm font-medium mb-1 block">Location / Address</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.locationAddress")}</label>
                 <Input value={locationText} onChange={e => setLocationText(e.target.value)} placeholder="e.g. 42 Rue de la Paix, Paris" maxLength={200} />
               </div>
             )}
@@ -367,13 +367,13 @@ export default function ServiceCreate() {
         {/* Online call tool selector */}
         {(serviceType === "online_call" || locationTypeMode === "online" || locationTypeMode === "hybrid") && (
           <div>
-            <label className="text-sm font-medium mb-1 block">Call tool</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiServiceCreate.callTool")}</label>
             <Select value={locationType} onValueChange={setLocationType}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="JITSI">Jitsi</SelectItem>
-                <SelectItem value="ZOOM">Zoom</SelectItem>
-                <SelectItem value="OTHER">Other</SelectItem>
+                <SelectItem value="ZOOM">{t("uiServiceCreate.zoom")}</SelectItem>
+                <SelectItem value="OTHER">{t("uiServiceCreate.other")}</SelectItem>
               </SelectContent>
             </Select>
           </div>

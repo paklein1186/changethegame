@@ -45,7 +45,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
       });
       if (error) throw error;
       if (data?.error) {
-        toast({ title: "Evaluation unavailable", description: data.error, variant: "destructive" });
+        toast({ title: t("uiProposalEvaluator.evaluationUnavailable"), description: data.error, variant: "destructive" });
         return;
       }
       if (data?.message) {
@@ -56,7 +56,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
       }
       setEvaluations(data.evaluations || []);
       setComparison(data.comparison || null);
-      toast({ title: "AI evaluation complete" });
+      toast({ title: t("uiProposalEvaluator.aiEvaluationComplete") });
     } catch (e: any) {
       toast({ title: t("uiProposalEvaluator.evaluationFailed"), description: e.message, variant: "destructive" });
     } finally {
@@ -87,7 +87,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
           </div>
           <Button size="sm" onClick={runEvaluation} disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Sparkles className="h-4 w-4 mr-1" />}
-            {loading ? "Analyzing…" : "Evaluate"}
+            {loading ? t("uiProposalEvaluator.analyzing") : t("uiProposalEvaluator.evaluate")}
           </Button>
         </div>
       </Card>
@@ -110,11 +110,11 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          <h4 className="text-sm font-semibold">AI Evaluation Results</h4>
+          <h4 className="text-sm font-semibold">{t("uiProposalEvaluator.aiEvaluationResults")}</h4>
         </div>
         <Button size="sm" variant="outline" onClick={runEvaluation} disabled={loading}>
           {loading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <RotateCcw className="h-3.5 w-3.5 mr-1" />}
-          Re-evaluate
+          {t("uiProposalEvaluator.reEvaluate")}
         </Button>
       </div>
 
@@ -141,7 +141,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
             {isExpanded && (
               <div className="px-4 pb-4 space-y-3 border-t border-border pt-3">
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground mb-1">Summary</p>
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">{t("uiProposalEvaluator.summary")}</p>
                   <p className="text-sm">{ev.summary}</p>
                 </div>
 
@@ -153,7 +153,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
                     <p className="text-xs font-semibold flex items-center gap-1 mb-1">
-                      <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Strengths
+                      <CheckCircle2 className="h-3 w-3 text-emerald-600" /> {t("uiProposalEvaluator.strengths")}
                     </p>
                     <ul className="space-y-0.5">
                       {ev.strengths.map((s, i) => (
@@ -163,7 +163,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
                   </div>
                   <div>
                     <p className="text-xs font-semibold flex items-center gap-1 mb-1">
-                      <AlertTriangle className="h-3 w-3 text-amber-600" /> Risks
+                      <AlertTriangle className="h-3 w-3 text-amber-600" /> {t("uiProposalEvaluator.risks")}
                     </p>
                     <ul className="space-y-0.5">
                       {ev.risks.map((r, i) => (
@@ -173,7 +173,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
                   </div>
                   <div>
                     <p className="text-xs font-semibold flex items-center gap-1 mb-1">
-                      <Info className="h-3 w-3 text-primary" /> Needed Conditions
+                      <Info className="h-3 w-3 text-primary" /> {t("uiProposalEvaluator.neededConditions")}
                     </p>
                     <ul className="space-y-0.5">
                       {ev.neededConditions.map((c, i) => (
@@ -192,12 +192,12 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
       {comparison && (
         <Card className="p-4 border-primary/20 bg-primary/5 space-y-2">
           <h4 className="text-sm font-semibold flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" /> Overall Comparison
+            <Sparkles className="h-4 w-4 text-primary" /> {t("uiProposalEvaluator.overallComparison")}
           </h4>
           <p className="text-sm">{comparison.reasoning}</p>
           {comparison.topRecommendation && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Top match:</span>
+              <span className="text-xs text-muted-foreground">{t("uiProposalEvaluator.topMatch")}</span>
               <Badge variant="default" className="text-xs">
                 {proposalTitles[comparison.topRecommendation] || t("uiProposalEvaluator.proposal")}
               </Badge>
@@ -205,7 +205,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
           )}
           {comparison.recommendedMatches.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1">
-              <span className="text-xs text-muted-foreground mr-1">Suggested collaborators:</span>
+              <span className="text-xs text-muted-foreground mr-1">{t("uiProposalEvaluator.suggestedCollaborators")}</span>
               {comparison.recommendedMatches.map(m => (
                 <Badge key={m} variant="outline" className="text-xs">{m}</Badge>
               ))}

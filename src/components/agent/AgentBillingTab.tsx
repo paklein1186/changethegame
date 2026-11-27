@@ -138,7 +138,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
       {isOwner && (
         <>
           <h3 className="text-sm font-semibold flex items-center gap-2">
-            <DollarSign className="h-4 w-4 text-primary" /> Revenue Dashboard
+            <DollarSign className="h-4 w-4 text-primary" /> {t("uiAgentBillingTab.revenueDashboard")}
           </h3>
 
           {revenueLoading ? (
@@ -147,7 +147,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Card className="p-4">
-                  <p className="text-xs text-muted-foreground mb-1">Total Revenue</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t("uiAgentBillingTab.totalRevenue")}</p>
                   <p className="text-xl font-bold">{revenueStats.totalAll.toFixed(1)}</p>
                 </Card>
                 <Card className="p-4">
@@ -155,18 +155,18 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
                   <p className="text-xl font-bold">{revenueStats.thisMonth.toFixed(1)}</p>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><BarChart3 className="h-3 w-3" /> Avg/Day (30d)</p>
+                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><BarChart3 className="h-3 w-3" /> {t("uiAgentBillingTab.avgDay30d")}</p>
                   <p className="text-xl font-bold">{revenueStats.avgPerDay.toFixed(2)}</p>
                 </Card>
                 <Card className="p-4">
-                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><Users className="h-3 w-3" /> Unique Users</p>
+                  <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1"><Users className="h-3 w-3" /> {t("uiAgentBillingTab.uniqueUsers")}</p>
                   <p className="text-xl font-bold">{uniqueUsers ?? 0}</p>
                 </Card>
               </div>
 
               {/* Revenue Chart */}
               <Card className="p-4">
-                <h4 className="text-xs font-semibold text-muted-foreground mb-3">Daily Revenue (Last 30 Days)</h4>
+                <h4 className="text-xs font-semibold text-muted-foreground mb-3">{t("uiAgentBillingTab.dailyRevenueLast30Days")}</h4>
                 <div className="h-48">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={revenueStats.chartData}>
@@ -190,7 +190,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
 
               {/* Recent Revenue Records Table */}
               <Card className="p-4">
-                <h4 className="text-xs font-semibold text-muted-foreground mb-3">Recent Revenue Records</h4>
+                <h4 className="text-xs font-semibold text-muted-foreground mb-3">{t("uiAgentBillingTab.recentRevenueRecords")}</h4>
                 {revenueRecords && revenueRecords.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
@@ -198,9 +198,9 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
                         <tr className="border-b border-border text-muted-foreground">
                           <th className="text-left py-2 pr-2">{t("uiAgentBillingTab.date")}</th>
                           <th className="text-right py-2 px-2">{t("uiAgentBillingTab.amount")}</th>
-                          <th className="text-center py-2 px-2">Currency</th>
+                          <th className="text-center py-2 px-2">{t("uiAgentBillingTab.currency")}</th>
                           <th className="text-center py-2 px-2">{t("uiAgentBillingTab.share")}</th>
-                          <th className="text-left py-2 pl-2">Source</th>
+                          <th className="text-left py-2 pl-2">{t("uiAgentBillingTab.source")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -215,7 +215,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
                             </td>
                             <td className="text-center py-1.5 px-2">{r.share_pct ?? "—"}%</td>
                             <td className="py-1.5 pl-2">
-                              <span className="text-muted-foreground">{r.beneficiary_type === "user" ? "Direct hire" : r.beneficiary_type}</span>
+                              <span className="text-muted-foreground">{r.beneficiary_type === "user" ? t("uiAgentBillingTab.directHire") : r.beneficiary_type}</span>
                             </td>
                           </tr>
                         ))}
@@ -235,7 +235,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <TrendingUp className="h-4 w-4" /> Month Spend
+            <TrendingUp className="h-4 w-4" /> {t("uiAgentBillingTab.monthSpend")}
           </div>
           <p className="text-2xl font-bold">{monthlyData?.totalSpent?.toFixed(1) ?? 0} <span className="text-sm font-normal text-muted-foreground">credits</span></p>
         </Card>
@@ -247,7 +247,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-            <Shield className="h-4 w-4" /> Plan
+            <Shield className="h-4 w-4" /> {t("uiAgentBillingTab.plan")}
           </div>
           <p className="text-lg font-semibold">{billing?.agent_plans?.label || t("uiAgentBillingTab.noPlan")}</p>
         </Card>
@@ -256,7 +256,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
       {/* Action breakdown */}
       {monthlyData?.byAction && Object.keys(monthlyData.byAction).length > 0 && (
         <Card className="p-4">
-          <h3 className="text-sm font-semibold mb-3">Usage Breakdown</h3>
+          <h3 className="text-sm font-semibold mb-3">{t("uiAgentBillingTab.usageBreakdown")}</h3>
           <div className="space-y-2">
             {Object.entries(monthlyData.byAction).map(([code, data]: [string, any]) => (
               <div key={code} className="flex items-center justify-between text-sm">
@@ -280,7 +280,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-muted-foreground">Subscription Plan</label>
+              <label className="text-xs text-muted-foreground">{t("uiAgentBillingTab.subscriptionPlan")}</label>
               <Select value={selectedPlan || billing?.current_plan_id || "none"} onValueChange={setSelectedPlan}>
                 <SelectTrigger><SelectValue placeholder={t("uiAgentBillingTab.noPlan")} /></SelectTrigger>
                 <SelectContent>
@@ -309,7 +309,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
               checked={autoPause}
               onCheckedChange={setAutoPause}
             />
-            <span className="text-sm">Auto-pause when over limit</span>
+            <span className="text-sm">{t("uiAgentBillingTab.autoPauseWhenOverLimit")}</span>
           </div>
 
           <Button onClick={() => upsertBilling.mutate()} disabled={upsertBilling.isPending} size="sm">
@@ -320,7 +320,7 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
 
       {/* Recent Usage Log */}
       <Card className="p-4">
-        <h3 className="text-sm font-semibold mb-3">Recent Usage</h3>
+        <h3 className="text-sm font-semibold mb-3">{t("uiAgentBillingTab.recentUsage")}</h3>
         {usageLoading ? (
           <Skeleton className="h-32" />
         ) : !usage?.length ? (
@@ -330,12 +330,12 @@ export default function AgentBillingTab({ agentId, agentCreatorId }: Props) {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
-                  <th className="text-left py-2 pr-2">Action</th>
-                  <th className="text-right py-2 px-2">Base</th>
-                  <th className="text-right py-2 px-2">Trust×</th>
-                  <th className="text-right py-2 px-2">Sens×</th>
-                  <th className="text-right py-2 px-2">Val×</th>
-                  <th className="text-right py-2 px-2">Final</th>
+                  <th className="text-left py-2 pr-2">{t("uiAgentBillingTab.action")}</th>
+                  <th className="text-right py-2 px-2">{t("uiAgentBillingTab.base")}</th>
+                  <th className="text-right py-2 px-2">{t("uiAgentBillingTab.trust")}</th>
+                  <th className="text-right py-2 px-2">{t("uiAgentBillingTab.sens")}</th>
+                  <th className="text-right py-2 px-2">{t("uiAgentBillingTab.val")}</th>
+                  <th className="text-right py-2 px-2">{t("uiAgentBillingTab.final")}</th>
                   <th className="text-right py-2 pl-2">{t("uiAgentBillingTab.date")}</th>
                 </tr>
               </thead>

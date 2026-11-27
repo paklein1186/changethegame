@@ -48,14 +48,14 @@ const GOALS = [
   { key: "collaborate", get label() { return i18n.t("uiGuestOnboardingAssistant.findMyPeople"); }, icon: Users, get desc() { return i18n.t("uiGuestOnboardingAssistant.joinAGuildCircleOrPod"); } },
   { key: "learn", get label() { return i18n.t("uiGuestOnboardingAssistant.learnGrow"); }, icon: BookOpen, get desc() { return i18n.t("uiGuestOnboardingAssistant.takeCoursesAttendEvents"); } },
   { key: "offer", get label() { return i18n.t("uiGuestOnboardingAssistant.offerMySkills"); }, icon: Briefcase, get desc() { return i18n.t("uiGuestOnboardingAssistant.publishServicesOrSessions"); } },
-  { key: "explore", label: "Just browsing", icon: Compass, get desc() { return i18n.t("uiGuestOnboardingAssistant.seeWhatSPossibleFirst"); } },
+  { key: "explore", get label() { return i18n.t("uiGuestOnboardingAssistant.justBrowsing"); }, icon: Compass, get desc() { return i18n.t("uiGuestOnboardingAssistant.seeWhatSPossibleFirst"); } },
 ];
 
 const PERSONAS = [
-  { key: "creative", label: "Creator", icon: Palette, desc: "Artist, designer, writer, performer", color: "text-purple-500", bg: "bg-purple-500/10 border-purple-500/20" },
-  { key: "impact", label: "Impact Builder", icon: Shield, desc: "Consultant, facilitator, ecosystem builder", color: "text-emerald-500", bg: "bg-emerald-500/10 border-emerald-500/20" },
-  { key: "hybrid", label: "Both", icon: Blend, desc: "Creative meets strategic", color: "text-amber-500", bg: "bg-amber-500/10 border-amber-500/20" },
-  { key: "org_rep", label: "Organization Representative", icon: Building2, get desc() { return i18n.t("uiGuestOnboardingAssistant.companyInstitutionFoundationOrNgo"); }, color: "text-blue-500", bg: "bg-blue-500/10 border-blue-500/20" },
+  { key: "creative", get label() { return i18n.t("uiGuestOnboardingAssistant.creator"); }, icon: Palette, get desc() { return i18n.t("uiGuestOnboardingAssistant.artistDesignerWriterPerformer"); }, color: "text-purple-500", bg: "bg-purple-500/10 border-purple-500/20" },
+  { key: "impact", get label() { return i18n.t("uiGuestOnboardingAssistant.impactBuilder"); }, icon: Shield, get desc() { return i18n.t("uiGuestOnboardingAssistant.consultantFacilitatorEcosystemBuilder"); }, color: "text-emerald-500", bg: "bg-emerald-500/10 border-emerald-500/20" },
+  { key: "hybrid", get label() { return i18n.t("uiGuestOnboardingAssistant.both"); }, icon: Blend, get desc() { return i18n.t("uiGuestOnboardingAssistant.creativeMeetsStrategic"); }, color: "text-amber-500", bg: "bg-amber-500/10 border-amber-500/20" },
+  { key: "org_rep", get label() { return i18n.t("uiGuestOnboardingAssistant.organizationRepresentative"); }, icon: Building2, get desc() { return i18n.t("uiGuestOnboardingAssistant.companyInstitutionFoundationOrNgo"); }, color: "text-blue-500", bg: "bg-blue-500/10 border-blue-500/20" },
 ];
 
 interface TopicItem {
@@ -313,7 +313,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
     setSignupError(null);
     if (!name.trim() || !email.trim() || !password) return;
     if (password !== confirmPassword) {
-      toast({ title: "Passwords don't match", variant: "destructive" });
+      toast({ title: t("uiGuestOnboardingAssistant.passwordsDonTMatch"), variant: "destructive" });
       return;
     }
     if (password.length < 6) {
@@ -465,10 +465,10 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <p className="font-display font-semibold text-sm">{quickSignup ? "Quick Signup" : t("uiGuestOnboardingAssistant.getStarted")}</p>
+              <p className="font-display font-semibold text-sm">{quickSignup ? t("uiGuestOnboardingAssistant.quickSignup") : t("uiGuestOnboardingAssistant.getStarted")}</p>
             </div>
             <p className="text-xs text-muted-foreground">
-              Step {stepIndex + 1} of {totalSteps}
+              {t("uiGuestOnboardingAssistant.step")} {stepIndex + 1} of {totalSteps}
             </p>
           </div>
           <div className="flex gap-1.5">
@@ -556,7 +556,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
               <motion.div key="interests" {...motionProps} className="p-5">
                 <h2 className="font-display font-semibold text-base mb-1">{interestsHeading}</h2>
                 <p className="text-xs text-muted-foreground mb-4">
-                  {t("uiGuestOnboardingAssistant.pickUpTo7HelpsUs")} <span className="italic">Optional.</span>
+                  {t("uiGuestOnboardingAssistant.pickUpTo7HelpsUs")} <span className="italic">{t("uiGuestOnboardingAssistant.optional")}</span>
                 </p>
 
                 {loadingTopics ? (
@@ -570,7 +570,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                       <div className="mb-4">
                         {universe === "both" && (
                           <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                            Creative Houses
+                            {t("uiGuestOnboardingAssistant.creativeHouses")}
                           </p>
                         )}
                         <div className="flex flex-wrap gap-2">
@@ -643,7 +643,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
               <motion.div key="connect" {...motionProps} className="p-5">
                 <h2 className="font-display font-semibold text-base mb-1">{t("uiGuestOnboardingAssistant.yourProjectOrOrganization")}</h2>
                 <p className="text-xs text-muted-foreground mb-4">
-                  {t("uiGuestOnboardingAssistant.pasteAWebsiteToDiscoverRelevant")} <span className="italic">Optional.</span>
+                  {t("uiGuestOnboardingAssistant.pasteAWebsiteToDiscoverRelevant")} <span className="italic">{t("uiGuestOnboardingAssistant.optional")}</span>
                 </p>
 
                 {!scrapedOrg ? (
@@ -660,12 +660,12 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                         />
                       </div>
                       <Button onClick={handleScrapeOrg} disabled={scraping || !orgUrl.trim()} size="default">
-                        {scraping ? <Loader2 className="h-4 w-4 animate-spin" /> : "Analyze"}
+                        {scraping ? <Loader2 className="h-4 w-4 animate-spin" /> : t("uiGuestOnboardingAssistant.analyze")}
                       </Button>
                     </div>
                     {scraping && (
                       <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                        <Loader2 className="h-3 w-3 animate-spin" /> Analyzing website…
+                        <Loader2 className="h-3 w-3 animate-spin" /> {t("uiGuestOnboardingAssistant.analyzingWebsite")}
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground mt-2">
@@ -684,7 +684,7 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate">{scrapedOrg.name || "Organization"}</p>
+                        <p className="text-sm font-semibold truncate">{scrapedOrg.name || t("uiGuestOnboardingAssistant.organization")}</p>
                         {scrapedOrg.sector && (
                           <span className="inline-block text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full mt-0.5">
                             {scrapedOrg.sector}
@@ -825,18 +825,18 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
                     <Input id="guest-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiGuestOnboardingAssistant.yourName")} required autoComplete="name" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="guest-email" className="text-xs">Email</Label>
+                    <Label htmlFor="guest-email" className="text-xs">{t("uiGuestOnboardingAssistant.email")}</Label>
                     <Input id="guest-email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); setSignupError(null); }} placeholder={t("uiGuestOnboardingAssistant.youExampleCom")} required autoComplete="email" className={signupError ? "border-destructive" : ""} />
                     {signupError && <p className="text-[11px] text-destructive">{signupError}</p>}
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <Label htmlFor="guest-pw" className="text-xs">Password</Label>
-                      <Input id="guest-pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 6 chars" required minLength={6} autoComplete="new-password" />
+                      <Label htmlFor="guest-pw" className="text-xs">{t("uiGuestOnboardingAssistant.password")}</Label>
+                      <Input id="guest-pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("uiGuestOnboardingAssistant.min6Chars")} required minLength={6} autoComplete="new-password" />
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="guest-pw2" className="text-xs">{t("uiGuestOnboardingAssistant.confirm")}</Label>
-                      <Input id="guest-pw2" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat" required autoComplete="new-password" />
+                      <Input id="guest-pw2" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder={t("uiGuestOnboardingAssistant.repeat")} required autoComplete="new-password" />
                     </div>
                   </div>
 
@@ -877,12 +877,12 @@ export function GuestOnboardingAssistant({ open, onOpenChange, actionLabel = "pe
 
                 <form onSubmit={handleLogin} className="space-y-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="login-email" className="text-xs">Email</Label>
+                    <Label htmlFor="login-email" className="text-xs">{t("uiGuestOnboardingAssistant.email")}</Label>
                     <Input id="login-email" type="email" value={loginEmail} onChange={(e) => { setLoginEmail(e.target.value); setLoginError(null); }} placeholder={t("uiGuestOnboardingAssistant.youExampleCom")} required autoComplete="email" className={loginError ? "border-destructive" : ""} />
                     {loginError && <p className="text-[11px] text-destructive">{loginError}</p>}
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="login-pw" className="text-xs">Password</Label>
+                    <Label htmlFor="login-pw" className="text-xs">{t("uiGuestOnboardingAssistant.password")}</Label>
                     <Input id="login-pw" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} placeholder={t("uiGuestOnboardingAssistant.yourPassword")} required autoComplete="current-password" />
                   </div>
 

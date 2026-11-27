@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -44,13 +45,13 @@ const slug = (s: string) =>
 /** Modèle tiré de l'expérience de Trois-Tiers (réseau de tiers-lieux), à adapter. */
 const IA = "Usage de base des assistants IA inclus";
 const MODELE_RESEAU: Omit<PlanRow, "sort_order">[] = [
-  { code: "citoyen", label: "Citoyen soutenant", billing_interval: "year", base: "60", perPerson: "0", perSmallPlace: "0", perLargePlace: "0", active: true,
+  { code: "citoyen", get label() { return i18n.t("uiGuildEuroPlansSettings.citoyenSoutenant"); }, billing_interval: "year", base: "60", perPerson: "0", perSmallPlace: "0", perLargePlace: "0", active: true,
     description: "Pour les habitants et curieux qui soutiennent l'émergence des lieux sans en porter un.",
     benefits: ["Accès au commun : bibliothèque, savoirs, outils", "Communauté apprenante et suivi des missions", "Groupes de travail, accueilli par leur lead", IA].join("\n") },
-  { code: "accompagnant_freelance", label: "Accompagnant freelance", billing_interval: "year", base: "100", perPerson: "0", perSmallPlace: "0", perLargePlace: "0", active: true,
+  { code: "accompagnant_freelance", get label() { return i18n.t("uiGuildEuroPlansSettings.accompagnantFreelance"); }, billing_interval: "year", base: "100", perPerson: "0", perSmallPlace: "0", perLargePlace: "0", active: true,
     description: "Pour les professionnels indépendants qui accompagnent des lieux.",
     benefits: ["Accès complet au commun et à la capitalisation des missions", "Missions facturées via le réseau, ventilées par rôle", "Dossier de mission ouvert le temps de chaque mission", "Peut lancer et animer un groupe de travail", IA].join("\n") },
-  { code: "accompagnant_organisation", label: "Organisation d'accompagnement", billing_interval: "year", base: "100", perPerson: "50", perSmallPlace: "0", perLargePlace: "0", active: true,
+  { code: "accompagnant_organisation", get label() { return i18n.t("uiGuildEuroPlansSettings.organisationDAccompagnement"); }, billing_interval: "year", base: "100", perPerson: "50", perSmallPlace: "0", perLargePlace: "0", active: true,
     description: "Pour les structures dont plusieurs personnes accompagnent des lieux. La structure paie, chaque personne a son accès.",
     benefits: ["Tout ce qu'ouvre la formule accompagnant, pour chaque personne", "Accès nominatifs pour l'équipe", "Visibilité de la structure dans le réseau", IA].join("\n") },
   { code: "partenaire_allie", label: "Partenaire allié", billing_interval: "year", base: "350", perPerson: "0", perSmallPlace: "0", perLargePlace: "0", active: true,
@@ -177,7 +178,7 @@ export function GuildEuroPlansSettings({ guild, guildId }: { guild: any; guildId
     }
     setSaving(false);
     if (gErr || pErr) {
-      toast({ title: "Enregistrement impossible", description: (gErr ?? pErr)?.message, variant: "destructive" });
+      toast({ title: t("uiGuildEuroPlansSettings.enregistrementImpossible"), description: (gErr ?? pErr)?.message, variant: "destructive" });
       return;
     }
     toast({ title: "Cotisation en euros enregistrée" });
@@ -197,7 +198,7 @@ export function GuildEuroPlansSettings({ guild, guildId }: { guild: any; guildId
     <section className="space-y-4 rounded-xl border border-border bg-card p-5 mt-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="font-semibold flex items-center gap-2"><Euro className="h-4 w-4" /> Cotisation en euros (Stripe)</h3>
+          <h3 className="font-semibold flex items-center gap-2"><Euro className="h-4 w-4" /> {t("uiGuildEuroPlansSettings.cotisationEnEurosStripe")}</h3>
           <p className="text-sm text-muted-foreground mt-1">
             Les membres paient en euros sur le compte Stripe de la guilde, avec une formule par profil.
             Une fois activée, elle remplace la cotisation en Coins sur la page de la guilde.
@@ -215,7 +216,7 @@ export function GuildEuroPlansSettings({ guild, guildId }: { guild: any; guildId
 
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <p className="text-sm font-medium">Formules</p>
+          <p className="text-sm font-medium">{t("uiGuildEuroPlansSettings.formules")}</p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={loadModel}>Compléter avec le modèle « réseau de tiers-lieux »</Button>
             <Button variant="outline" size="sm" onClick={addRow}><Plus className="h-3.5 w-3.5 mr-1" /> Ajouter une formule</Button>
@@ -266,7 +267,7 @@ export function GuildEuroPlansSettings({ guild, guildId }: { guild: any; guildId
                   <Textarea id={`benef-${i}`} rows={3} value={row.benefits} onChange={(e) => update(i, { benefits: e.target.value })} />
                 </div>
               </div>
-              <p className="text-[11px] text-muted-foreground">Identifiant : {row.code || slug(row.label) || "—"} (stable, ne change plus après l'enregistrement)</p>
+              <p className="text-[11px] text-muted-foreground">{t("uiGuildEuroPlansSettings.identifiant")} {row.code || slug(row.label) || "—"} (stable, ne change plus après l'enregistrement)</p>
             </div>
           ))
         )}

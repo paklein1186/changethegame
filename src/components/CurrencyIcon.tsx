@@ -39,7 +39,7 @@ const CURRENCY_MAP: Record<CurrencyType, CurrencyConfig> = {
   },
   weight: {
     icon: Scale,
-    label: "Weight",
+    get label() { return i18n.t("uiCurrencyIcon.weight"); },
     get tooltip() { return i18n.t("uiCurrencyIcon.weightMultiplierUsedToCalculateWeighted"); },
     colorClass: "text-slate-600 dark:text-slate-400",
   },

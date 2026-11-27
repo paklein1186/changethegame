@@ -46,7 +46,7 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
 
       <Tabs defaultValue="teach">
         <TabsList className="mb-4">
-          <TabsTrigger value="teach">I teach ({teachCourses.length})</TabsTrigger>
+          <TabsTrigger value="teach">{t("uiMyCourses.iTeach")}{teachCourses.length})</TabsTrigger>
           <TabsTrigger value="learn">{t("uiMyCourses.iLearn")}{myEnrollments.length})</TabsTrigger>
         </TabsList>
 
@@ -73,11 +73,11 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
                     <div className="p-4">
                       <div className="flex items-center gap-2 mb-1">
                         {course.isPublished ? (
-                          <Badge className="bg-green-500/10 text-green-600 border-0 text-[10px]">Published</Badge>
+                          <Badge className="bg-green-500/10 text-green-600 border-0 text-[10px]">{t("uiMyCourses.published")}</Badge>
                         ) : (
                           <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30">{t("uiMyCourses.draft")}</Badge>
                         )}
-                        {course.isFree ? <Badge variant="secondary" className="text-[10px]">Free</Badge> : <Badge className="bg-primary/10 text-primary border-0 text-[10px]">€{course.priceAmount}</Badge>}
+                        {course.isFree ? <Badge variant="secondary" className="text-[10px]">{t("uiMyCourses.free")}</Badge> : <Badge className="bg-primary/10 text-primary border-0 text-[10px]">€{course.priceAmount}</Badge>}
                       </div>
                       <h3 className="font-display font-semibold">{course.title}</h3>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
@@ -97,7 +97,7 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
             <div className="text-center py-12">
               <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
               <p className="text-muted-foreground mb-3">{t("uiMyCourses.youHavenTEnrolledInAny")}</p>
-              <Button size="sm" variant="outline" asChild><Link to="/explore?tab=courses">Browse courses</Link></Button>
+              <Button size="sm" variant="outline" asChild><Link to="/explore?tab=courses">{t("uiMyCourses.browseCourses")}</Link></Button>
             </div>
           )}
           <div className="grid gap-4 md:grid-cols-2">
@@ -117,13 +117,13 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
                       <h3 className="font-display font-semibold mb-1">{course.title}</h3>
                       <p className="text-xs text-muted-foreground mb-2">by {creator?.name}</p>
                       <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                        <span>Progress</span>
+                        <span>{t("uiMyCourses.progress")}</span>
                         <span>{Math.round(enrollment.progressPercentage)}%</span>
                       </div>
                       <Progress value={enrollment.progressPercentage} className="h-2 mb-3" />
                       <Button size="sm" asChild className="w-full">
                         <Link to={continueUrl}>
-                          {enrollment.completionDate ? <><CheckCircle className="h-4 w-4 mr-1" /> Review course</> : <><Play className="h-4 w-4 mr-1" /> {t("uiMyCourses.continue")}</>}
+                          {enrollment.completionDate ? <><CheckCircle className="h-4 w-4 mr-1" /> {t("uiMyCourses.reviewCourse")}</> : <><Play className="h-4 w-4 mr-1" /> {t("uiMyCourses.continue")}</>}
                         </Link>
                       </Button>
                     </div>

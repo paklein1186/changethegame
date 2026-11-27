@@ -12,13 +12,13 @@ const errors: Record<string, { icon: React.ElementType; title: string; descripti
   },
   "500": {
     icon: ServerCrash,
-    title: "Something went wrong",
+    get title() { return i18n.t("uiErrorPage.somethingWentWrong"); },
     get description() { return i18n.t("uiErrorPage.weEncounteredAnUnexpectedServerError"); },
     action: { get label() { return i18n.t("uiErrorPage.backToHome"); }, to: "/" },
   },
   "access-denied": {
     icon: ShieldX,
-    title: "Access denied",
+    get title() { return i18n.t("uiErrorPage.accessDenied"); },
     get description() { return i18n.t("uiErrorPage.youDonTHavePermissionTo"); },
     action: { get label() { return i18n.t("uiErrorPage.backToHome"); }, to: "/" },
   },

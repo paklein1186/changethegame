@@ -91,7 +91,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Agent hired!");
+      toast.success(t("uiAgentsMarketplace.agentHired"));
       qc.invalidateQueries({ queryKey: ["my-agent-hires"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
     },
@@ -140,12 +140,12 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
 
       {/* Filter chips */}
       <div className="flex flex-wrap items-center gap-2 mb-5">
-        <span className="text-xs text-muted-foreground mr-1">Source:</span>
+        <span className="text-xs text-muted-foreground mr-1">{t("uiAgentsMarketplace.source")}</span>
         {[
           { value: "all", label: t("uiAgentsMarketplace.all") },
-          { value: "platform", label: "🤖 Platform" },
-          { value: "custom_llm", label: "🔑 Custom" },
-          { value: "webhook", label: "🔗 External" },
+          { value: "platform", label: t("uiAgentsMarketplace.platform") },
+          { value: "custom_llm", label: t("uiAgentsMarketplace.custom") },
+          { value: "webhook", label: t("uiAgentsMarketplace.external") },
         ].map(f => (
           <button
             key={f.value}
@@ -158,10 +158,10 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
           >{f.label}</button>
         ))}
 
-        <span className="text-xs text-muted-foreground ml-3 mr-1">Billing:</span>
+        <span className="text-xs text-muted-foreground ml-3 mr-1">{t("uiAgentsMarketplace.billing")}</span>
         {[
           { value: "all", label: t("uiAgentsMarketplace.all") },
-          { value: "free", label: "Free" },
+          { value: "free", label: t("uiAgentsMarketplace.free") },
           { value: "credits", label: t("uiAgentsMarketplace.credits") },
           { value: "coins", label: t("uiAgentsMarketplace.coins") },
         ].map(f => (
@@ -181,7 +181,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
             onClick={() => { setCategory("all"); setSourceFilter("all"); setBillingFilter("all"); }}
             className="text-[10px] ml-2 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
           >
-            Clear {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""}
+            {t("uiAgentsMarketplace.clear")} {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""}
           </button>
         )}
       </div>
@@ -219,7 +219,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
                       <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">{agent.name}</h3>
                       {isHired && (
                         <Badge className="text-[10px] bg-primary/10 text-primary border-primary/30 px-1.5 py-0 shrink-0">
-                          <CheckCircle className="h-3 w-3 mr-0.5" /> Hired
+                          <CheckCircle className="h-3 w-3 mr-0.5" /> {t("uiAgentsMarketplace.hired")}
                         </Badge>
                       )}
                     </div>
@@ -243,7 +243,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
                     )}
                     <span>
                       <Zap className="h-3 w-3 inline mr-0.5" />
-                      {Number(agent.usage_price ?? agent.cost_per_use) > 0 ? `${agent.usage_price ?? agent.cost_per_use}/msg` : "Free usage"}
+                      {Number(agent.usage_price ?? agent.cost_per_use) > 0 ? `${agent.usage_price ?? agent.cost_per_use}/msg` : t("uiAgentsMarketplace.freeUsage")}
                     </span>
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
                       onClick={() => hireMut.mutate(agent.id)}
                     >
                       <Sparkles className="h-3.5 w-3.5 mr-1" />
-                      {hireMut.isPending ? "Hiring..." : Number(agent.hire_price ?? 0) > 0 ? `Hire (${agent.hire_price} cr)` : "Hire Agent (Free)"}
+                      {hireMut.isPending ? t("uiAgentsMarketplace.hiring") : Number(agent.hire_price ?? 0) > 0 ? `Hire (${agent.hire_price} cr)` : t("uiAgentsMarketplace.hireAgentFree")}
                     </Button>
                   ) : (
                     <>

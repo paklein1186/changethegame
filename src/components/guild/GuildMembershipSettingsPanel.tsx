@@ -170,7 +170,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
       {/* Enable toggle */}
       <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
         <div>
-          <Label className="text-sm font-medium">Enable membership</Label>
+          <Label className="text-sm font-medium">{t("uiGuildMembershipSettingsPanel.enableMembership")}</Label>
           <p className="text-xs text-muted-foreground">{t("uiGuildMembershipSettingsPanel.addsAMembershipSystemToThis")}</p>
         </div>
         <Switch checked={enableMembership} onCheckedChange={setEnableMembership} />
@@ -180,27 +180,27 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
         <>
           {/* Membership style */}
           <div>
-            <Label className="text-sm font-medium mb-1 block">Membership style</Label>
+            <Label className="text-sm font-medium mb-1 block">{t("uiGuildMembershipSettingsPanel.membershipStyle")}</Label>
             <Select value={membershipStyle} onValueChange={(v) => handleStyleChange(v as MembershipStyle)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">{t("uiGuildMembershipSettingsPanel.noMembership")}</SelectItem>
-                <SelectItem value="symbolic_supporter">Symbolic supporters</SelectItem>
+                <SelectItem value="symbolic_supporter">{t("uiGuildMembershipSettingsPanel.symbolicSupporters")}</SelectItem>
                 <SelectItem value="core_members">{t("uiGuildMembershipSettingsPanel.coreMembers")}</SelectItem>
-                <SelectItem value="cooperative_circle">Cooperative circle</SelectItem>
+                <SelectItem value="cooperative_circle">{t("uiGuildMembershipSettingsPanel.cooperativeCircle")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Billing model */}
           <div>
-            <Label className="text-sm font-medium mb-1 block">Billing model</Label>
+            <Label className="text-sm font-medium mb-1 block">{t("uiGuildMembershipSettingsPanel.billingModel")}</Label>
             <Select value={billingModel} onValueChange={setBillingModel}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="one_time">{t("uiGuildMembershipSettingsPanel.oneTimeEntryFee")}</SelectItem>
-                <SelectItem value="monthly">Monthly fee, renewed automatically</SelectItem>
-                <SelectItem value="yearly">Yearly fee, renewed automatically</SelectItem>
+                <SelectItem value="monthly">{t("uiGuildMembershipSettingsPanel.monthlyFeeRenewedAutomatically")}</SelectItem>
+                <SelectItem value="yearly">{t("uiGuildMembershipSettingsPanel.yearlyFeeRenewedAutomatically")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -225,7 +225,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
               <div className="rounded-lg border border-border bg-card p-4 space-y-4">
                 <div>
                   <Label className="text-sm font-medium mb-1 block">
-                    {isMonthly ? (yearly ? "Yearly membership price" : "Monthly membership price") : t("uiGuildMembershipSettingsPanel.oneTimeEntryPrice")}
+                    {isMonthly ? (yearly ? t("uiGuildMembershipSettingsPanel.yearlyMembershipPrice") : t("uiGuildMembershipSettingsPanel.monthlyMembershipPrice")) : t("uiGuildMembershipSettingsPanel.oneTimeEntryPrice")}
                   </Label>
                   <p className="text-xs text-muted-foreground">
                     {t("uiGuildMembershipSettingsPanel.paidInCoins")}{isMonthly
@@ -374,14 +374,14 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
             className="flex items-center gap-1 text-sm text-primary hover:underline"
           >
             {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            {showAdvanced ? "Hide advanced options" : "Show advanced options"}
+            {showAdvanced ? t("uiGuildMembershipSettingsPanel.hideAdvancedOptions") : t("uiGuildMembershipSettingsPanel.showAdvancedOptions")}
           </button>
 
           {showAdvanced && (
             <div className="space-y-4 pl-2 border-l-2 border-primary/20">
               <div>
                 <Label className="text-sm font-medium mb-1 block">
-                  🌱 $CTG Redistribution ({redistributionPercent}%)
+                  {t("uiGuildMembershipSettingsPanel.ctgRedistribution")}{redistributionPercent}%)
                 </Label>
                 <p className="text-xs text-muted-foreground mb-2">
                   {t("uiGuildMembershipSettingsPanel.percentOfQuestEarnedCtgRedistributed")}
@@ -408,7 +408,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                 />
               </div>
               <div>
-                <Label className="text-sm font-medium mb-1 block">Membership duration (months)</Label>
+                <Label className="text-sm font-medium mb-1 block">{t("uiGuildMembershipSettingsPanel.membershipDurationMonths")}</Label>
                 <p className="text-xs text-muted-foreground mb-2">
                   {t("uiGuildMembershipSettingsPanel.ifEmptyMembershipDoesNotExpire")}
                 </p>

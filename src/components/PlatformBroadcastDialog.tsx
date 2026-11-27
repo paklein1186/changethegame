@@ -268,7 +268,7 @@ export function PlatformBroadcastDialog() {
         .eq("id", broadcastId);
 
       toast({
-        title: "Broadcast complete",
+        title: t("uiPlatformBroadcastDialog.broadcastComplete"),
         description: `Message delivered to ${sent} user${sent !== 1 ? "s" : ""}${failed > 0 ? ` (${failed} failed)` : ""}.`,
       });
 
@@ -303,7 +303,7 @@ export function PlatformBroadcastDialog() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5 text-primary" />
-            Platform broadcast
+            {t("uiPlatformBroadcastDialog.platformBroadcast")}
           </DialogTitle>
         </DialogHeader>
 
@@ -323,7 +323,7 @@ export function PlatformBroadcastDialog() {
             {/* Subject */}
             <div>
               <Label htmlFor="broadcast-subject" className="text-sm font-medium">
-                Subject <span className="text-muted-foreground font-normal">(optional)</span>
+                {t("uiPlatformBroadcastDialog.subject")} <span className="text-muted-foreground font-normal">{t("uiPlatformBroadcastDialog.optional")}</span>
               </Label>
               <Input
                 id="broadcast-subject"
@@ -337,7 +337,7 @@ export function PlatformBroadcastDialog() {
             {/* Message with formatting toolbar */}
             <div>
               <Label htmlFor="broadcast-content" className="text-sm font-medium">
-                Message
+                {t("uiPlatformBroadcastDialog.message")}
               </Label>
               <BroadcastToolbar textareaRef={textareaRef} disabled={sending} onInsert={handleContentInsert} />
               <Textarea
@@ -355,7 +355,7 @@ export function PlatformBroadcastDialog() {
             {/* URL */}
             <div>
               <Label htmlFor="broadcast-url" className="text-sm font-medium flex items-center gap-1.5">
-                <Link2 className="h-3.5 w-3.5" /> {t("uiPlatformBroadcastDialog.linkUrl")} <span className="text-muted-foreground font-normal">(optional)</span>
+                <Link2 className="h-3.5 w-3.5" /> {t("uiPlatformBroadcastDialog.linkUrl")} <span className="text-muted-foreground font-normal">{t("uiPlatformBroadcastDialog.optional")}</span>
               </Label>
               <Input
                 id="broadcast-url"
@@ -375,7 +375,7 @@ export function PlatformBroadcastDialog() {
               <div className="space-y-1.5">
                 <Progress value={progress} className="h-2" />
                 <p className="text-xs text-muted-foreground text-center">
-                  Sending… {progress}%
+                  {t("uiPlatformBroadcastDialog.sending")} {progress}%
                   {stats && ` (${stats.sent} sent, ${stats.failed} failed of ${stats.total})`}
                 </p>
               </div>
@@ -389,7 +389,7 @@ export function PlatformBroadcastDialog() {
           </Button>
           <Button onClick={handleSend} disabled={!content.trim() || sending || audiences.length === 0}>
             {sending ? (
-              <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Broadcasting…</>
+              <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> {t("uiPlatformBroadcastDialog.broadcasting")}</>
             ) : (
               <><Megaphone className="h-4 w-4 mr-1" /> {t("uiPlatformBroadcastDialog.sendBroadcast")}</>
             )}

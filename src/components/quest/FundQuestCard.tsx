@@ -183,7 +183,7 @@ export function FundQuestCard({ questId, className }: Props) {
     const numAmount = Number(amount);
     if (numAmount <= 0) return;
     if (numAmount > userBalance) {
-      toast({ title: "Insufficient balance", variant: "destructive" });
+      toast({ title: t("uiFundQuestCard.insufficientBalance"), variant: "destructive" });
       return;
     }
 
@@ -294,7 +294,7 @@ export function FundQuestCard({ questId, className }: Props) {
               <CampaignRow
                 key={c.id}
                 emoji="🌱"
-                title={c.title || "$CTG Campaign"}
+                title={c.title || t("uiFundQuestCard.ctgCampaign")}
                 raised={raised}
                 threshold={threshold}
                 pct={pct}
@@ -311,10 +311,10 @@ export function FundQuestCard({ questId, className }: Props) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Contribute {currency === "coins" ? t("uiFundQuestCard.coins") : "🌱 $CTG"}
+              {t("uiFundQuestCard.contribute")} {currency === "coins" ? t("uiFundQuestCard.coins") : "🌱 $CTG"}
             </DialogTitle>
             <DialogDescription>
-              {selectedCampaign?.title || "Campaign"}
+              {selectedCampaign?.title || t("uiFundQuestCard.campaign")}
               {selectedCampaign?.threshold_amount && (
                 <> — {Number(selectedCampaign.raised_amount || 0).toLocaleString()} / {Number(selectedCampaign.threshold_amount).toLocaleString()} {currency === "coins" ? t("uiFundQuestCard.coins2") : "$CTG"}</>
               )}
@@ -332,7 +332,7 @@ export function FundQuestCard({ questId, className }: Props) {
               placeholder={t("uiFundQuestCard.amountToContribute")}
             />
             {Number(amount) > userBalance && (
-              <p className="text-xs text-destructive">Insufficient balance.</p>
+              <p className="text-xs text-destructive">{t("uiFundQuestCard.insufficientBalance2")}</p>
             )}
             {currency === "coins" && amount && (
               <p className="text-xs text-muted-foreground">≈ €{(Number(amount) * coinsRate).toFixed(2)}</p>
@@ -345,7 +345,7 @@ export function FundQuestCard({ questId, className }: Props) {
               disabled={contributing || !amount || Number(amount) <= 0 || Number(amount) > userBalance}
             >
               {contributing && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-              Contribute
+              {t("uiFundQuestCard.contribute")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -360,6 +360,7 @@ function CampaignRow({
   emoji: string; title: string; raised: number; threshold: number; pct: number;
   currencyLabel: string; onContribute: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
       <div className="flex items-center justify-between gap-2">
@@ -370,7 +371,7 @@ function CampaignRow({
           </p>
         </div>
         <Button size="sm" variant="outline" onClick={onContribute}>
-          <Plus className="h-3.5 w-3.5 mr-1" /> Contribute
+          <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiFundQuestCard.contribute")}
         </Button>
       </div>
       {threshold > 0 && (

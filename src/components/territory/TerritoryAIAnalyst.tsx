@@ -19,12 +19,12 @@ interface Props {
 
 const AI_ACTIONS = [
   { key: "summarize", get label() { return i18n.t("uiTerritoryAIAnalyst.summarizeThisTerritory"); }, icon: Brain, prompt: "Provide a comprehensive summary of this territory based on all available memory and data." },
-  { key: "strengths", label: "Strengths & weaknesses", icon: Shield, prompt: "Analyze the strengths and weaknesses of this territory based on all available intelligence." },
-  { key: "opportunities", label: "Strategic opportunities", icon: Sparkles, prompt: "Identify strategic opportunities for growth, collaboration, and impact in this territory." },
-  { key: "missing", label: "Highlight missing info", icon: SearchIcon, prompt: "Identify gaps in the territory's knowledge base — what information is missing and should be gathered?" },
-  { key: "resilience", label: "Resilience analysis", icon: TrendingUp, prompt: "Generate a resilience analysis covering economic, social, and environmental dimensions." },
+  { key: "strengths", get label() { return i18n.t("uiTerritoryAIAnalyst.strengthsWeaknesses"); }, icon: Shield, prompt: "Analyze the strengths and weaknesses of this territory based on all available intelligence." },
+  { key: "opportunities", get label() { return i18n.t("uiTerritoryAIAnalyst.strategicOpportunities"); }, icon: Sparkles, prompt: "Identify strategic opportunities for growth, collaboration, and impact in this territory." },
+  { key: "missing", get label() { return i18n.t("uiTerritoryAIAnalyst.highlightMissingInfo"); }, icon: SearchIcon, prompt: "Identify gaps in the territory's knowledge base — what information is missing and should be gathered?" },
+  { key: "resilience", get label() { return i18n.t("uiTerritoryAIAnalyst.resilienceAnalysis"); }, icon: TrendingUp, prompt: "Generate a resilience analysis covering economic, social, and environmental dimensions." },
   { key: "quests", get label() { return i18n.t("uiTerritoryAIAnalyst.suggestQuests"); }, icon: Compass, prompt: "Suggest concrete quests/missions that could be launched based on territorial context and needs." },
-  { key: "risks", label: "Risk assessment", icon: AlertTriangle, prompt: "Assess current and emerging risks for this territory across multiple dimensions." },
+  { key: "risks", get label() { return i18n.t("uiTerritoryAIAnalyst.riskAssessment"); }, icon: AlertTriangle, prompt: "Assess current and emerging risks for this territory across multiple dimensions." },
 ] as const;
 
 export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
@@ -44,7 +44,7 @@ export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
       });
       if (error) throw error;
       if (data?.error) {
-        toast({ title: "AI unavailable", description: data.error, variant: "destructive" });
+        toast({ title: t("uiTerritoryAIAnalyst.aiUnavailable"), description: data.error, variant: "destructive" });
         setResponse(null);
       } else if (data?.analysisResponse) {
         setResponse(data.analysisResponse);
@@ -92,7 +92,7 @@ export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
           <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="flex items-center justify-center py-6">
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
-            <span className="text-xs text-muted-foreground ml-2">Analyzing...</span>
+            <span className="text-xs text-muted-foreground ml-2">{t("uiTerritoryAIAnalyst.analyzing")}</span>
           </motion.div>
         )}
 
@@ -108,7 +108,7 @@ export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
             </p>
             <div className="flex justify-end mt-1">
               <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => activeAction && runAction(activeAction, AI_ACTIONS.find(a => a.key === activeAction)!.prompt)}>
-                <RefreshCw className="h-3 w-3 mr-1" /> Regenerate
+                <RefreshCw className="h-3 w-3 mr-1" /> {t("uiTerritoryAIAnalyst.regenerate")}
               </Button>
             </div>
           </motion.div>

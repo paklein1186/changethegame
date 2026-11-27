@@ -12,13 +12,13 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const TYPE_META: Record<string, { label: string; icon: React.ElementType; linkPrefix: string }> = {
-  USER: { label: "People", icon: UserRound, linkPrefix: "/users" },
+  USER: { get label() { return i18n.t("uiMyFollowing.people"); }, icon: UserRound, linkPrefix: "/users" },
   GUILD: { get label() { return i18n.t("uiMyFollowing.guildsCollectives"); }, icon: Shield, linkPrefix: "/guilds" },
-  COMPANY: { label: "Companies", icon: Building2, linkPrefix: "/companies" },
+  COMPANY: { get label() { return i18n.t("uiMyFollowing.companies"); }, icon: Building2, linkPrefix: "/companies" },
   QUEST: { get label() { return i18n.t("uiMyFollowing.quests"); }, icon: Compass, linkPrefix: "/quests" },
-  POD: { label: "Pods", icon: CircleDot, linkPrefix: "/pods" },
-  SERVICE: { label: "Services", icon: Wrench, linkPrefix: "/services" },
-  COURSE: { label: "Courses", icon: BookOpen, linkPrefix: "/courses" },
+  POD: { get label() { return i18n.t("uiMyFollowing.pods"); }, icon: CircleDot, linkPrefix: "/pods" },
+  SERVICE: { get label() { return i18n.t("uiMyFollowing.services"); }, icon: Wrench, linkPrefix: "/services" },
+  COURSE: { get label() { return i18n.t("uiMyFollowing.courses"); }, icon: BookOpen, linkPrefix: "/courses" },
   TERRITORY: { get label() { return i18n.t("uiMyFollowing.territories"); }, icon: MapPin, linkPrefix: "/territories" },
 };
 
@@ -93,7 +93,7 @@ export default function MyFollowing() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["my-follows"] });
       qc.invalidateQueries({ queryKey: ["follow"] });
-      toast.success("Unfollowed");
+      toast.success(t("uiMyFollowing.unfollowed"));
     },
   });
 
@@ -142,7 +142,7 @@ export default function MyFollowing() {
                           onClick={() => unfollowMut.mutate(f.id)}
                           disabled={unfollowMut.isPending}
                         >
-                          <X className="h-3.5 w-3.5 mr-1" /> Unfollow
+                          <X className="h-3.5 w-3.5 mr-1" /> {t("uiMyFollowing.unfollow")}
                         </Button>
                       </div>
                     ))}

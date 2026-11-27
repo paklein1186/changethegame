@@ -95,7 +95,7 @@ export function FollowersDialog({ open, onOpenChange, targetId, targetType, mode
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {mode === "followers" ? <UserPlus className="h-4 w-4" /> : <Users className="h-4 w-4" />}
-            {mode === "followers" ? "Followers" : "Following"}
+            {mode === "followers" ? t("uiFollowersDialog.followers") : t("uiFollowersDialog.following")}
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-y-auto space-y-1 -mx-2 px-2 flex-1 min-h-0">
@@ -139,6 +139,7 @@ export function EntityFollowersCount({
   entityType: string;
   variant?: "card" | "inline";
 }) {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: count = 0 } = useQuery({
@@ -189,7 +190,7 @@ export function EntityFollowersCount({
         className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"
       >
         <p className="text-2xl font-bold text-primary">{count}</p>
-        <p className="text-sm text-muted-foreground">Followers</p>
+        <p className="text-sm text-muted-foreground">{t("uiFollowersDialog.followers")}</p>
       </button>
       <FollowersDialog
         open={dialogOpen}

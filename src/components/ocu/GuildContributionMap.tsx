@@ -190,8 +190,8 @@ export function GuildContributionMap({ guildId }: Props) {
                 <thead className="bg-muted/50">
                   <tr>
                     <th className="text-left px-3 py-2 font-medium">#</th>
-                    <th className="text-left px-3 py-2 font-medium">Contributor</th>
-                    <th className="text-right px-3 py-2 font-medium">Total FMV 🟩</th>
+                    <th className="text-left px-3 py-2 font-medium">{t("uiGuildContributionMap.contributor")}</th>
+                    <th className="text-right px-3 py-2 font-medium">{t("uiGuildContributionMap.totalFmv")}</th>
                     <th className="text-right px-3 py-2 font-medium">{t("uiGuildContributionMap.guild")}</th>
                     <th className="text-right px-3 py-2 font-medium">{t("uiGuildContributionMap.quests")}</th>
                   </tr>
@@ -232,7 +232,7 @@ export function GuildContributionMap({ guildId }: Props) {
                     </UITooltip>
                   ))}
                   <tr className="border-t border-border bg-muted/30 font-semibold">
-                    <td className="px-3 py-2" colSpan={2}>Total</td>
+                    <td className="px-3 py-2" colSpan={2}>{t("uiGuildContributionMap.total")}</td>
                     <td className="px-3 py-2 text-right text-primary">{grandTotal}</td>
                     <td className="px-3 py-2 text-right">100%</td>
                     <td />

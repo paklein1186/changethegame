@@ -308,7 +308,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
 
             {config.showQuestType && (
               <div>
-                <p className="text-xs font-medium mb-1.5 text-muted-foreground">Nature</p>
+                <p className="text-xs font-medium mb-1.5 text-muted-foreground">{t("uiExploreFilters.nature")}</p>
                 <Select value={filters.questType} onValueChange={v => set({ questType: v })}>
                   <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -329,7 +329,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
                   className="h-4 w-4 rounded border-border" />
                 <label htmlFor="missionOnly"
                   className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
-                  💰 Missions only
+                  {t("uiExploreFilters.missionsOnly")}
                   <span className="text-xs text-muted-foreground font-normal">{t("uiExploreFilters.fundedQuests")}</span>
                 </label>
               </div>
@@ -466,7 +466,7 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
                       : 'border-border text-muted-foreground hover:border-emerald-400/40 hover:text-foreground'
                   )}
                 >
-                  🌱 $CTG incentive
+                  {t("uiExploreFilters.ctgIncentive")}
                 </button>
                 <button
                   onClick={() => set({ isFundraising: !filters.isFundraising })}
@@ -689,13 +689,13 @@ export function ExploreFilters({ filters, onChange, config, houseFilter, univers
           )}
           {filters.hasCtg && (
             <Badge variant="secondary" className="text-[10px] gap-1">
-              🌱 $CTG incentive
+              {t("uiExploreFilters.ctgIncentive")}
               <button onClick={() => set({ hasCtg: false })} className="ml-0.5"><X className="h-2.5 w-2.5" /></button>
             </Badge>
           )}
           {filters.isFundraising && (
             <Badge variant="secondary" className="text-[10px] gap-1">
-              🎯 Fundraising
+              {t("uiExploreFilters.fundraising")}
               <button onClick={() => set({ isFundraising: false })} className="ml-0.5"><X className="h-2.5 w-2.5" /></button>
             </Badge>
           )}

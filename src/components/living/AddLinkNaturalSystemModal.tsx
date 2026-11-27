@@ -80,7 +80,7 @@ export function AddLinkNaturalSystemModal({ open, onOpenChange, linkedType, link
             linkedType={linkedType}
             linkedId={linkedId}
             defaultTerritoryId={defaultTerritoryId}
-            onDone={() => { handleClose(false); toast({ title: "Natural system created & linked!" }); }}
+            onDone={() => { handleClose(false); toast({ title: t("uiAddLinkNaturalSystemModal.naturalSystemCreatedLinked") }); }}
             onBack={() => setStep("choose")}
           />
         )}
@@ -89,7 +89,7 @@ export function AddLinkNaturalSystemModal({ open, onOpenChange, linkedType, link
           <LinkForm
             linkedType={linkedType}
             linkedId={linkedId}
-            onDone={() => { handleClose(false); toast({ title: "Natural system linked!" }); }}
+            onDone={() => { handleClose(false); toast({ title: t("uiAddLinkNaturalSystemModal.naturalSystemLinked") }); }}
             onBack={() => setStep("choose")}
           />
         )}
@@ -214,7 +214,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
       if (data?.suggestedTopics?.length) {
         setTags((prev) => [...new Set([...prev, ...data.suggestedTopics.slice(0, 5)])]);
       }
-      toast({ title: "Metadata imported" });
+      toast({ title: t("uiAddLinkNaturalSystemModal.metadataImported") });
     } catch {
       toast({ title: t("uiAddLinkNaturalSystemModal.couldNotScrapeUrl"), variant: "destructive" });
     } finally {
@@ -256,13 +256,13 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
       {/* Name */}
       <div>
         <Label>{t("uiAddLinkNaturalSystemModal.name")}</Label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Loire River Watershed" />
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiAddLinkNaturalSystemModal.eGLoireRiverWatershed")} />
       </div>
 
       {/* Category + System Type */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label>Category</Label>
+          <Label>{t("uiAddLinkNaturalSystemModal.category")}</Label>
           <Select value={kingdom} onValueChange={(v) => setKingdom(v as NaturalSystemKingdom)}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -274,7 +274,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
           <p className="text-[10px] text-muted-foreground mt-1">{t("uiAddLinkNaturalSystemModal.useEcosystemForRiversForestsEtc")}</p>
         </div>
         <div>
-          <Label>System Type</Label>
+          <Label>{t("uiAddLinkNaturalSystemModal.systemType")}</Label>
           <Select value={systemType} onValueChange={(v) => setSystemType(v as NaturalSystemTypeV2)}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -288,7 +288,7 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
 
       {/* Source URL */}
       <div>
-        <Label>Source URL</Label>
+        <Label>{t("uiAddLinkNaturalSystemModal.sourceUrl")}</Label>
         <div className="flex gap-2">
           <Input
             value={sourceUrl}
@@ -310,13 +310,13 @@ function CreateForm({ linkedType, linkedId, defaultTerritoryId, onDone, onBack }
 
       {/* Location */}
       <div>
-        <Label>Location</Label>
-        <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} placeholder="e.g. Central France, Loire Valley" />
+        <Label>{t("uiAddLinkNaturalSystemModal.location")}</Label>
+        <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} placeholder={t("uiAddLinkNaturalSystemModal.eGCentralFranceLoireValley")} />
       </div>
 
       {/* Picture */}
       <ImageUpload
-        label="Picture"
+        label={t("uiAddLinkNaturalSystemModal.picture")}
         currentImageUrl={pictureUrl}
         onChange={(url) => setPictureUrl(url)}
         aspectRatio="16/9"

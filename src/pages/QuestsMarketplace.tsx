@@ -232,7 +232,7 @@ export default function QuestsMarketplace({ bare, statusFilter: externalStatusFi
                     <div className="mb-3 space-y-1">
                       <div className="flex items-center justify-between text-xs">
                         <span className="flex items-center gap-1 text-muted-foreground">
-                          <HandCoins className="h-3 w-3" /> Fundraising
+                          <HandCoins className="h-3 w-3" /> {t("uiQuestsMarketplace.fundraising")}
                         </span>
                         <span className="font-medium text-primary">
                           {(quest as any).escrow_credits ?? 0} / {(quest as any).funding_goal_credits} Cr
@@ -279,10 +279,10 @@ export default function QuestsMarketplace({ bare, statusFilter: externalStatusFi
                           {(quest as any)._subtasks.done}/{(quest as any)._subtasks.total}
                         </Badge>
                       )}
-                      {quest.company_id && <Badge className="bg-accent text-accent-foreground border-0"><Building2 className="h-3 w-3 mr-0.5" />Client</Badge>}
+                      {quest.company_id && <Badge className="bg-accent text-accent-foreground border-0"><Building2 className="h-3 w-3 mr-0.5" />{t("uiQuestsMarketplace.client")}</Badge>}
                       <Badge variant="outline" className="capitalize">{quest.status.toLowerCase().replace(/_/g, " ")}</Badge>
                       {(quest as any).price_fiat > 0 && (
-                        <Badge variant="secondary"><CreditCard className="h-3 w-3 mr-0.5" />Paid</Badge>
+                        <Badge variant="secondary"><CreditCard className="h-3 w-3 mr-0.5" />{t("uiQuestsMarketplace.paid")}</Badge>
                       )}
                     </div>
                   </div>

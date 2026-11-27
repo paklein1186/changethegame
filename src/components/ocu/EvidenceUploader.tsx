@@ -73,7 +73,7 @@ export function EvidenceUploader({ onUpload, questId, accept = "image/*,applicat
         disabled={uploading}
       >
         {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
-        {uploading ? "Uploading…" : t("uiEvidenceUploader.uploadReceiptEvidence")}
+        {uploading ? t("uiEvidenceUploader.uploading") : t("uiEvidenceUploader.uploadReceiptEvidence")}
       </Button>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
     </div>

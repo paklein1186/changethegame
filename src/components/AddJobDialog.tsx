@@ -19,16 +19,16 @@ import { SearchableTagPicker } from "@/components/SearchableTagPicker";
 const CONTRACT_TYPES = [
   { value: "full-time", get label() { return i18n.t("uiAddJobDialog.fullTime"); } },
   { value: "part-time", get label() { return i18n.t("uiAddJobDialog.partTime"); } },
-  { value: "contract", label: "Contract" },
-  { value: "freelance", label: "Freelance" },
-  { value: "internship", label: "Internship" },
-  { value: "volunteer", label: "Volunteer" },
+  { value: "contract", get label() { return i18n.t("uiAddJobDialog.contract"); } },
+  { value: "freelance", get label() { return i18n.t("uiAddJobDialog.freelance"); } },
+  { value: "internship", get label() { return i18n.t("uiAddJobDialog.internship"); } },
+  { value: "volunteer", get label() { return i18n.t("uiAddJobDialog.volunteer"); } },
 ];
 
 const REMOTE_POLICIES = [
   { value: "on-site", get label() { return i18n.t("uiAddJobDialog.onSite"); } },
-  { value: "remote", label: "Remote" },
-  { value: "hybrid", label: "Hybrid" },
+  { value: "remote", get label() { return i18n.t("uiAddJobDialog.remote"); } },
+  { value: "hybrid", get label() { return i18n.t("uiAddJobDialog.hybrid"); } },
 ];
 
 type Step = "source" | "file" | "details";
@@ -207,7 +207,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
         if (ext.contract_type) setContractType(ext.contract_type);
         if (ext.remote_policy) setRemotePolicy(ext.remote_policy);
         if (ext.location) setLocationText(ext.location);
-        toast({ title: "Info extracted", description: t("uiAddJobDialog.reviewAndEditThePreFilled") });
+        toast({ title: t("uiAddJobDialog.infoExtracted"), description: t("uiAddJobDialog.reviewAndEditThePreFilled") });
       }
     } catch (e) {
       console.error("Extraction failed:", e);
@@ -244,7 +244,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
           topic_ids: selectedTopics,
           territory_ids: selectedTerritories,
         });
-        toast({ title: "Job position updated!" });
+        toast({ title: t("uiAddJobDialog.jobPositionUpdated") });
       } else {
         await createJob.mutateAsync({
           company_id: selectedCompanyId || undefined,
@@ -260,7 +260,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
           topic_ids: selectedTopics,
           territory_ids: selectedTerritories,
         });
-        toast({ title: "Job position posted!" });
+        toast({ title: t("uiAddJobDialog.jobPositionPosted") });
       }
       resetForm();
       onOpenChange(false);
@@ -296,7 +296,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
               >
                 <User className="h-8 w-8 text-primary" />
                 <div className="text-center">
-                  <p className="font-semibold text-sm">Individual</p>
+                  <p className="font-semibold text-sm">{t("uiAddJobDialog.individual")}</p>
                   <p className="text-xs text-muted-foreground mt-1">{t("uiAddJobDialog.postOnYourOwnBehalf")}</p>
                 </div>
               </button>
@@ -306,7 +306,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
               >
                 <Building2 className="h-8 w-8 text-primary" />
                 <div className="text-center">
-                  <p className="font-semibold text-sm">Organization</p>
+                  <p className="font-semibold text-sm">{t("uiAddJobDialog.organization")}</p>
                   <p className="text-xs text-muted-foreground mt-1">{t("uiAddJobDialog.postForAnOrganizationYouManage")}</p>
                 </div>
               </button>
@@ -355,7 +355,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
               <div className="space-y-3">
                 <Button variant="outline" className="w-full h-20 flex-col gap-2" onClick={() => fileRef.current?.click()} disabled={uploading}>
                   <Upload className="h-5 w-5 text-muted-foreground" />
-                  <span className="text-sm">{uploading ? "Uploading…" : t("uiAddJobDialog.uploadDocumentPdfDoc")}</span>
+                  <span className="text-sm">{uploading ? t("uiAddJobDialog.uploading") : t("uiAddJobDialog.uploadDocumentPdfDoc")}</span>
                 </Button>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="flex-1 h-px bg-border" />
@@ -401,10 +401,10 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
             )}
             <div>
               <label className="text-sm font-medium mb-1 block">{t("uiAddJobDialog.title")}</label>
-              <Input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} placeholder="e.g. Frontend Developer" />
+              <Input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} placeholder={t("uiAddJobDialog.eGFrontendDeveloper")} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Recruiting organization</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiAddJobDialog.recruitingOrganization")}</label>
               <Input value={organizationName} onChange={e => setOrganizationName(e.target.value)} maxLength={120} placeholder="e.g. Fondation Terre de Liens" />
             </div>
             <div>
@@ -413,14 +413,14 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-medium mb-1 block">Contract type</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiAddJobDialog.contractType")}</label>
                 <Select value={contractType} onValueChange={setContractType}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>{CONTRACT_TYPES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Remote policy</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiAddJobDialog.remotePolicy")}</label>
                 <Select value={remotePolicy} onValueChange={setRemotePolicy}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>{REMOTE_POLICIES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
@@ -428,8 +428,8 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Location</label>
-              <Input value={locationText} onChange={e => setLocationText(e.target.value)} placeholder="e.g. Paris, France" />
+              <label className="text-sm font-medium mb-1 block">{t("uiAddJobDialog.location")}</label>
+              <Input value={locationText} onChange={e => setLocationText(e.target.value)} placeholder={t("uiAddJobDialog.eGParisFrance")} />
             </div>
 
             {/* Document preview if uploaded */}
@@ -453,7 +453,7 @@ export function AddJobDialog({ open, onOpenChange, editJob }: Props) {
             <div className="flex gap-2">
               {!isEdit && <Button variant="outline" size="sm" onClick={() => setStep("file")}>{t("uiAddJobDialog.back")}</Button>}
               <Button onClick={handleCreate} className="flex-1" disabled={!title.trim() || createJob.isPending || updateJob.isPending}>
-                {(createJob.isPending || updateJob.isPending) ? (isEdit ? "Saving…" : "Creating…") : (isEdit ? t("uiAddJobDialog.saveChanges") : "Post Job")}
+                {(createJob.isPending || updateJob.isPending) ? (isEdit ? t("uiAddJobDialog.saving") : t("uiAddJobDialog.creating")) : (isEdit ? t("uiAddJobDialog.saveChanges") : t("uiAddJobDialog.postJob"))}
               </Button>
             </div>
           </div>

@@ -81,7 +81,7 @@ function NetworkTabs({ tab, setTab, people, totalEntities, isLoading, loadingPeo
     { value: "following", label: <><Rss className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.following")}</span><span className="sm:hidden">{t("tabs.following")}</span></> },
     { value: "activity", label: <><Activity className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.activity")}</span></> },
     { value: "overview", label: t("tabs.overview") },
-    { value: "dashboard", label: <><LayoutDashboard className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Dashboard</span></> },
+    { value: "dashboard", label: <><LayoutDashboard className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiNetworkHub.dashboard")}</span></> },
     { value: "people", label: <><Users className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.people")} ({people.length})</span><span className="sm:hidden">{people.length}</span></> },
     { value: "entities", label: <><Briefcase className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.entities")} ({totalEntities})</span><span className="sm:hidden">{totalEntities}</span></> },
     { value: "territories", label: <><MapPin className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiNetworkHub.territories")}</span><span className="sm:hidden">{t("tabs.areas")}</span></> },
@@ -110,7 +110,7 @@ function NetworkTabs({ tab, setTab, people, totalEntities, isLoading, loadingPeo
           if (section === "territories") return <OverviewTerritories key="territories" territories={myTerritories} topics={myTopics} activity={territoryActivity} />;
           if (section === "ai") return (
             <div key="ai">
-              <SectionHeader icon={Sparkles} title="AI Suggestions" />
+              <SectionHeader icon={Sparkles} title={t("uiNetworkHub.aiSuggestions")} />
               <MatchmakerPanel matchType="user" userId={currentUser.id} />
             </div>
           );
@@ -361,8 +361,8 @@ function PeopleTab({ people, loading }: { people: any[]; loading: boolean }) {
         <p className="text-sm text-muted-foreground">{people.length} {t("uiNetworkHub.peopleInYourOrbit2")}</p>
         <div className="flex gap-2">
           <div className="flex gap-1">
-            <Button size="sm" variant={sort === "interactions" ? "default" : "outline"} onClick={() => setSort("interactions")} className="text-xs h-7">Most shared</Button>
-            <Button size="sm" variant={sort === "recent" ? "default" : "outline"} onClick={() => setSort("recent")} className="text-xs h-7">Recent</Button>
+            <Button size="sm" variant={sort === "interactions" ? "default" : "outline"} onClick={() => setSort("interactions")} className="text-xs h-7">{t("uiNetworkHub.mostShared")}</Button>
+            <Button size="sm" variant={sort === "recent" ? "default" : "outline"} onClick={() => setSort("recent")} className="text-xs h-7">{t("uiNetworkHub.recent")}</Button>
           </div>
           <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as "grid" | "map")} className="border rounded-md">
             <ToggleGroupItem value="grid" aria-label={t("uiNetworkHub.gridView")} className="px-2 h-7"><LayoutGrid className="h-3.5 w-3.5" /></ToggleGroupItem>
@@ -462,7 +462,7 @@ function CompaniesTab({ memberships, loading }: { memberships: any[]; loading: b
 
       <div className="flex gap-2 pt-2">
         <Button size="sm" asChild><Link to="/me/companies"><Plus className="h-4 w-4 mr-1" /> {t("uiNetworkHub.createOrganization")}</Link></Button>
-        <Button size="sm" variant="outline" asChild><Link to="/explore?tab=companies">Explore organizations <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
+        <Button size="sm" variant="outline" asChild><Link to="/explore?tab=companies">{t("uiNetworkHub.exploreOrganizations")} <ArrowRight className="h-4 w-4 ml-1" /></Link></Button>
       </div>
     </div>
   );
@@ -482,7 +482,7 @@ function PodsTab({ memberships, loading, label }: { memberships: any[]; loading:
             {memberships.map((m: any, i: number) => (
               <motion.div key={m.podId} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
                 <Link to={`/pods/${m.podId}`} className="block rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-all">
-                   <h4 className="font-display font-semibold">{m.pod?.name ?? "Unnamed Pod"}</h4>
+                   <h4 className="font-display font-semibold">{m.pod?.name ?? t("uiNetworkHub.unnamedPod")}</h4>
                   <Badge variant="secondary" className="text-[10px] capitalize mt-1">{m.role?.toLowerCase()}</Badge>
                 </Link>
               </motion.div>
@@ -637,13 +637,13 @@ function CompanyCard({ membership, index }: { membership: any; index: number }) 
 // ─── Following Feed Tab ──────────────────────────────────────
 const FEED_FILTERS = [
   { key: "ALL", get label() { return i18n.t("uiNetworkHub.all"); } },
-  { key: "USER", label: "People" },
+  { key: "USER", get label() { return i18n.t("uiNetworkHub.people"); } },
   { key: "GUILD", get label() { return i18n.t("uiNetworkHub.guilds"); } },
-  { key: "COMPANY", label: "Companies" },
+  { key: "COMPANY", get label() { return i18n.t("uiNetworkHub.statCompanies"); } },
   { key: "QUEST", get label() { return i18n.t("uiNetworkHub.quests"); } },
-  { key: "SERVICE", label: "Services" },
-  { key: "POD", label: "Pods" },
-  { key: "COURSE", label: "Courses" },
+  { key: "SERVICE", get label() { return i18n.t("uiNetworkHub.services"); } },
+  { key: "POD", get label() { return i18n.t("uiNetworkHub.pods"); } },
+  { key: "COURSE", get label() { return i18n.t("uiNetworkHub.courses"); } },
   { key: "EVENT", get label() { return i18n.t("uiNetworkHub.events"); } },
   { key: "TERRITORY", get label() { return i18n.t("uiNetworkHub.territories"); } },
 ] as const;

@@ -47,11 +47,11 @@ interface Props {
 }
 
 const MODELS = [
-  { value: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash (recommended)" },
-  { value: "google/gemini-2.5-pro", label: "Gemini 2.5 Pro (deep reasoning)" },
-  { value: "google/gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite (cheap)" },
-  { value: "openai/gpt-5-mini", label: "GPT-5 Mini" },
-  { value: "openai/gpt-5", label: "GPT-5" },
+  { value: "google/gemini-2.5-flash", get label() { return i18n.t("uiGuildAgentSettingsPanel.gemini25FlashRecommended"); } },
+  { value: "google/gemini-2.5-pro", get label() { return i18n.t("uiGuildAgentSettingsPanel.gemini25ProDeepReasoning"); } },
+  { value: "google/gemini-2.5-flash-lite", get label() { return i18n.t("uiGuildAgentSettingsPanel.gemini25FlashLiteCheap"); } },
+  { value: "openai/gpt-5-mini", get label() { return i18n.t("uiGuildAgentSettingsPanel.gpt5Mini"); } },
+  { value: "openai/gpt-5", get label() { return i18n.t("uiGuildAgentSettingsPanel.gpt5"); } },
 ];
 
 async function call(action: string, payload: Record<string, unknown> = {}) {
@@ -140,7 +140,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         allow_mcp_write: allowMcp,
       });
       setAgent((res as any).agent);
-      toast({ title: "Agent saved" });
+      toast({ title: t("uiGuildAgentSettingsPanel.agentSaved") });
     } catch (e: any) {
       toast({ title: t("uiGuildAgentSettingsPanel.saveFailed"), description: e.message, variant: "destructive" });
     } finally {
@@ -167,7 +167,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
       await call("add_source", {
         agent_id: agent.id,
         type: sourceType,
-        title: sourceTitle || (sourceType === "url" ? sourceUrl : "Manual entry"),
+        title: sourceTitle || (sourceType === "url" ? sourceUrl : t("uiGuildAgentSettingsPanel.manualEntry")),
         config,
       });
       toast({ title: t("uiGuildAgentSettingsPanel.sourceAddedIndexingInBackground") });
@@ -187,7 +187,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
     if (!agent) return;
     try {
       await call("resync_source", { source_id: id });
-      toast({ title: "Resync started" });
+      toast({ title: t("uiGuildAgentSettingsPanel.resyncStarted") });
       setTimeout(() => loadSources(agent.id), 1500);
     } catch (e: any) {
       toast({ title: t("uiGuildAgentSettingsPanel.resyncFailed"), description: e.message, variant: "destructive" });
@@ -254,10 +254,10 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
 
       <Tabs defaultValue="identity">
         <TabsList>
-          <TabsTrigger value="identity"><Sparkles className="w-4 h-4 mr-1" /> Identity</TabsTrigger>
-          <TabsTrigger value="sources" disabled={!agent}><FileText className="w-4 h-4 mr-1" /> Knowledge</TabsTrigger>
-          <TabsTrigger value="channels" disabled={!agent}><LinkIcon className="w-4 h-4 mr-1" /> Channels</TabsTrigger>
-          <TabsTrigger value="chat" disabled={!agent}><MessageSquare className="w-4 h-4 mr-1" /> Test chat</TabsTrigger>
+          <TabsTrigger value="identity"><Sparkles className="w-4 h-4 mr-1" /> {t("uiGuildAgentSettingsPanel.identity")}</TabsTrigger>
+          <TabsTrigger value="sources" disabled={!agent}><FileText className="w-4 h-4 mr-1" /> {t("uiGuildAgentSettingsPanel.knowledge")}</TabsTrigger>
+          <TabsTrigger value="channels" disabled={!agent}><LinkIcon className="w-4 h-4 mr-1" /> {t("uiGuildAgentSettingsPanel.channels")}</TabsTrigger>
+          <TabsTrigger value="chat" disabled={!agent}><MessageSquare className="w-4 h-4 mr-1" /> {t("uiGuildAgentSettingsPanel.testChat")}</TabsTrigger>
         </TabsList>
 
         {/* IDENTITY */}
@@ -267,7 +267,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
             <Input id="agent-name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="agent-persona">Persona / system prompt</Label>
+            <Label htmlFor="agent-persona">{t("uiGuildAgentSettingsPanel.personaSystemPrompt")}</Label>
             <Textarea
               id="agent-persona"
               rows={6}
@@ -280,7 +280,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
             </p>
           </div>
           <div className="space-y-2">
-            <Label>Model</Label>
+            <Label>{t("uiGuildAgentSettingsPanel.model")}</Label>
             <Select value={model} onValueChange={setModel}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -309,7 +309,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         <TabsContent value="sources" className="space-y-4 mt-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium">Knowledge sources</h3>
+              <h3 className="font-medium">{t("uiGuildAgentSettingsPanel.knowledgeSources")}</h3>
               <p className="text-xs text-muted-foreground">
                 {t("uiGuildAgentSettingsPanel.anythingYouAddHereIsChunked")}
               </p>
@@ -326,14 +326,14 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
                       size="sm"
                       variant={sourceType === "manual" ? "default" : "outline"}
                       onClick={() => setSourceType("manual")}
-                    >Paste text</Button>
+                    >{t("uiGuildAgentSettingsPanel.pasteText")}</Button>
                     <Button
                       size="sm"
                       variant={sourceType === "url" ? "default" : "outline"}
                       onClick={() => setSourceType("url")}
                     >{t("uiGuildAgentSettingsPanel.fromUrl")}</Button>
-                    <Button size="sm" variant="outline" disabled>Google Drive (soon)</Button>
-                    <Button size="sm" variant="outline" disabled>Nextcloud (soon)</Button>
+                    <Button size="sm" variant="outline" disabled>{t("uiGuildAgentSettingsPanel.googleDriveSoon")}</Button>
+                    <Button size="sm" variant="outline" disabled>{t("uiGuildAgentSettingsPanel.nextcloudSoon")}</Button>
                   </div>
                   <div className="space-y-2">
                     <Label>{t("uiGuildAgentSettingsPanel.titleOptional")}</Label>
@@ -341,7 +341,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
                   </div>
                   {sourceType === "manual" ? (
                     <div className="space-y-2">
-                      <Label>Content</Label>
+                      <Label>{t("uiGuildAgentSettingsPanel.content")}</Label>
                       <Textarea rows={8} value={sourceContent} onChange={(e) => setSourceContent(e.target.value)} />
                     </div>
                   ) : (
@@ -373,7 +373,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">{s.type}</Badge>
-                      <span className="font-medium truncate">{s.title || "(untitled)"}</span>
+                      <span className="font-medium truncate">{s.title || t("uiGuildAgentSettingsPanel.untitled")}</span>
                       <Badge variant={s.status === "ready" ? "default" : s.status === "error" ? "destructive" : "outline"}>
                         {s.status}
                       </Badge>
@@ -403,9 +403,9 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
           </p>
           <ul className="text-sm list-disc pl-5 space-y-1">
             <li>{t("uiGuildAgentSettingsPanel.telegramBotPasteATokenFrom")}</li>
-            <li>WhatsApp via Twilio / Meta Business</li>
-            <li>Signal via self-hosted signal-cli bridge</li>
-            <li>Embeddable web widget (<code>&lt;iframe&gt;</code> snippet)</li>
+            <li>{t("uiGuildAgentSettingsPanel.whatsappViaTwilioMetaBusiness")}</li>
+            <li>{t("uiGuildAgentSettingsPanel.signalViaSelfHostedSignalCli")}</li>
+            <li>{t("uiGuildAgentSettingsPanel.embeddableWebWidget")}<code>&lt;iframe&gt;</code> {t("uiGuildAgentSettingsPanel.snippet")}</li>
           </ul>
           <p className="text-xs text-muted-foreground">
             {t("uiGuildAgentSettingsPanel.forNowYouCanAlreadyTalk")}
@@ -430,7 +430,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
             )}
             {chatLoading && (
               <div className="text-sm text-muted-foreground flex items-center gap-2">
-                <Loader2 className="w-3 h-3 animate-spin" /> thinking…
+                <Loader2 className="w-3 h-3 animate-spin" /> {t("uiGuildAgentSettingsPanel.thinking")}
               </div>
             )}
           </div>

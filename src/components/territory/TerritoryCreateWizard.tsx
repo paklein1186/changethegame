@@ -35,14 +35,14 @@ import {
 const TERRITORY_TYPES = [
   {
     id: "location",
-    label: "Location",
+    get label() { return i18n.t("uiTerritoryCreateWizard.location"); },
     get description() { return i18n.t("uiTerritoryCreateWizard.aTownCityRegionOrCountry"); },
     icon: MapPin,
     color: "text-blue-500 bg-blue-500/10",
   },
   {
     id: "bioregion",
-    label: "Bioregion",
+    get label() { return i18n.t("uiTerritoryCreateWizard.bioregion"); },
     get description() { return i18n.t("uiTerritoryCreateWizard.anEcologicalBioregionWatershedEcoregion"); },
     icon: Leaf,
     color: "text-emerald-500 bg-emerald-500/10",
@@ -51,21 +51,21 @@ const TERRITORY_TYPES = [
 
 /* ── Level options with explanations ── */
 const LOCATION_LEVELS = [
-  { value: "TOWN", label: "Town / City", get description() { return i18n.t("uiTerritoryCreateWizard.aMunicipalityOrUrbanArea"); } },
-  { value: "PROVINCE", label: "Province / County", get description() { return i18n.t("uiTerritoryCreateWizard.aSubRegionalAdministrativeDivision"); } },
-  { value: "REGION", label: "Region / State", get description() { return i18n.t("uiTerritoryCreateWizard.aMajorSubNationalArea"); } },
-  { value: "NATIONAL", label: "Country", get description() { return i18n.t("uiTerritoryCreateWizard.aSovereignNation"); } },
-  { value: "CONTINENT", label: "Continent", get description() { return i18n.t("uiTerritoryCreateWizard.aContinentalLandmass"); } },
+  { value: "TOWN", get label() { return i18n.t("uiTerritoryCreateWizard.townCity"); }, get description() { return i18n.t("uiTerritoryCreateWizard.aMunicipalityOrUrbanArea"); } },
+  { value: "PROVINCE", get label() { return i18n.t("uiTerritoryCreateWizard.provinceCounty"); }, get description() { return i18n.t("uiTerritoryCreateWizard.aSubRegionalAdministrativeDivision"); } },
+  { value: "REGION", get label() { return i18n.t("uiTerritoryCreateWizard.regionState"); }, get description() { return i18n.t("uiTerritoryCreateWizard.aMajorSubNationalArea"); } },
+  { value: "NATIONAL", get label() { return i18n.t("uiTerritoryCreateWizard.country"); }, get description() { return i18n.t("uiTerritoryCreateWizard.aSovereignNation"); } },
+  { value: "CONTINENT", get label() { return i18n.t("uiTerritoryCreateWizard.continent"); }, get description() { return i18n.t("uiTerritoryCreateWizard.aContinentalLandmass"); } },
 ];
 
 /* ── Granularity options with explanations ── */
 const GRANULARITY_OPTIONS = [
-  { value: "DISTRICT_OR_COMMUNE", label: "District / Commune", get description() { return i18n.t("uiTerritoryCreateWizard.mostPreciseMatchesASpecificMunicipality"); } },
-  { value: "NUTS3", get label() { return i18n.t("uiTerritoryCreateWizard.nuts3CountyLevel"); }, description: "European statistical unit — e.g. arrondissement, Landkreis" },
+  { value: "DISTRICT_OR_COMMUNE", get label() { return i18n.t("uiTerritoryCreateWizard.districtCommune"); }, get description() { return i18n.t("uiTerritoryCreateWizard.mostPreciseMatchesASpecificMunicipality"); } },
+  { value: "NUTS3", get label() { return i18n.t("uiTerritoryCreateWizard.nuts3CountyLevel"); }, get description() { return i18n.t("uiTerritoryCreateWizard.europeanStatisticalUnitEGArrondissement"); } },
   { value: "NUTS2", get label() { return i18n.t("uiTerritoryCreateWizard.nuts2ProvinceLevel"); }, description: "European statistical unit — e.g. département, Regierungsbezirk" },
   { value: "NUTS1", get label() { return i18n.t("uiTerritoryCreateWizard.nuts1RegionLevel"); }, description: "European statistical unit — e.g. Länder, grandes régions" },
-  { value: "COUNTRY", label: "Country", description: "National boundary" },
-  { value: "CUSTOM_PERIMETER", label: "Custom Perimeter", description: "Manually defined area" },
+  { value: "COUNTRY", get label() { return i18n.t("uiTerritoryCreateWizard.country"); }, get description() { return i18n.t("uiTerritoryCreateWizard.nationalBoundary"); } },
+  { value: "CUSTOM_PERIMETER", get label() { return i18n.t("uiTerritoryCreateWizard.customPerimeter"); }, get description() { return i18n.t("uiTerritoryCreateWizard.manuallyDefinedArea"); } },
 ];
 
 /* ── Geocoding hook ── */
@@ -87,6 +87,7 @@ function useGeocode(query: string) {
 
 /* ── Step indicator ── */
 function StepDots({ current, total }: { current: number; total: number }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-2 py-2">
       {Array.from({ length: total }, (_, i) => i + 1).map(n => (
@@ -106,7 +107,7 @@ function StepDots({ current, total }: { current: number; total: number }) {
           {n < total && <div className={cn("h-0.5 w-8 rounded-full", current > n ? "bg-primary" : "bg-border")} />}
         </div>
       ))}
-      <span className="ml-2 text-xs text-muted-foreground">Step {current} of {total}</span>
+      <span className="ml-2 text-xs text-muted-foreground">{t("uiTerritoryCreateWizard.step")} {current} of {total}</span>
     </div>
   );
 }
@@ -264,7 +265,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">{t("uiTerritoryCreateWizard.name")}</Label>
                 <Input
-                  placeholder="e.g. Marseille, Bavaria, Costa Rica..."
+                  placeholder={t("uiTerritoryCreateWizard.eGMarseilleBavariaCostaRica")}
                   value={name}
                   onChange={e => setName(e.target.value)}
                   className="text-sm"
@@ -291,7 +292,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
 
               {/* Granularity */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Data granularity</Label>
+                <Label className="text-xs font-medium">{t("uiTerritoryCreateWizard.dataGranularity")}</Label>
                 <Select value={granularity} onValueChange={setGranularity}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -309,7 +310,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
 
               {/* Postal code + geocode search */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Postal code (optional — helps locate precisely)</Label>
+                <Label className="text-xs font-medium">{t("uiTerritoryCreateWizard.postalCodeOptionalHelpsLocatePrecisely")}</Label>
                 <Input
                   placeholder="e.g. 13001"
                   value={postalCode}
@@ -400,7 +401,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
             <div className="space-y-4">
               <div className="rounded-xl border border-border p-4 space-y-3">
                 <h4 className="text-sm font-semibold flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-primary" /> Summary
+                  <Sparkles className="h-4 w-4 text-primary" /> {t("uiTerritoryCreateWizard.summary")}
                 </h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -412,11 +413,11 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                     <p className="text-sm font-medium">{LOCATION_LEVELS.find(l => l.value === level)?.label}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Granularity</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTerritoryCreateWizard.granularity")}</p>
                     <p className="text-sm font-medium">{GRANULARITY_OPTIONS.find(g => g.value === granularity)?.label}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Coordinates</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTerritoryCreateWizard.coordinates")}</p>
                     <p className="text-sm font-medium">
                       {selectedGeo
                         ? `${parseFloat(selectedGeo.lat).toFixed(3)}, ${parseFloat(selectedGeo.lon).toFixed(3)}`
@@ -453,7 +454,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                   disabled={createMutation.isPending || !name.trim()}
                 >
                   {createMutation.isPending ? (
-                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Creating...</>
+                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {t("uiTerritoryCreateWizard.creating")}</>
                   ) : (
                     <><Globe className="h-3.5 w-3.5" /> {t("uiTerritoryCreateWizard.createTerritory")}</>
                   )}

@@ -204,7 +204,7 @@ export function useDeleteExcerpt() {
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ["territory-excerpts", vars.territoryId] });
-      toast({ title: "Excerpt removed" });
+      toast({ title: t("uiUseTerritoryDetail.excerptRemoved") });
     },
     onError: (e: any) => {
       toast({ title: t("uiUseTerritoryDetail.failedToDelete"), description: e.message, variant: "destructive" });
@@ -238,7 +238,7 @@ export function useReportExcerpt() {
         const notifications = admins.map((a: any) => ({
           user_id: a.id,
           type: "excerpt_report",
-          title: "Excerpt reported",
+          title: t("uiUseTerritoryDetail.excerptReported"),
           body: `Reason: ${reason}${customReason ? ` — ${customReason}` : ""}`,
           related_entity_type: "territory_excerpt",
           related_entity_id: excerptId,
@@ -247,7 +247,7 @@ export function useReportExcerpt() {
       }
     },
     onSuccess: () => {
-      toast({ title: "Report submitted", description: "Admins have been notified." });
+      toast({ title: t("uiUseTerritoryDetail.reportSubmitted"), description: t("uiUseTerritoryDetail.adminsHaveBeenNotified") });
     },
     onError: (e: any) => {
       toast({ title: t("uiUseTerritoryDetail.failedToReport"), description: e.message, variant: "destructive" });

@@ -14,15 +14,15 @@ import { Plus, Trash2, Save } from "lucide-react";
 import { WebsiteSectionEditor } from "./WebsiteSectionEditor";
 
 const PAGE_TYPES = [
-  { value: "home", label: "Home" },
+  { value: "home", get label() { return i18n.t("uiWebsitePageEditor.home"); } },
   { value: "about", get label() { return i18n.t("uiWebsitePageEditor.about"); } },
-  { value: "services", label: "Services" },
-  { value: "projects", label: "Projects" },
-  { value: "community", label: "Community" },
-  { value: "program", label: "Program" },
-  { value: "contact", label: "Contact" },
+  { value: "services", get label() { return i18n.t("uiWebsitePageEditor.services"); } },
+  { value: "projects", get label() { return i18n.t("uiWebsitePageEditor.projects"); } },
+  { value: "community", get label() { return i18n.t("uiWebsitePageEditor.community"); } },
+  { value: "program", get label() { return i18n.t("uiWebsitePageEditor.program"); } },
+  { value: "contact", get label() { return i18n.t("uiWebsitePageEditor.contact"); } },
   { value: "learning", get label() { return i18n.t("uiWebsitePageEditor.learningEvents"); } },
-  { value: "custom", label: "Custom" },
+  { value: "custom", get label() { return i18n.t("uiWebsitePageEditor.custom"); } },
 ];
 
 interface Props {
@@ -61,7 +61,7 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website-pages", websiteId] });
-      toast.success("Page updated");
+      toast.success(t("uiWebsitePageEditor.pageUpdated"));
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -79,7 +79,7 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website-sections", page.id] });
-      toast.success("Section added");
+      toast.success(t("uiWebsitePageEditor.sectionAdded"));
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -91,7 +91,7 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website-sections", page.id] });
-      toast.success("Section removed");
+      toast.success(t("uiWebsitePageEditor.sectionRemoved"));
     },
   });
 
@@ -103,11 +103,11 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
           <Input value={title} onChange={(e) => setTitle(e.target.value)} className="h-8 text-sm" />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Slug</Label>
+          <Label className="text-xs">{t("uiWebsitePageEditor.slug")}</Label>
           <Input value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} className="h-8 text-sm" />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Type</Label>
+          <Label className="text-xs">{t("uiWebsitePageEditor.type")}</Label>
           <Select value={pageType} onValueChange={setPageType}>
             <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -124,7 +124,7 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
 
       <div className="border-t border-border pt-4 mt-4">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium">Sections</h4>
+          <h4 className="text-sm font-medium">{t("uiWebsitePageEditor.sections")}</h4>
           <Button variant="outline" size="sm" onClick={() => addSection.mutate()}>
             <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiWebsitePageEditor.addSection")}
           </Button>
@@ -139,7 +139,7 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
             <Card key={s.id} className="border-dashed">
               <CardContent className="p-3 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">Section #{i + 1}</span>
+                  <span className="text-xs font-medium text-muted-foreground">{t("uiWebsitePageEditor.section")}{i + 1}</span>
                   <Button variant="ghost" size="sm" className="h-6 text-destructive" onClick={() => deleteSection.mutate(s.id)}>
                     <Trash2 className="h-3 w-3" />
                   </Button>

@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useTranslation } from "react-i18next";
 /**
  * CreateBioregion.tsx — Multi-step wizard for creating a bioregion territory.
@@ -27,10 +28,10 @@ import "leaflet/dist/leaflet.css";
 
 /* ── Step indicator ── */
 const STEPS = [
-  { label: "Identity", icon: Sprout },
-  { label: "Towns", icon: MapPin },
-  { label: "Living Systems", icon: Leaf },
-  { label: "Boundary", icon: Globe2 },
+  { get label() { return i18n.t("uiCreateBioregion.identity"); }, icon: Sprout },
+  { get label() { return i18n.t("uiCreateBioregion.towns"); }, icon: MapPin },
+  { get label() { return i18n.t("uiCreateBioregion.livingSystems"); }, icon: Leaf },
+  { get label() { return i18n.t("uiCreateBioregion.boundary"); }, icon: Globe2 },
 ] as const;
 
 function StepIndicator({ current }: { current: number }) {
@@ -122,7 +123,7 @@ function StepIdentity({
         <Input
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="e.g. Senne River Basin, Flemish Ardennes…"
+          placeholder={t("uiCreateBioregion.eGSenneRiverBasinFlemish")}
           maxLength={100}
         />
         <p className="text-xs text-muted-foreground mt-1">{t("uiCreateBioregion.chooseANameThatReflectsThe")}</p>
@@ -242,7 +243,7 @@ function CreateTownInline({
         <Input
           value={postalCode}
           onChange={e => setPostalCode(e.target.value)}
-          placeholder="Postal code (optional)"
+          placeholder={t("uiCreateBioregion.postalCodeOptional")}
           className="text-sm flex-1"
           maxLength={20}
         />
@@ -254,7 +255,7 @@ function CreateTownInline({
           className="text-xs shrink-0"
         >
           {geocoding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
-          Locate
+          {t("uiCreateBioregion.locate")}
         </Button>
       </div>
       {geocoded && (
@@ -469,11 +470,11 @@ function StepBoundary({
         <div className="flex items-center gap-2">
           <Badge variant="outline">{points.length} points</Badge>
           <Button variant="ghost" size="sm" onClick={() => setPoints([])} className="text-xs">
-            Clear
+            {t("uiCreateBioregion.clear")}
           </Button>
           {points.length > 0 && (
             <Button variant="ghost" size="sm" onClick={() => setPoints(points.slice(0, -1))} className="text-xs">
-              Undo last
+              {t("uiCreateBioregion.undoLast")}
             </Button>
           )}
         </div>
@@ -648,7 +649,7 @@ export default function CreateBioregion() {
       return { id: bioregionId, slug };
     },
     onSuccess: (result) => {
-      toast.success("Bioregion created!", { description: `${name} is now live.` });
+      toast.success(t("uiCreateBioregion.bioregionCreated"), { description: `${name} is now live.` });
       queryClient.invalidateQueries({ queryKey: ["territories"] });
       navigate(`/territories/${result.slug ?? result.id}`);
     },
@@ -678,7 +679,7 @@ export default function CreateBioregion() {
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center space-y-3">
             <Mountain className="h-10 w-10 text-muted-foreground mx-auto" />
-             <h2 className="text-lg font-semibold">Experience required</h2>
+             <h2 className="text-lg font-semibold">{t("uiCreateBioregion.experienceRequired")}</h2>
              <p className="text-sm text-muted-foreground">
                {t("uiCreateBioregion.youNeedToBeAtLeast")} <strong>{t("uiCreateBioregion.level1")}</strong> {t("uiCreateBioregion.toCreateABioregionSignUp")}
              </p>

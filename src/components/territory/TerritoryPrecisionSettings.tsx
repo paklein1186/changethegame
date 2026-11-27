@@ -21,18 +21,18 @@ interface Props {
 }
 
 const PRECISION_OPTIONS = [
-  { value: TerritorialPrecisionLevel.STRICT_MATCH, label: "Strict Match", icon: "🎯", desc: "Only exact granularity datasets" },
-  { value: TerritorialPrecisionLevel.PERIMETER_MATCH, label: "Perimeter Match", icon: "📐", get desc() { return i18n.t("uiTerritoryPrecisionSettings.exactFallbackToBroaderLevels"); } },
-  { value: TerritorialPrecisionLevel.BIOREGIONAL_MATCH, label: "Bioregional Match", icon: "🌍", desc: "Ecoregion + territorial fallback" },
+  { value: TerritorialPrecisionLevel.STRICT_MATCH, get label() { return i18n.t("uiTerritoryPrecisionSettings.strictMatch"); }, icon: "🎯", get desc() { return i18n.t("uiTerritoryPrecisionSettings.onlyExactGranularityDatasets"); } },
+  { value: TerritorialPrecisionLevel.PERIMETER_MATCH, get label() { return i18n.t("uiTerritoryPrecisionSettings.perimeterMatch"); }, icon: "📐", get desc() { return i18n.t("uiTerritoryPrecisionSettings.exactFallbackToBroaderLevels"); } },
+  { value: TerritorialPrecisionLevel.BIOREGIONAL_MATCH, get label() { return i18n.t("uiTerritoryPrecisionSettings.bioregionalMatch"); }, icon: "🌍", get desc() { return i18n.t("uiTerritoryPrecisionSettings.ecoregionTerritorialFallback"); } },
 ];
 
 const GRANULARITY_OPTIONS = [
-  { value: TerritorialGranularity.DISTRICT_OR_COMMUNE, label: "District / Commune" },
+  { value: TerritorialGranularity.DISTRICT_OR_COMMUNE, get label() { return i18n.t("uiTerritoryPrecisionSettings.districtCommune"); } },
   { value: TerritorialGranularity.NUTS3, label: "NUTS3" },
   { value: TerritorialGranularity.NUTS2, label: "NUTS2" },
   { value: TerritorialGranularity.NUTS1, label: "NUTS1" },
-  { value: TerritorialGranularity.COUNTRY, label: "Country" },
-  { value: TerritorialGranularity.CUSTOM_PERIMETER, label: "Custom Perimeter" },
+  { value: TerritorialGranularity.COUNTRY, get label() { return i18n.t("uiTerritoryPrecisionSettings.country"); } },
+  { value: TerritorialGranularity.CUSTOM_PERIMETER, get label() { return i18n.t("uiTerritoryPrecisionSettings.customPerimeter"); } },
 ];
 
 export function TerritoryPrecisionSettings({ territoryId }: Props) {
@@ -82,7 +82,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
         </div>
         <div>
           <h3 className="font-display text-sm font-semibold text-foreground">
-            Living Systems Precision
+            {t("uiTerritoryPrecisionSettings.livingSystemsPrecision")}
           </h3>
           <p className="text-[11px] text-muted-foreground">
             {t("uiTerritoryPrecisionSettings.configureHowEnvironmentalDatasetsAreMatched")}
@@ -121,7 +121,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
 
       {/* Granularity */}
       <div className="space-y-2">
-        <label className="text-xs font-medium text-foreground">Territorial granularity</label>
+        <label className="text-xs font-medium text-foreground">{t("uiTerritoryPrecisionSettings.territorialGranularity")}</label>
         <Select value={granularity || ""} onValueChange={(v) => setGranularity(v || null)}>
           <SelectTrigger className="text-xs">
             <SelectValue placeholder={t("uiTerritoryPrecisionSettings.autoDetectFromLevel")} />
@@ -153,7 +153,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
       {/* Auto-expand toggle */}
       <div className="flex items-center justify-between py-2">
         <div>
-          <p className="text-xs font-medium text-foreground">Auto-expand perimeter</p>
+          <p className="text-xs font-medium text-foreground">{t("uiTerritoryPrecisionSettings.autoExpandPerimeter")}</p>
           <p className="text-[10px] text-muted-foreground">
             {t("uiTerritoryPrecisionSettings.fallbackToBroaderLevelsWhenNo")}
           </p>

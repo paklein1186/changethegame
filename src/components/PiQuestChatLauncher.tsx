@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { Bot, Sparkles, Users, ListChecks, MessageCircle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ const PROMPTS: { icon: any; label: string; prompt: (n: string) => string }[] = [
 ];
 
 export function PiQuestChatLauncher({ questId, questName }: PiQuestChatLauncherProps) {
+  const { t } = useTranslation();
   const { openPiPanel, setContext, setPrefillPrompt, isOpen } = usePiPanel();
 
   // Keep Pi context in sync with this quest while the tab is mounted
@@ -46,7 +48,7 @@ export function PiQuestChatLauncher({ questId, questName }: PiQuestChatLauncherP
               Pose-lui une question ou choisis une action ci-dessous.
             </p>
             <Button className="mt-3" onClick={() => launch()}>
-              <Sparkles className="h-4 w-4 mr-2" /> Ouvrir Pi
+              <Sparkles className="h-4 w-4 mr-2" /> {t("uiPiQuestChatLauncher.ouvrirPi")}
             </Button>
           </div>
         </div>

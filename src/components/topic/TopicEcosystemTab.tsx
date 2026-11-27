@@ -97,9 +97,9 @@ export function TopicEcosystemTab({ topicId }: Props) {
     return [
       { key: "quests", label: t("uiTopicEcosystemTab.quests"), icon: Compass, linkPrefix: "/quests/", nameField: "title", items: ecosystem.quests },
       { key: "guilds", label: t("uiTopicEcosystemTab.guilds"), icon: Shield, linkPrefix: "/guilds/", nameField: "name", items: ecosystem.guilds },
-      { key: "companies", label: "Organizations", icon: Building2, linkPrefix: "/companies/", nameField: "name", items: ecosystem.companies },
-      { key: "services", label: "Services", icon: Briefcase, linkPrefix: "/services/", nameField: "title", items: ecosystem.services },
-      { key: "courses", label: "Courses", icon: GraduationCap, linkPrefix: "/courses/", nameField: "title", items: ecosystem.courses },
+      { key: "companies", label: t("uiTopicEcosystemTab.organizations"), icon: Building2, linkPrefix: "/companies/", nameField: "name", items: ecosystem.companies },
+      { key: "services", label: t("uiTopicEcosystemTab.services"), icon: Briefcase, linkPrefix: "/services/", nameField: "title", items: ecosystem.services },
+      { key: "courses", label: t("uiTopicEcosystemTab.courses"), icon: GraduationCap, linkPrefix: "/courses/", nameField: "title", items: ecosystem.courses },
     ].filter(s => s.items.length > 0);
   }, [ecosystem]);
 
@@ -156,7 +156,7 @@ export function TopicEcosystemTab({ topicId }: Props) {
         <div className="space-y-3">
           <h3 className="font-display text-sm font-semibold flex items-center gap-2 text-muted-foreground">
             <Users className="h-4 w-4" />
-            People
+            {t("uiTopicEcosystemTab.people")}
             <Badge variant="outline" className="text-[10px] ml-1">{people.length}</Badge>
           </h3>
 

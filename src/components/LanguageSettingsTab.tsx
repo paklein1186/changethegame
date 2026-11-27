@@ -48,7 +48,7 @@ export function LanguageSettingsTab() {
       setLocalCodes((p) => [i18n.language, ...p]);
     }
     await saveSpokenLanguages(localCodes);
-    toast({ title: "Spoken languages saved!" });
+    toast({ title: t("uiLanguageSettingsTab.spokenLanguagesSaved") });
   };
 
   const handleChangePreferred = async (code: string) => {
@@ -86,7 +86,7 @@ export function LanguageSettingsTab() {
 
       <Separator />
 
-      <Section title="Spoken Languages" icon={<Languages className="h-5 w-5" />}>
+      <Section title={t("uiLanguageSettingsTab.spokenLanguages")} icon={<Languages className="h-5 w-5" />}>
         <p className="text-sm text-muted-foreground mb-4">
           {t("uiLanguageSettingsTab.theseAreTheLanguagesYouSpeak")}
         </p>

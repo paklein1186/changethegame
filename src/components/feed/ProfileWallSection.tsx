@@ -27,9 +27,9 @@ const SOURCE_FILTERS: { key: WallSourceFilter; label: string; icon: React.ReactN
   { key: "PROFILE", get label() { return i18n.t("uiProfileWallSection.profile"); }, icon: <User className="h-3 w-3" /> },
   { key: "GUILD", get label() { return i18n.t("uiProfileWallSection.guilds"); }, icon: <Shield className="h-3 w-3" /> },
   { key: "QUEST", get label() { return i18n.t("uiProfileWallSection.quests"); }, icon: <Compass className="h-3 w-3" /> },
-  { key: "COMPANY", label: "Companies", icon: <Building2 className="h-3 w-3" /> },
-  { key: "POD", label: "Pods", icon: <CircleDot className="h-3 w-3" /> },
-  { key: "COURSE_EVENT", label: "Courses", icon: <GraduationCap className="h-3 w-3" /> },
+  { key: "COMPANY", get label() { return i18n.t("uiProfileWallSection.companies"); }, icon: <Building2 className="h-3 w-3" /> },
+  { key: "POD", get label() { return i18n.t("uiProfileWallSection.pods"); }, icon: <CircleDot className="h-3 w-3" /> },
+  { key: "COURSE_EVENT", get label() { return i18n.t("uiProfileWallSection.courses"); }, icon: <GraduationCap className="h-3 w-3" /> },
 ];
 
 const EMPTY_MESSAGES: Record<WallSourceFilter, string> = {

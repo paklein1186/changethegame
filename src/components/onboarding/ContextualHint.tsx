@@ -139,6 +139,7 @@ export function SectionBanner({
   variant = "info",
   className,
 }: SectionBannerProps) {
+  const { t } = useTranslation();
   const { dismissed, dismiss } = useIsDismissed(id);
 
   if (dismissed) return null;
@@ -188,7 +189,7 @@ export function SectionBanner({
       <button
         onClick={dismiss}
         className="shrink-0 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-        aria-label="Dismiss hint"
+        aria-label={t("uiContextualHint.dismissHint")}
       >
         <X className="h-4 w-4" />
       </button>

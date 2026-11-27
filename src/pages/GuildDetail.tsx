@@ -626,17 +626,17 @@ export default function GuildDetail() {
             <h3 className="font-display font-semibold mb-2">{t("uiGuildDetail.details")}</h3>
             <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Membership policy</span>
+                <span className="text-sm text-muted-foreground">{t("uiGuildDetail.membershipPolicy")}</span>
                 <Badge variant={guild.join_policy === "OPEN" ? "default" : guild.join_policy === "INVITE_ONLY" ? "destructive" : "secondary"} className="capitalize text-xs">
                   {(guild.join_policy || "OPEN").replace(/_/g, " ").toLowerCase()}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Type</span>
+                <span className="text-sm text-muted-foreground">{t("uiGuildDetail.type")}</span>
                 <Badge variant="outline" className="capitalize text-xs">{translateEntityType(guild.type || "guild", t)}</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Founder</span>
+                <span className="text-sm text-muted-foreground">{t("uiGuildDetail.founder")}</span>
                 {creator ? (
                   <Link to={`/users/${creator.user_id}`} className="flex items-center gap-1.5 text-sm font-medium hover:text-primary transition-colors">
                     <Avatar className="h-5 w-5"><AvatarImage src={creator.avatar_url ?? undefined} /><AvatarFallback className="text-[10px]">{creator.name?.[0]}</AvatarFallback></Avatar>
@@ -649,7 +649,7 @@ export default function GuildDetail() {
                 if (admins.length === 0) return null;
                 return (
                   <div>
-                    <span className="text-sm text-muted-foreground block mb-1.5">Admins</span>
+                    <span className="text-sm text-muted-foreground block mb-1.5">{t("uiGuildDetail.admins")}</span>
                     <div className="flex flex-wrap gap-2">
                       {admins.map((m: any) => (
                         <Link key={m.id} to={`/users/${m.user_id}`} className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-xs font-medium hover:border-primary/30 transition-colors">
@@ -662,7 +662,7 @@ export default function GuildDetail() {
                 );
               })()}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Created</span>
+                <span className="text-sm text-muted-foreground">{t("uiGuildDetail.created")}</span>
                 <span className="text-sm">{guild.created_at && !isNaN(new Date(guild.created_at).getTime()) ? formatDistanceToNow(new Date(guild.created_at), { addSuffix: true }) : "—"}</span>
               </div>
             </div>
@@ -671,17 +671,17 @@ export default function GuildDetail() {
           {/* Governance Model Card */}
           {(() => {
             const govModels: Record<string, { label: string; description: string }> = {
-              "1h1v": { label: "1 Human, 1 Vote", description: t("uiGuildDetail.equalEveryMemberHasOneVote") },
-              soft_log: { label: "Soft Logarithmic", description: t("uiGuildDetail.logarithmicSoftContributionsInfluenceVotesBut") },
-              strong_log: { label: "Logarithmic (strong)", description: t("uiGuildDetail.logarithmicStrongContributionsHaveMoreInfluence") },
-              pure_pct: { label: "Proportional", description: t("uiGuildDetail.proportionalVotingPowerDirectlyMirrorsContribution") },
+              "1h1v": { label: t("uiGuildDetail.1Human1Vote"), description: t("uiGuildDetail.equalEveryMemberHasOneVote") },
+              soft_log: { label: t("uiGuildDetail.softLogarithmic"), description: t("uiGuildDetail.logarithmicSoftContributionsInfluenceVotesBut") },
+              strong_log: { label: t("uiGuildDetail.logarithmicStrong"), description: t("uiGuildDetail.logarithmicStrongContributionsHaveMoreInfluence") },
+              pure_pct: { label: t("uiGuildDetail.proportional"), description: t("uiGuildDetail.proportionalVotingPowerDirectlyMirrorsContribution") },
             };
             const model = (guild as any).governance_model ?? "1h1v";
             const info = govModels[model] ?? govModels["1h1v"];
             return (
               <div className="rounded-xl border border-border bg-card/50 p-4">
                 <h3 className="font-display font-semibold mb-2 text-sm flex items-center gap-1.5">
-                  <Vote className="h-4 w-4" /> Governance Model
+                  <Vote className="h-4 w-4" /> {t("uiGuildDetail.governanceModel")}
                 </h3>
                 <div className="flex items-start gap-3">
                   <Badge variant="outline" className="text-xs shrink-0">{info.label}</Badge>
@@ -695,7 +695,7 @@ export default function GuildDetail() {
             <EntityFollowersCount entityId={guild.id} entityType="GUILD" />
             <button onClick={() => setActiveTab("network")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{members.length}</p><p className="text-sm text-muted-foreground">{t("uiGuildDetail.members")}</p></button>
             <button onClick={() => setActiveTab("work")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{quests.length}</p><p className="text-sm text-muted-foreground">{t("uiGuildDetail.quests")}</p></button>
-            <button onClick={() => setActiveTab("work")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{services.length}</p><p className="text-sm text-muted-foreground">Services</p></button>
+            <button onClick={() => setActiveTab("work")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{services.length}</p><p className="text-sm text-muted-foreground">{t("uiGuildDetail.services")}</p></button>
             <div className="rounded-lg border border-border bg-card p-4 text-center">
               <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1"><Wallet className="h-5 w-5" />{guild.credits_balance ?? 0}</p>
               <p className="text-sm text-muted-foreground">{t("uiGuildDetail.guildWallet")}</p>
@@ -763,7 +763,7 @@ export default function GuildDetail() {
                     {(m.user?.xp ?? 0) > 0 && (
                       <XpLevelBadge level={computeLevelFromXp(m.user?.xp ?? 0)} xp={m.user?.xp} compact />
                     )}
-                    <span className="text-xs text-muted-foreground shrink-0">Joined {m.joined_at && !isNaN(new Date(m.joined_at).getTime()) ? formatDistanceToNow(new Date(m.joined_at), { addSuffix: true }) : "recently"}</span>
+                    <span className="text-xs text-muted-foreground shrink-0">{t("uiGuildDetail.joined")} {m.joined_at && !isNaN(new Date(m.joined_at).getTime()) ? formatDistanceToNow(new Date(m.joined_at), { addSuffix: true }) : "recently"}</span>
                   </Link>
                   {isAdmin && m.user_id !== currentUser.id && (
                     <SendOfficialMessageDialog
@@ -841,28 +841,28 @@ export default function GuildDetail() {
           {/* Services section */}
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display font-semibold flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary" /> Services ({services.length})</h3>
+              <h3 className="font-display font-semibold flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary" /> {t("uiGuildDetail.services2")}{services.length})</h3>
               {isMember && (
                 <Dialog open={createSvcOpen} onOpenChange={setCreateSvcOpen}>
                   <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" /> {t("uiGuildDetail.newService")}</Button></DialogTrigger>
                   <DialogContent>
                     <DialogHeader><DialogTitle>{editSvcId ? t("uiGuildDetail.editService") : t("uiGuildDetail.createGuildService")}</DialogTitle></DialogHeader>
                     <div className="space-y-4 mt-2">
-                      <div><label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.title")}</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder="e.g. Coaching Session" maxLength={120} /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.title")}</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder={t("uiGuildDetail.eGCoachingSession")} maxLength={120} /></div>
                       <div><label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.description")}</label><Textarea value={svcDesc} onChange={e => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
-                      <ImageUpload label="Image (optional)" currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" />
+                      <ImageUpload label={t("uiGuildDetail.imageOptional")} currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" />
                       <div className="grid grid-cols-2 gap-3">
-                        <div><label className="text-sm font-medium mb-1 block">Duration (min)</label><Input type="number" value={svcDuration} onChange={e => setSvcDuration(e.target.value)} min={15} max={480} /></div>
-                        <div><label className="text-sm font-medium mb-1 block">Price (€)</label><Input type="number" value={svcPrice} onChange={e => setSvcPrice(e.target.value)} min={0} step={5} /></div>
+                        <div><label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.durationMin")}</label><Input type="number" value={svcDuration} onChange={e => setSvcDuration(e.target.value)} min={15} max={480} /></div>
+                        <div><label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.price")}</label><Input type="number" value={svcPrice} onChange={e => setSvcPrice(e.target.value)} min={0} step={5} /></div>
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1 block">Location type</label>
+                        <label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.locationType")}</label>
                         <Select value={svcLocationType} onValueChange={v => setSvcLocationType(v as OnlineLocationType)}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value={OnlineLocationType.JITSI}>Jitsi</SelectItem>
-                            <SelectItem value={OnlineLocationType.ZOOM}>Zoom</SelectItem>
-                            <SelectItem value={OnlineLocationType.OTHER}>Other</SelectItem>
+                            <SelectItem value={OnlineLocationType.ZOOM}>{t("uiGuildDetail.zoom")}</SelectItem>
+                            <SelectItem value={OnlineLocationType.OTHER}>{t("uiGuildDetail.other")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -875,10 +875,10 @@ export default function GuildDetail() {
             </div>
             <ServicesList services={services} isAdmin={isAdmin} onToggleActive={async (svc: any) => {
               const { error } = await supabase.from("services").update({ is_active: !svc.is_active }).eq("id", svc.id);
-              if (!error) { qc.invalidateQueries({ queryKey: ["services-for-guild", id] }); toast({ title: svc.is_active ? "Service paused" : "Service resumed" }); }
+              if (!error) { qc.invalidateQueries({ queryKey: ["services-for-guild", id] }); toast({ title: svc.is_active ? t("uiGuildDetail.servicePaused") : t("uiGuildDetail.serviceResumed") }); }
             }} onDelete={async (svc: any) => {
               const { error } = await supabase.from("services").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", svc.id);
-              if (!error) { qc.invalidateQueries({ queryKey: ["services-for-guild", id] }); toast({ title: "Service deleted" }); }
+              if (!error) { qc.invalidateQueries({ queryKey: ["services-for-guild", id] }); toast({ title: t("uiGuildDetail.serviceDeleted") }); }
             }} />
           </section>
 
@@ -892,7 +892,7 @@ export default function GuildDetail() {
 
           {/* Partnerships section */}
           <section>
-            <h3 className="font-display font-semibold flex items-center gap-2 mb-3"><Handshake className="h-4 w-4 text-primary" /> Partnerships</h3>
+            <h3 className="font-display font-semibold flex items-center gap-2 mb-3"><Handshake className="h-4 w-4 text-primary" /> {t("uiGuildDetail.partnerships")}</h3>
             <PartnershipsTab entityType="GUILD" entityId={guild.id} isAdmin={isAdmin} />
           </section>
         </TabsContent>

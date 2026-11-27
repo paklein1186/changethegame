@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -72,6 +73,7 @@ function FitOpportunityBounds({ nodes }: { nodes: MapNode[] }): null {
 }
 
 export default function OpportunityMap() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const [scope, setScope] = useState<Scope>("me");
   const [direction, setDirection] = useState<"all" | "help_for_you" | "you_can_help">("all");
@@ -210,17 +212,17 @@ export default function OpportunityMap() {
 
     {listedLinks.length > 0 || search ? <section aria-label="Liste des connexions" className="rounded-xl border border-border bg-card">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border p-3">
-        <h2 className="text-sm font-semibold">Connexions ({listedLinks.length})</h2>
+        <h2 className="text-sm font-semibold">{t("uiOpportunityMap.connexions")}{listedLinks.length})</h2>
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Filtrer par projet, personne, besoin, territoire…" className="h-8 max-w-xs text-xs" />
       </div>
       <div className="max-h-[480px] overflow-auto">
         <table className="w-full text-xs">
-          <thead className="sticky top-0 bg-card text-left text-muted-foreground"><tr><th className="p-2">Projet</th><th className="p-2">Besoin</th><th className="p-2">Qui peut aider</th><th className="p-2">Pourquoi</th><th className="p-2 text-right">Pertinence</th></tr></thead>
+          <thead className="sticky top-0 bg-card text-left text-muted-foreground"><tr><th className="p-2">{t("uiOpportunityMap.projet")}</th><th className="p-2">{t("uiOpportunityMap.besoin")}</th><th className="p-2">Qui peut aider</th><th className="p-2">{t("uiOpportunityMap.pourquoi")}</th><th className="p-2 text-right">{t("uiOpportunityMap.pertinence")}</th></tr></thead>
           <tbody>
             {listedLinks.map((l) => <tr key={l.id} onMouseEnter={() => setSelectedLink(l.id)} onMouseLeave={() => setSelectedLink(null)} className={`border-t border-border align-top ${selectedLink === l.id ? "bg-primary/10" : "hover:bg-muted/40"}`}>
               <td className="p-2"><Link to={l.from.url} className="font-medium hover:text-primary">{l.from.name}</Link><p className="text-muted-foreground">{l.from.territory}</p></td>
               <td className="p-2 font-medium">{l.need}</td>
-              <td className="p-2"><Link to={l.to.url} className="font-medium hover:text-primary">{l.to.name}</Link><p className="text-muted-foreground">{helperTypeLabel[l.helperType] ?? "Ressource"} · {l.to.territory}{l.from.territory === l.to.territory ? " (même territoire)" : ""}</p></td>
+              <td className="p-2"><Link to={l.to.url} className="font-medium hover:text-primary">{l.to.name}</Link><p className="text-muted-foreground">{helperTypeLabel[l.helperType] ?? t("uiOpportunityMap.ressource")} · {l.to.territory}{l.from.territory === l.to.territory ? " (même territoire)" : ""}</p></td>
               <td className="p-2 text-muted-foreground"><span className="mr-1 rounded bg-muted px-1 py-0.5 text-[10px]">{directionLabel[l.direction] ?? l.direction}</span>{l.reason}</td>
               <td className="p-2 text-right font-semibold">{Math.round(l.score <= 1 ? l.score * 100 : l.score)}%</td>
             </tr>)}

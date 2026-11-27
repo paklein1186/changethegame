@@ -90,7 +90,7 @@ export function BroadcastHistoryPanel() {
 
   const statusBadge = (status: string) => {
     switch (status) {
-      case "sent": return <Badge variant="default" className="gap-1 text-xs"><CheckCircle2 className="h-3 w-3" /> Sent</Badge>;
+      case "sent": return <Badge variant="default" className="gap-1 text-xs"><CheckCircle2 className="h-3 w-3" /> {t("uiBroadcastHistoryPanel.sent")}</Badge>;
       case "failed": return <Badge variant="destructive" className="gap-1 text-xs"><XCircle className="h-3 w-3" /> {t("uiBroadcastHistoryPanel.failed")}</Badge>;
       default: return <Badge variant="secondary" className="gap-1 text-xs"><Clock className="h-3 w-3" /> {t("uiBroadcastHistoryPanel.pending")}</Badge>;
     }
@@ -118,7 +118,7 @@ export function BroadcastHistoryPanel() {
     <div className="space-y-4">
       <h3 className="text-lg font-semibold flex items-center gap-2">
         <Megaphone className="h-5 w-5 text-primary" />
-        Broadcast History
+        {t("uiBroadcastHistoryPanel.broadcastHistory")}
       </h3>
 
       <div className="rounded-lg border">
@@ -126,10 +126,10 @@ export function BroadcastHistoryPanel() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-8" />
-              <TableHead>Subject / Content</TableHead>
-              <TableHead>Sender</TableHead>
-              <TableHead className="text-center">Recipients</TableHead>
-              <TableHead className="text-center">Sent</TableHead>
+              <TableHead>{t("uiBroadcastHistoryPanel.subjectContent")}</TableHead>
+              <TableHead>{t("uiBroadcastHistoryPanel.sender")}</TableHead>
+              <TableHead className="text-center">{t("uiBroadcastHistoryPanel.recipients")}</TableHead>
+              <TableHead className="text-center">{t("uiBroadcastHistoryPanel.sent")}</TableHead>
               <TableHead className="text-center">{t("uiBroadcastHistoryPanel.failed")}</TableHead>
               <TableHead>{t("uiBroadcastHistoryPanel.date")}</TableHead>
               <TableHead className="w-8" />
@@ -178,11 +178,11 @@ export function BroadcastHistoryPanel() {
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead>Recipient</TableHead>
-                                <TableHead>Email</TableHead>
+                                <TableHead>{t("uiBroadcastHistoryPanel.recipient")}</TableHead>
+                                <TableHead>{t("uiBroadcastHistoryPanel.email")}</TableHead>
                                 <TableHead>{t("uiBroadcastHistoryPanel.status")}</TableHead>
-                                <TableHead>Delivered</TableHead>
-                                <TableHead>Read</TableHead>
+                                <TableHead>{t("uiBroadcastHistoryPanel.delivered")}</TableHead>
+                                <TableHead>{t("uiBroadcastHistoryPanel.read")}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -236,7 +236,7 @@ export function BroadcastHistoryPanel() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Megaphone className="h-5 w-5 text-primary" />
-              {previewBroadcast?.subject || "Broadcast Message"}
+              {previewBroadcast?.subject || t("uiBroadcastHistoryPanel.broadcastMessage")}
             </DialogTitle>
           </DialogHeader>
           <div className="text-xs text-muted-foreground flex items-center gap-3">

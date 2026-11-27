@@ -46,12 +46,12 @@ const STEP_LABELS_CREATIVE = ["Creative Path", "Houses of Art", "Creative Ground
 const STEP_LABELS_IMPACT = ["Intention", "Identity", "Your Territory", "Languages", "Your Work", "Review Suggestions", "People to Follow", "Project", "Offering", "Get Started"];
 
 const INTENTION_OPTIONS = [
-  { key: "impact", label: "Make impact / collaborate", icon: Heart, get desc() { return i18n.t("uiOnboarding.workOnMissionsSocialImpactProjects"); } },
-  { key: "creative", label: "Express myself creatively", icon: Palette, desc: "Art, writing, performance, installations" },
+  { key: "impact", get label() { return i18n.t("uiOnboarding.makeImpactCollaborate"); }, icon: Heart, get desc() { return i18n.t("uiOnboarding.workOnMissionsSocialImpactProjects"); } },
+  { key: "creative", get label() { return i18n.t("uiOnboarding.expressMyselfCreatively"); }, icon: Palette, get desc() { return i18n.t("uiOnboarding.artWritingPerformanceInstallations"); } },
   { key: "explore", get label() { return i18n.t("uiOnboarding.exploreNotSureYet"); }, icon: HelpCircle, get desc() { return i18n.t("uiOnboarding.justLookingAroundForNow"); } },
   { key: "project", get label() { return i18n.t("uiOnboarding.launchOrStructureAProject"); }, icon: Rocket, get desc() { return i18n.t("uiOnboarding.startAMissionInitiativeOrVenture"); } },
   { key: "community", get label() { return i18n.t("uiOnboarding.meetPeopleJoinCommunities"); }, icon: Users, get desc() { return i18n.t("uiOnboarding.findYourPeopleAndBelong"); } },
-  { key: "work", label: "Find work / clients", icon: Briefcase, get desc() { return i18n.t("uiOnboarding.offerYourSkillsAndGetHired"); } },
+  { key: "work", get label() { return i18n.t("uiOnboarding.findWorkClients"); }, icon: Briefcase, get desc() { return i18n.t("uiOnboarding.offerYourSkillsAndGetHired"); } },
   { key: "learn", get label() { return i18n.t("uiOnboarding.learnAndGrowSkills"); }, icon: GraduationCap, get desc() { return i18n.t("uiOnboarding.discoverNewTopicsAndTrain"); } },
   { key: "register_org", get label() { return i18n.t("uiOnboarding.registerMyOrganization"); }, icon: Building2, get desc() { return i18n.t("uiOnboarding.createAProfileForMyCompany"); } },
   { key: "recruit", get label() { return i18n.t("uiOnboarding.recruitTalentForMyOrganization"); }, icon: Target, get desc() { return i18n.t("uiOnboarding.findSkilledIndividualsAndGuildsAligned"); } },
@@ -337,7 +337,7 @@ export default function Onboarding() {
       }
     } catch (e: any) {
       console.error("AI suggestions error:", e);
-      toast({ title: "AI suggestions unavailable", description: t("uiOnboarding.youCanAddEverythingManuallyLater"), variant: "default" });
+      toast({ title: t("uiOnboarding.aiSuggestionsUnavailable"), description: t("uiOnboarding.youCanAddEverythingManuallyLater"), variant: "default" });
     } finally {
       setAiLoading(false);
     }
@@ -906,7 +906,7 @@ export default function Onboarding() {
             const creativeTopicIds = dbTopics.filter(t => (t as any).universe_type === "creative").map(t => t.id);
             setSelectedTopics(creativeTopicIds);
           }}>{t("uiOnboarding.selectAll")}</Button>
-          <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>Clear</Button>
+          <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>{t("uiOnboarding.clear")}</Button>
         </div>
 
         <div className="space-y-2">
@@ -985,7 +985,7 @@ export default function Onboarding() {
             currentImageUrl={avatarUrl}
             onChange={(url) => setAvatarUrl(url)}
             aspectRatio="1/1"
-            description="Square photo, 256×256 recommended"
+            description={t("uiOnboarding.squarePhoto256256Recommended")}
           />
         </div>
 
@@ -995,8 +995,8 @@ export default function Onboarding() {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">Headline</label>
-          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Visual artist & sound designer" maxLength={120} />
+          <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.headline")}</label>
+          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder={t("uiOnboarding.eGVisualArtistSoundDesigner")} maxLength={120} />
           <p className="text-xs text-muted-foreground mt-1">{t("uiOnboarding.aShortTaglineVisibleOnYour")}</p>
         </div>
 
@@ -1066,7 +1066,7 @@ export default function Onboarding() {
             currentImageUrl={avatarUrl}
             onChange={(url) => setAvatarUrl(url)}
             aspectRatio="1/1"
-            description="Square photo, 256×256 recommended"
+            description={t("uiOnboarding.squarePhoto256256Recommended")}
           />
         </div>
 
@@ -1076,19 +1076,19 @@ export default function Onboarding() {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">Headline</label>
-          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder={isOrgRep ? t("uiOnboarding.eGHeadOfPartnershipsAcme") : "e.g. Social entrepreneur, renewable energy"} maxLength={120} />
+          <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.headline")}</label>
+          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder={isOrgRep ? t("uiOnboarding.eGHeadOfPartnershipsAcme") : t("uiOnboarding.eGSocialEntrepreneurRenewableEnergy")} maxLength={120} />
           <p className="text-xs text-muted-foreground mt-1">{t("uiOnboarding.aShortTaglineVisibleOnYour")}</p>
         </div>
 
 
         <div>
           <label className="text-sm font-medium mb-1.5 block flex items-center gap-1">
-            <Hash className="h-3.5 w-3.5 text-primary" /> Houses (2–4 recommended)
+            <Hash className="h-3.5 w-3.5 text-primary" /> {t("uiOnboarding.houses24Recommended")}
           </label>
           <div className="flex items-center gap-2 mb-2">
             <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics(dbTopics.map((t) => t.id))}>{t("uiOnboarding.selectAll")}</Button>
-            <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>Clear</Button>
+            <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>{t("uiOnboarding.clear")}</Button>
           </div>
           <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
             {dbTopics.map((t) => (
@@ -1111,7 +1111,7 @@ export default function Onboarding() {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">One-sentence bio</label>
+          <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.oneSentenceBio")}</label>
           <Textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
@@ -1154,9 +1154,9 @@ export default function Onboarding() {
 
         <div>
           <label className="text-sm font-medium mb-1 block flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5 text-accent" /> Location
+            <MapPin className="h-3.5 w-3.5 text-accent" /> {t("uiOnboarding.location")}
           </label>
-          <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Paris, France" maxLength={100} />
+          <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t("uiOnboarding.eGParisFrance")} maxLength={100} />
           <p className="text-xs text-muted-foreground mt-1">{t("uiOnboarding.freeTextLocationVisibleOnYour")}</p>
         </div>
 
@@ -1172,7 +1172,7 @@ export default function Onboarding() {
             className="mb-2"
           />
           <div className="flex items-center gap-2 mb-2">
-            <Button variant="ghost" size="sm" onClick={() => setSelectedTerritories([])} disabled={selectedTerritories.length === 0} className="text-xs h-7">Clear</Button>
+            <Button variant="ghost" size="sm" onClick={() => setSelectedTerritories([])} disabled={selectedTerritories.length === 0} className="text-xs h-7">{t("uiOnboarding.clear")}</Button>
             <AddTerritoryDialog onCreated={(id) => { setSelectedTerritories((p) => [...p, id]); setTerritorySearch(""); }} />
           </div>
           <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
@@ -1322,7 +1322,7 @@ export default function Onboarding() {
                   {t("uiOnboarding.followAll")}
                 </Button>
                 <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedFollows([])} disabled={selectedFollows.length === 0}>
-                  Clear
+                  {t("uiOnboarding.clear")}
                 </Button>
               </div>
             </div>
@@ -1366,13 +1366,13 @@ export default function Onboarding() {
   function renderProject(creative: boolean) {
     const statusOptions = creative
       ? [
-          { value: "STARTING", label: "🌱 Seedling" },
-          { value: "ONGOING", label: "🌸 Blooming" },
+          { value: "STARTING", label: t("uiOnboarding.seedling") },
+          { value: "ONGOING", label: t("uiOnboarding.blooming") },
           { value: "COMPLETED", label: t("uiOnboarding.completed") },
         ]
       : [
-          { value: "STARTING", label: "Starting" },
-          { value: "ONGOING", label: "Ongoing" },
+          { value: "STARTING", label: t("uiOnboarding.starting") },
+          { value: "ONGOING", label: t("uiOnboarding.ongoing") },
           { value: "COMPLETED", label: t("uiOnboarding.completedAchievement") },
         ];
 
@@ -1410,7 +1410,7 @@ export default function Onboarding() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.title")}</label>
-              <Input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={creative ? t("uiOnboarding.eGSoundInstallationAtThe") : "e.g. Regenerative Farm Network"} maxLength={120} />
+              <Input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={creative ? t("uiOnboarding.eGSoundInstallationAtThe") : t("uiOnboarding.eGRegenerativeFarmNetwork")} maxLength={120} />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.shortDescription")}</label>
@@ -1435,7 +1435,7 @@ export default function Onboarding() {
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">{creative ? t("uiOnboarding.housesOfArt") : "Houses"}</label>
+              <label className="text-sm font-medium mb-1.5 block">{creative ? t("uiOnboarding.housesOfArt") : t("uiOnboarding.houses")}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                 {dbTopics.map((t) => (
                   <button
@@ -1475,8 +1475,8 @@ export default function Onboarding() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Cover image (optional)</label>
-              <ImageUpload label="Cover image" currentImageUrl={projectImage} onChange={(url) => setProjectImage(url)} />
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.coverImageOptional")}</label>
+              <ImageUpload label={t("uiOnboarding.coverImage")} currentImageUrl={projectImage} onChange={(url) => setProjectImage(url)} />
             </div>
           </div>
         )}
@@ -1499,7 +1499,7 @@ export default function Onboarding() {
         {wantsService === null && (
           <div className="flex gap-3">
             <Button variant="default" className="flex-1" onClick={() => setWantsService(true)}>
-              Yes, let's go
+              {t("uiOnboarding.yesLetSGo")}
             </Button>
             <Button variant="outline" className="flex-1" onClick={() => { setWantsService(false); goNext(); }}>
               {t("uiOnboarding.skipForNow")}
@@ -1511,7 +1511,7 @@ export default function Onboarding() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.title")}</label>
-              <Input value={serviceTitle} onChange={(e) => setServiceTitle(e.target.value)} placeholder={creative ? "e.g. Live Drawing Session" : "e.g. Strategy Workshop"} maxLength={120} />
+              <Input value={serviceTitle} onChange={(e) => setServiceTitle(e.target.value)} placeholder={creative ? t("uiOnboarding.eGLiveDrawingSession") : t("uiOnboarding.eGStrategyWorkshop")} maxLength={120} />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.description")}</label>
@@ -1526,11 +1526,11 @@ export default function Onboarding() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Price (€, optional)</label>
-              <Input type="number" value={servicePrice} onChange={(e) => setServicePrice(e.target.value)} placeholder="0 = free" min={0} step={5} />
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.priceOptional")}</label>
+              <Input type="number" value={servicePrice} onChange={(e) => setServicePrice(e.target.value)} placeholder={t("uiOnboarding.0Free")} min={0} step={5} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">{creative ? t("uiOnboarding.housesOfArt") : "Houses"}</label>
+              <label className="text-sm font-medium mb-1.5 block">{creative ? t("uiOnboarding.housesOfArt") : t("uiOnboarding.houses")}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                 {dbTopics.map((t) => (
                   <button
@@ -1550,7 +1550,7 @@ export default function Onboarding() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Image (optional)</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.imageOptional")}</label>
               <ImageUpload label={`${sLabel} image`} currentImageUrl={serviceImage} onChange={(url) => setServiceImage(url)} />
             </div>
           </div>
@@ -1568,7 +1568,7 @@ export default function Onboarding() {
         {saving ? (
           <div className="space-y-4">
             <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
-            <p className="text-muted-foreground">Setting everything up…</p>
+            <p className="text-muted-foreground">{t("uiOnboarding.settingEverythingUp")}</p>
           </div>
         ) : (
           <>
@@ -1592,10 +1592,10 @@ export default function Onboarding() {
 
             {hasDraftServices && (
               <div className="w-full rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-left">
-                <p className="font-medium">{t("uiOnboarding.weVeCreatedDraft")} {creative ? "skill sessions" : "services"} {t("uiOnboarding.forYou")}</p>
+                <p className="font-medium">{t("uiOnboarding.weVeCreatedDraft")} {creative ? t("uiOnboarding.skillSessions") : "services"} {t("uiOnboarding.forYou")}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {t("uiOnboarding.youCanReviewAndPublishThem")}{" "}
-                  <Link to="/me/settings" className="underline text-primary">{t("uiOnboarding.my")} {creative ? "Skill Sessions" : "Services"}</Link>.
+                  <Link to="/me/settings" className="underline text-primary">{t("uiOnboarding.my")} {creative ? t("uiOnboarding.skillSessions2") : t("uiOnboarding.services")}</Link>.
                 </p>
               </div>
             )}
@@ -1693,7 +1693,7 @@ export default function Onboarding() {
                   </Button>
                   <Button asChild variant="outline">
                     <Link to="/explore/users">
-                      <Users className="h-4 w-4 mr-2" /> Explore Creators
+                      <Users className="h-4 w-4 mr-2" /> {t("uiOnboarding.exploreCreators")}
                     </Link>
                   </Button>
                 </div>
@@ -1734,10 +1734,10 @@ export default function Onboarding() {
         {!isLastStep && (
           <div className="mb-6">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-              <span>Step {step + 1} of {progressSteps}</span>
+              <span>{t("uiOnboarding.step")} {step + 1} of {progressSteps}</span>
               <span className="font-display font-semibold text-foreground">{currentStepLabel}</span>
             </div>
-            <Progress value={((step + 1) / progressSteps) * 100} className="h-1.5" aria-label="Onboarding progress" />
+            <Progress value={((step + 1) / progressSteps) * 100} className="h-1.5" aria-label={t("uiOnboarding.onboardingProgress")} />
           </div>
         )}
 
@@ -1772,7 +1772,7 @@ export default function Onboarding() {
               {showNextButton() && (
                 <Button onClick={goNext} size="sm" disabled={saving || aiLoading}>
                   {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-                  {isFinishStep ? "Finish" : t("uiOnboarding.next")} <ArrowRight className="h-4 w-4 ml-1" />
+                  {isFinishStep ? t("uiOnboarding.finish") : t("uiOnboarding.next")} <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               )}
             </div>

@@ -53,7 +53,7 @@ const EDGE_TYPE_LABELS: Record<string, string> = {
 
 const VISIBILITY_BADGE: Record<string, { label: string; className: string }> = {
   public: { get label() { return i18n.t("uiTrustTab.public"); }, className: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
-  network: { label: "Network", className: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
+  network: { get label() { return i18n.t("uiTrustTab.network"); }, className: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
   private: { get label() { return i18n.t("uiTrustTab.private"); }, className: "bg-muted text-muted-foreground border-border" },
 };
 
@@ -71,11 +71,11 @@ function FreshnessIndicator({ lastConfirmedAt, createdAt }: { lastConfirmedAt: s
       <TooltipTrigger asChild>
         <span className={`inline-flex items-center gap-1 text-[10px] font-medium ${isFresh ? "text-emerald-600" : isStale ? "text-orange-500" : "text-muted-foreground"}`}>
           <Clock className="h-3 w-3" />
-          {isFresh ? "Fresh" : isStale ? "Aging" : t("uiTrustTab.active")}
+          {isFresh ? t("uiTrustTab.fresh") : isStale ? t("uiTrustTab.aging") : t("uiTrustTab.active")}
         </span>
       </TooltipTrigger>
       <TooltipContent>
-        <p className="text-xs">Last confirmed {formatDistanceToNow(new Date(ref), { addSuffix: true })}</p>
+        <p className="text-xs">{t("uiTrustTab.lastConfirmed")} {formatDistanceToNow(new Date(ref), { addSuffix: true })}</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -147,7 +147,7 @@ function TrustSummaryHeader({ edges }: { edges: TrustEdgeRow[] }) {
       </div>
       <div className="text-center">
         <p className="text-2xl font-bold text-primary">{trustScoreGlobal}</p>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Trust Score</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTrustTab.trustScore")}</p>
       </div>
       <div className="text-center">
         <div className="flex justify-center gap-1 mb-1 flex-wrap">
@@ -157,13 +157,13 @@ function TrustSummaryHeader({ edges }: { edges: TrustEdgeRow[] }) {
             </Badge>
           )) : <span className="text-xs text-muted-foreground">—</span>}
         </div>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Top Tags</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTrustTab.topTags")}</p>
       </div>
       <div className="text-center">
         <p className={`text-2xl font-bold ${freshnessPercent > 70 ? "text-emerald-600" : freshnessPercent > 40 ? "text-amber-600" : "text-orange-500"}`}>
           {freshnessPercent}%
         </p>
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Freshness</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTrustTab.freshness")}</p>
       </div>
     </div>
   );
@@ -171,6 +171,7 @@ function TrustSummaryHeader({ edges }: { edges: TrustEdgeRow[] }) {
 
 // ─── Edge Card ─────────────────────────────────────────────
 function TrustEdgeCard({ edge, giver }: { edge: TrustEdgeRow; giver?: GiverProfile }) {
+  const { t } = useTranslation();
   const visBadge = VISIBILITY_BADGE[edge.visibility] || VISIBILITY_BADGE.public;
   const displayTags = (edge.tags || []).filter(t => !t.startsWith("__"));
 
@@ -187,7 +188,7 @@ function TrustEdgeCard({ edge, giver }: { edge: TrustEdgeRow; giver?: GiverProfi
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <Link to={`/users/${edge.from_node_id}`} className="text-sm font-semibold hover:text-primary transition-colors truncate">
-              {giver?.name || "Unknown"}
+              {giver?.name || t("uiTrustTab.unknown")}
             </Link>
             <Badge variant="outline" className="text-[10px] capitalize">
               {EDGE_TYPE_LABELS[edge.edge_type] || edge.edge_type}
@@ -225,7 +226,7 @@ function TrustEdgeCard({ edge, giver }: { edge: TrustEdgeRow; giver?: GiverProfi
             <span>{formatDistanceToNow(new Date(edge.created_at), { addSuffix: true })}</span>
             {edge.evidence_url && (
               <a href={edge.evidence_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-0.5">
-                <ExternalLink className="h-3 w-3" /> Evidence
+                <ExternalLink className="h-3 w-3" /> {t("uiTrustTab.evidence")}
               </a>
             )}
           </div>
@@ -329,7 +330,7 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
         <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen}>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm" className="text-muted-foreground">
-              <Filter className="h-3.5 w-3.5 mr-1" /> Filters
+              <Filter className="h-3.5 w-3.5 mr-1" /> {t("uiTrustTab.filters")}
               {filtersOpen ? <ChevronUp className="h-3.5 w-3.5 ml-1" /> : <ChevronDown className="h-3.5 w-3.5 ml-1" />}
             </Button>
           </CollapsibleTrigger>
@@ -337,7 +338,7 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
             <div className="flex flex-wrap gap-3">
               <Select value={filterEdgeType} onValueChange={setFilterEdgeType}>
                 <SelectTrigger className="w-[160px] h-8 text-xs">
-                  <SelectValue placeholder="Edge type" />
+                  <SelectValue placeholder={t("uiTrustTab.edgeType")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("uiTrustTab.allTypes")}</SelectItem>
@@ -365,9 +366,9 @@ export function TrustTab({ nodeType, nodeId }: { nodeType: TrustNodeType; nodeId
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t("uiTrustTab.allTime")}</SelectItem>
-                  <SelectItem value="30d">Last 30 days</SelectItem>
-                  <SelectItem value="6m">Last 6 months</SelectItem>
-                  <SelectItem value="1y">Last year</SelectItem>
+                  <SelectItem value="30d">{t("uiTrustTab.last30Days")}</SelectItem>
+                  <SelectItem value="6m">{t("uiTrustTab.last6Months")}</SelectItem>
+                  <SelectItem value="1y">{t("uiTrustTab.lastYear")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

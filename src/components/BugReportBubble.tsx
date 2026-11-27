@@ -22,7 +22,7 @@ export function BugReportBubble() {
     const f = e.target.files?.[0];
     if (!f) return;
     if (f.size > 10 * 1024 * 1024) {
-      toast({ title: t("uiBugReportBubble.fileTooLarge"), description: "Max 10 MB", variant: "destructive" });
+      toast({ title: t("uiBugReportBubble.fileTooLarge"), description: t("uiBugReportBubble.max10Mb"), variant: "destructive" });
       return;
     }
     setFile(f);
@@ -54,7 +54,7 @@ export function BugReportBubble() {
       setFile(null);
       setPreview(null);
       setOpen(false);
-      toast({ title: "Bug report sent!", description: t("uiBugReportBubble.thanksForHelpingUsImprove") });
+      toast({ title: t("uiBugReportBubble.bugReportSent"), description: t("uiBugReportBubble.thanksForHelpingUsImprove") });
       notifyPlatformAdmins({
         type: "SYSTEM_BUG_REPORT",
         title: t("uiBugReportBubble.newBugReport"),
@@ -62,7 +62,7 @@ export function BugReportBubble() {
         deepLinkUrl: "/admin/content/reports",
       });
     } catch (e: any) {
-      toast({ title: t("uiBugReportBubble.failedToSend"), description: e.message || "Please try again.", variant: "destructive" });
+      toast({ title: t("uiBugReportBubble.failedToSend"), description: e.message || t("uiBugReportBubble.pleaseTryAgain"), variant: "destructive" });
     } finally {
       setSending(false);
     }
@@ -93,7 +93,7 @@ export function BugReportBubble() {
           </div>
 
           <Textarea
-            placeholder="Describe what went wrong…"
+            placeholder={t("uiBugReportBubble.describeWhatWentWrong")}
             value={text}
             onChange={(e) => setText(e.target.value)}
             className="min-h-[80px] text-sm resize-none"
@@ -102,7 +102,7 @@ export function BugReportBubble() {
 
           {preview && (
             <div className="relative">
-              <img src={preview} alt="Screenshot" className="rounded-lg max-h-28 w-full object-cover" />
+              <img src={preview} alt={t("uiBugReportBubble.screenshot")} className="rounded-lg max-h-28 w-full object-cover" />
               <button
                 onClick={() => { setFile(null); setPreview(null); }}
                 className="absolute top-1 right-1 bg-background/80 rounded-full p-0.5"

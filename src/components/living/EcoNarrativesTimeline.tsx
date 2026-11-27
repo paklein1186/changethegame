@@ -45,7 +45,7 @@ export function EcoNarrativesTimeline({ naturalSystemId }: Props) {
   return (
     <div className="space-y-3">
       <h3 className="font-display font-semibold text-base flex items-center gap-2">
-        <Clock className="h-4 w-4 text-amber-600" /> Ecosystem Timeline
+        <Clock className="h-4 w-4 text-amber-600" /> {t("uiEcoNarrativesTimeline.ecosystemTimeline")}
         <span className="text-muted-foreground font-normal text-sm">({narratives.length})</span>
       </h3>
 

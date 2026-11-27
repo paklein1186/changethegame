@@ -349,7 +349,7 @@ export default function NetworkDashboardTab() {
         </CardContent></Card>
         <Card><CardContent className="py-4 text-center">
           <p className="text-2xl font-bold text-amber-500">{pendingPartnerships.length}</p>
-          <p className="text-xs text-muted-foreground">Partnership Requests</p>
+          <p className="text-xs text-muted-foreground">{t("uiNetworkDashboardTab.partnershipRequests")}</p>
         </CardContent></Card>
         <Card><CardContent className="py-4 text-center">
           <p className="text-2xl font-bold text-destructive">{totalReports}</p>
@@ -383,7 +383,7 @@ export default function NetworkDashboardTab() {
                   className="h-7 text-xs"
                   onClick={() => setDismissedOcuAlerts(prev => new Set(prev).add(alert.guildId))}
                 >
-                  <X className="h-3 w-3 mr-1" /> Dismiss
+                  <X className="h-3 w-3 mr-1" /> {t("uiNetworkDashboardTab.dismiss")}
                 </Button>
               </div>
             </div>
@@ -413,15 +413,15 @@ export default function NetworkDashboardTab() {
                 <p className="text-[10px] text-muted-foreground mt-0.5">{formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}</p>
               </div>
               <Button size="sm" variant="outline" className="text-xs h-7 ml-2" asChild>
-                <Link to={`/admin?tab=reports`}><Eye className="h-3 w-3 mr-1" /> Review</Link>
+                <Link to={`/admin?tab=reports`}><Eye className="h-3 w-3 mr-1" /> {t("uiNetworkDashboardTab.review")}</Link>
               </Button>
             </div>
           ))}
           {(reportData?.excerptReports || []).map((r: any) => (
             <div key={r.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">Flagged excerpt</p>
-                <p className="text-xs text-muted-foreground line-clamp-1">{r.starred_excerpts?.content || "Content flagged"}</p>
+                <p className="text-sm font-medium">{t("uiNetworkDashboardTab.flaggedExcerpt")}</p>
+                <p className="text-xs text-muted-foreground line-clamp-1">{r.starred_excerpts?.content || t("uiNetworkDashboardTab.contentFlagged")}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}</p>
               </div>
               <EntityChip
@@ -511,7 +511,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
       await (supabase.from(cfg.members).insert(insertData) as any);
     }
 
-    toast({ title: action === "APPROVED" ? "Application approved ✓" : "Application rejected" });
+    toast({ title: action === "APPROVED" ? t("uiNetworkDashboardTab.applicationApproved") : t("uiNetworkDashboardTab.applicationRejected") });
     notifyApplicationDecision({ entityType: app.entityType, entityId: app.entityId, entityName: app.entityName, applicantUserId: app.applicant_user_id, decision: action });
     if (action === "APPROVED") notifyGuildMemberAdded({ guildId: app.entityId, userId: app.applicant_user_id });
 
@@ -540,7 +540,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
               </Link>
               <div className="flex-1 min-w-0">
                 <Link to={`/users/${app.applicant?.user_id || app.applicant_user_id}`} className="text-sm font-medium hover:text-primary transition-colors">
-                  {app.applicant?.name || "Unknown"}
+                  {app.applicant?.name || t("uiNetworkDashboardTab.unknown")}
                 </Link>
                 <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                   <EntityChip entityType={app.entityType} entityId={app.entityId} entityName={app.entityName} logoUrl={app.entityLogo} />
@@ -554,10 +554,10 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
                   </Button>
                 )}
                 <Button size="sm" variant="default" className="h-7 text-xs" onClick={() => handleAction(app, "APPROVED")} disabled={acting}>
-                  <Check className="h-3 w-3 sm:mr-1" /><span className="hidden sm:inline">Accept</span>
+                  <Check className="h-3 w-3 sm:mr-1" /><span className="hidden sm:inline">{t("uiNetworkDashboardTab.accept")}</span>
                 </Button>
                 <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => handleAction(app, "REJECTED")} disabled={acting}>
-                  <X className="h-3 w-3 sm:mr-1" /><span className="hidden sm:inline">Decline</span>
+                  <X className="h-3 w-3 sm:mr-1" /><span className="hidden sm:inline">{t("uiNetworkDashboardTab.decline")}</span>
                 </Button>
               </div>
             </div>
@@ -578,7 +578,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
                 </Avatar>
                 <div>
                   <Link to={`/users/${selectedApp.applicant?.user_id || selectedApp.applicant_user_id}`} className="font-medium hover:text-primary">
-                    {selectedApp.applicant?.name || "Unknown"}
+                    {selectedApp.applicant?.name || t("uiNetworkDashboardTab.unknown")}
                   </Link>
                   {selectedApp.applicant?.headline && <p className="text-xs text-muted-foreground">{selectedApp.applicant.headline}</p>}
                   <EntityChip entityType={selectedApp.entityType} entityId={selectedApp.entityId} entityName={selectedApp.entityName} logoUrl={selectedApp.entityLogo} />
@@ -587,7 +587,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
 
               {selectedApp.answers && selectedApp.answers.length > 0 && (
                 <div className="space-y-3">
-                  <h4 className="text-sm font-medium">Answers</h4>
+                  <h4 className="text-sm font-medium">{t("uiNetworkDashboardTab.answers")}</h4>
                   {selectedApp.answers.map((qa, i) => (
                     <div key={i} className="rounded-lg border border-border p-3">
                       <p className="text-sm font-medium text-muted-foreground">{qa.question}</p>
@@ -599,7 +599,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
 
               <div>
                 <label className="text-sm font-medium mb-1 block">{t("uiNetworkDashboardTab.adminNoteOptional")}</label>
-                <Textarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder="Internal note…" maxLength={500} className="resize-none" />
+                <Textarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder={t("uiNetworkDashboardTab.internalNote")} maxLength={500} className="resize-none" />
               </div>
 
               <div className="flex gap-2">
@@ -635,7 +635,7 @@ function PendingPartnershipsSection({ partnerships }: { partnerships: any[] }) {
     if (error) {
       toast({ title: t("uiNetworkDashboardTab.failedToUpdate"), description: error.message, variant: "destructive" });
     } else {
-      toast({ title: status === "ACCEPTED" ? "Partnership accepted ✓" : "Partnership declined" });
+      toast({ title: status === "ACCEPTED" ? t("uiNetworkDashboardTab.partnershipAccepted") : t("uiNetworkDashboardTab.partnershipDeclined") });
       qc.invalidateQueries({ queryKey: ["dashboard-partnerships"] });
       qc.invalidateQueries({ queryKey: ["partnerships"] });
     }
@@ -645,7 +645,7 @@ function PendingPartnershipsSection({ partnerships }: { partnerships: any[] }) {
   return (
     <SectionShell
       icon={Handshake}
-      title="Partnership Requests"
+      title={t("uiNetworkDashboardTab.partnershipRequests")}
       count={partnerships.length}
       emptyMsg="No pending partnership requests for your entities."
     >
@@ -680,7 +680,7 @@ function PendingPartnershipsSection({ partnerships }: { partnerships: any[] }) {
                 onClick={() => handleAction(p.id, "ACCEPTED")}
               >
                 {acting === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3 mr-1" />}
-                Accept
+                {t("uiNetworkDashboardTab.accept")}
               </Button>
               <Button
                 size="sm"
@@ -689,7 +689,7 @@ function PendingPartnershipsSection({ partnerships }: { partnerships: any[] }) {
                 disabled={acting === p.id}
                 onClick={() => handleAction(p.id, "DECLINED")}
               >
-                <X className="h-3 w-3 mr-1" /> Decline
+                <X className="h-3 w-3 mr-1" /> {t("uiNetworkDashboardTab.decline")}
               </Button>
             </div>
           </div>

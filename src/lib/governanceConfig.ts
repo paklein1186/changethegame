@@ -17,8 +17,8 @@ export const TERRITORY_ACTIVATION_BONUS = 0.2; // +20%
 
 // ─── Translocal Badges ─────────────────────────────────────
 export const TRANSLOCAL_BADGES = [
-  { key: "translocal", label: "🌍 Translocal", minCountries: 3, minLevel: 11 },
-  { key: "bioregional_architect", label: "🌐 Bioregional Architect", minCountries: 5, minLevel: 11 },
+  { key: "translocal", get label() { return i18n.t("uiGovernanceConfig.translocal"); }, minCountries: 3, minLevel: 11 },
+  { key: "bioregional_architect", get label() { return i18n.t("uiGovernanceConfig.bioregionalArchitect"); }, minCountries: 5, minLevel: 11 },
 ] as const;
 
 export function getTranslocalBadge(level: number, countriesCount: number) {
@@ -41,20 +41,20 @@ export interface GovernanceRight {
 export const GOVERNANCE_RIGHTS: GovernanceRight[] = [
   { get label() { return i18n.t("uiGovernanceConfig.createProfile"); }, get description() { return i18n.t("uiGovernanceConfig.setUpYourIdentityInThe"); }, minLevel: 1, sphere: "personal" },
   { get label() { return i18n.t("uiGovernanceConfig.joinGuilds"); }, get description() { return i18n.t("uiGovernanceConfig.participateInCollaborativeGroups"); }, minLevel: 1, sphere: "guild" },
-  { label: "Comment & upvote", get description() { return i18n.t("uiGovernanceConfig.engageInDiscussions"); }, minLevel: 1, sphere: "personal" },
+  { get label() { return i18n.t("uiGovernanceConfig.commentUpvote"); }, get description() { return i18n.t("uiGovernanceConfig.engageInDiscussions"); }, minLevel: 1, sphere: "personal" },
   { get label() { return i18n.t("uiGovernanceConfig.completeQuests"); }, get description() { return i18n.t("uiGovernanceConfig.takeOnCollaborativeMissions"); }, minLevel: 1, sphere: "personal" },
-  { get label() { return i18n.t("uiGovernanceConfig.createPods"); }, description: "Organize small collaborative groups", minLevel: 1, sphere: "guild" },
+  { get label() { return i18n.t("uiGovernanceConfig.createPods"); }, get description() { return i18n.t("uiGovernanceConfig.organizeSmallCollaborativeGroups"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.proposePublicQuests"); }, get description() { return i18n.t("uiGovernanceConfig.submitQuestsForCommunityReview"); }, minLevel: 1, sphere: "guild" },
-  { get label() { return i18n.t("uiGovernanceConfig.createLocalEvents"); }, description: "Organize community gatherings", minLevel: 1, sphere: "guild" },
+  { get label() { return i18n.t("uiGovernanceConfig.createLocalEvents"); }, get description() { return i18n.t("uiGovernanceConfig.organizeCommunityGatherings"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.participateInGuildVotes"); }, get description() { return i18n.t("uiGovernanceConfig.voteOnGuildLevelDecisions"); }, minLevel: 1, sphere: "guild" },
-  { label: "Moderate own pods", get description() { return i18n.t("uiGovernanceConfig.manageYourPodSpaces"); }, minLevel: 1, sphere: "guild" },
-  { label: "Flag content", description: "Report inappropriate content", minLevel: 1, sphere: "guild" },
-  { label: "Endorse collaborators", get description() { return i18n.t("uiGovernanceConfig.vouchForTrustedContributors"); }, minLevel: 1, sphere: "guild" },
+  { get label() { return i18n.t("uiGovernanceConfig.moderateOwnPods"); }, get description() { return i18n.t("uiGovernanceConfig.manageYourPodSpaces"); }, minLevel: 1, sphere: "guild" },
+  { get label() { return i18n.t("uiGovernanceConfig.flagContent"); }, get description() { return i18n.t("uiGovernanceConfig.reportInappropriateContent"); }, minLevel: 1, sphere: "guild" },
+  { get label() { return i18n.t("uiGovernanceConfig.endorseCollaborators"); }, get description() { return i18n.t("uiGovernanceConfig.vouchForTrustedContributors"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.launchPublicQuests"); }, get description() { return i18n.t("uiGovernanceConfig.createQuestsWithoutPreApproval"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.hostCrossGuildProjects"); }, get description() { return i18n.t("uiGovernanceConfig.bridgeMultipleGuilds"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.createTerritoryProposals"); }, get description() { return i18n.t("uiGovernanceConfig.proposeChangesToTerritories"); }, minLevel: 1, sphere: "territory" },
-  { label: "Offer paid services", get description() { return i18n.t("uiGovernanceConfig.monetizeYourExpertise"); }, minLevel: 1, sphere: "personal" },
-  { label: "Nominate pod moderators", get description() { return i18n.t("uiGovernanceConfig.suggestModeratorsForPods"); }, minLevel: 1, sphere: "guild" },
+  { get label() { return i18n.t("uiGovernanceConfig.offerPaidServices"); }, get description() { return i18n.t("uiGovernanceConfig.monetizeYourExpertise"); }, minLevel: 1, sphere: "personal" },
+  { get label() { return i18n.t("uiGovernanceConfig.nominatePodModerators"); }, get description() { return i18n.t("uiGovernanceConfig.suggestModeratorsForPods"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.proposeGuildPartnerships"); }, get description() { return i18n.t("uiGovernanceConfig.initiateInterGuildCollaborations"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.createNewGuilds"); }, get description() { return i18n.t("uiGovernanceConfig.establishCollaborativeGroupsWithReview"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.createTerritoryPages"); }, get description() { return i18n.t("uiGovernanceConfig.setUpTerritoryPresence"); }, minLevel: 1, sphere: "territory" },
@@ -62,18 +62,18 @@ export const GOVERNANCE_RIGHTS: GovernanceRight[] = [
   { get label() { return i18n.t("uiGovernanceConfig.moderateGuilds"); }, get description() { return i18n.t("uiGovernanceConfig.stewardGuildCommunities"); }, minLevel: 1, sphere: "guild" },
   { get label() { return i18n.t("uiGovernanceConfig.voteInTerritoryGovernance"); }, get description() { return i18n.t("uiGovernanceConfig.participateInTerritoryDecisions"); }, minLevel: 1, sphere: "territory" },
   { get label() { return i18n.t("uiGovernanceConfig.validateCrossTerritoryProjects"); }, get description() { return i18n.t("uiGovernanceConfig.approveMultiTerritoryInitiatives"); }, minLevel: 1, sphere: "territory" },
-  { label: "Access Governance Voting", get description() { return i18n.t("uiGovernanceConfig.participateInPlatformReferendums"); }, minLevel: 1, sphere: "platform" },
-  { get label() { return i18n.t("uiGovernanceConfig.initiateTerritoryCouncils"); }, description: "Set up territorial governance bodies", minLevel: 1, sphere: "territory" },
-  { get label() { return i18n.t("uiGovernanceConfig.launchGovernanceProposals"); }, description: "Propose rule amendments", minLevel: 1, sphere: "platform" },
-  { get label() { return i18n.t("uiGovernanceConfig.coModerateTerritories"); }, description: "Steward territorial communities", minLevel: 1, sphere: "territory" },
+  { get label() { return i18n.t("uiGovernanceConfig.accessGovernanceVoting"); }, get description() { return i18n.t("uiGovernanceConfig.participateInPlatformReferendums"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.initiateTerritoryCouncils"); }, get description() { return i18n.t("uiGovernanceConfig.setUpTerritorialGovernanceBodies"); }, minLevel: 1, sphere: "territory" },
+  { get label() { return i18n.t("uiGovernanceConfig.launchGovernanceProposals"); }, get description() { return i18n.t("uiGovernanceConfig.proposeRuleAmendments"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.coModerateTerritories"); }, get description() { return i18n.t("uiGovernanceConfig.stewardTerritorialCommunities"); }, minLevel: 1, sphere: "territory" },
   { get label() { return i18n.t("uiGovernanceConfig.approveGuildCreation"); }, get description() { return i18n.t("uiGovernanceConfig.reviewAndApproveNewGuilds"); }, minLevel: 1, sphere: "platform" },
-  { get label() { return i18n.t("uiGovernanceConfig.suspendMaliciousActivity"); }, description: "Temporary safety interventions", minLevel: 1, sphere: "platform" },
-  { label: "Nominate Moderators", description: "Recommend community stewards", minLevel: 1, sphere: "platform" },
-  { label: "Platform-wide governance vote", get description() { return i18n.t("uiGovernanceConfig.voteOnPlatformLevelDecisions"); }, minLevel: 1, sphere: "platform" },
-  { label: "Initiate constitutional review", description: "Trigger governance reform processes", minLevel: 1, sphere: "platform" },
-  { label: "Strategic Council eligibility", get description() { return i18n.t("uiGovernanceConfig.joinTheHighestStewardshipBody"); }, minLevel: 1, sphere: "platform" },
-  { get label() { return i18n.t("uiGovernanceConfig.finalArbitrationRole"); }, description: "Collective dispute resolution (multi-signature)", minLevel: 1, sphere: "platform" },
-  { label: "Emergency moderation override", get description() { return i18n.t("uiGovernanceConfig.requiresQuorumOf3Stewards"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.suspendMaliciousActivity"); }, get description() { return i18n.t("uiGovernanceConfig.temporarySafetyInterventions"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.nominateModerators"); }, get description() { return i18n.t("uiGovernanceConfig.recommendCommunityStewards"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.platformWideGovernanceVote"); }, get description() { return i18n.t("uiGovernanceConfig.voteOnPlatformLevelDecisions"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.initiateConstitutionalReview"); }, get description() { return i18n.t("uiGovernanceConfig.triggerGovernanceReformProcesses"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.strategicCouncilEligibility"); }, get description() { return i18n.t("uiGovernanceConfig.joinTheHighestStewardshipBody"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.finalArbitrationRole"); }, get description() { return i18n.t("uiGovernanceConfig.collectiveDisputeResolutionMultiSignature"); }, minLevel: 1, sphere: "platform" },
+  { get label() { return i18n.t("uiGovernanceConfig.emergencyModerationOverride"); }, get description() { return i18n.t("uiGovernanceConfig.requiresQuorumOf3Stewards"); }, minLevel: 1, sphere: "platform" },
 ];
 
 /** Get all governance rights unlocked at a specific level */
@@ -96,11 +96,11 @@ export const VOTING_THRESHOLDS = {
 
 // ─── Governance Bodies ─────────────────────────────────────
 export const GOVERNANCE_BODIES = [
-  { name: "Pod Council", minLevel: 1, description: "Local collaborative governance" },
+  { name: "Pod Council", minLevel: 1, get description() { return i18n.t("uiGovernanceConfig.localCollaborativeGovernance"); } },
   { name: "Guild Council", minLevel: 1, get description() { return i18n.t("uiGovernanceConfig.guildLevelDecisionMaking"); } },
   { name: "Territory Council", minLevel: 1, get description() { return i18n.t("uiGovernanceConfig.territorialGovernanceAndCoordination"); } },
   { name: "Translocal Assembly", minLevel: 1, get description() { return i18n.t("uiGovernanceConfig.crossTerritoryStrategicCoordination"); }, extraReq: "3+ territories" },
-  { name: "Strategic Steward Council", minLevel: 1, description: "Highest stewardship body (capped membership)" },
+  { name: "Strategic Steward Council", minLevel: 1, get description() { return i18n.t("uiGovernanceConfig.highestStewardshipBodyCappedMembership"); } },
 ] as const;
 
 // ─── Level-gated feature check ─────────────────────────────

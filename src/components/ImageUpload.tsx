@@ -134,7 +134,7 @@ export function ImageUpload({
             <div className="flex items-center gap-3 p-2 rounded-md border border-border bg-muted/30 max-w-xs">
               <Focus className="h-4 w-4 text-muted-foreground shrink-0" />
               <div className="flex-1 space-y-1">
-                <span className="text-xs text-muted-foreground">Adjust focus</span>
+                <span className="text-xs text-muted-foreground">{t("uiImageUpload.adjustFocus")}</span>
                 <Slider
                   value={[localFocal]}
                   onValueChange={handleFocalChange}
@@ -144,8 +144,8 @@ export function ImageUpload({
                   className="w-full"
                 />
                 <div className="flex justify-between text-[10px] text-muted-foreground">
-                  <span>Top</span>
-                  <span>Bottom</span>
+                  <span>{t("uiImageUpload.top")}</span>
+                  <span>{t("uiImageUpload.bottom")}</span>
                 </div>
               </div>
             </div>
@@ -165,7 +165,7 @@ export function ImageUpload({
             <ImagePlus className="h-8 w-8 text-muted-foreground" />
           )}
           <span className="text-xs text-muted-foreground">
-            {uploading ? "Uploading…" : t("uiImageUpload.clickToUpload")}
+            {uploading ? t("uiImageUpload.uploading") : t("uiImageUpload.clickToUpload")}
           </span>
         </button>
       )}
@@ -189,7 +189,7 @@ export function ImageUpload({
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
             >
-              {uploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />} Replace
+              {uploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />} {t("uiImageUpload.replace")}
             </Button>
             <Button
               type="button"
@@ -198,7 +198,7 @@ export function ImageUpload({
               className="text-xs h-7"
               onClick={() => setShowFocalEditor(!showFocalEditor)}
             >
-              <Focus className="h-3 w-3 mr-1" /> Focus
+              <Focus className="h-3 w-3 mr-1" /> {t("uiImageUpload.focus")}
             </Button>
           </>
         )}
@@ -209,7 +209,7 @@ export function ImageUpload({
           className="text-xs h-7"
           onClick={() => setUrlMode(!urlMode)}
         >
-          {urlMode ? "Hide URL" : "Use URL"}
+          {urlMode ? t("uiImageUpload.hideUrl") : t("uiImageUpload.useUrl")}
         </Button>
       </div>
 
@@ -228,7 +228,7 @@ export function ImageUpload({
             onClick={handleUrlSubmit}
             disabled={!urlValue.trim()}
           >
-            Set
+            {t("uiImageUpload.set")}
           </Button>
         </div>
       )}

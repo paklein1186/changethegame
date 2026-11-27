@@ -53,7 +53,7 @@ export default function CooperativeVenturePage({ embedded }: { embedded?: boolea
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
           <span className="text-amber-500 text-lg">⚠️</span>
           <div>
-            <p className="text-sm font-semibold text-foreground">Alpha Phase — Shareholding Structure</p>
+            <p className="text-sm font-semibold text-foreground">{t("uiCooperativeVenturePage.alphaPhaseShareholdingStructure")}</p>
             <p className="text-sm text-muted-foreground">{t("uiCooperativeVenturePage.theShareClassesGovernanceWeightsAnd")}</p>
           </div>
         </div>

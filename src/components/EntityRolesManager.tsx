@@ -86,7 +86,7 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
                 <>
                   <div className="h-4 w-4 rounded-full shrink-0" style={{ backgroundColor: role.color }} />
                   <span className="text-sm font-medium flex-1">{role.name}</span>
-                  {role.is_default && <Badge variant="outline" className="text-[10px] h-5">Default</Badge>}
+                  {role.is_default && <Badge variant="outline" className="text-[10px] h-5">{t("uiEntityRolesManager.default")}</Badge>}
                   <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => startEdit(role)}>
                     <Pencil className="h-3 w-3 text-muted-foreground" />
                   </Button>
@@ -149,7 +149,7 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
                       <AvatarImage src={m.user?.avatar_url} />
                       <AvatarFallback className="text-xs">{m.user?.name?.[0]}</AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-medium">{m.user?.name || "Unknown"}</span>
+                    <span className="text-sm font-medium">{m.user?.name || t("uiEntityRolesManager.unknown")}</span>
                     <div className="flex flex-wrap gap-1 ml-auto">
                       {userRoles.map((r) => (
                         <Badge key={r.id} className="text-[10px] h-5 text-white border-0" style={{ backgroundColor: r.color }}>

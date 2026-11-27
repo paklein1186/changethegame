@@ -208,7 +208,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
         content: aiContent,
       });
     } catch (e: any) {
-      toast.error(e?.message || "Something went wrong");
+      toast.error(e?.message || t("uiTerritoryChatTab.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -288,7 +288,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
                     {msg.attachment_type && IMAGE_TYPES.includes(msg.attachment_type) ? (
                     <img
                           src={msg.attachment_url}
-                          alt={msg.attachment_name || "Attachment"}
+                          alt={msg.attachment_name || t("uiTerritoryChatTab.attachment")}
                           className="rounded-lg max-h-48 max-w-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
                           onClick={() => setLightboxSrc(msg.attachment_url!)}
                         />
@@ -368,7 +368,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
             <div className="flex justify-start">
               <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Thinking…</span>
+                <span className="text-sm text-muted-foreground">{t("uiTerritoryChatTab.thinking")}</span>
               </div>
             </div>
           )}
@@ -403,7 +403,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
                 className="scale-75"
               />
               <Label htmlFor="knowledge-mode" className="text-xs text-muted-foreground cursor-pointer">
-                {isKnowledge ? "Adding knowledge (+10 $CTG)" : t("uiTerritoryChatTab.askingAQuestion")}
+                {isKnowledge ? t("uiTerritoryChatTab.addingKnowledge10Ctg") : t("uiTerritoryChatTab.askingAQuestion")}
               </Label>
             </div>
           </div>

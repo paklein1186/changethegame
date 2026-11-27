@@ -185,7 +185,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
       items.push({
         id: `ritual-${occ.id}`,
         kind: "ritual",
-        title: ritual.title || config?.label || "Ritual",
+        title: ritual.title || config?.label || t("uiGuildEvents.ritual"),
         description: ritual.description,
         startAt: occ.scheduled_at,
         locationType: "ONLINE",
@@ -276,7 +276,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
     if (error) { toast({ title: t("uiGuildEvents.failedToRegister"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["guild-events", guildId] });
     qc.invalidateQueries({ queryKey: ["my-event-registrations", guildId, currentUser.id] });
-    toast({ title: isFull ? t("uiGuildEvents.addedToWaitlist") : autoAccept ? "Registered!" : "Registration submitted" });
+    toast({ title: isFull ? t("uiGuildEvents.addedToWaitlist") : autoAccept ? t("uiGuildEvents.registered") : t("uiGuildEvents.registrationSubmitted") });
   };
 
   const cancelRegistration = async (eventId: string) => {
@@ -313,7 +313,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
                 <Repeat className="h-3.5 w-3.5 text-primary shrink-0" />
                 <span className="font-display font-semibold text-sm truncate">{item.title}</span>
                 <Badge variant="outline" className="text-[10px] border-primary/30 text-primary shrink-0">
-                  Ritual
+                  {t("uiGuildEvents.ritual")}
                 </Badge>
                 {item.ritualLabel && item.ritualLabel !== item.title && (
                   <Badge variant="secondary" className="text-[10px] shrink-0">{item.ritualLabel}</Badge>
@@ -394,7 +394,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
                   </>
                 ) : (
                   <Button size="sm" onClick={() => registerForEvent(item.id)}>
-                    {item.isPaid ? <><Euro className="h-3.5 w-3.5 mr-1" />Buy Ticket</> : "Register"}
+                    {item.isPaid ? <><Euro className="h-3.5 w-3.5 mr-1" />{t("uiGuildEvents.buyTicket")}</> : t("uiGuildEvents.register")}
                   </Button>
                 )}
               </>
@@ -423,14 +423,14 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
 
       {upcomingItems.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">Upcoming</h4>
+          <h4 className="text-sm font-medium text-muted-foreground">{t("uiGuildEvents.upcoming")}</h4>
           {upcomingItems.map(renderItem)}
         </div>
       )}
 
       {pastItems.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-muted-foreground">Past</h4>
+          <h4 className="text-sm font-medium text-muted-foreground">{t("uiGuildEvents.past")}</h4>
           {pastItems.map(renderItem)}
         </div>
       )}
@@ -455,35 +455,35 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
                 <Input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">End</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.end")}</label>
                 <Input type="datetime-local" value={endAt} onChange={(e) => setEndAt(e.target.value)} />
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Location Type</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.locationType")}</label>
               <Select value={locationType} onValueChange={setLocationType}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ONLINE">Online</SelectItem>
-                  <SelectItem value="OFFLINE">Offline</SelectItem>
-                  <SelectItem value="HYBRID">Hybrid</SelectItem>
+                  <SelectItem value="ONLINE">{t("uiGuildEvents.online")}</SelectItem>
+                  <SelectItem value="OFFLINE">{t("uiGuildEvents.offline")}</SelectItem>
+                  <SelectItem value="HYBRID">{t("uiGuildEvents.hybrid")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {(locationType === "ONLINE" || locationType === "HYBRID") && (
               <div>
-                <label className="text-sm font-medium mb-1 block">Call URL</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.callUrl")}</label>
                 <Input value={callUrl} onChange={(e) => setCallUrl(e.target.value)} placeholder="https://meet.jit.si/..." />
               </div>
             )}
             {(locationType === "OFFLINE" || locationType === "HYBRID") && (
               <div>
-                <label className="text-sm font-medium mb-1 block">Location</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.location")}</label>
                 <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} placeholder={t("uiGuildEvents.addressOrPlaceName")} />
               </div>
             )}
             <div>
-              <label className="text-sm font-medium mb-1 block">Visibility</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.visibility")}</label>
               <Select value={visibility} onValueChange={setVisibility}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -493,12 +493,12 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Acceptance Mode</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.acceptanceMode")}</label>
               <Select value={acceptanceMode} onValueChange={setAcceptanceMode}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="AUTO">Automatic (first-come, first-served)</SelectItem>
-                  <SelectItem value="MANUAL">Manual (review & accept)</SelectItem>
+                  <SelectItem value="AUTO">{t("uiGuildEvents.automaticFirstComeFirstServed")}</SelectItem>
+                  <SelectItem value="MANUAL">{t("uiGuildEvents.manualReviewAccept")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -509,11 +509,11 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
             {isPaid && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Price per ticket</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.pricePerTicket")}</label>
                   <Input type="number" value={pricePerTicket} onChange={(e) => setPricePerTicket(e.target.value)} placeholder="0" min={0} step={0.01} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Currency</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.currency")}</label>
                   <Select value={currency} onValueChange={setCurrency}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -526,8 +526,8 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
               </div>
             )}
             <div>
-              <label className="text-sm font-medium mb-1 block">Max Attendees (optional)</label>
-              <Input type="number" value={maxAttendees} onChange={(e) => setMaxAttendees(e.target.value)} placeholder="Unlimited" min={1} />
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.maxAttendeesOptional")}</label>
+              <Input type="number" value={maxAttendees} onChange={(e) => setMaxAttendees(e.target.value)} placeholder={t("uiGuildEvents.unlimited")} min={1} />
             </div>
             <Button onClick={createEvent} disabled={!title.trim() || !startAt} className="w-full">{t("uiGuildEvents.createEvent")}</Button>
           </div>

@@ -234,9 +234,9 @@ export const CREDIT_COSTS = {
 
 // ─── Platform Credit Bundles (purchasable via Stripe) ────────────────
 export const CREDIT_BUNDLES = [
-  { code: "STARTER_100", credits: 100, priceEur: 4, label: "Starter", stripePriceId: "price_1SzRJsBttrYxqJqzDOZdcEfR" },
-  { code: "CREATOR_300", credits: 300, priceEur: 10, label: "Creator", stripePriceId: "price_1SzRJtBttrYxqJqz6Uwn7fN8" },
-  { code: "CATALYST_1000", credits: 1000, priceEur: 25, label: "Catalyst", stripePriceId: "price_1SzRJuBttrYxqJqzUnFTnprq" },
+  { code: "STARTER_100", credits: 100, priceEur: 4, get label() { return i18n.t("uiXpCreditsConfig.starter"); }, stripePriceId: "price_1SzRJsBttrYxqJqzDOZdcEfR" },
+  { code: "CREATOR_300", credits: 300, priceEur: 10, get label() { return i18n.t("uiXpCreditsConfig.creator"); }, stripePriceId: "price_1SzRJtBttrYxqJqz6Uwn7fN8" },
+  { code: "CATALYST_1000", credits: 1000, priceEur: 25, get label() { return i18n.t("uiXpCreditsConfig.catalyst"); }, stripePriceId: "price_1SzRJuBttrYxqJqzUnFTnprq" },
 ] as const;
 
 export type CreditBundleCode = (typeof CREDIT_BUNDLES)[number]["code"];
@@ -283,18 +283,18 @@ export const PLAN_MIGRATION_MAP: Record<string, string> = {
 
 // ─── Share Classes ──────────────────────────────────────────
 export const SHARE_CLASSES = {
-  A: { label: "Guardian", description: "Core builders — strategic governance" },
-  B: { label: "Steward", get description() { return i18n.t("uiXpCreditsConfig.activeContributorsCommunityGovernance"); } },
-  C: { label: "Strategic Partner", description: "Strategic partners — institutional alignment" },
+  A: { get label() { return i18n.t("uiXpCreditsConfig.guardian"); }, get description() { return i18n.t("uiXpCreditsConfig.coreBuildersStrategicGovernance"); } },
+  B: { get label() { return i18n.t("uiXpCreditsConfig.steward"); }, get description() { return i18n.t("uiXpCreditsConfig.activeContributorsCommunityGovernance"); } },
+  C: { get label() { return i18n.t("uiXpCreditsConfig.strategicPartner"); }, get description() { return i18n.t("uiXpCreditsConfig.strategicPartnersInstitutionalAlignment"); } },
 } as const;
 
 export type ShareClass = keyof typeof SHARE_CLASSES;
 
 // ─── Ecosystem Treasury Allocation Model ────────────────────
 export const TREASURY_ALLOCATION = {
-  REINVESTMENT: { percent: 40, label: "Reinvestment Reserve" },
-  SHAREHOLDERS: { percent: 30, label: "Shareholder Distribution" },
-  ECOSYSTEM: { percent: 20, label: "Ecosystem Treasury" },
+  REINVESTMENT: { percent: 40, get label() { return i18n.t("uiXpCreditsConfig.reinvestmentReserve"); } },
+  SHAREHOLDERS: { percent: 30, get label() { return i18n.t("uiXpCreditsConfig.shareholderDistribution"); } },
+  ECOSYSTEM: { percent: 20, get label() { return i18n.t("uiXpCreditsConfig.ecosystemTreasury"); } },
   SOLIDARITY: { percent: 10, get label() { return i18n.t("uiXpCreditsConfig.solidarityNewTerritories"); } },
 } as const;
 
@@ -304,10 +304,10 @@ export const CROSS_TERRITORY_XP_BONUS = 0.10; // +10%
 
 // ─── Governance XP Tiers ────────────────────────────────────
 export const GOVERNANCE_XP_TIERS = [
-  { levels: "1–4", label: "Participate", minLevel: 1, get description() { return i18n.t("uiXpCreditsConfig.exploreTheEcosystemJoinGuildsAttend"); } },
-  { levels: "5–8", label: "Comment & Vote", minLevel: 5, get description() { return i18n.t("uiXpCreditsConfig.engageInGovernanceDiscussionsAndCast"); } },
-  { levels: "9–12", label: "Propose", minLevel: 9, get description() { return i18n.t("uiXpCreditsConfig.submitGovernanceProposalsAndLeadInitiatives"); } },
-  { levels: "13–15", label: "Steward Council", minLevel: 13, get description() { return i18n.t("uiXpCreditsConfig.eligibleForStewardCouncilRolesAnd"); } },
+  { levels: "1–4", get label() { return i18n.t("uiXpCreditsConfig.participate"); }, minLevel: 1, get description() { return i18n.t("uiXpCreditsConfig.exploreTheEcosystemJoinGuildsAttend"); } },
+  { levels: "5–8", get label() { return i18n.t("uiXpCreditsConfig.commentVote"); }, minLevel: 5, get description() { return i18n.t("uiXpCreditsConfig.engageInGovernanceDiscussionsAndCast"); } },
+  { levels: "9–12", get label() { return i18n.t("uiXpCreditsConfig.propose"); }, minLevel: 9, get description() { return i18n.t("uiXpCreditsConfig.submitGovernanceProposalsAndLeadInitiatives"); } },
+  { levels: "13–15", get label() { return i18n.t("uiXpCreditsConfig.stewardCouncil"); }, minLevel: 13, get description() { return i18n.t("uiXpCreditsConfig.eligibleForStewardCouncilRolesAnd"); } },
 ] as const;
 
 // ─── Grace Period ───────────────────────────────────────────
@@ -316,10 +316,10 @@ export const GRACE_PERIOD_DAYS = 30;
 
 // ─── Steward Tiers ($CTG) ───────────────────────────────────
 export const STEWARD_TIERS = [
-  { key: "seedling",   label: "Seedling",   minLifetime: 0,    icon: "🌱", color: "#16A34A" },
-  { key: "cultivator", label: "Cultivator", minLifetime: 100,  icon: "🌿", color: "#15803D" },
-  { key: "steward",    label: "Steward",    minLifetime: 500,  icon: "🌳", color: "#166534" },
-  { key: "guardian",   label: "Guardian",   minLifetime: 2000, icon: "🏔", color: "#14532D" },
+  { key: "seedling",   get label() { return i18n.t("uiXpCreditsConfig.seedling"); },   minLifetime: 0,    icon: "🌱", color: "#16A34A" },
+  { key: "cultivator", get label() { return i18n.t("uiXpCreditsConfig.cultivator"); }, minLifetime: 100,  icon: "🌿", color: "#15803D" },
+  { key: "steward",    get label() { return i18n.t("uiXpCreditsConfig.steward"); },    minLifetime: 500,  icon: "🌳", color: "#166534" },
+  { key: "guardian",   get label() { return i18n.t("uiXpCreditsConfig.guardian"); },   minLifetime: 2000, icon: "🏔", color: "#14532D" },
 ] as const;
 
 export type StewardTierKey = (typeof STEWARD_TIERS)[number]["key"];

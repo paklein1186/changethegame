@@ -340,7 +340,7 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
           <SelectContent>
             <SelectItem value="relevance">A–Z</SelectItem>
             <SelectItem value="xp">{t("uiExploreUsers.mostXp")}</SelectItem>
-            <SelectItem value="newest">Newest</SelectItem>
+            <SelectItem value="newest">{t("uiExploreUsers.newest")}</SelectItem>
           </SelectContent>
         </Select>
         <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as "grid" | "map")} className="border rounded-md">
@@ -397,8 +397,8 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
 
       {viewMode === "grid" && totalPages > 1 && (
         <div className="flex justify-center gap-2 pt-4">
-          <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>Previous</Button>
-          <span className="flex items-center text-sm text-muted-foreground px-3">Page {page + 1} of {totalPages}</span>
+          <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>{t("uiExploreUsers.previous")}</Button>
+          <span className="flex items-center text-sm text-muted-foreground px-3">{t("uiExploreUsers.page")} {page + 1} of {totalPages}</span>
           <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>{t("uiExploreUsers.next")}</Button>
         </div>
       )}
@@ -411,7 +411,7 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
     <PageShell>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-          <Users className="h-7 w-7 text-primary" /> Discover People
+          <Users className="h-7 w-7 text-primary" /> {t("uiExploreUsers.discoverPeople")}
         </h1>
         <p className="text-muted-foreground mt-1">{t("uiExploreUsers.browseAndConnectWithCommunityMembers")}</p>
       </div>

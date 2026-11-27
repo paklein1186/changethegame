@@ -92,7 +92,7 @@ export default function EventEdit() {
     return (
       <PageShell>
         <div className="text-center py-16">
-          <h2 className="text-xl font-bold mb-2">Access Denied</h2>
+          <h2 className="text-xl font-bold mb-2">{t("uiEventEdit.accessDenied")}</h2>
           <p className="text-muted-foreground mb-4">{t("uiEventEdit.youDonTHavePermissionTo")}</p>
           <Button asChild><Link to={`/events/${id}`}>{t("uiEventEdit.backToEvent")}</Link></Button>
         </div>
@@ -172,36 +172,36 @@ export default function EventEdit() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Location type</Label>
+              <Label>{t("uiEventEdit.locationType")}</Label>
               <Select value={locationType} onValueChange={setLocationType} disabled={readOnly}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ONLINE">Online</SelectItem>
-                  <SelectItem value="OFFLINE">Offline</SelectItem>
-                  <SelectItem value="HYBRID">Hybrid</SelectItem>
+                  <SelectItem value="ONLINE">{t("uiEventEdit.online")}</SelectItem>
+                  <SelectItem value="OFFLINE">{t("uiEventEdit.offline")}</SelectItem>
+                  <SelectItem value="HYBRID">{t("uiEventEdit.hybrid")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label>Max participants</Label>
-              <Input type="number" min={1} value={maxAttendees} onChange={(e) => setMaxAttendees(e.target.value)} disabled={readOnly} placeholder="Unlimited" />
+              <Label>{t("uiEventEdit.maxParticipants")}</Label>
+              <Input type="number" min={1} value={maxAttendees} onChange={(e) => setMaxAttendees(e.target.value)} disabled={readOnly} placeholder={t("uiEventEdit.unlimited")} />
             </div>
           </div>
 
           <div>
-            <Label>Location / Address</Label>
+            <Label>{t("uiEventEdit.locationAddress")}</Label>
             <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} disabled={readOnly} placeholder={t("uiEventEdit.venueAddressOrInstructions")} />
           </div>
 
           <div>
-            <Label>Call / Meeting URL</Label>
+            <Label>{t("uiEventEdit.callMeetingUrl")}</Label>
             <Input value={callUrl} onChange={(e) => setCallUrl(e.target.value)} disabled={readOnly} placeholder="https://…" />
           </div>
         </div>
 
         <div className="flex gap-3 pt-4 border-t border-border">
           <Button onClick={handleSave} disabled={saving || readOnly}>
-            <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : t("uiEventEdit.saveChanges")}
+            <Save className="h-4 w-4 mr-1" /> {saving ? t("uiEventEdit.saving") : t("uiEventEdit.saveChanges")}
           </Button>
           <Button variant="ghost" asChild><Link to={`/events/${id}`}>{t("uiEventEdit.cancel")}</Link></Button>
         </div>

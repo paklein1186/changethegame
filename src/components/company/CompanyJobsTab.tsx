@@ -20,16 +20,16 @@ import { translateTopicName } from "@/lib/entityLabels";
 const CONTRACT_TYPES = [
   { value: "full-time", get label() { return i18n.t("uiCompanyJobsTab.fullTime"); } },
   { value: "part-time", get label() { return i18n.t("uiCompanyJobsTab.partTime"); } },
-  { value: "contract", label: "Contract" },
-  { value: "freelance", label: "Freelance" },
-  { value: "internship", label: "Internship" },
-  { value: "volunteer", label: "Volunteer" },
+  { value: "contract", get label() { return i18n.t("uiCompanyJobsTab.contract"); } },
+  { value: "freelance", get label() { return i18n.t("uiCompanyJobsTab.freelance"); } },
+  { value: "internship", get label() { return i18n.t("uiCompanyJobsTab.internship"); } },
+  { value: "volunteer", get label() { return i18n.t("uiCompanyJobsTab.volunteer"); } },
 ];
 
 const REMOTE_POLICIES = [
   { value: "on-site", get label() { return i18n.t("uiCompanyJobsTab.onSite"); } },
-  { value: "remote", label: "Remote" },
-  { value: "hybrid", label: "Hybrid" },
+  { value: "remote", get label() { return i18n.t("uiCompanyJobsTab.remote"); } },
+  { value: "hybrid", get label() { return i18n.t("uiCompanyJobsTab.hybrid"); } },
 ];
 
 interface Props {
@@ -113,7 +113,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
         if (ext.contract_type) setContractType(ext.contract_type);
         if (ext.remote_policy) setRemotePolicy(ext.remote_policy);
         if (ext.location) setLocationText(ext.location);
-        toast({ title: "Info extracted", description: t("uiCompanyJobsTab.reviewAndEditThePreFilled") });
+        toast({ title: t("uiCompanyJobsTab.infoExtracted"), description: t("uiCompanyJobsTab.reviewAndEditThePreFilled") });
       }
     } catch (e) {
       console.error("Extraction failed:", e);
@@ -147,7 +147,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
         topic_ids: selectedTopics,
         territory_ids: selectedTerritories,
       });
-      toast({ title: "Job position created" });
+      toast({ title: t("uiCompanyJobsTab.jobPositionCreated") });
       resetForm();
       setOpen(false);
     } catch {
@@ -187,7 +187,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                   <div className="space-y-3">
                     <Button variant="outline" className="w-full h-20 flex-col gap-2" onClick={() => fileRef.current?.click()} disabled={uploading}>
                       <Upload className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-sm">{uploading ? "Uploading…" : t("uiCompanyJobsTab.uploadDocumentPdfDoc")}</span>
+                      <span className="text-sm">{uploading ? t("uiCompanyJobsTab.uploading") : t("uiCompanyJobsTab.uploadDocumentPdfDoc")}</span>
                     </Button>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <div className="flex-1 h-px bg-border" />
@@ -230,7 +230,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                 )}
                 <div>
                   <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.title")}</label>
-                  <Input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} placeholder="e.g. Frontend Developer" />
+                  <Input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} placeholder={t("uiCompanyJobsTab.eGFrontendDeveloper")} />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.description")}</label>
@@ -238,14 +238,14 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Contract type</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.contractType")}</label>
                     <Select value={contractType} onValueChange={setContractType}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{CONTRACT_TYPES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Remote policy</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.remotePolicy")}</label>
                     <Select value={remotePolicy} onValueChange={setRemotePolicy}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{REMOTE_POLICIES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
@@ -253,8 +253,8 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Location</label>
-                  <Input value={locationText} onChange={e => setLocationText(e.target.value)} placeholder="e.g. Paris, France" />
+                  <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.location")}</label>
+                  <Input value={locationText} onChange={e => setLocationText(e.target.value)} placeholder={t("uiCompanyJobsTab.eGParisFrance")} />
                 </div>
 
                 {docUrl && (
@@ -291,7 +291,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => setStep("file")}>{t("uiCompanyJobsTab.back")}</Button>
                   <Button onClick={handleCreate} className="flex-1" disabled={!title.trim() || createJob.isPending}>
-                    {createJob.isPending ? "Creating…" : t("uiCompanyJobsTab.createJobPosition")}
+                    {createJob.isPending ? t("uiCompanyJobsTab.creating") : t("uiCompanyJobsTab.createJobPosition")}
                   </Button>
                 </div>
               </div>
@@ -345,7 +345,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
               </div>
 
               <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1">
-                <span>Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</span>
+                <span>{t("uiCompanyJobsTab.posted")} {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</span>
               {job.document_url && (
                   <a
                     href={job.document_url}
@@ -354,7 +354,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                     className="flex items-center gap-1 text-primary hover:underline"
                     onClick={(e) => { window.open(job.document_url, "_blank", "noopener,noreferrer"); e.preventDefault(); }}
                   >
-                    <FileText className="h-3 w-3" /> {job.document_name || "Document"} <ExternalLink className="h-2.5 w-2.5" />
+                    <FileText className="h-3 w-3" /> {job.document_name || t("uiCompanyJobsTab.document")} <ExternalLink className="h-2.5 w-2.5" />
                   </a>
                 )}
               </div>

@@ -39,7 +39,7 @@ export default function JobsPage() {
           <div className="flex items-center gap-3">
             <Briefcase className="h-7 w-7 text-primary" />
             <div>
-              <h1 className="text-2xl font-display font-bold">Job Board</h1>
+              <h1 className="text-2xl font-display font-bold">{t("uiJobsPage.jobBoard")}</h1>
               <p className="text-sm text-muted-foreground">{t("uiJobsPage.exploreOpenPositionsInTheEcosystem")}</p>
             </div>
           </div>

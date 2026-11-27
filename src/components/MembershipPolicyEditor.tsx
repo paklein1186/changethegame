@@ -28,7 +28,7 @@ export function MembershipPolicyEditor({
 
   const handleSave = () => {
     onSave(joinPolicy, questions);
-    toast({ title: "Membership policy saved!" });
+    toast({ title: t("uiMembershipPolicyEditor.membershipPolicySaved") });
   };
 
   return (
@@ -53,7 +53,7 @@ export function MembershipPolicyEditor({
           <Separator />
           <div>
             <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3">
-              <ClipboardList className="h-5 w-5" /> Application Questions
+              <ClipboardList className="h-5 w-5" /> {t("uiMembershipPolicyEditor.applicationQuestions")}
             </h3>
             <p className="text-sm text-muted-foreground mb-3">
               {t("uiMembershipPolicyEditor.defineQuestionsApplicantsMustAnswerLeave")}

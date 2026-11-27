@@ -54,7 +54,7 @@ export default function CompaniesList({ bare, hideFilters, externalFilters }: { 
         <>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-              <Building2 className="h-7 w-7 text-primary" /> Traditional Organizations
+              <Building2 className="h-7 w-7 text-primary" /> {t("uiCompaniesList.traditionalOrganizations")}
             </h1>
           </div>
 

@@ -45,7 +45,7 @@ export default function AdminFeatureToggles() {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Settings className="h-6 w-6 text-primary" />
-        <h2 className="font-display text-2xl font-bold">Platform Controls</h2>
+        <h2 className="font-display text-2xl font-bold">{t("uiAdminFeatureToggles.platformControls")}</h2>
       </div>
       <p className="text-muted-foreground text-sm max-w-xl">
         {t("uiAdminFeatureToggles.toggleMajorPlatformFeaturesOnOr")}

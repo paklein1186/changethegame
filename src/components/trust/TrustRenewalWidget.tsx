@@ -115,7 +115,7 @@ export function TrustRenewalWidget() {
     if (error) {
       toast({ title: t("uiTrustRenewalWidget.renewalFailed"), description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "✅ Trust renewed!", description: `+2 credits earned. Your attestation for ${(result as any)?.target_name ?? "this entity"} is now fresh.` });
+      toast({ title: t("uiTrustRenewalWidget.trustRenewed"), description: `+2 credits earned. Your attestation for ${(result as any)?.target_name ?? "this entity"} is now fresh.` });
       qc.invalidateQueries({ queryKey: ["trust-renewal-edges"] });
     }
   };
@@ -127,7 +127,7 @@ export function TrustRenewalWidget() {
       .update({ status: "retracted" as any, updated_at: new Date().toISOString() })
       .eq("id", edgeId);
     setActing(null);
-    toast({ title: "Trust retracted" });
+    toast({ title: t("uiTrustRenewalWidget.trustRetracted") });
     qc.invalidateQueries({ queryKey: ["trust-renewal-edges"] });
   };
 
@@ -142,7 +142,7 @@ export function TrustRenewalWidget() {
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
           <RefreshCw className="h-4 w-4 text-amber-500" />
-          Trust Attestation Renewals
+          {t("uiTrustRenewalWidget.trustAttestationRenewals")}
           <Badge variant="secondary" className="text-[10px]">{totalCount}</Badge>
         </CardTitle>
       </CardHeader>
@@ -170,7 +170,7 @@ export function TrustRenewalWidget() {
         {outdatedCount > 0 && (
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3" /> Outdated ({outdatedCount})
+              <AlertTriangle className="h-3 w-3" /> {t("uiTrustRenewalWidget.outdated")}{outdatedCount})
             </p>
             {data!.outdated.map((edge) => (
               <RenewalEdgeRow
@@ -196,6 +196,7 @@ function RenewalEdgeRow({ edge, acting, onRenew, onRetract, variant }: {
   onRetract: () => void;
   variant: "renewal" | "outdated";
 }) {
+  const { t } = useTranslation();
   const NODE_TYPE_LABELS: Record<string, string> = { profile: "User", guild: "Guild", quest: "Quest", service: "Service", partner_entity: "Organization" };
 
   return (
@@ -213,7 +214,7 @@ function RenewalEdgeRow({ edge, acting, onRenew, onRetract, variant }: {
             {NODE_TYPE_LABELS[edge.to_node_type] ?? edge.to_node_type}
           </Badge>
           <span className="text-[10px] text-muted-foreground">
-            {edge.score}★ · {edge.last_confirmed_at ? formatDistanceToNow(new Date(edge.last_confirmed_at), { addSuffix: true }) : "never confirmed"}
+            {edge.score}★ · {edge.last_confirmed_at ? formatDistanceToNow(new Date(edge.last_confirmed_at), { addSuffix: true }) : t("uiTrustRenewalWidget.neverConfirmed")}
           </span>
           {(edge.tags ?? []).filter(t => !t.startsWith("__")).slice(0, 2).map(t => (
             <Badge key={t} variant="outline" className="text-[9px] px-1 py-0 h-3.5">{t}</Badge>
@@ -228,7 +229,7 @@ function RenewalEdgeRow({ edge, acting, onRenew, onRetract, variant }: {
           onClick={onRenew}
         >
           {acting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3 mr-0.5" />}
-          {variant === "outdated" ? "Reactivate" : "Renew"}
+          {variant === "outdated" ? t("uiTrustRenewalWidget.reactivate") : t("uiTrustRenewalWidget.renew")}
         </Button>
         <Button
           size="sm"
@@ -237,7 +238,7 @@ function RenewalEdgeRow({ edge, acting, onRenew, onRetract, variant }: {
           disabled={acting}
           onClick={onRetract}
         >
-          <X className="h-3 w-3 mr-0.5" /> Retract
+          <X className="h-3 w-3 mr-0.5" /> {t("uiTrustRenewalWidget.retract")}
         </Button>
       </div>
     </div>

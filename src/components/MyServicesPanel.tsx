@@ -98,7 +98,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
       queryClient.invalidateQueries({ queryKey: ["my-services"] });
       setCreateOpen(false);
       resetForm();
-      toast({ title: editId ? "Service updated" : "Service created" });
+      toast({ title: editId ? t("uiMyServicesPanel.serviceUpdated") : t("uiMyServicesPanel.serviceCreated") });
     },
     onError: (err: any) => {
       toast({ title: t("uiMyServicesPanel.error"), description: err.message, variant: "destructive" });
@@ -123,7 +123,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-services"] });
-      toast({ title: "Service deleted" });
+      toast({ title: t("uiMyServicesPanel.serviceDeleted") });
     },
   });
 
@@ -143,7 +143,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
             <div className="space-y-4 mt-2">
               <div>
                 <label className="text-sm font-medium mb-1 block">{t("uiMyServicesPanel.title")}</label>
-                <Input value={formTitle} onChange={(e) => setFormTitle(e.target.value)} placeholder="e.g. Strategy Workshop" maxLength={120} />
+                <Input value={formTitle} onChange={(e) => setFormTitle(e.target.value)} placeholder={t("uiMyServicesPanel.eGStrategyWorkshop")} maxLength={120} />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">{t("uiMyServicesPanel.description")}</label>
@@ -151,22 +151,22 @@ export function MyServicesPanel({ userId }: { userId: string }) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Duration (min)</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiMyServicesPanel.durationMin")}</label>
                   <Input type="number" value={formDuration} onChange={(e) => setFormDuration(e.target.value)} min={15} max={480} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Price (€)</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiMyServicesPanel.price")}</label>
                   <Input type="number" value={formPrice} onChange={(e) => setFormPrice(e.target.value)} min={0} step={5} />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Location type</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiMyServicesPanel.locationType")}</label>
                 <Select value={formLocationType} onValueChange={setFormLocationType}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="JITSI">Jitsi</SelectItem>
-                    <SelectItem value="ZOOM">Zoom</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="ZOOM">{t("uiMyServicesPanel.zoom")}</SelectItem>
+                    <SelectItem value="OTHER">{t("uiMyServicesPanel.other")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -202,7 +202,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
                   <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {svc.duration_minutes} min</span>
                   <span className="flex items-center gap-1">
                     <Euro className="h-3 w-3" />
-                    {(!svc.price_amount || svc.price_amount === 0) ? "Free" : `€${svc.price_amount}`}
+                    {(!svc.price_amount || svc.price_amount === 0) ? t("uiMyServicesPanel.free") : `€${svc.price_amount}`}
                   </span>
                   <Badge variant="outline" className="text-[10px]">
                     <Video className="h-2.5 w-2.5 mr-0.5" /> {svc.online_location_type}
@@ -210,7 +210,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
                 </div>
               </div>
               <Badge className={svc.is_active ? "bg-emerald-500/10 text-emerald-600 border-0" : "bg-muted text-muted-foreground border-0"}>
-                {svc.is_active ? t("uiMyServicesPanel.active") : "Paused"}
+                {svc.is_active ? t("uiMyServicesPanel.active") : t("uiMyServicesPanel.paused")}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{svc.description}</p>
@@ -219,7 +219,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
                 <Pencil className="h-3.5 w-3.5 mr-1" /> {t("uiMyServicesPanel.edit")}
               </Button>
               <Button size="sm" variant="outline" onClick={() => toggleMutation.mutate({ id: svc.id, isActive: svc.is_active })}>
-                {svc.is_active ? <><ToggleRight className="h-3.5 w-3.5 mr-1" /> Pause</> : <><ToggleLeft className="h-3.5 w-3.5 mr-1" /> Resume</>}
+                {svc.is_active ? <><ToggleRight className="h-3.5 w-3.5 mr-1" /> {t("uiMyServicesPanel.pause")}</> : <><ToggleLeft className="h-3.5 w-3.5 mr-1" /> {t("uiMyServicesPanel.resume")}</>}
               </Button>
               <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteMutation.mutate(svc.id)}>
                 <Trash2 className="h-3.5 w-3.5" />

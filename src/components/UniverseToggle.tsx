@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Sparkles, Globe, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { UniverseMode } from "@/lib/universeMapping";
@@ -9,9 +10,9 @@ interface Props {
 }
 
 const OPTIONS: { value: UniverseMode; label: string; icon: typeof Sparkles }[] = [
-  { value: "creative", label: "Creative", icon: Sparkles },
-  { value: "impact", label: "Impact", icon: Globe },
-  { value: "both", label: "Both", icon: Layers },
+  { value: "creative", get label() { return i18n.t("uiUniverseToggle.creative"); }, icon: Sparkles },
+  { value: "impact", get label() { return i18n.t("uiUniverseToggle.impact"); }, icon: Globe },
+  { value: "both", get label() { return i18n.t("uiUniverseToggle.both"); }, icon: Layers },
 ];
 
 export function UniverseToggle({ value, onChange, className = "" }: Props) {

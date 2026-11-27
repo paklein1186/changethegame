@@ -205,7 +205,7 @@ export default function PublicBooking() {
             });
           }
         }
-        toast({ title: isFree ? "✅ Session confirmed!" : t("uiPublicBooking.bookingRequestSent") });
+        toast({ title: isFree ? t("uiPublicBooking.sessionConfirmed") : t("uiPublicBooking.bookingRequestSent") });
         navigate(`/bookings/${newBooking.id}`);
       })();
     } catch {
@@ -273,7 +273,7 @@ export default function PublicBooking() {
           {/* Home button */}
           <div className="flex justify-start mb-4">
             <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-1.5 text-muted-foreground hover:text-foreground">
-              <Home className="h-4 w-4" /> Home
+              <Home className="h-4 w-4" /> {t("uiPublicBooking.home")}
             </Button>
           </div>
 
@@ -304,7 +304,7 @@ export default function PublicBooking() {
               )}
               <Badge variant="secondary" className="gap-1">
                 <Euro className="h-3 w-3" />
-                {isFree ? "Free" : `${svc.price_amount} ${svc.price_currency}`}
+                {isFree ? t("uiPublicBooking.free") : `${svc.price_amount} ${svc.price_currency}`}
               </Badge>
               {svc.online_location_type && (
                 <Badge variant="outline" className="gap-1 text-xs">
@@ -395,7 +395,7 @@ export default function PublicBooking() {
           {/* Notes */}
           {selectedSlot && (
             <div className="rounded-xl border border-border bg-card p-5 space-y-3 mb-6">
-              <label className="text-sm font-medium block">Notes (optional)</label>
+              <label className="text-sm font-medium block">{t("uiPublicBooking.notesOptional")}</label>
               <Textarea
                 value={bookNotes}
                 onChange={e => setBookNotes(e.target.value)}
@@ -415,7 +415,7 @@ export default function PublicBooking() {
             onClick={handleSelectSlot}
           >
             {bookingInProgress ? (
-              <span className="animate-pulse">Creating booking…</span>
+              <span className="animate-pulse">{t("uiPublicBooking.creatingBooking")}</span>
             ) : isLoggedIn ? (
               <>
                 <CalendarClock className="h-4 w-4 mr-2" />

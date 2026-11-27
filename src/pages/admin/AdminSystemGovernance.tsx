@@ -36,7 +36,7 @@ function CooperativeSettings() {
   const updateSetting = async (key: string, value: any) => {
     await supabase.from("cooperative_settings").update({ value, updated_at: new Date().toISOString() }).eq("key", key);
     qc.invalidateQueries({ queryKey: ["admin-coop-settings"] });
-    toast({ title: "Setting updated" });
+    toast({ title: t("uiAdminSystemGovernance.settingUpdated") });
   };
 
   const sharePrice = getSetting("share_price")?.amount ?? 10;
@@ -60,7 +60,7 @@ function CooperativeSettings() {
       <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
         <span className="text-amber-500 text-lg">⚠️</span>
         <div>
-          <p className="text-sm font-semibold text-foreground">Alpha Phase</p>
+          <p className="text-sm font-semibold text-foreground">{t("uiAdminSystemGovernance.alphaPhase")}</p>
           <p className="text-sm text-muted-foreground">{t("uiAdminSystemGovernance.shareholdingSettingsAreProvisionalAndWill")}</p>
         </div>
       </div>
@@ -85,17 +85,17 @@ function CooperativeSettings() {
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             <Switch checked={classAEnabled} onCheckedChange={(v) => updateSetting("class_a_enabled", { enabled: v })} />
-            <span className="text-sm text-muted-foreground">{classAEnabled ? "Enabled" : "Disabled"}</span>
+            <span className="text-sm text-muted-foreground">{classAEnabled ? t("uiAdminSystemGovernance.enabled") : t("uiAdminSystemGovernance.disabled")}</span>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Class B Shares</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("uiAdminSystemGovernance.classBShares")}</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             <Switch checked={classBEnabled} onCheckedChange={(v) => updateSetting("class_b_enabled", { enabled: v })} />
-            <span className="text-sm text-muted-foreground">{classBEnabled ? "Enabled" : "Disabled"}</span>
+            <span className="text-sm text-muted-foreground">{classBEnabled ? t("uiAdminSystemGovernance.enabled") : t("uiAdminSystemGovernance.disabled")}</span>
           </CardContent>
         </Card>
       </div>
@@ -131,11 +131,11 @@ function CooperativeSettings() {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Voting Weight Formulas</CardTitle>
+          <CardTitle className="text-sm font-medium">{t("uiAdminSystemGovernance.votingWeightFormulas")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <p><strong>{t("uiAdminSystemGovernance.classA")}</strong> {t("uiAdminSystemGovernance.log1Shares")}</p>
-          <p><strong>Class B:</strong> {t("uiAdminSystemGovernance.log1Shares02")}</p>
+          <p><strong>{t("uiAdminSystemGovernance.classB")}</strong> {t("uiAdminSystemGovernance.log1Shares02")}</p>
           <p className="text-xs text-muted-foreground">{t("uiAdminSystemGovernance.formulasAreAppliedAutomaticallyViaDatabase")}</p>
         </CardContent>
       </Card>
@@ -170,9 +170,9 @@ function ShareholdersList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{shareholders.length} shareholder(s)</p>
+        <p className="text-sm text-muted-foreground">{shareholders.length} {t("uiAdminSystemGovernance.shareholderS")}</p>
         <Button variant="outline" size="sm" onClick={exportCSV}>
-          <Download className="h-4 w-4 mr-2" /> Export CSV
+          <Download className="h-4 w-4 mr-2" /> {t("uiAdminSystemGovernance.exportCsv")}
         </Button>
       </div>
       <div className="rounded-xl border border-border overflow-hidden">
@@ -180,10 +180,10 @@ function ShareholdersList() {
           <TableHeader>
             <TableRow>
               <TableHead>{t("uiAdminSystemGovernance.name")}</TableHead>
-              <TableHead>Email</TableHead>
+              <TableHead>{t("uiAdminSystemGovernance.email")}</TableHead>
               <TableHead className="text-right">{t("uiAdminSystemGovernance.classA2")}</TableHead>
-              <TableHead className="text-right">Class B</TableHead>
-              <TableHead className="text-right">Weight</TableHead>
+              <TableHead className="text-right">{t("uiAdminSystemGovernance.classB2")}</TableHead>
+              <TableHead className="text-right">{t("uiAdminSystemGovernance.weight")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -211,14 +211,14 @@ export default function AdminSystemGovernance() {
   return (
     <div className="space-y-4">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-        <Star className="h-6 w-6 text-primary" /> Governance & Featured Content
+        <Star className="h-6 w-6 text-primary" /> {t("uiAdminSystemGovernance.governanceFeaturedContent")}
       </h2>
 
       <Tabs defaultValue="governance">
         <TabsList>
-          <TabsTrigger value="governance"><Star className="h-4 w-4 mr-1" /> Featured Content</TabsTrigger>
+          <TabsTrigger value="governance"><Star className="h-4 w-4 mr-1" /> {t("uiAdminSystemGovernance.featuredContent")}</TabsTrigger>
           <TabsTrigger value="cooperative"><Crown className="h-4 w-4 mr-1" /> {t("uiAdminSystemGovernance.cooperativeSettings")}</TabsTrigger>
-          <TabsTrigger value="shareholders"><Users className="h-4 w-4 mr-1" /> Shareholders</TabsTrigger>
+          <TabsTrigger value="shareholders"><Users className="h-4 w-4 mr-1" /> {t("uiAdminSystemGovernance.shareholders")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="governance" className="mt-4">

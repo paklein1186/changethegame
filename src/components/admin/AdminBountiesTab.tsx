@@ -59,7 +59,7 @@ export function AdminBountiesTab() {
         ends_at: new Date(form.ends_at).toISOString(),
       } as any);
       if (error) throw error;
-      toast.success("Bounty created!");
+      toast.success(t("uiAdminBountiesTab.bountyCreated"));
       setForm({ title: "", description: "", action_type: "", required_count: 1, ctg_reward: 10, total_slots: 50, starts_at: new Date().toISOString().slice(0, 16), ends_at: "" });
       qc.invalidateQueries({ queryKey: ["admin-ctg-bounties"] });
     } catch (e: any) {
@@ -78,7 +78,7 @@ export function AdminBountiesTab() {
   const deleteBounty = async (id: string) => {
     await supabase.from("ctg_bounties" as any).delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-ctg-bounties"] });
-    toast.success("Bounty deleted");
+    toast.success(t("uiAdminBountiesTab.bountyDeleted"));
   };
 
   return (
@@ -97,21 +97,21 @@ export function AdminBountiesTab() {
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={t("uiAdminBountiesTab.eGDocumentANaturalSystem")} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Action Type *</Label>
-              <Input value={form.action_type} onChange={(e) => setForm({ ...form, action_type: e.target.value })} placeholder="e.g. document_ns, host_ritual" />
+              <Label className="text-xs">{t("uiAdminBountiesTab.actionType")}</Label>
+              <Input value={form.action_type} onChange={(e) => setForm({ ...form, action_type: e.target.value })} placeholder={t("uiAdminBountiesTab.eGDocumentNsHostRitual")} />
             </div>
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">{t("uiAdminBountiesTab.description")}</Label>
-            <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} placeholder="What should contributors do?" />
+            <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} placeholder={t("uiAdminBountiesTab.whatShouldContributorsDo")} />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">$CTG Reward</Label>
+              <Label className="text-xs">{t("uiAdminBountiesTab.ctgReward")}</Label>
               <Input type="number" value={form.ctg_reward} onChange={(e) => setForm({ ...form, ctg_reward: Number(e.target.value) })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Total Slots</Label>
+              <Label className="text-xs">{t("uiAdminBountiesTab.totalSlots")}</Label>
               <Input type="number" value={form.total_slots} onChange={(e) => setForm({ ...form, total_slots: Number(e.target.value) })} />
             </div>
             <div className="space-y-1.5">
@@ -146,10 +146,10 @@ export function AdminBountiesTab() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t("uiAdminBountiesTab.title2")}</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead className="text-right">Reward</TableHead>
-                    <TableHead className="text-right">Claims</TableHead>
-                    <TableHead>Ends</TableHead>
+                    <TableHead>{t("uiAdminBountiesTab.type")}</TableHead>
+                    <TableHead className="text-right">{t("uiAdminBountiesTab.reward")}</TableHead>
+                    <TableHead className="text-right">{t("uiAdminBountiesTab.claims")}</TableHead>
+                    <TableHead>{t("uiAdminBountiesTab.ends")}</TableHead>
                     <TableHead>{t("uiAdminBountiesTab.active")}</TableHead>
                     <TableHead />
                   </TableRow>

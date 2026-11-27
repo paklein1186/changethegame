@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -30,8 +31,8 @@ const fadeUp = {
 };
 
 const ENTITY_LINKS: { label: string; to: string }[] = [
-  { label: "Trois-Tiers", to: "/guilds/4964c699-4684-43a9-b508-cee21c77e24e" },
-  { label: "Poiethic", to: "/companies/e786a8cc-6e46-4fed-ae25-0e5fed5f7f90" },
+  { get label() { return i18n.t("uiHomeLanding.troisTiers"); }, to: "/guilds/4964c699-4684-43a9-b508-cee21c77e24e" },
+  { get label() { return i18n.t("uiHomeLanding.poiethic"); }, to: "/companies/e786a8cc-6e46-4fed-ae25-0e5fed5f7f90" },
 ];
 
 /** Turns known entity names inside a plain string into bold links to their pages. */

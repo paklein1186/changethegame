@@ -136,55 +136,55 @@ export function NotionEditor({
     <div className="rounded-lg border border-border bg-card overflow-hidden">
       {editable && (
         <div className="flex flex-wrap items-center gap-0.5 border-b border-border bg-muted/30 px-2 py-1.5">
-          <ToolBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Bold">
+          <ToolBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title={t("uiNotionEditor.bold")}>
             <Bold className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")} title="Italic">
+          <ToolBtn onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")} title={t("uiNotionEditor.italic")}>
             <Italic className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive("underline")} title="Underline">
+          <ToolBtn onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive("underline")} title={t("uiNotionEditor.underline")}>
             <UnderlineIcon className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive("strike")} title="Strikethrough">
+          <ToolBtn onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive("strike")} title={t("uiNotionEditor.strikethrough")}>
             <Strikethrough className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleHighlight().run()} active={editor.isActive("highlight")} title="Highlight">
+          <ToolBtn onClick={() => editor.chain().focus().toggleHighlight().run()} active={editor.isActive("highlight")} title={t("uiNotionEditor.highlight")}>
             <Highlighter className="h-3.5 w-3.5" />
           </ToolBtn>
 
           <Separator orientation="vertical" className="h-5 mx-1" />
 
-          <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} active={editor.isActive("heading", { level: 1 })} title="Heading 1">
+          <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} active={editor.isActive("heading", { level: 1 })} title={t("uiNotionEditor.heading1")}>
             <Heading1 className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive("heading", { level: 2 })} title="Heading 2">
+          <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive("heading", { level: 2 })} title={t("uiNotionEditor.heading2")}>
             <Heading2 className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive("heading", { level: 3 })} title="Heading 3">
+          <ToolBtn onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive("heading", { level: 3 })} title={t("uiNotionEditor.heading3")}>
             <Heading3 className="h-3.5 w-3.5" />
           </ToolBtn>
 
           <Separator orientation="vertical" className="h-5 mx-1" />
 
-          <ToolBtn onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive("bulletList")} title="Bullet list">
+          <ToolBtn onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive("bulletList")} title={t("uiNotionEditor.bulletList")}>
             <List className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive("orderedList")} title="Numbered list">
+          <ToolBtn onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive("orderedList")} title={t("uiNotionEditor.numberedList")}>
             <ListOrdered className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleTaskList().run()} active={editor.isActive("taskList")} title="Checklist">
+          <ToolBtn onClick={() => editor.chain().focus().toggleTaskList().run()} active={editor.isActive("taskList")} title={t("uiNotionEditor.checklist")}>
             <CheckSquare className="h-3.5 w-3.5" />
           </ToolBtn>
 
           <Separator orientation="vertical" className="h-5 mx-1" />
 
-          <ToolBtn onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive("blockquote")} title="Quote">
+          <ToolBtn onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive("blockquote")} title={t("uiNotionEditor.quote")}>
             <Quote className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().toggleCodeBlock().run()} active={editor.isActive("codeBlock")} title="Code block">
+          <ToolBtn onClick={() => editor.chain().focus().toggleCodeBlock().run()} active={editor.isActive("codeBlock")} title={t("uiNotionEditor.codeBlock")}>
             <Code className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Divider">
+          <ToolBtn onClick={() => editor.chain().focus().setHorizontalRule().run()} title={t("uiNotionEditor.divider")}>
             <Minus className="h-3.5 w-3.5" />
           </ToolBtn>
 
@@ -199,13 +199,13 @@ export function NotionEditor({
 
           <Separator orientation="vertical" className="h-5 mx-1" />
 
-          <ToolBtn onClick={() => editor.chain().focus().setTextAlign("left").run()} active={editor.isActive({ textAlign: "left" })} title="Align left">
+          <ToolBtn onClick={() => editor.chain().focus().setTextAlign("left").run()} active={editor.isActive({ textAlign: "left" })} title={t("uiNotionEditor.alignLeft")}>
             <AlignLeft className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().setTextAlign("center").run()} active={editor.isActive({ textAlign: "center" })} title="Align center">
+          <ToolBtn onClick={() => editor.chain().focus().setTextAlign("center").run()} active={editor.isActive({ textAlign: "center" })} title={t("uiNotionEditor.alignCenter")}>
             <AlignCenter className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={() => editor.chain().focus().setTextAlign("right").run()} active={editor.isActive({ textAlign: "right" })} title="Align right">
+          <ToolBtn onClick={() => editor.chain().focus().setTextAlign("right").run()} active={editor.isActive({ textAlign: "right" })} title={t("uiNotionEditor.alignRight")}>
             <AlignRight className="h-3.5 w-3.5" />
           </ToolBtn>
 
@@ -248,16 +248,16 @@ export function NotionEditor({
               title={t("uiNotionEditor.saveNow")}
             >
               <Save className="h-3.5 w-3.5 mr-1" />
-              {isSaving ? "Saving…" : t("uiNotionEditor.save")}
+              {isSaving ? t("uiNotionEditor.saving") : t("uiNotionEditor.save")}
             </Button>
           )}
 
           {!ydoc && (
             <>
-              <ToolBtn onClick={() => editor.chain().focus().undo().run()} title="Undo">
+              <ToolBtn onClick={() => editor.chain().focus().undo().run()} title={t("uiNotionEditor.undo")}>
                 <Undo className="h-3.5 w-3.5" />
               </ToolBtn>
-              <ToolBtn onClick={() => editor.chain().focus().redo().run()} title="Redo">
+              <ToolBtn onClick={() => editor.chain().focus().redo().run()} title={t("uiNotionEditor.redo")}>
                 <Redo className="h-3.5 w-3.5" />
               </ToolBtn>
             </>

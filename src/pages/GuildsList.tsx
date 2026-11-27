@@ -97,13 +97,13 @@ export default function GuildsList({ bare, hideFilters, externalFilters, externa
             <Textarea value={gDesc} onChange={e => setGDesc(e.target.value)} placeholder={t("uiGuildsList.whatIsYourGuildAbout")} maxLength={500} className="resize-none" />
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Type</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiGuildsList.type")}</label>
             <Select value={gType} onValueChange={v => setGType(v as GuildType)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value={GuildType.GUILD}>{t("uiGuildsList.guild")}</SelectItem>
-                <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
-                <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
+                <SelectItem value={GuildType.NETWORK}>{t("uiGuildsList.network")}</SelectItem>
+                <SelectItem value={GuildType.COLLECTIVE}>{t("uiGuildsList.collective")}</SelectItem>
               </SelectContent>
             </Select>
           </div>

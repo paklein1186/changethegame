@@ -22,7 +22,7 @@ export default function AdminSuperMode() {
         <div className="flex items-center gap-2 bg-muted/50 rounded-lg px-3 py-2">
           {maskPII ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
           <Label htmlFor="mask-pii" className="text-sm cursor-pointer">
-            Mask personal identifiers
+            {t("uiAdminSuperMode.maskPersonalIdentifiers")}
           </Label>
           <Switch id="mask-pii" checked={maskPII} onCheckedChange={setMaskPII} />
         </div>

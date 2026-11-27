@@ -268,8 +268,8 @@ export function ProfileQuestsTab({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("uiProfileQuestsTab.allSources")}</SelectItem>
-              <SelectItem value="created">Created</SelectItem>
-              <SelectItem value="joined">Joined</SelectItem>
+              <SelectItem value="created">{t("uiProfileQuestsTab.created")}</SelectItem>
+              <SelectItem value="joined">{t("uiProfileQuestsTab.joined")}</SelectItem>
             </SelectContent>
           </Select>
           <div className="flex border border-border rounded-md overflow-hidden">
@@ -327,7 +327,7 @@ export function ProfileQuestsTab({
                           <Link key={q.id} to={`/quests/${q.id}`} className="block rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-all">
                             <h4 className="font-display text-sm font-semibold truncate">{q.title}</h4>
                             {q.guild && <p className="text-[10px] text-muted-foreground truncate mt-0.5">{q.guild.name}</p>}
-                            <Badge variant="secondary" className="text-[10px] capitalize mt-1.5">{q.source === "created" ? "Creator" : q.role || "Participant"}</Badge>
+                            <Badge variant="secondary" className="text-[10px] capitalize mt-1.5">{q.source === "created" ? t("uiProfileQuestsTab.creator") : q.role || t("uiProfileQuestsTab.participant")}</Badge>
                           </Link>
                         ))}
                       </div>
@@ -362,7 +362,7 @@ export function ProfileQuestsTab({
                       )}
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <Badge variant="outline" className={cn("text-[10px]", st?.color)}>{st?.label || q.status}</Badge>
-                        <Badge variant="secondary" className="text-[10px] capitalize">{q.source === "created" ? "Creator" : q.role || "Participant"}</Badge>
+                        <Badge variant="secondary" className="text-[10px] capitalize">{q.source === "created" ? t("uiProfileQuestsTab.creator") : q.role || t("uiProfileQuestsTab.participant")}</Badge>
                       </div>
                     </div>
                   </Link>
@@ -422,7 +422,7 @@ export function ProfileQuestsTab({
                          <Badge variant="outline" className={cn("text-[10px]", st?.color)}>{st?.label || q.status}</Badge>
                        </td>
                       <td className="py-2.5 px-3 hidden md:table-cell">
-                        <Badge variant="secondary" className="text-[10px] capitalize">{q.source === "created" ? "Creator" : q.role || "Participant"}</Badge>
+                        <Badge variant="secondary" className="text-[10px] capitalize">{q.source === "created" ? t("uiProfileQuestsTab.creator") : q.role || t("uiProfileQuestsTab.participant")}</Badge>
                       </td>
                     </tr>
                   );
@@ -513,7 +513,7 @@ function QuestCard({ quest, isOwnProfile, isHighlighted, toggleHighlight }: {
               {st?.label || quest.status}
             </Badge>
             <Badge variant="secondary" className="text-[10px] capitalize">
-              {quest.source === "created" ? "Creator" : quest.role || "Participant"}
+              {quest.source === "created" ? t("uiProfileQuestsTab.creator") : quest.role || t("uiProfileQuestsTab.participant")}
             </Badge>
           </div>
         </div>

@@ -202,7 +202,7 @@ export function EntityCreationWizard({ open, onOpenChange, initialKind }: Entity
         const matched = (data.suggestedTopics?.length || data.suggestedTerritories?.length)
           ? "Topics & territories were pre-selected too."
           : "";
-        toast({ title: "Website data imported!", description: `${pagesMsg}${matched || "Review and adjust the pre-filled fields."}` });
+        toast({ title: t("uiEntityCreationWizard.websiteDataImported"), description: `${pagesMsg}${matched || "Review and adjust the pre-filled fields."}` });
       }
     } catch (err) {
       console.error("Scrape error:", err);
@@ -256,12 +256,12 @@ Respond ONLY in this exact JSON format, no markdown:
           const parsed = JSON.parse(jsonMatch[0]);
           if (parsed.name && !name) setName(parsed.name);
           if (parsed.description) setDescription(parsed.description);
-          toast({ title: "AI suggestions applied!", description: t("uiEntityCreationWizard.reviewAndAdjustThePreFilled") });
+          toast({ title: t("uiEntityCreationWizard.aiSuggestionsApplied"), description: t("uiEntityCreationWizard.reviewAndAdjustThePreFilled") });
         }
       }
     } catch (err) {
       console.error("AI assist error:", err);
-      toast({ title: "AI assist unavailable", description: t("uiEntityCreationWizard.youCanFillInTheDetails"), variant: "destructive" });
+      toast({ title: t("uiEntityCreationWizard.aiAssistUnavailable"), description: t("uiEntityCreationWizard.youCanFillInTheDetails"), variant: "destructive" });
     } finally {
       setAiLoading(false);
     }
@@ -359,7 +359,7 @@ Respond ONLY in this exact JSON format, no markdown:
           image_url: logoUrl || null,
         }).eq("id", pod.id);
 
-        toast({ title: "Pod created!", description: `${name} is ready.` });
+        toast({ title: t("uiEntityCreationWizard.podCreated"), description: `${name} is ready.` });
         handleOpenChange(false);
         navigate(`/pods/${pod.id}`);
       } else if (kind === "company") {
@@ -391,7 +391,7 @@ Respond ONLY in this exact JSON format, no markdown:
           );
         }
         qc.invalidateQueries({ queryKey: ["my-companies"] });
-        toast({ title: "Organization created!" });
+        toast({ title: t("uiEntityCreationWizard.organizationCreated") });
         handleOpenChange(false);
         navigate(`/companies/${newCompany.id}`);
       }
@@ -531,13 +531,13 @@ Respond ONLY in this exact JSON format, no markdown:
             )}
             {kind === "guild" && (
               <div>
-                <label className="text-sm font-medium mb-1 block">Type</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.type")}</label>
                 <Select value={guildType} onValueChange={v => setGuildType(v as GuildType)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value={GuildType.GUILD}>{t("uiEntityCreationWizard.guild")}</SelectItem>
-                    <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
-                    <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
+                    <SelectItem value={GuildType.NETWORK}>{t("uiEntityCreationWizard.network")}</SelectItem>
+                    <SelectItem value={GuildType.COLLECTIVE}>{t("uiEntityCreationWizard.collective")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -545,12 +545,12 @@ Respond ONLY in this exact JSON format, no markdown:
             {kind === "pod" && (
               <>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Pod type</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.podType")}</label>
                   <Select value={podType} onValueChange={v => setPodType(v as PodType)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value={PodType.QUEST_POD}>{t("uiEntityCreationWizard.questPod")}</SelectItem>
-                      <SelectItem value={PodType.STUDY_POD}>Study Pod</SelectItem>
+                      <SelectItem value={PodType.STUDY_POD}>{t("uiEntityCreationWizard.studyPod")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -583,28 +583,28 @@ Respond ONLY in this exact JSON format, no markdown:
             {kind === "company" && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Type</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.type")}</label>
                   <Select value={orgType} onValueChange={setOrgType}>
                     <SelectTrigger><SelectValue placeholder={t("uiEntityCreationWizard.selectType")} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="public">{t("uiEntityCreationWizard.public")}</SelectItem>
                       <SelectItem value="private">{t("uiEntityCreationWizard.private")}</SelectItem>
                       <SelectItem value="ngo">NGO</SelectItem>
-                      <SelectItem value="academics">Academics</SelectItem>
-                      <SelectItem value="company">Company</SelectItem>
-                      <SelectItem value="foundation">Foundation</SelectItem>
+                      <SelectItem value="academics">{t("uiEntityCreationWizard.academics")}</SelectItem>
+                      <SelectItem value="company">{t("uiEntityCreationWizard.company")}</SelectItem>
+                      <SelectItem value="foundation">{t("uiEntityCreationWizard.foundation")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Size</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiEntityCreationWizard.size")}</label>
                   <Select value={companySize} onValueChange={v => setCompanySize(v as CompanySize)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={CompanySize.MICRO}>Micro</SelectItem>
+                      <SelectItem value={CompanySize.MICRO}>{t("uiEntityCreationWizard.micro")}</SelectItem>
                       <SelectItem value={CompanySize.SME}>SME</SelectItem>
-                      <SelectItem value={CompanySize.LARGE}>Large</SelectItem>
-                      <SelectItem value={CompanySize.OTHER}>Other</SelectItem>
+                      <SelectItem value={CompanySize.LARGE}>{t("uiEntityCreationWizard.large")}</SelectItem>
+                      <SelectItem value={CompanySize.OTHER}>{t("uiEntityCreationWizard.other")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -668,7 +668,7 @@ Respond ONLY in this exact JSON format, no markdown:
               <div className="space-y-2">
                 {[
                   { value: GuildJoinPolicy.OPEN, label: t("uiEntityCreationWizard.open"), desc: t("uiEntityCreationWizard.anyoneCanJoinImmediately"), icon: Users },
-                  { value: GuildJoinPolicy.APPROVAL_REQUIRED, label: "Approval required", desc: t("uiEntityCreationWizard.membersMustApplyAndBeApproved"), icon: Eye },
+                  { value: GuildJoinPolicy.APPROVAL_REQUIRED, label: t("uiEntityCreationWizard.approvalRequired"), desc: t("uiEntityCreationWizard.membersMustApplyAndBeApproved"), icon: Eye },
                   { value: GuildJoinPolicy.INVITE_ONLY, label: t("uiEntityCreationWizard.inviteOnly"), desc: t("uiEntityCreationWizard.onlyInvitedMembersCanJoin"), icon: Lock },
                 ].map(opt => (
                   <button
@@ -690,13 +690,13 @@ Respond ONLY in this exact JSON format, no markdown:
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-2 block">Universe visibility</label>
+              <label className="text-sm font-medium mb-2 block">{t("uiEntityCreationWizard.universeVisibility")}</label>
               <Select value={universeVisibility} onValueChange={setUniverseVisibility}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="both">Both (Creative & Impact)</SelectItem>
-                  <SelectItem value="creative">Creative only</SelectItem>
-                  <SelectItem value="impact">Impact only</SelectItem>
+                  <SelectItem value="both">{t("uiEntityCreationWizard.bothCreativeImpact")}</SelectItem>
+                  <SelectItem value="creative">{t("uiEntityCreationWizard.creativeOnly")}</SelectItem>
+                  <SelectItem value="impact">{t("uiEntityCreationWizard.impactOnly")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -719,18 +719,18 @@ Respond ONLY in this exact JSON format, no markdown:
                 : t(KIND_CONFIG[kind!].labelKey)}
             </p>
             <ImageUpload
-              label="Logo"
+              label={t("uiEntityCreationWizard.logo")}
               currentImageUrl={logoUrl}
               onChange={setLogoUrl}
               aspectRatio="1/1"
-              description="Square logo, 256×256 recommended"
+              description={t("uiEntityCreationWizard.squareLogo256256Recommended")}
             />
             <ImageUpload
-              label="Banner (optional)"
+              label={t("uiEntityCreationWizard.bannerOptional")}
               currentImageUrl={bannerUrl}
               onChange={setBannerUrl}
               aspectRatio="16/9"
-              description="Wide banner, 1200×400 recommended"
+              description={t("uiEntityCreationWizard.wideBanner1200400Recommended")}
             />
           </div>
         );
@@ -745,7 +745,7 @@ Respond ONLY in this exact JSON format, no markdown:
                   return <div className={cn("p-2 rounded-lg bg-muted", KIND_CONFIG[kind].color)}><Icon className="h-5 w-5" /></div>;
                 })()}
                 <div>
-                  <h3 className="font-display font-semibold">{name || "Untitled"}</h3>
+                  <h3 className="font-display font-semibold">{name || t("uiEntityCreationWizard.untitled")}</h3>
                   <span className="text-xs text-muted-foreground">{kind && t(KIND_CONFIG[kind].labelKey)}</span>
                 </div>
               </div>
@@ -775,7 +775,7 @@ Respond ONLY in this exact JSON format, no markdown:
               <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   {joinPolicy === GuildJoinPolicy.OPEN ? <Users className="h-3 w-3" /> : joinPolicy === GuildJoinPolicy.INVITE_ONLY ? <Lock className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                  {joinPolicy === GuildJoinPolicy.OPEN ? t("uiEntityCreationWizard.open") : joinPolicy === GuildJoinPolicy.INVITE_ONLY ? t("uiEntityCreationWizard.inviteOnly") : "Approval required"}
+                  {joinPolicy === GuildJoinPolicy.OPEN ? t("uiEntityCreationWizard.open") : joinPolicy === GuildJoinPolicy.INVITE_ONLY ? t("uiEntityCreationWizard.inviteOnly") : t("uiEntityCreationWizard.approvalRequired")}
                 </span>
                 {isDraft && <Badge variant="outline" className="text-xs">{t("uiEntityCreationWizard.draft")}</Badge>}
               </div>

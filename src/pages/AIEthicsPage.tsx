@@ -5,11 +5,11 @@ export default function AIEthicsPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.aiEthics.title")} subtitle={t("pages.aiEthics.subtitle")}>
-      <ContentSection title="Why We Use AI">
+      <ContentSection title={t("uiAIEthicsPage.whyWeUseAi")}>
         <p>{t("uiAIEthicsPage.aiAmplifiesHumanCollaborationCreativityAnd")}</p>
       </ContentSection>
 
-      <ContentSection title="Principles">
+      <ContentSection title={t("uiAIEthicsPage.principles")}>
         <ContentList items={[
           t("uiAIEthicsPage.whatAiCanAndCannotDo"),
           t("uiAIEthicsPage.dataBoundariesAreStrictlyEnforcedPer"),

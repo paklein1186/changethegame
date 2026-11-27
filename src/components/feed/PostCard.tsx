@@ -107,6 +107,7 @@ function ImageGrid({ images }: { images: PostAttachment[] }) {
 }
 
 function VideoEmbed({ attachment }: { attachment: PostAttachment }) {
+  const { t } = useTranslation();
   const meta = attachment.embed_meta as Record<string, any> | null;
   const embedUrl = meta?.embedUrl;
   if (!embedUrl) {
@@ -119,7 +120,7 @@ function VideoEmbed({ attachment }: { attachment: PostAttachment }) {
   return (
     <div className="rounded-lg overflow-hidden">
       <div className="aspect-video">
-        <iframe src={embedUrl} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy" title={meta?.provider ? `${meta.provider} video` : "Embedded video"} />
+        <iframe src={embedUrl} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy" title={meta?.provider ? `${meta.provider} video` : t("uiPostCard.embeddedVideo")} />
       </div>
       {meta?.provider && <p className="text-xs text-muted-foreground px-1 py-1">{meta.provider} video</p>}
     </div>
@@ -156,10 +157,11 @@ function LinkPreview({ attachment }: { attachment: PostAttachment }) {
 }
 
 function DocumentChip({ attachment }: { attachment: PostAttachment }) {
+  const { t } = useTranslation();
   return (
     <a href={attachment.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm hover:border-primary/30 transition-all">
       <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-      <span className="truncate flex-1">{attachment.file_name || "Document"}</span>
+      <span className="truncate flex-1">{attachment.file_name || t("uiPostCard.document")}</span>
       {attachment.file_size_bytes && <span className="text-xs text-muted-foreground shrink-0">{formatFileSize(attachment.file_size_bytes)}</span>}
       <Download className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
     </a>
@@ -181,7 +183,7 @@ function EmbeddedPost({ post }: { post: FeedPostWithAttachments }) {
           </Avatar>
         </Link>
         <Link to={`/users/${post.author_user_id}`} className="text-xs font-medium hover:underline">
-          {post.author?.name || "Unknown"}
+          {post.author?.name || t("uiPostCard.unknown")}
         </Link>
         <span className="text-[10px] text-muted-foreground">
           {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
@@ -272,7 +274,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
 
   const handleDelete = () => {
     deletePost.mutate(post.id, {
-      onSuccess: () => toast.success("Post deleted"),
+      onSuccess: () => toast.success(t("uiPostCard.postDeleted")),
       onError: () => toast.error(t("uiPostCard.failedToDeletePost")),
     });
   };
@@ -375,7 +377,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       setEditFiles([]);
       setEditLink(null);
       setRemovedAttachmentIds([]);
-      toast.success("Post updated");
+      toast.success(t("uiPostCard.postUpdated"));
     } catch {
       toast.error(t("uiPostCard.failedToUpdatePost"));
     } finally {
@@ -419,7 +421,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
         attachments: [],
         resharedPostId: reshareTargetId,
       });
-      toast.success("Reshared!");
+      toast.success(t("uiPostCard.reshared"));
     } catch {
       toast.error(t("uiPostCard.failedToReshare"));
     } finally {
@@ -440,7 +442,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       });
       setQuoteContent("");
       setQuoteDialogOpen(false);
-      toast.success("Quote posted!");
+      toast.success(t("uiPostCard.quotePosted"));
     } catch {
       toast.error(t("uiPostCard.failedToPostQuote"));
     } finally {
@@ -484,7 +486,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       {post.reshared_post_id && (
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground -mt-1 mb-1">
           <Repeat2 className="h-3.5 w-3.5" />
-          <span>{isOwn ? t("uiPostCard.you") : post.author?.name || "Someone"} reshared</span>
+          <span>{isOwn ? t("uiPostCard.you") : post.author?.name || t("uiPostCard.someone")} reshared</span>
         </div>
       )}
       {/* Header */}
@@ -507,14 +509,14 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
               <span className="text-sm font-medium">{(post as any).posted_as_label}</span>
             ) : (
               <Link to={`/users/${post.author_user_id}`} className="text-sm font-medium hover:underline">
-                {post.author?.name || "Unknown"}
+                {post.author?.name || t("uiPostCard.unknown")}
               </Link>
             )}
             <span className="text-xs text-muted-foreground">
               {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
             </span>
             {post.updated_at !== post.created_at && !editing && (
-              <span className="text-[10px] text-muted-foreground italic">(edited)</span>
+              <span className="text-[10px] text-muted-foreground italic">{t("uiPostCard.edited")}</span>
             )}
           </div>
           {(post as any).contextName && (
@@ -555,7 +557,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
           {/* Existing attachments (removable) */}
           {(post.post_attachments || []).filter(a => !removedAttachmentIds.includes(a.id)).length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-xs text-muted-foreground font-medium">Existing attachments</p>
+              <p className="text-xs text-muted-foreground font-medium">{t("uiPostCard.existingAttachments")}</p>
               {(post.post_attachments || [])
                 .filter(a => !removedAttachmentIds.includes(a.id))
                 .map(a => (
@@ -611,7 +613,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
           {editLink && (
             <div className="relative rounded-lg border border-border bg-muted/30 p-3 pr-8">
               {editLink.loading ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Fetching…</div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> {t("uiPostCard.fetching")}</div>
               ) : editLink.type === "VIDEO_LINK" ? (
                 <div className="flex items-center gap-2 text-sm"><Film className="h-4 w-4 text-muted-foreground" /><span className="truncate">{editLink.url}</span></div>
               ) : (
@@ -630,8 +632,8 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
           {showEditLinkInput && (
             <div className="flex gap-2">
               <Input value={editLinkUrl} onChange={e => setEditLinkUrl(e.target.value)} placeholder="https://…" className="flex-1 h-8 text-sm"
-                onKeyDown={e => { if (e.key === "Enter") { try { new URL(editLinkUrl.trim()); fetchEditLinkPreview(editLinkUrl.trim()); } catch { toast.error("Invalid URL"); } } }} />
-              <Button size="sm" className="h-8" onClick={() => { try { new URL(editLinkUrl.trim()); fetchEditLinkPreview(editLinkUrl.trim()); } catch { toast.error("Invalid URL"); } }}>{t("uiPostCard.add")}</Button>
+                onKeyDown={e => { if (e.key === "Enter") { try { new URL(editLinkUrl.trim()); fetchEditLinkPreview(editLinkUrl.trim()); } catch { toast.error(t("uiPostCard.invalidUrl")); } } }} />
+              <Button size="sm" className="h-8" onClick={() => { try { new URL(editLinkUrl.trim()); fetchEditLinkPreview(editLinkUrl.trim()); } catch { toast.error(t("uiPostCard.invalidUrl")); } }}>{t("uiPostCard.add")}</Button>
               <Button size="sm" variant="ghost" className="h-8" onClick={() => { setShowEditLinkInput(false); setEditLinkUrl(""); }}><XIcon className="h-4 w-4" /></Button>
             </div>
           )}
@@ -647,7 +649,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
           <div className="flex items-center justify-between border-t border-border pt-2">
             <div className="flex gap-1">
               <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => editImgRef.current?.click()} disabled={editFiles.length >= MAX_ATTACHMENTS_PER_POST}>
-                <ImagePlus className="h-3.5 w-3.5 mr-1" /> Image
+                <ImagePlus className="h-3.5 w-3.5 mr-1" /> {t("uiPostCard.image")}
               </Button>
               <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => editDocRef.current?.click()} disabled={editFiles.length >= MAX_ATTACHMENTS_PER_POST}>
                 <Paperclip className="h-3.5 w-3.5 mr-1" /> {t("uiPostCard.file")}
@@ -683,17 +685,17 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
         <div className="space-y-0.5">
           {isTranslating && (
             <p className="text-[10px] text-muted-foreground italic flex items-center gap-1">
-              <Loader2 className="h-2.5 w-2.5 animate-spin" /> Translating…
+              <Loader2 className="h-2.5 w-2.5 animate-spin" /> {t("uiPostCard.translating")}
             </p>
           )}
           {needsTranslation && isTranslated && !showOriginal && (
             <button onClick={() => setShowOriginal(true)} className="text-[10px] text-muted-foreground italic hover:text-foreground transition-colors">
-              Translated automatically · Show original
+              {t("uiPostCard.translatedAutomaticallyShowOriginal")}
             </button>
           )}
           {needsTranslation && showOriginal && isTranslated && (
             <button onClick={() => setShowOriginal(false)} className="text-[10px] text-muted-foreground italic hover:text-foreground transition-colors">
-              Showing original · Show translation
+              {t("uiPostCard.showingOriginalShowTranslation")}
             </button>
           )}
         </div>
@@ -753,7 +755,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-xs">
-              {hasUpvoted ? t("uiPostCard.removeUpvote") : "Upvote"}
+              {hasUpvoted ? t("uiPostCard.removeUpvote") : t("uiPostCard.upvote")}
             </TooltipContent>
           </Tooltip>
           {needsTranslation && (
@@ -770,7 +772,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="text-xs">
-                {showOriginal ? "Show translation" : "Show original"}
+                {showOriginal ? t("uiPostCard.showTranslation") : t("uiPostCard.showOriginal")}
               </TooltipContent>
             </Tooltip>
           )}
@@ -788,7 +790,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="text-xs">
-                {showComments ? "Hide comments" : "Comments"}
+                {showComments ? t("uiPostCard.hideComments") : t("uiPostCard.comments")}
               </TooltipContent>
             </Tooltip>
           )}
@@ -808,14 +810,14 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
                     </Button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">Reshare</TooltipContent>
+                <TooltipContent side="bottom" className="text-xs">{t("uiPostCard.reshare")}</TooltipContent>
               </Tooltip>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={handleInstantReshare}>
                   <Repeat2 className="h-4 w-4 mr-2" /> {t("uiPostCard.reshareNow")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setQuoteDialogOpen(true)}>
-                  <Pencil className="h-4 w-4 mr-2" /> Quote post
+                  <Pencil className="h-4 w-4 mr-2" /> {t("uiPostCard.quotePost")}
                 </DropdownMenuItem>
                 {guildContext?.isAdmin && post.context_type !== "GUILD_DISCUSSION" && (
                   <DropdownMenuItem onClick={handleRepostToGuild}>
@@ -843,7 +845,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       <Dialog open={quoteDialogOpen} onOpenChange={setQuoteDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Quote Post</DialogTitle>
+            <DialogTitle>{t("uiPostCard.quotePost2")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <Textarea
@@ -861,7 +863,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
                 disabled={isResharing || !quoteContent.trim()}
               >
                 {isResharing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
-                Post Quote
+                {t("uiPostCard.postQuote")}
               </Button>
             </div>
           </div>

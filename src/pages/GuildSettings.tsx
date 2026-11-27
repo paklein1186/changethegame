@@ -69,24 +69,24 @@ import { ExitProtocolSettings } from "@/components/ocu/ExitProtocolSettings";
 
 const TABS = [
   { key: "identity", get label() { return i18n.t("uiGuildSettings.identityProfile"); }, icon: Shield },
-  { key: "features", label: "Features", icon: Puzzle },
-  { key: "governance", label: "Governance", icon: Vote },
-  { key: "membership", label: "Membership Policy", icon: ClipboardList },
+  { key: "features", get label() { return i18n.t("uiGuildSettings.features"); }, icon: Puzzle },
+  { key: "governance", get label() { return i18n.t("uiGuildSettings.governance"); }, icon: Vote },
+  { key: "membership", get label() { return i18n.t("uiGuildSettings.membershipPolicy"); }, icon: ClipboardList },
   { key: "membership-contributions", get label() { return i18n.t("uiGuildSettings.membershipContributions"); }, icon: Users },
-  { key: "applications", label: "Applications", icon: Users },
+  { key: "applications", get label() { return i18n.t("uiGuildSettings.applications"); }, icon: Users },
   { key: "members", get label() { return i18n.t("uiGuildSettings.membersRoles"); }, icon: Users },
   { key: "roles", get label() { return i18n.t("uiGuildSettings.customRoles"); }, icon: Tag },
-  { key: "services", label: "Services", icon: Briefcase },
-  { key: "services-display", label: "Services Display", icon: Briefcase },
-  { key: "availability", label: "Availability", icon: CalendarDays },
+  { key: "services", get label() { return i18n.t("uiGuildSettings.services"); }, icon: Briefcase },
+  { key: "services-display", get label() { return i18n.t("uiGuildSettings.servicesDisplay"); }, icon: Briefcase },
+  { key: "availability", get label() { return i18n.t("uiGuildSettings.availability"); }, icon: CalendarDays },
   { key: "access", get label() { return i18n.t("uiGuildSettings.questAccessCoAdmins"); }, icon: KeyRound },
   { key: "defaults", get label() { return i18n.t("uiGuildSettings.questsPodsDefaults"); }, icon: Settings },
-  { key: "partnerships", label: "Partnerships", icon: Handshake },
-  { key: "documents", label: "Documents", icon: Briefcase },
-  { key: "billing", label: "Unit Wallet", icon: CreditCard },
-  { key: "website", label: "Website", icon: Globe },
-  { key: "mcp", label: "MCP Agents", icon: Plug },
-  { key: "agent", label: "AI Agent", icon: Plug },
+  { key: "partnerships", get label() { return i18n.t("uiGuildSettings.partnerships"); }, icon: Handshake },
+  { key: "documents", get label() { return i18n.t("uiGuildSettings.documents"); }, icon: Briefcase },
+  { key: "billing", get label() { return i18n.t("uiGuildSettings.unitWallet"); }, icon: CreditCard },
+  { key: "website", get label() { return i18n.t("uiGuildSettings.website"); }, icon: Globe },
+  { key: "mcp", get label() { return i18n.t("uiGuildSettings.mcpAgents"); }, icon: Plug },
+  { key: "agent", get label() { return i18n.t("uiGuildSettings.aiAgent"); }, icon: Plug },
 ];
 
 export default function GuildSettings() {
@@ -240,7 +240,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
     if (error) { toast({ title: t("uiGuildSettings.failedToSaveFeatures"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
     qc.invalidateQueries({ queryKey: ["guild", guildId] });
-    toast({ title: "Features saved!" });
+    toast({ title: t("uiGuildSettings.featuresSaved") });
   };
 
   // ── Handlers ──
@@ -350,7 +350,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
     if (!gm) return;
     const admins = members.filter((m: any) => m.role === "ADMIN");
     if (gm.role === "ADMIN" && admins.length <= 1) {
-      toast({ title: "Cannot demote", description: t("uiGuildSettings.atLeastOneAdminMustExist"), variant: "destructive" });
+      toast({ title: t("uiGuildSettings.cannotDemote"), description: t("uiGuildSettings.atLeastOneAdminMustExist"), variant: "destructive" });
       return;
     }
     const newRole = gm.role === "ADMIN" ? "MEMBER" : "ADMIN";
@@ -405,7 +405,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
   const toggleServiceActive = async (svc: any) => {
     await supabase.from("services").update({ is_active: !svc.is_active }).eq("id", svc.id);
     refetchServices();
-    toast({ title: svc.is_active ? "Service paused" : "Service resumed" });
+    toast({ title: svc.is_active ? t("uiGuildSettings.servicePaused") : t("uiGuildSettings.serviceResumed") });
   };
 
   return (
@@ -422,9 +422,9 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
             <p className="text-sm text-muted-foreground">{guild.name}</p>
           </div>
           {guild.is_approved ? (
-            <Badge className="bg-primary/10 text-primary border-0 ml-auto"><ShieldCheck className="h-3 w-3 mr-1" /> Approved</Badge>
+            <Badge className="bg-primary/10 text-primary border-0 ml-auto"><ShieldCheck className="h-3 w-3 mr-1" /> {t("uiGuildSettings.approved")}</Badge>
           ) : (
-            <Badge variant="outline" className="ml-auto"><AlertCircle className="h-3 w-3 mr-1" /> Awaiting moderation</Badge>
+            <Badge variant="outline" className="ml-auto"><AlertCircle className="h-3 w-3 mr-1" /> {t("uiGuildSettings.awaitingModeration")}</Badge>
           )}
         </div>
 
@@ -457,8 +457,8 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                   <Section title={t("uiGuildSettings.guildIdentity")} icon={<Shield className="h-5 w-5" />}>
                     <div className="space-y-4">
                       <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.name")}</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
-                      <ImageUpload label="Logo" currentImageUrl={logoUrl || undefined} onChange={(url) => setLogoUrl(url ?? "")} aspectRatio="1/1" description="Square logo, recommended 256×256" />
-                      <ImageUpload label="Banner (optional)" currentImageUrl={bannerUrl || undefined} onChange={(url) => setBannerUrl(url ?? "")} aspectRatio="16/9" description="Wide banner, recommended 1200×400" />
+                      <ImageUpload label={t("uiGuildSettings.logo")} currentImageUrl={logoUrl || undefined} onChange={(url) => setLogoUrl(url ?? "")} aspectRatio="1/1" description={t("uiGuildSettings.squareLogoRecommended256256")} />
+                      <ImageUpload label={t("uiGuildSettings.bannerOptional")} currentImageUrl={bannerUrl || undefined} onChange={(url) => setBannerUrl(url ?? "")} aspectRatio="16/9" description={t("uiGuildSettings.wideBannerRecommended1200400")} />
                       <div>
                         <div className="flex items-center justify-between mb-1">
                           <label className="text-sm font-medium">{t("uiGuildSettings.description")}</label>
@@ -471,13 +471,13 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         </div>
                         <Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} className="resize-none min-h-[120px]" />
                       </div>
-                      <div><label className="text-sm font-medium mb-1 block">Type</label>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.type")}</label>
                         <Select value={type} onValueChange={(v) => setType(v as GuildType)}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value={GuildType.GUILD}>{t("uiGuildSettings.guild")}</SelectItem>
-                            <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
-                            <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
+                            <SelectItem value={GuildType.NETWORK}>{t("uiGuildSettings.network")}</SelectItem>
+                            <SelectItem value={GuildType.COLLECTIVE}>{t("uiGuildSettings.collective")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -510,16 +510,16 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                     />
                   </Section>
 
-                  <Section title="Universe Visibility" icon={<Settings className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.universeVisibility")} icon={<Settings className="h-5 w-5" />}>
                     <p className="text-xs text-muted-foreground mb-2">
                       {t("uiGuildSettings.controlInWhichUniverseThisGuild")}
                     </p>
                     <Select value={universeVisibility} onValueChange={setUniverseVisibility}>
                       <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="both">Both universes</SelectItem>
-                        <SelectItem value="creative">Creative Universe only</SelectItem>
-                        <SelectItem value="impact">Impact Universe only</SelectItem>
+                        <SelectItem value="both">{t("uiGuildSettings.bothUniverses")}</SelectItem>
+                        <SelectItem value="creative">{t("uiGuildSettings.creativeUniverseOnly")}</SelectItem>
+                        <SelectItem value="impact">{t("uiGuildSettings.impactUniverseOnly")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </Section>
@@ -528,7 +528,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
                   <Separator />
 
-                  <Section title="Links & Social" icon={<Shield className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.linksSocial")} icon={<Shield className="h-5 w-5" />}>
                     <SocialLinksEdit
                       data={{ websiteUrl: guildWebsiteUrl, twitterUrl: guildTwitterUrl, linkedinUrl: guildLinkedinUrl, instagramUrl: guildInstagramUrl }}
                       onChange={(key, value) => {
@@ -562,17 +562,17 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {/* ── Features ── */}
               {activeTab === "features" && (
                 <div className="space-y-5 max-w-lg">
-                  <Section title="Collaboration Features" icon={<Puzzle className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.collaborationFeatures")} icon={<Puzzle className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">{t("uiGuildSettings.enableOrDisableToolsForThis")}</p>
                     <div className="space-y-4">
                       {[
-                        { key: "kanbanBoard", label: "Kanban Board", desc: t("uiGuildSettings.visualBoardToTrackQuestStatus"), icon: LayoutGrid },
+                        { key: "kanbanBoard", label: t("uiGuildSettings.kanbanBoard"), desc: t("uiGuildSettings.visualBoardToTrackQuestStatus"), icon: LayoutGrid },
                         { key: "subtasks", label: t("uiGuildSettings.subtasks"), desc: t("uiGuildSettings.breakQuestsIntoSmallerTasksWith"), icon: ListChecks },
-                        { key: "docsSpace", label: "Docs Space", desc: t("uiGuildSettings.notionLikeDocumentsForGuildKnowledge"), icon: FileText },
+                        { key: "docsSpace", label: t("uiGuildSettings.docsSpace"), desc: t("uiGuildSettings.notionLikeDocumentsForGuildKnowledge"), icon: FileText },
                         { key: "events", label: t("uiGuildSettings.events"), desc: t("uiGuildSettings.createOnlineOfflineEventsWithAttendees"), icon: CalendarDays },
-                        { key: "applicationProcess", label: "Application Process", desc: t("uiGuildSettings.requireApplicationsForNewMembers"), icon: ClipboardList },
+                        { key: "applicationProcess", label: t("uiGuildSettings.applicationProcess"), desc: t("uiGuildSettings.requireApplicationsForNewMembers"), icon: ClipboardList },
                         { key: "showMemberServices", label: t("uiGuildSettings.memberServices"), desc: t("uiGuildSettings.displayServicesOfferedByGuildMembers"), icon: Briefcase },
-                        { key: "rituals", label: "Rituals", desc: t("uiGuildSettings.recurringSessionsWithVideoCallsNotes"), icon: CalendarDays },
+                        { key: "rituals", label: t("uiGuildSettings.rituals"), desc: t("uiGuildSettings.recurringSessionsWithVideoCallsNotes"), icon: CalendarDays },
                       ].map(({ key, label, desc, icon: Icon }) => (
                         <div key={key} className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
                           <div className="flex items-center gap-3">
@@ -590,7 +590,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                   </Section>
 
                   {/* Discussion settings */}
-                  <Section title="Discussion Tab" icon={<CalendarDays className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.discussionTab")} icon={<CalendarDays className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
                       {t("uiGuildSettings.configureTheGuildSDiscussionBoard")}
                     </p>
@@ -599,7 +599,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         <div className="flex items-center gap-3">
                           <CalendarDays className="h-5 w-5 text-muted-foreground" />
                           <div>
-                            <Label className="text-sm font-medium">Enable Discussion Tab</Label>
+                            <Label className="text-sm font-medium">{t("uiGuildSettings.enableDiscussionTab")}</Label>
                             <p className="text-xs text-muted-foreground">{t("uiGuildSettings.showADedicatedDiscussionFeedOn")}</p>
                           </div>
                         </div>
@@ -635,7 +635,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             >
                               <SelectTrigger><SelectValue /></SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="ADMIN">Admins only</SelectItem>
+                                <SelectItem value="ADMIN">{t("uiGuildSettings.adminsOnly")}</SelectItem>
                                 <SelectItem value="MEMBER">{t("uiGuildSettings.allMembers")}</SelectItem>
                               </SelectContent>
                             </Select>
@@ -653,13 +653,13 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {/* ── Governance ── */}
               {activeTab === "governance" && (
                 <div className="space-y-5 max-w-lg">
-                  <Section title="Governance & Decisions" icon={<Vote className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.governanceDecisions")} icon={<Vote className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
                       {t("uiGuildSettings.controlHowDecisionsAndProposalsWork")}
                     </p>
                     <div className="space-y-4">
                       <div>
-                        <Label className="text-sm font-medium mb-1 block">Who can propose decisions?</Label>
+                        <Label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.whoCanProposeDecisions")}</Label>
                         <p className="text-xs text-muted-foreground mb-2">
                           {t("uiGuildSettings.chooseWhichMembersAreAllowedTo")}
                         </p>
@@ -669,7 +669,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         >
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="ADMIN">Admins only</SelectItem>
+                            <SelectItem value="ADMIN">{t("uiGuildSettings.adminsOnly")}</SelectItem>
                             <SelectItem value="MEMBER">{t("uiGuildSettings.allMembers")}</SelectItem>
                           </SelectContent>
                         </Select>
@@ -687,7 +687,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                     <div className="space-y-4">
                       <div>
                         <div className="flex items-center gap-1.5 mb-1">
-                          <Label className="text-sm font-medium">FMV Rate (€ per half-day)</Label>
+                          <Label className="text-sm font-medium">{t("uiGuildSettings.fmvRatePerHalfDay")}</Label>
                           <span
                             className="text-muted-foreground cursor-help"
                             title={t("uiGuildSettings.fairMarketValueRateUsedTo")}
@@ -707,12 +707,12 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                           }}
                           className="max-w-[200px]"
                         />
-                        <p className="text-xs text-muted-foreground mt-1">Default: 200 €. Range: 10–5 000 €.</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t("uiGuildSettings.default200Range105000")}</p>
                       </div>
 
                       <div>
                         <div className="flex items-center gap-1.5 mb-1">
-                          <Label className="text-sm font-medium">Governance Model</Label>
+                          <Label className="text-sm font-medium">{t("uiGuildSettings.governanceModel")}</Label>
                           <span
                             className="text-muted-foreground cursor-help"
                             title={t("uiGuildSettings.thisGovernsHowContributionTranslatesTo")}
@@ -725,15 +725,15 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                           onValueChange={async (v) => {
                             await supabase.from("guilds").update({ governance_model: v } as any).eq("id", guildId);
                             qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
-                            toast({ title: "Governance model updated" });
+                            toast({ title: t("uiGuildSettings.governanceModelUpdated") });
                           }}
                         >
                           <SelectTrigger className="max-w-xs"><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="1h1v">1 Human, 1 Vote</SelectItem>
-                            <SelectItem value="soft_log">Soft Logarithmic</SelectItem>
-                            <SelectItem value="strong_log">Strong Logarithmic</SelectItem>
-                            <SelectItem value="pure_pct">Pure Percentage</SelectItem>
+                            <SelectItem value="1h1v">{t("uiGuildSettings.1Human1Vote")}</SelectItem>
+                            <SelectItem value="soft_log">{t("uiGuildSettings.softLogarithmic")}</SelectItem>
+                            <SelectItem value="strong_log">{t("uiGuildSettings.strongLogarithmic")}</SelectItem>
+                            <SelectItem value="pure_pct">{t("uiGuildSettings.purePercentage")}</SelectItem>
                           </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground mt-1">
@@ -746,7 +746,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         <div className="rounded-md border border-border bg-muted/30 p-3 space-y-2">
                           <div className="flex items-center justify-between">
                             <div>
-                              <Label className="text-sm font-medium">Weighted amendment threshold</Label>
+                              <Label className="text-sm font-medium">{t("uiGuildSettings.weightedAmendmentThreshold")}</Label>
                               <p className="text-xs text-muted-foreground">
                                 {t("uiGuildSettings.use50OfWeightedVoteInstead")}
                               </p>
@@ -754,7 +754,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             <Switch
                               defaultChecked={false}
                               onCheckedChange={async (checked) => {
-                                toast({ title: checked ? "Weighted threshold enabled" : "Unanimous consensus restored", description: t("uiGuildSettings.applyThisPerQuestInQuest") });
+                                toast({ title: checked ? t("uiGuildSettings.weightedThresholdEnabled") : t("uiGuildSettings.unanimousConsensusRestored"), description: t("uiGuildSettings.applyThisPerQuestInQuest") });
                               }}
                             />
                           </div>
@@ -768,7 +768,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         {/* Cash multiplier */}
                         <div>
                           <Label className="text-sm font-medium">
-                            Cash-equivalent multiplier
+                            {t("uiGuildSettings.cashEquivalentMultiplier")}
                             <span className="text-xs text-muted-foreground font-normal ml-2">
                               {t("uiGuildSettings.appliesToExpensesSuppliesEquipmentFacilities")}
                             </span>
@@ -827,7 +827,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
 
                         {/* Evidence requirement */}
                         <div>
-                          <Label className="text-sm font-medium">Evidence requirement</Label>
+                          <Label className="text-sm font-medium">{t("uiGuildSettings.evidenceRequirement")}</Label>
                           <Select
                             defaultValue={
                               (guild as any).evidence_required_override === true ? "all" :
@@ -837,7 +837,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                               const override = v === "all" ? true : v === "none" ? false : null;
                               await supabase.from("guilds").update({ evidence_required_override: override } as any).eq("id", guildId);
                               qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
-                              toast({ title: "Evidence policy updated" });
+                              toast({ title: t("uiGuildSettings.evidencePolicyUpdated") });
                             }}
                           >
                             <SelectTrigger className="w-full mt-1"><SelectValue /></SelectTrigger>
@@ -849,7 +849,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                                 {t("uiGuildSettings.strictRequiredForAllContributionTypes")}
                               </SelectItem>
                               <SelectItem value="none">
-                                Relaxed — never required (trust-based cooperative)
+                                {t("uiGuildSettings.relaxedNeverRequiredTrustBasedCooperative")}
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -883,7 +883,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                       application_questions: questions as any,
                     }).eq("id", guildId);
                     qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
-                    toast({ title: "Membership policy saved!" });
+                    toast({ title: t("uiGuildSettings.membershipPolicySaved") });
                   }}
                 />
               )}
@@ -1007,18 +1007,18 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                         <div className="space-y-4 mt-2">
                           <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.title")}</label><Input value={svcTitle} onChange={(e) => setSvcTitle(e.target.value)} placeholder={t("uiGuildSettings.serviceTitle")} maxLength={120} /></div>
                           <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.description")}</label><Textarea value={svcDesc} onChange={(e) => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
-                          <ImageUpload label="Image (optional)" currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" description="Service cover image" />
+                          <ImageUpload label={t("uiGuildSettings.imageOptional")} currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" description={t("uiGuildSettings.serviceCoverImage")} />
                           <div className="grid grid-cols-2 gap-3">
-                            <div><label className="text-sm font-medium mb-1 block">Duration (min)</label><Input type="number" value={svcDuration} onChange={(e) => setSvcDuration(e.target.value)} min={15} /></div>
+                            <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.durationMin")}</label><Input type="number" value={svcDuration} onChange={(e) => setSvcDuration(e.target.value)} min={15} /></div>
                             <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.priceShownAsCoinsToClients")}</label><Input type="number" value={svcPrice} onChange={(e) => setSvcPrice(e.target.value)} min={0} /></div>
                           </div>
-                          <div><label className="text-sm font-medium mb-1 block">Online location</label>
+                          <div><label className="text-sm font-medium mb-1 block">{t("uiGuildSettings.onlineLocation")}</label>
                             <Select value={svcLocationType} onValueChange={(v) => setSvcLocationType(v as OnlineLocationType)}>
                               <SelectTrigger><SelectValue /></SelectTrigger>
                               <SelectContent>
                                 <SelectItem value={OnlineLocationType.JITSI}>Jitsi</SelectItem>
-                                <SelectItem value={OnlineLocationType.ZOOM}>Zoom</SelectItem>
-                                <SelectItem value={OnlineLocationType.OTHER}>Other</SelectItem>
+                                <SelectItem value={OnlineLocationType.ZOOM}>{t("uiGuildSettings.zoom")}</SelectItem>
+                                <SelectItem value={OnlineLocationType.OTHER}>{t("uiGuildSettings.other")}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -1038,13 +1038,13 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                             <Link to={`/services/${svc.id}`} className="text-sm font-medium hover:text-primary transition-colors">{svc.title}</Link>
                             <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                               <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{svc.duration_minutes} min</span>
-                              <span className="flex items-center gap-1"><Euro className="h-3 w-3" />{(!svc.price_amount || svc.price_amount === 0) ? "Free" : `€${svc.price_amount}`}</span>
+                              <span className="flex items-center gap-1"><Euro className="h-3 w-3" />{(!svc.price_amount || svc.price_amount === 0) ? t("uiGuildSettings.free") : `€${svc.price_amount}`}</span>
                               <span className="flex items-center gap-1"><Video className="h-3 w-3" />{svc.online_location_type?.toLowerCase()}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
                             <Badge className={svc.is_active ? "bg-primary/10 text-primary border-0" : "bg-muted text-muted-foreground border-0"}>
-                              {svc.is_active ? t("uiGuildSettings.active") : "Paused"}
+                              {svc.is_active ? t("uiGuildSettings.active") : t("uiGuildSettings.paused")}
                             </Badge>
                             <Switch checked={svc.is_active} onCheckedChange={() => toggleServiceActive(svc)} />
                           </div>
@@ -1063,7 +1063,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {/* ── Availability ── */}
               {activeTab === "availability" && (
                 <div className="space-y-5 max-w-lg">
-                  <Section title="Unit Availability" icon={<CalendarDays className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.unitAvailability")} icon={<CalendarDays className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
                       {t("uiGuildSettings.configureWhenThisGuildIsAvailable")}
                     </p>
@@ -1075,7 +1075,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {/* ── Quests & Pods Defaults ── */}
               {activeTab === "defaults" && (
                 <div className="space-y-6 max-w-lg">
-                  <Section title="Pod Access Policy" icon={<Settings className="h-5 w-5" />}>
+                  <Section title={t("uiGuildSettings.podAccessPolicy")} icon={<Settings className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-3">{t("uiGuildSettings.whenPodsAreCreatedFromThis")}</p>
                     <Select value={podAccessPolicy} onValueChange={(v) => setPodAccessPolicy(v as any)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
@@ -1264,7 +1264,7 @@ function GuildFeatureSuggestionBox({ guildId, userId }: { guildId: string; userI
       toast({ title: t("uiGuildSettings.suggestionSentThankYou") });
       setText("");
     } catch {
-      toast({ title: "Something went wrong", variant: "destructive" });
+      toast({ title: t("uiGuildSettings.somethingWentWrong"), variant: "destructive" });
     } finally {
       setSending(false);
     }
@@ -1289,7 +1289,7 @@ function GuildFeatureSuggestionBox({ guildId, userId }: { guildId: string; userI
         size="sm"
         className="mt-3"
       >
-        {sending ? "Sending…" : t("uiGuildSettings.submitSuggestion")}
+        {sending ? t("uiGuildSettings.sending") : t("uiGuildSettings.submitSuggestion")}
       </Button>
     </Section>
   );
@@ -1356,7 +1356,7 @@ function GuildServicesDisplayTab({ guildId, members }: { guildId: string; member
     }
     refetchVis();
     qc.invalidateQueries({ queryKey: ["services-for-guild", guildId] });
-    toast({ title: newVisible ? "Service shown" : "Service hidden" });
+    toast({ title: newVisible ? t("uiGuildSettings.serviceShown") : t("uiGuildSettings.serviceHidden") });
   };
 
   const services = memberServices ?? [];
@@ -1400,7 +1400,7 @@ function GuildServicesDisplayTab({ guildId, members }: { guildId: string; member
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{svc.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      by {profileMap.get(svc.provider_user_id ?? "") ?? "Unknown"}
+                      by {profileMap.get(svc.provider_user_id ?? "") ?? t("uiGuildSettings.unknown")}
                       {svc.price_amount != null && ` · €${svc.price_amount}`}
                     </p>
                   </div>
@@ -1411,7 +1411,7 @@ function GuildServicesDisplayTab({ guildId, members }: { guildId: string; member
                     onClick={() => toggleVisibility(svc.id, isVisible)}
                   >
                     {isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
-                    {isVisible ? "Shown" : "Hidden"}
+                    {isVisible ? t("uiGuildSettings.shown") : t("uiGuildSettings.hidden")}
                   </Button>
                 </div>
               );

@@ -242,7 +242,7 @@ function ExploreTabsInner({ tab, onTabChange, isGuest, isCreative, currentUserId
     { value: "entities", label: <><Compass className="h-3.5 w-3.5 mr-1" /> {t("tabs.entities")} <HintTooltip {...HINTS.tooltips.exploreEntities} /></> },
     { value: "quests", label: <><Swords className="h-3.5 w-3.5 mr-1" /> {t("explore.quests")} <HintTooltip {...HINTS.tooltips.exploreQuests} /></> },
     { value: "needs", label: <><HandHelping className="h-3.5 w-3.5 mr-1" /> {t("tabs.needs")}</> },
-    { value: "jobs", label: <><HandHeart className="h-3.5 w-3.5 mr-1" /> Opportunities</>, visible: !isCreative },
+    { value: "jobs", label: <><HandHeart className="h-3.5 w-3.5 mr-1" /> {t("uiExploreHub.opportunities")}</>, visible: !isCreative },
     { value: "services", label: <><Wrench className="h-3.5 w-3.5 mr-1" /> {t("explore.services")}</>, visible: !isGuest },
     { value: "agents", label: <><Bot className="h-3.5 w-3.5 mr-1" /> {t("tabs.agents")} <HintTooltip {...HINTS.tooltips.exploreAgents} /></> },
     { value: "houses", label: <><Tag className="h-3.5 w-3.5 mr-1" /> {t("tabs.topics")} <HintTooltip {...HINTS.tooltips.exploreHouses} /></> },
@@ -276,10 +276,10 @@ function QuestsSubTabs() {
       <div className="flex gap-2 mb-4">
         <Button variant={sub === "quests" ? "default" : "outline"} size="sm" onClick={() => setSub("quests")}>{t("uiExploreHub.quests")}</Button>
         <Button variant={sub === "missions" ? "default" : "outline"} size="sm" onClick={() => setSub("missions")}>
-          <Target className="h-3.5 w-3.5 mr-1" /> Missions
+          <Target className="h-3.5 w-3.5 mr-1" /> {t("uiExploreHub.missions")}
         </Button>
         <Button variant={sub === "ideas" ? "default" : "outline"} size="sm" onClick={() => setSub("ideas")}>
-          <Lightbulb className="h-3.5 w-3.5 mr-1" /> Ideas
+          <Lightbulb className="h-3.5 w-3.5 mr-1" /> {t("uiExploreHub.ideas")}
         </Button>
       </div>
       {sub === "quests" && <QuestsMarketplace bare />}

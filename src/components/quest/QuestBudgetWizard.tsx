@@ -60,7 +60,7 @@ function Tip({ children }: { children: React.ReactNode }) {
 
 const STEPS = [
   { id: 0, get label() { return i18n.t("uiQuestBudgetWizard.budget"); }, icon: Banknote, short: "Coins budget · $CTG pool · fiat compensation" },
-  { id: 1, label: "Rewards", icon: Zap, short: "XP & monetization" },
+  { id: 1, get label() { return i18n.t("uiQuestBudgetWizard.rewards"); }, icon: Zap, short: "XP & monetization" },
   { id: 2, get label() { return i18n.t("uiQuestBudgetWizard.funding"); }, icon: Handshake, short: "Proposals & fundraising" },
 ];
 
@@ -130,7 +130,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="bw-budgetMin" className="text-xs flex items-center gap-1">
-                  Min (€) <Tip>{t("uiQuestBudgetWizard.minimumCompensationYouDPayFor")}</Tip>
+                  {t("uiQuestBudgetWizard.min")} <Tip>{t("uiQuestBudgetWizard.minimumCompensationYouDPayFor")}</Tip>
                 </Label>
                 <Input
                   id="bw-budgetMin"
@@ -144,7 +144,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
               </div>
               <div>
                 <Label htmlFor="bw-budgetMax" className="text-xs flex items-center gap-1">
-                  Max (€) <Tip>{t("uiQuestBudgetWizard.maximumCompensationForThisQuest")}</Tip>
+                  {t("uiQuestBudgetWizard.max")} <Tip>{t("uiQuestBudgetWizard.maximumCompensationForThisQuest")}</Tip>
                 </Label>
                 <Input
                   id="bw-budgetMax"
@@ -160,14 +160,14 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
 
             <div>
               <Label htmlFor="bw-paymentType" className="text-xs flex items-center gap-1">
-                Payment method <Tip>{t("uiQuestBudgetWizard.howWillTheParticipantBePaid")}</Tip>
+                {t("uiQuestBudgetWizard.paymentMethod")} <Tip>{t("uiQuestBudgetWizard.howWillTheParticipantBePaid")}</Tip>
               </Label>
               <Select value={props.paymentType} onValueChange={props.setPaymentType}>
                 <SelectTrigger className="mt-1 text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="INVOICE">Invoice</SelectItem>
+                  <SelectItem value="INVOICE">{t("uiQuestBudgetWizard.invoice")}</SelectItem>
                   <SelectItem value="STRIPE">Stripe</SelectItem>
                 </SelectContent>
               </Select>
@@ -184,11 +184,11 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
           <>
             <div>
               <h3 className="text-sm font-semibold flex items-center gap-1.5">
-                <Zap className="h-4 w-4 text-primary" /> Rewards
+                <Zap className="h-4 w-4 text-primary" /> {t("uiQuestBudgetWizard.rewards")}
                 <Tip>{t("uiQuestBudgetWizard.xpRewardsDistributedToParticipantsWhen")}</Tip>
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                What do participants earn?
+                {t("uiQuestBudgetWizard.whatDoParticipantsEarn")}
               </p>
             </div>
 
@@ -219,7 +219,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   <div>
                      <Label htmlFor="bw-creditReward" className="text-xs flex items-center gap-1">
-                       🌱 $CTG reward <Tip>{t("uiQuestBudgetWizard.ctgEmittedOnVerifiedCompletionContribution")}</Tip>
+                       {t("uiQuestBudgetWizard.ctgReward")} <Tip>{t("uiQuestBudgetWizard.ctgEmittedOnVerifiedCompletionContribution")}</Tip>
                     </Label>
                     <Input
                       id="bw-creditReward"
@@ -233,7 +233,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                   </div>
                   <div>
                     <Label htmlFor="bw-priceFiat" className="text-xs flex items-center gap-1">
-                      Entry fee (€ cents) <Tip>{t("uiQuestBudgetWizard.stripePaymentRequiredToJoinThis")}</Tip>
+                      {t("uiQuestBudgetWizard.entryFeeCents")} <Tip>{t("uiQuestBudgetWizard.stripePaymentRequiredToJoinThis")}</Tip>
                     </Label>
                     <Input
                       id="bw-priceFiat"
@@ -277,7 +277,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                 <div className="space-y-3 pt-1">
                   <div>
                     <Label className="text-xs flex items-center gap-1">
-                       Pot currency <Tip>{t("uiQuestBudgetWizard.useCtgOrFiatEurosTo")}</Tip>
+                       {t("uiQuestBudgetWizard.potCurrency")} <Tip>{t("uiQuestBudgetWizard.useCtgOrFiatEurosTo")}</Tip>
                     </Label>
                     <Select value={props.fundingType} onValueChange={(v) => props.setFundingType(v as "CREDITS" | "FIAT")}>
                       <SelectTrigger className="mt-1 text-sm">
@@ -285,7 +285,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="CREDITS">{t("uiQuestBudgetWizard.ctgContributionToken")}</SelectItem>
-                        <SelectItem value="FIAT">Fiat (€)</SelectItem>
+                        <SelectItem value="FIAT">{t("uiQuestBudgetWizard.fiat")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -293,7 +293,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label htmlFor="bw-creditBudget" className="text-xs flex items-center gap-1">
-                        🌱 $CTG Pool <Tip>{t("uiQuestBudgetWizard.youSpendCreditsNowContributorsEarn")}</Tip>
+                        {t("uiQuestBudgetWizard.ctgPool")} <Tip>{t("uiQuestBudgetWizard.youSpendCreditsNowContributorsEarn")}</Tip>
                       </Label>
                       <Input
                         id="bw-creditBudget"
@@ -307,7 +307,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                     </div>
                     <div>
                       <Label htmlFor="bw-fundingGoal" className="text-xs flex items-center gap-1">
-                        Goal (optional) <Tip>{t("uiQuestBudgetWizard.targetAmountForThisQuestPurely")}</Tip>
+                        {t("uiQuestBudgetWizard.goalOptional")} <Tip>{t("uiQuestBudgetWizard.targetAmountForThisQuestPurely")}</Tip>
                       </Label>
                       <Input
                         id="bw-fundingGoal"
@@ -316,7 +316,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                         onChange={(e) => props.setFundingGoalCredits(e.target.value)}
                         min={0}
                         className="mt-1"
-                        placeholder="Target"
+                        placeholder={t("uiQuestBudgetWizard.target")}
                       />
                     </div>
                   </div>
@@ -328,7 +328,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
               <div className="flex items-center gap-3">
                 <Switch id="bw-fundraising" checked={props.allowFundraising} onCheckedChange={props.setAllowFundraising} />
                 <Label htmlFor="bw-fundraising" className="text-xs font-medium flex items-center gap-1">
-                  Community fundraising
+                  {t("uiQuestBudgetWizard.communityFundraising")}
                   <Tip>{t("uiQuestBudgetWizard.allowOthersToContributeCoinsTo")}</Tip>
                 </Label>
               </div>

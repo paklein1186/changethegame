@@ -133,7 +133,7 @@ export default function SharesPage() {
           purchase_price_per_share: sharePrice,
           total_paid: totalPaid,
         });
-        toast({ title: "Shares purchased!", description: `${quantity} Class B share(s) added.` });
+        toast({ title: t("uiSharesPage.sharesPurchased"), description: `${quantity} Class B share(s) added.` });
         setShowBuyB(false);
         setQuantity(1);
       }
@@ -193,7 +193,7 @@ export default function SharesPage() {
             </Button>
             <Button variant="outline" asChild>
               <Link to="/explore?tab=quests">
-                <Compass className="h-4 w-4 mr-2" /> Explore {questLabel}
+                <Compass className="h-4 w-4 mr-2" /> {t("uiSharesPage.explore")} {questLabel}
               </Link>
             </Button>
           </div>
@@ -209,14 +209,14 @@ export default function SharesPage() {
                   <Shield className="h-5 w-5 text-primary" /> {t("uiSharesPage.youAreACoopLikeMember")}
                 </h3>
                 <div className="flex gap-4 mt-2 text-sm">
-                  {(profile.total_shares_a ?? 0) > 0 && <Badge variant="default" className="text-xs">Guardian</Badge>}
-                  {(profile.total_shares_b ?? 0) > 0 && <Badge variant="secondary" className="text-xs">Steward</Badge>}
-                  <span>Governance weight: <strong>{Number(profile.governance_weight).toFixed(2)}</strong></span>
+                  {(profile.total_shares_a ?? 0) > 0 && <Badge variant="default" className="text-xs">{t("uiSharesPage.guardian")}</Badge>}
+                  {(profile.total_shares_b ?? 0) > 0 && <Badge variant="secondary" className="text-xs">{t("uiSharesPage.steward")}</Badge>}
+                  <span>{t("uiSharesPage.governanceWeight")} <strong>{Number(profile.governance_weight).toFixed(2)}</strong></span>
                 </div>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/governance">Governance decisions</Link>
+                  <Link to="/governance">{t("uiSharesPage.governanceDecisions")}</Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <a href={CLASS_A_MAILTO}>{t("uiSharesPage.applyForClassA")}</a>
@@ -237,25 +237,25 @@ export default function SharesPage() {
             <CardHeader>
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge className="bg-primary/10 text-primary border-0">{t("uiSharesPage.classA")}</Badge>
-                <Badge variant="outline">25 000 € minimum</Badge>
+                <Badge variant="outline">{t("uiSharesPage.25000Minimum")}</Badge>
                 <Badge variant="secondary" className="text-[10px]">
-                  <Lock className="h-3 w-3 mr-0.5" /> Application-Only
+                  <Lock className="h-3 w-3 mr-0.5" /> {t("uiSharesPage.applicationOnly")}
                 </Badge>
               </div>
-              <CardTitle className="font-display text-xl">Guardian Shares</CardTitle>
+              <CardTitle className="font-display text-xl">{t("uiSharesPage.guardianShares")}</CardTitle>
               <CardDescription>
                 {t("uiSharesPage.forGovernanceParticipationAndOperationalDecision")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2"><Vote className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Strategic governance voting</li>
-                <li className="flex items-start gap-2"><Shield className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Operational decision power</li>
+                <li className="flex items-start gap-2"><Vote className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("uiSharesPage.strategicGovernanceVoting")}</li>
+                <li className="flex items-start gap-2"><Shield className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("uiSharesPage.operationalDecisionPower")}</li>
                 <li className="flex items-start gap-2"><Users className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("uiSharesPage.participationInInnerGovernanceGroup")}</li>
               </ul>
               <div className="rounded-lg bg-muted/50 border border-border p-3 text-xs text-muted-foreground space-y-1">
                 <p className="font-medium text-foreground text-sm">{t("uiSharesPage.votingWeightLog1Shares")}</p>
-                <p>Full logarithmic governance weight.</p>
+                <p>{t("uiSharesPage.fullLogarithmicGovernanceWeight")}</p>
               </div>
 
               <Button className="w-full" variant="outline" asChild>
@@ -274,13 +274,13 @@ export default function SharesPage() {
             <div className="absolute top-0 right-0 w-24 h-24 bg-accent/5 rounded-bl-[100%]" />
             <CardHeader>
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge className="bg-accent/10 text-accent border-0">Class B</Badge>
+                <Badge className="bg-accent/10 text-accent border-0">{t("uiSharesPage.classB")}</Badge>
                 <Badge variant="outline">{sharePrice} {t("uiSharesPage.share2")}</Badge>
                 <Badge variant="secondary" className="text-[10px] bg-accent/10 text-accent border-0">
                   {t("uiSharesPage.openForPurchase")}
                 </Badge>
               </div>
-              <CardTitle className="font-display text-xl">Steward Shares</CardTitle>
+              <CardTitle className="font-display text-xl">{t("uiSharesPage.stewardShares")}</CardTitle>
               <CardDescription>
                 {t("uiSharesPage.supportTheEcosystemJoinAssemblies")}
               </CardDescription>
@@ -288,7 +288,7 @@ export default function SharesPage() {
             <CardContent className="space-y-4">
               <ul className="space-y-2 text-sm">
                 <li className="flex items-start gap-2"><Users className="h-4 w-4 text-accent mt-0.5 shrink-0" /> {t("uiSharesPage.accessToAssembliesCommunityEvents")}</li>
-                <li className="flex items-start gap-2"><Vote className="h-4 w-4 text-accent mt-0.5 shrink-0" /> Symbolic governance input (light vote)</li>
+                <li className="flex items-start gap-2"><Vote className="h-4 w-4 text-accent mt-0.5 shrink-0" /> {t("uiSharesPage.symbolicGovernanceInputLightVote")}</li>
               </ul>
               <div className="rounded-lg bg-muted/50 border border-border p-3 text-xs text-muted-foreground space-y-1">
                 <p className="font-medium text-foreground text-sm">{t("uiSharesPage.votingWeightLog1Shares0")}</p>
@@ -307,7 +307,7 @@ export default function SharesPage() {
                     </Button>
                   </div>
                   <p className="text-center text-sm text-muted-foreground">
-                    Total: <strong>{quantity * sharePrice} €</strong>
+                    {t("uiSharesPage.total")} <strong>{quantity * sharePrice} €</strong>
                   </p>
                   <div className="flex gap-2">
                     <Button className="flex-1" variant="secondary" onClick={handlePurchaseB} disabled={purchasing}>
@@ -319,7 +319,7 @@ export default function SharesPage() {
                 </div>
               ) : (
                 <Button className="w-full" variant="secondary" onClick={() => setShowBuyB(true)}>
-                  Buy Class B Shares <ArrowRight className="ml-2 h-4 w-4" />
+                  {t("uiSharesPage.buyClassBShares")} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               )}
             </CardContent>
@@ -329,15 +329,15 @@ export default function SharesPage() {
             <div className="absolute top-0 right-0 w-24 h-24 bg-muted/30 rounded-bl-[100%]" />
             <CardHeader>
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge className="bg-muted text-muted-foreground border-0">Class C</Badge>
+                <Badge className="bg-muted text-muted-foreground border-0">{t("uiSharesPage.classC")}</Badge>
                 <Badge variant="outline" className="text-[10px]">
-                  <Building2 className="h-3 w-3 mr-0.5" /> Institutional
+                  <Building2 className="h-3 w-3 mr-0.5" /> {t("uiSharesPage.institutional")}
                 </Badge>
                 <Badge variant="secondary" className="text-[10px]">
                   <Lock className="h-3 w-3 mr-0.5" /> {t("uiSharesPage.byApplication")}
                 </Badge>
               </div>
-              <CardTitle className="font-display text-xl">Strategic Stewardship</CardTitle>
+              <CardTitle className="font-display text-xl">{t("uiSharesPage.strategicStewardship")}</CardTitle>
               <CardDescription>
                 {t("uiSharesPage.designedForInstitutionalPartnersAlignedWith")}
               </CardDescription>
@@ -356,14 +356,14 @@ export default function SharesPage() {
 
               {/* Rights */}
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Rights & access</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("uiSharesPage.rightsAccess")}</p>
                 <TooltipProvider>
                   <ul className="space-y-1.5 text-sm">
                     <li className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="cursor-help border-b border-dotted border-muted-foreground/40">Governance participation</span>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/40">{t("uiSharesPage.governanceParticipation")}</span>
                         </TooltipTrigger>
                         <TooltipContent><p className="max-w-xs text-xs">{t("uiSharesPage.governanceRightsAreBalancedWithXp")}</p></TooltipContent>
                       </Tooltip>
@@ -372,14 +372,14 @@ export default function SharesPage() {
                       <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="cursor-help border-b border-dotted border-muted-foreground/40">Dividend eligibility</span>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/40">{t("uiSharesPage.dividendEligibility")}</span>
                         </TooltipTrigger>
                         <TooltipContent><p className="max-w-xs text-xs">{t("uiSharesPage.dividendsAreDistributedOnlyWhenAnnual")}</p></TooltipContent>
                       </Tooltip>
                     </li>
-                    <li className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Visibility as ecosystem partner</li>
-                    <li className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Strategic consultation access</li>
-                    <li className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> Ecosystem treasury oversight</li>
+                    <li className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("uiSharesPage.visibilityAsEcosystemPartner")}</li>
+                    <li className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("uiSharesPage.strategicConsultationAccess")}</li>
+                    <li className="flex items-start gap-2"><Check className="h-4 w-4 text-primary mt-0.5 shrink-0" /> {t("uiSharesPage.ecosystemTreasuryOversight")}</li>
                   </ul>
                 </TooltipProvider>
                 <p className="text-xs text-muted-foreground italic mt-1">
@@ -391,11 +391,11 @@ export default function SharesPage() {
 
               {/* Eligibility */}
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Eligibility</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("uiSharesPage.eligibility")}</p>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> Minimum strategic alignment review</li>
+                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> {t("uiSharesPage.minimumStrategicAlignmentReview")}</li>
                   <li className="flex items-start gap-2"><span className="text-foreground">•</span> {t("uiSharesPage.participationInEcosystemInitiatives")}</li>
-                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> Administrative approval</li>
+                  <li className="flex items-start gap-2"><span className="text-foreground">•</span> {t("uiSharesPage.administrativeApproval")}</li>
                   <li className="flex items-start gap-2"><span className="text-foreground">•</span> {t("uiSharesPage.xpThresholdForRepresentatives")}</li>
                 </ul>
                 <p className="text-xs text-muted-foreground">
@@ -407,7 +407,7 @@ export default function SharesPage() {
 
               {/* Economic framework */}
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Economic framework</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("uiSharesPage.economicFramework")}</p>
                 <div className="rounded-lg bg-muted/50 border border-border p-3 text-xs text-muted-foreground space-y-2">
                   <ul className="space-y-1">
                     <li>{t("uiSharesPage.doNotGrantOperationalControl")}</li>
@@ -416,7 +416,7 @@ export default function SharesPage() {
                     <li>{t("uiSharesPage.boundByMissionProtectionClause")}</li>
                   </ul>
                 </div>
-                <p className="text-xs font-medium text-foreground mb-1">Annual surplus allocation</p>
+                <p className="text-xs font-medium text-foreground mb-1">{t("uiSharesPage.annualSurplusAllocation")}</p>
                 <div className="space-y-1.5">
                   {Object.values(TREASURY_ALLOCATION).map((alloc) => (
                     <div key={alloc.label} className="flex items-center gap-2 text-xs">
@@ -432,7 +432,7 @@ export default function SharesPage() {
 
               {/* Stewardship commitment */}
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Stewardship commitment</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("uiSharesPage.stewardshipCommitment")}</p>
                 <p className="text-sm text-muted-foreground">
                   {t("uiSharesPage.byHoldingClassCSharesPartners")}
                 </p>
@@ -465,8 +465,8 @@ export default function SharesPage() {
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left p-2 sm:p-3 font-medium">{t("uiSharesPage.date")}</th>
-                    <th className="text-left p-2 sm:p-3 font-medium">Class</th>
-                    <th className="text-right p-2 sm:p-3 font-medium">Shares</th>
+                    <th className="text-left p-2 sm:p-3 font-medium">{t("uiSharesPage.class")}</th>
+                    <th className="text-right p-2 sm:p-3 font-medium">{t("uiSharesPage.shares")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -475,7 +475,7 @@ export default function SharesPage() {
                       <td className="p-2 sm:p-3 text-muted-foreground text-xs sm:text-sm">{new Date(h.created_at).toLocaleDateString()}</td>
                       <td className="p-2 sm:p-3">
                         <Badge variant={h.share_class === "A" ? "default" : "secondary"} className="text-xs">
-                          Class {h.share_class}
+                          {t("uiSharesPage.class")} {h.share_class}
                         </Badge>
                       </td>
                       <td className="p-2 sm:p-3 text-right font-medium">{h.number_of_shares}</td>
@@ -493,7 +493,7 @@ export default function SharesPage() {
             <Separator />
             <div className="space-y-4">
               <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-                <Crown className="h-5 w-5 text-primary" /> Shareholders
+                <Crown className="h-5 w-5 text-primary" /> {t("uiSharesPage.shareholders")}
               </h2>
               <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                 {shareholders.map((s) => {
@@ -514,12 +514,12 @@ export default function SharesPage() {
                         <div className="flex gap-1 mt-0.5 flex-wrap">
                           {hasA && (
                             <Badge className="text-[10px] bg-primary/10 text-primary border-0 px-1.5 py-0">
-                              <Shield className="h-2.5 w-2.5 mr-0.5" /> Guardian
+                              <Shield className="h-2.5 w-2.5 mr-0.5" /> {t("uiSharesPage.guardian")}
                             </Badge>
                           )}
                           {hasB && (
                             <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                              <Users className="h-2.5 w-2.5 mr-0.5" /> Steward
+                              <Users className="h-2.5 w-2.5 mr-0.5" /> {t("uiSharesPage.steward")}
                             </Badge>
                           )}
                         </div>

@@ -17,7 +17,7 @@ export function QuickShortcuts() {
 
   return (
     <section>
-      <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick access</h3>
+      <h3 className="text-sm font-medium text-muted-foreground mb-3">{t("uiQuickShortcuts.quickAccess")}</h3>
       <div className="flex flex-wrap gap-2">
         {shortcuts.map((s) => {
           const Icon = s.icon;

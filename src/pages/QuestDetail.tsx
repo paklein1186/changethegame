@@ -533,7 +533,7 @@ export default function QuestDetail() {
   const togglePin = async (updateId: string, currentPinned: boolean) => {
     await supabase.from("quest_updates").update({ pinned: !currentPinned } as any).eq("id", updateId);
     qc.invalidateQueries({ queryKey: ["quest-updates", id] });
-    toast({ title: currentPinned ? "Unpinned" : "Pinned!" });
+    toast({ title: currentPinned ? t("uiQuestDetail.unpinned") : t("uiQuestDetail.pinned") });
   };
 
   const createPod = async () => {
@@ -544,7 +544,7 @@ export default function QuestDetail() {
     autoFollowEntity(currentUser.id, "POD", pod.id);
     qc.invalidateQueries({ queryKey: ["pods-for-quest", id] });
     setPodOpen(false); setPodName(""); setPodDesc(""); setPodStart(""); setPodEnd(""); setPodImageUrl(undefined);
-    toast({ title: "Pod created!" });
+    toast({ title: t("uiQuestDetail.podCreated") });
   };
 
   const openEditQuest = () => {
@@ -736,7 +736,7 @@ export default function QuestDetail() {
             )}
             {isMission(quest as any) && (quest as any).quest_nature !== "MISSION" && (
               <Badge variant="outline" className="bg-amber-500/10 text-amber-700 border-amber-500/30">
-                💰 Mission
+                {t("uiQuestDetail.mission")}
               </Badge>
             )}
             {(() => {
@@ -786,7 +786,7 @@ export default function QuestDetail() {
               <p className="text-xs text-muted-foreground font-medium">{t("uiQuestDetail.xpReward")}</p>
               <p className="text-lg font-bold text-primary">+{quest.reward_xp} XP</p>
               <p className="text-[10px] text-muted-foreground">
-                Creator: +{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_CREATOR]} {t("uiQuestDetail.xpParticipant")}{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_USER]} XP
+                {t("uiQuestDetail.creator")}{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_CREATOR]} {t("uiQuestDetail.xpParticipant")}{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_USER]} XP
               </p>
               <p className="text-[10px] text-muted-foreground mt-2">
                 {t("uiQuestDetail.xpIsPermanentReputationCtgIs")}
@@ -794,7 +794,7 @@ export default function QuestDetail() {
             </div>
             {quest.credit_reward > 0 && (
               <div>
-                <p className="text-xs text-muted-foreground font-medium">🌱 $CTG Reward</p>
+                <p className="text-xs text-muted-foreground font-medium">{t("uiQuestDetail.ctgReward")}</p>
                 <p className="text-lg font-bold text-primary">{quest.credit_reward} $CTG</p>
                 <p className="text-[10px] text-muted-foreground">{t("uiQuestDetail.perParticipantOnCompletion")}</p>
               </div>
@@ -809,7 +809,7 @@ export default function QuestDetail() {
             )}
             {Number((quest as any).ctg_budget ?? 0) > 0 && (
               <div>
-                <p className="text-xs text-muted-foreground font-medium">🌱 $CTG Pool</p>
+                <p className="text-xs text-muted-foreground font-medium">{t("uiQuestDetail.ctgPool")}</p>
                 <p className="text-lg font-bold">{Number((quest as any).ctg_escrow ?? 0).toLocaleString()} $CTG</p>
                 <p className="text-[10px] text-muted-foreground">{t("uiQuestDetail.frozenInEscrow")}</p>
               </div>
@@ -851,15 +851,15 @@ export default function QuestDetail() {
           <span>·</span><span>by <Link to={`/users/${creator?.user_id}`} className="text-primary hover:underline">{creator?.name}</Link></span>
           {creator?.xp != null && <XpLevelBadge level={computeLevelFromXp(creator.xp)} compact />}
           <span>·</span>
-          <Badge variant="outline" className="capitalize">{quest.status.toLowerCase().replace(/_/g, " ")}</Badge>
+          <Badge variant="outline" className="capitalize">{t(`questStatus.${quest.status}`, { defaultValue: quest.status.toLowerCase().replace(/_/g, " ") })}</Badge>
           {quest.price_fiat > 0 && (
-            <Badge className="bg-amber-500/10 text-amber-600 border-0"><CreditCard className="h-3 w-3 mr-1" /> Paid — 🟩 {toCoins(quest.price_fiat / 100).toLocaleString()} {t("uiQuestDetail.coins2")}{(quest.price_fiat / 100).toFixed(2)})</Badge>
+            <Badge className="bg-amber-500/10 text-amber-600 border-0"><CreditCard className="h-3 w-3 mr-1" /> {t("uiQuestDetail.paid")} {toCoins(quest.price_fiat / 100).toLocaleString()} {t("uiQuestDetail.coins2")}{(quest.price_fiat / 100).toFixed(2)})</Badge>
           )}
           {quest.monetization_type === "FREE" && quest.price_fiat === 0 && (
-            <Badge variant="secondary" className="capitalize">Free</Badge>
+            <Badge variant="secondary" className="capitalize">{t("uiQuestDetail.free")}</Badge>
           )}
-          {quest.is_featured && <Badge className="bg-warning/10 text-warning border-0">Featured</Badge>}
-          {(quest as any).is_boosted && <Badge className="bg-orange-500/10 text-orange-600 border-0">🔥 Boosted</Badge>}
+          {quest.is_featured && <Badge className="bg-warning/10 text-warning border-0">{t("uiQuestDetail.featured")}</Badge>}
+          {(quest as any).is_boosted && <Badge className="bg-orange-500/10 text-orange-600 border-0">{t("uiQuestDetail.boosted")}</Badge>}
         </div>
         {(questTr.description?.text || quest.description) && (
           <div className="rounded-xl border border-border bg-card/50 p-5 w-full max-w-5xl">
@@ -871,7 +871,7 @@ export default function QuestDetail() {
               <p className="text-[15px] text-foreground/85 leading-relaxed whitespace-pre-line">{questTr.description?.text || quest.description}</p>
             </GuestContentGate>
             {questTr.description?.isTranslated && (
-              <p className="text-[10px] text-muted-foreground mt-1 italic">🌐 Auto-translated</p>
+              <p className="text-[10px] text-muted-foreground mt-1 italic">{t("uiQuestDetail.autoTranslated")}</p>
             )}
           </div>
         )}
@@ -898,7 +898,7 @@ export default function QuestDetail() {
               <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => {
                 if (!isLoggedIn) { setAuthPromptAction("follow this quest"); setAuthPromptOpen(true); return; }
                 toggleFollow();
-              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? "Unfollow" : t("uiQuestDetail.follow")}</Button>
+              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? t("uiQuestDetail.unfollow") : t("uiQuestDetail.follow")}</Button>
             )}
             {!isParticipant && !isCancelled && (
               <Button size="sm" variant={isPaidQuest ? "default" : "outline"} onClick={() => {
@@ -941,7 +941,7 @@ export default function QuestDetail() {
                 return isOwner ? (
                   <Button size="sm" variant="outline" onClick={toggleHighlight} title={isHighlighted ? t("uiQuestDetail.removeFromFeatured") : t("uiQuestDetail.featureOnYourProfile")}>
                     <Star className={`h-4 w-4 mr-1 ${isHighlighted ? "text-amber-500 fill-amber-500" : ""}`} />
-                    {isHighlighted ? "Featured" : "Feature"}
+                    {isHighlighted ? t("uiQuestDetail.featured") : t("uiQuestDetail.feature")}
                   </Button>
                 ) : null;
               }
@@ -952,7 +952,7 @@ export default function QuestDetail() {
                   <DropdownMenuTrigger asChild>
                     <Button size="sm" variant="outline">
                       <Star className={`h-4 w-4 mr-1 ${anyHighlighted ? "text-amber-500 fill-amber-500" : ""}`} />
-                      {anyHighlighted ? "Featured" : "Feature"}
+                      {anyHighlighted ? t("uiQuestDetail.featured") : t("uiQuestDetail.feature")}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -977,11 +977,11 @@ export default function QuestDetail() {
                   <DialogHeader><DialogTitle>{editingUpdateId ? t("uiQuestDetail.editQuestUpdate") : t("uiQuestDetail.postQuestUpdate")}</DialogTitle></DialogHeader>
                   <div className="space-y-4 mt-2">
                     <PostAsSelector value={uPostAs} onChange={setUPostAs} questId={quest.id} />
-                    <div><label className="text-sm font-medium mb-1 block">Type</label><Select value={uType} onValueChange={setUType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="GENERAL">General</SelectItem><SelectItem value="MILESTONE">Milestone</SelectItem><SelectItem value="CALL_FOR_HELP">{t("uiQuestDetail.callForHelp")}</SelectItem><SelectItem value="REFLECTION">Reflection</SelectItem></SelectContent></Select></div>
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.type")}</label><Select value={uType} onValueChange={setUType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="GENERAL">{t("uiQuestDetail.general")}</SelectItem><SelectItem value="MILESTONE">{t("uiQuestDetail.milestone")}</SelectItem><SelectItem value="CALL_FOR_HELP">{t("uiQuestDetail.callForHelp")}</SelectItem><SelectItem value="REFLECTION">{t("uiQuestDetail.reflection")}</SelectItem></SelectContent></Select></div>
                     <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.title")}</label><Input value={uTitle} onChange={e => setUTitle(e.target.value)} maxLength={120} /></div>
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="text-sm font-medium">Content</label>
+                        <label className="text-sm font-medium">{t("uiQuestDetail.content")}</label>
                         <AIWriterButton
                           type="quest_update"
                           context={{ title: quest.title, updateType: uType, updateTitle: uTitle }}
@@ -991,13 +991,13 @@ export default function QuestDetail() {
                       </div>
                       <Textarea value={uContent} onChange={e => setUContent(e.target.value)} maxLength={1000} className="resize-none min-h-[100px]" />
                     </div>
-                    <ImageUpload label="Image (optional)" currentImageUrl={uImageUrl} onChange={setUImageUrl} aspectRatio="16/9" />
-                    <div><label className="text-sm font-medium mb-1 block">Visibility</label>
+                    <ImageUpload label={t("uiQuestDetail.imageOptional")} currentImageUrl={uImageUrl} onChange={setUImageUrl} aspectRatio="16/9" />
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.visibility")}</label>
                       <Select value={uVisibility} onValueChange={setUVisibility}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="PUBLIC">{t("uiQuestDetail.publicAnyoneCanSee")}</SelectItem>
-                          <SelectItem value="FOLLOWERS">Followers only</SelectItem>
+                          <SelectItem value="FOLLOWERS">{t("uiQuestDetail.followersOnly")}</SelectItem>
                           <SelectItem value="INTERNAL">{t("uiQuestDetail.internalHostsMembersOnly")}</SelectItem>
                         </SelectContent>
                       </Select>
@@ -1015,7 +1015,7 @@ export default function QuestDetail() {
                 <div className="space-y-4 mt-2">
                   <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.podName")}</label><Input value={podName} onChange={e => setPodName(e.target.value)} maxLength={100} /></div>
                   <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.description")}</label><Textarea value={podDesc} onChange={e => setPodDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
-                  <ImageUpload label="Pod Image (optional)" currentImageUrl={podImageUrl} onChange={setPodImageUrl} aspectRatio="16/9" />
+                  <ImageUpload label={t("uiQuestDetail.podImageOptional")} currentImageUrl={podImageUrl} onChange={setPodImageUrl} aspectRatio="16/9" />
                   <div className="grid grid-cols-2 gap-3">
                     <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.startDate")}</label><Input type="date" value={podStart} onChange={e => setPodStart(e.target.value)} /></div>
                     <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.endDate")}</label><Input type="date" value={podEnd} onChange={e => setPodEnd(e.target.value)} /></div>
@@ -1031,8 +1031,8 @@ export default function QuestDetail() {
       <Tabs value={activeTab} onValueChange={(v) => { if (!isLoggedIn && v !== "explore") { setAuthPromptAction("explore this quest"); setAuthPromptOpen(true); return; } setActiveTab(v); }}>
         <div className="flex items-center gap-1">
           <TabsList>
-            <TabsTrigger value="explore">Explore</TabsTrigger>
-            {isLoggedIn && <TabsTrigger value="work"><ListChecks className="h-3.5 w-3.5 mr-1" /> Work</TabsTrigger>}
+            <TabsTrigger value="explore">{t("uiQuestDetail.explore")}</TabsTrigger>
+            {isLoggedIn && <TabsTrigger value="work"><ListChecks className="h-3.5 w-3.5 mr-1" /> {t("uiQuestDetail.work")}</TabsTrigger>}
             <TabsTrigger value="activity"><MessageCircle className="h-3.5 w-3.5 mr-1" /> {t("uiQuestDetail.activity")}</TabsTrigger>
           </TabsList>
 
@@ -1047,53 +1047,53 @@ export default function QuestDetail() {
             <DropdownMenuContent align="end">
               {/* Living — show if quest has territory links or always for owners */}
               <DropdownMenuItem onClick={() => setActiveTab("living")}>
-                <Leaf className="h-4 w-4 mr-2" /> Living
+                <Leaf className="h-4 w-4 mr-2" /> {t("uiQuestDetail.living")}
               </DropdownMenuItem>
 
               {/* Agents — show for participants */}
               {isLoggedIn && isParticipant && (
                 <DropdownMenuItem onClick={() => setActiveTab("agents")}>
-                  <Bot className="h-4 w-4 mr-2" /> Agents
+                  <Bot className="h-4 w-4 mr-2" /> {t("uiQuestDetail.agents")}
                 </DropdownMenuItem>
               )}
 
               {/* Chat & AI */}
               {isLoggedIn && (
                 <DropdownMenuItem onClick={() => setActiveTab("ai-chat")}>
-                  <Bot className="h-4 w-4 mr-2" /> Chat & AI
+                  <Bot className="h-4 w-4 mr-2" /> {t("uiQuestDetail.chatAi")}
                 </DropdownMenuItem>
               )}
 
               {/* Trust — only when completed */}
               {quest.status === "COMPLETED" && (
                 <DropdownMenuItem onClick={() => setActiveTab("trust")}>
-                  <Shield className="h-4 w-4 mr-2" /> Trust
+                  <Shield className="h-4 w-4 mr-2" /> {t("uiQuestDetail.trust")}
                 </DropdownMenuItem>
               )}
 
               {/* Pods — show if any exist or for owners */}
               {((questPods || []).length > 0 || isOwner) && (
                 <DropdownMenuItem onClick={() => setActiveTab("pods")}>
-                  <CircleDot className="h-4 w-4 mr-2" /> Pods ({(questPods || []).length})
+                  <CircleDot className="h-4 w-4 mr-2" /> {t("uiQuestDetail.pods")}{(questPods || []).length})
                 </DropdownMenuItem>
               )}
 
               {/* Documents */}
               <DropdownMenuItem onClick={() => setActiveTab("documents")}>
-                <FileText className="h-4 w-4 mr-2" /> Documents
+                <FileText className="h-4 w-4 mr-2" /> {t("uiQuestDetail.documents")}
               </DropdownMenuItem>
 
               {/* Owner-only tools */}
               {isOwner && (
                 <>
                   <DropdownMenuItem onClick={() => setActiveTab("matchmaker")}>
-                    <Sparkles className="h-4 w-4 mr-2" /> Matchmaker
+                    <Sparkles className="h-4 w-4 mr-2" /> {t("uiQuestDetail.matchmaker")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab("memory")}>
-                    <Brain className="h-4 w-4 mr-2" /> Memory
+                    <Brain className="h-4 w-4 mr-2" /> {t("uiQuestDetail.memory")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab("fundraising-ai")}>
-                    <CurrencyIcon currency="coins" className="h-4 w-4 mr-2" /> Fundraising AI
+                    <CurrencyIcon currency="coins" className="h-4 w-4 mr-2" /> {t("uiQuestDetail.fundraisingAi")}
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to={`/quests/${quest.id}/settings`}><Puzzle className="h-4 w-4 mr-2" /> {t("uiQuestDetail.settings")}</Link>

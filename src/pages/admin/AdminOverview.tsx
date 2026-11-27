@@ -57,7 +57,7 @@ export default function AdminOverview() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-display text-lg font-semibold flex items-center gap-2">
-              <Bell className="h-5 w-5 text-primary" /> Recent Critical Notifications
+              <Bell className="h-5 w-5 text-primary" /> {t("uiAdminOverview.recentCriticalNotifications")}
             </h2>
             <Button variant="ghost" size="sm" asChild>
               <Link to="/notifications">{t("uiAdminOverview.viewAll")}</Link>

@@ -100,7 +100,7 @@ export function TransferCreditsDialog({
       });
       if (error) throw error;
 
-      toast({ title: "Transfer complete", description: `${amt} Platform Credits sent successfully.` });
+      toast({ title: t("uiTransferCreditsDialog.transferComplete"), description: `${amt} Platform Credits sent successfully.` });
       queryClient.invalidateQueries({ queryKey: ["credit-transactions"] });
       queryClient.invalidateQueries({ queryKey: ["unit-credit-transactions"] });
       queryClient.invalidateQueries({ queryKey: ["credits-balance"] });
@@ -143,7 +143,7 @@ export function TransferCreditsDialog({
             <Tabs value={targetType} onValueChange={(v) => setTargetType(v as "user" | "guild")}>
               <TabsList className="w-full">
                 <TabsTrigger value="user" className="flex-1 gap-1">
-                  <Users className="h-3.5 w-3.5" /> User
+                  <Users className="h-3.5 w-3.5" /> {t("uiTransferCreditsDialog.user")}
                 </TabsTrigger>
                 <TabsTrigger value="guild" className="flex-1 gap-1">
                   <Shield className="h-3.5 w-3.5" /> {t("uiTransferCreditsDialog.guild")}
@@ -151,7 +151,7 @@ export function TransferCreditsDialog({
               </TabsList>
 
               <TabsContent value="user" className="mt-3">
-                <Label className="text-xs text-muted-foreground mb-1 block">Recipient</Label>
+                <Label className="text-xs text-muted-foreground mb-1 block">{t("uiTransferCreditsDialog.recipient")}</Label>
                 <UserSearchInput
                   placeholder={t("uiTransferCreditsDialog.searchForAUser")}
                   excludeUserIds={userId ? [userId] : []}
@@ -179,7 +179,7 @@ export function TransferCreditsDialog({
             </Tabs>
           ) : (
             <div>
-              <Label className="text-xs text-muted-foreground mb-1 block">Recipient (user)</Label>
+              <Label className="text-xs text-muted-foreground mb-1 block">{t("uiTransferCreditsDialog.recipientUser")}</Label>
               <UserSearchInput
                 placeholder={t("uiTransferCreditsDialog.searchForAUser")}
                 onSelect={(u) => {
@@ -208,7 +208,7 @@ export function TransferCreditsDialog({
 
           {/* Note */}
           <div>
-            <Label className="text-xs text-muted-foreground mb-1 block">Note (optional)</Label>
+            <Label className="text-xs text-muted-foreground mb-1 block">{t("uiTransferCreditsDialog.noteOptional")}</Label>
             <Textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}

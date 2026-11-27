@@ -172,7 +172,7 @@ const PERSONA_CTA: Record<PersonaType | "DEFAULT", { label: string; to: string; 
     get description() { return i18n.t("uiEconomyOnboarding.joinAQuestToEarnYour"); },
   },
   CREATIVE: {
-    label: "Explore creations",
+    get label() { return i18n.t("uiEconomyOnboarding.exploreCreations"); },
     to: "/explore?tab=quests",
     get description() { return i18n.t("uiEconomyOnboarding.joinACreationOrLaunchYour"); },
   },
@@ -250,7 +250,7 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">💎</span>
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {isWhatsNew ? t("uiEconomyOnboarding.whatSNewMarch2026") : "How value works"}
+                  {isWhatsNew ? t("uiEconomyOnboarding.whatSNewMarch2026") : t("uiEconomyOnboarding.howValueWorks")}
                 </span>
               </div>
               <h2 className="text-xl font-bold text-foreground">
@@ -314,7 +314,7 @@ export function EconomyModal({ open, onClose, persona = "UNSET", mode = "full" }
                   )}
                   {layer.decays && (
                     <span className="text-xs text-muted-foreground">
-                      ⏳ Fades 1%/month
+                      {t("uiEconomyOnboarding.fades1Month")}
                     </span>
                   )}
                   {!layer.withdrawable && !layer.decays && (
@@ -484,7 +484,7 @@ export function PathwayCards({ persona, progress, steps, className }: PathwayCar
           <button
             onClick={dismiss}
             className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Hide pathway"
+            aria-label={t("uiEconomyOnboarding.hidePathway")}
           >
             <X className="h-4 w-4" />
           </button>
@@ -505,7 +505,7 @@ export function PathwayCards({ persona, progress, steps, className }: PathwayCar
                 <div className="flex items-center justify-between">
                   <span className="text-xl">{icon}</span>
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Step {i + 1}
+                    {t("uiEconomyOnboarding.step")} {i + 1}
                   </span>
                 </div>
 

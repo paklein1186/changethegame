@@ -228,14 +228,14 @@ export default function ServiceDetail() {
           body: { bookingId: newBooking.id },
         });
         if (checkoutErr || !checkoutData?.url) {
-          toast({ title: "Booking created", description: t("uiServiceDetail.paymentLinkCouldNotBeGenerated") });
+          toast({ title: t("uiServiceDetail.bookingCreated"), description: t("uiServiceDetail.paymentLinkCouldNotBeGenerated") });
         } else {
           window.open(checkoutData.url, "_blank");
           toast({ title: t("uiServiceDetail.bookingCreatedCompletePaymentInThe") });
           redirectedToCheckout = true;
         }
       } catch {
-        toast({ title: "Booking created", description: t("uiServiceDetail.paymentLinkCouldNotBeGenerated2") });
+        toast({ title: t("uiServiceDetail.bookingCreated"), description: t("uiServiceDetail.paymentLinkCouldNotBeGenerated2") });
       }
     }
 
@@ -296,7 +296,7 @@ export default function ServiceDetail() {
     });
 
     if (autoConfirm) {
-      toast({ title: "✅ Session confirmed!", description: t("uiServiceDetail.youCanJoinViaTheCall") });
+      toast({ title: t("uiServiceDetail.sessionConfirmed"), description: t("uiServiceDetail.youCanJoinViaTheCall") });
     } else if (requiresApproval) {
       toast({ title: t("uiServiceDetail.requestSubmitted"), description: t("uiServiceDetail.anAdminWillReviewAndValidate") });
     } else {
@@ -351,12 +351,12 @@ export default function ServiceDetail() {
           {svc.price_amount != null && (
             <>
               <Badge className="bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800">
-                {svc.price_amount === 0 ? "Free" : `🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins`}
+                {svc.price_amount === 0 ? t("uiServiceDetail.free") : `🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins`}
               </Badge>
               {svc.price_amount > 0 && <span className="text-[11px] text-muted-foreground">≈ €{svc.price_amount}</span>}
             </>
           )}
-          {(svc as any).service_type === "service_mission" && <Badge variant="outline" className="text-xs"><Briefcase className="h-3 w-3 mr-1" />Mission</Badge>}
+          {(svc as any).service_type === "service_mission" && <Badge variant="outline" className="text-xs"><Briefcase className="h-3 w-3 mr-1" />{t("uiServiceDetail.mission")}</Badge>}
           {(svc as any).service_type === "event_attendance" && <Badge variant="outline" className="text-xs"><Users className="h-3 w-3 mr-1" />{t("uiServiceDetail.event")}</Badge>}
           {(svc as any).service_type === "online_call" && svc.online_location_type && <Badge variant="outline" className="text-xs"><Video className="h-3 w-3 mr-1" />{svc.online_location_type}</Badge>}
           {(svc as any).location_text && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {(svc as any).location_text}</span>}
@@ -383,7 +383,7 @@ export default function ServiceDetail() {
               <Button size="sm" variant="outline" asChild><Link to={`/services/${svc.id}/edit`}><Pencil className="h-3.5 w-3.5 mr-1" /> {t("uiServiceDetail.edit")}</Link></Button>
               <Button size="sm" variant="ghost" className="text-destructive" onClick={async () => {
                 const { error } = await supabase.from("services").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", svc.id);
-                if (!error) { toast({ title: "Service deleted" }); navigate(-1); }
+                if (!error) { toast({ title: t("uiServiceDetail.serviceDeleted") }); navigate(-1); }
               }}><Trash2 className="h-3.5 w-3.5 mr-1" /> {t("uiServiceDetail.delete")}</Button>
             </>
           )}
@@ -391,9 +391,9 @@ export default function ServiceDetail() {
 
         {!isOwnService && (
           <Dialog open={bookOpen} onOpenChange={o => { setBookOpen(o); if (!o) { setSelectedSlot(null); setWeekOffset(0); } }}>
-            <DialogTrigger asChild><Button><CalendarClock className="h-4 w-4 mr-1" /> {svcType === "online_call" ? t("uiServiceDetail.bookASession") : svcType === "event_attendance" ? "Register" : t("uiServiceDetail.requestThisService")}</Button></DialogTrigger>
+            <DialogTrigger asChild><Button><CalendarClock className="h-4 w-4 mr-1" /> {svcType === "online_call" ? t("uiServiceDetail.bookASession") : svcType === "event_attendance" ? t("uiServiceDetail.register") : t("uiServiceDetail.requestThisService")}</Button></DialogTrigger>
             <DialogContent className="max-w-lg">
-              <DialogHeader><DialogTitle>Book — {svc.title}</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>{t("uiServiceDetail.book")} {svc.title}</DialogTitle></DialogHeader>
               <div className="space-y-4 mt-2">
                 <div className="flex items-center justify-between">
                   <Button variant="ghost" size="icon" disabled={weekOffset === 0} onClick={() => setWeekOffset(w => w - 1)}><ChevronLeft className="h-4 w-4" /></Button>
@@ -412,7 +412,7 @@ export default function ServiceDetail() {
                     </div>
                   )
                 ) : <p className="text-sm text-muted-foreground">{t("uiServiceDetail.serviceAvailabilityNotConfigured")}</p>}
-                <div><label className="text-sm font-medium mb-1 block">Notes (optional)</label><Textarea value={bookNotes} onChange={e => setBookNotes(e.target.value)} maxLength={500} className="resize-none" /></div>
+                <div><label className="text-sm font-medium mb-1 block">{t("uiServiceDetail.notesOptional")}</label><Textarea value={bookNotes} onChange={e => setBookNotes(e.target.value)} maxLength={500} className="resize-none" /></div>
                 <Button onClick={createBooking} className="w-full" disabled={!selectedSlot}><Send className="h-4 w-4 mr-1" />{requiresApproval ? (isFree ? t("uiServiceDetail.submitRequestFree") : `Submit request (🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins)`) : isFree ? t("uiServiceDetail.confirmFree") : `Book & Pay (🟩 ${toCoins(svc.price_amount).toLocaleString()} Coins)`}</Button>
               </div>
             </DialogContent>
@@ -420,12 +420,12 @@ export default function ServiceDetail() {
         )}
 
         <div className="mt-8 pt-6 border-t border-border">
-          <h3 className="font-display font-semibold mb-4 flex items-center gap-2"><Shield className="h-5 w-5" /> Trust</h3>
+          <h3 className="font-display font-semibold mb-4 flex items-center gap-2"><Shield className="h-5 w-5" /> {t("uiServiceDetail.trust")}</h3>
           <TrustTab nodeType={TrustNodeType.SERVICE} nodeId={svc.id} />
         </div>
 
         <div className="mt-8 pt-6 border-t border-border">
-          <h3 className="font-display font-semibold mb-4">Discussion</h3>
+          <h3 className="font-display font-semibold mb-4">{t("uiServiceDetail.discussion")}</h3>
           <CommentThread targetType={CommentTargetType.SERVICE} targetId={svc.id} />
         </div>
       </motion.div>

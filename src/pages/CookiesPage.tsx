@@ -10,12 +10,12 @@ export default function CookiesPage() {
       </ContentSection>
 
       <ContentSection title={t("uiCookiesPage.2TypesOfCookiesUsed")}>
-        <p><strong>Essential:</strong> {t("uiCookiesPage.necessaryForThePlatformToFunction")}</p>
-        <p><strong>Analytics:</strong> {t("uiCookiesPage.helpUsUnderstandHowUsersInteract")}</p>
-        <p><strong>Preferences:</strong> {t("uiCookiesPage.rememberYourSettingsSuchAsLanguage")}</p>
+        <p><strong>{t("uiCookiesPage.essential")}</strong> {t("uiCookiesPage.necessaryForThePlatformToFunction")}</p>
+        <p><strong>{t("uiCookiesPage.analytics")}</strong> {t("uiCookiesPage.helpUsUnderstandHowUsersInteract")}</p>
+        <p><strong>{t("uiCookiesPage.preferences")}</strong> {t("uiCookiesPage.rememberYourSettingsSuchAsLanguage")}</p>
       </ContentSection>
 
-      <ContentSection title="3. How We Use Cookies">
+      <ContentSection title={t("uiCookiesPage.3HowWeUseCookies")}>
         <p>{t("uiCookiesPage.cookiesEnableAuthenticationPersonalizationAnalyticsAnd")}</p>
       </ContentSection>
 
@@ -27,8 +27,8 @@ export default function CookiesPage() {
         <p>{t("uiCookiesPage.disablingEssentialCookiesMayPreventYou")}</p>
       </ContentSection>
 
-      <ContentSection title="6. Contact">
-        <p>{t("uiCookiesPage.forQuestionsAboutOurCookiePractices")} <a href="mailto:privacy@changethegame.xyz" className="text-primary hover:underline">privacy@changethegame.xyz</a>.</p>
+      <ContentSection title={t("uiCookiesPage.6Contact")}>
+        <p>{t("uiCookiesPage.forQuestionsAboutOurCookiePractices")} <a href="mailto:privacy@changethegame.xyz" className="text-primary hover:underline">{t("uiCookiesPage.privacyChangethegameXyz")}</a>.</p>
       </ContentSection>
     </ContentPageShell>
   );

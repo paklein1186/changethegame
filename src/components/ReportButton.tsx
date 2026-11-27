@@ -38,7 +38,7 @@ export function ReportButton({ targetType, targetId, variant = "sm" }: ReportBut
     if (error) { toast({ title: t("uiReportButton.failedToSubmitReport"), variant: "destructive" }); return; }
     setReason("");
     setOpen(false);
-    toast({ title: "Report submitted", description: t("uiReportButton.anAdminWillReviewItShortly") });
+    toast({ title: t("uiReportButton.reportSubmitted"), description: t("uiReportButton.anAdminWillReviewItShortly") });
     notifyPlatformAdmins({
       type: "SYSTEM_ABUSE_REPORT",
       title: t("uiReportButton.newContentReport"),
@@ -53,17 +53,17 @@ export function ReportButton({ targetType, targetId, variant = "sm" }: ReportBut
       <DialogTrigger asChild>
         {variant === "inline" ? (
           <Button variant="ghost" size="sm" className="h-7 px-2 text-muted-foreground hover:text-destructive">
-            <Flag className="h-3 w-3 mr-1" />Report
+            <Flag className="h-3 w-3 mr-1" />{t("uiReportButton.report")}
           </Button>
         ) : (
           <Button size="sm" variant="outline" className="text-muted-foreground hover:text-destructive hover:border-destructive">
-            <Flag className="h-4 w-4 mr-1" /> Report
+            <Flag className="h-4 w-4 mr-1" /> {t("uiReportButton.report")}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Report {targetType.toLowerCase().replace(/_/g, " ")}</DialogTitle>
+          <DialogTitle>{t("uiReportButton.report")} {targetType.toLowerCase().replace(/_/g, " ")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <p className="text-sm text-muted-foreground">

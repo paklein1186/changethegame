@@ -1,9 +1,16 @@
 {
+  "components/EntityCreationWizard.tsx": 1,
+  "components/home/DigestSections.tsx": 1,
   "components/network/TerritoryMapView.tsx": 1,
-  "data/mock.ts": 49,
+  "components/ocu/ContractTab.tsx": 2,
+  "components/ocu/ContributionsDashboard.tsx": 1,
+  "components/partnership/PartnershipsTab.tsx": 1,
+  "components/ui/sonner.tsx": 1,
+  "data/mock.ts": 69,
+  "hooks/useDiscussionRooms.tsx": 1,
   "hooks/useEntityRoles.tsx": 1,
   "hooks/useFeedPosts.tsx": 1,
-  "hooks/useNotifications.tsx": 17,
+  "hooks/useNotifications.tsx": 21,
   "hooks/useValuePie.ts": 2,
   "lib/mcp/tools/create-personal-task.ts": 3,
   "lib/mcp/tools/get-guild-activity.ts": 3,
@@ -13,7 +20,12 @@
   "lib/mcp/tools/list-my-tasks.ts": 3,
   "lib/mcp/tools/search-quests.ts": 3,
   "lib/mcp/tools/update-personal-task.ts": 5,
-  "lib/mcp/tools/whoami.ts": 3,
+  "lib/mcp/tools/whoami.ts": 4,
   "lib/mentionNotifications.ts": 2,
-  "lib/websiteTemplates.ts": 47
+  "lib/search.ts": 1,
+  "lib/websiteTemplates.ts": 77,
+  "main.tsx": 1,
+  "pages/admin/tabs/ContentTabs.tsx": 2,
+  "pages/HomeFeed.tsx": 1,
+  "pages/MyBookings.tsx": 2
 }

@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Globe, Twitter, Linkedin, Instagram } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -17,9 +18,9 @@ export function normalizeUrl(url: string | undefined | null): string | null {
 }
 
 const LINKS = [
-  { key: "websiteUrl" as const, label: "Website", icon: Globe, placeholder: "https://example.com" },
+  { key: "websiteUrl" as const, get label() { return i18n.t("uiSocialLinks.website"); }, icon: Globe, placeholder: "https://example.com" },
   { key: "linkedinUrl" as const, label: "LinkedIn", icon: Linkedin, placeholder: "https://linkedin.com/in/…" },
-  { key: "twitterUrl" as const, label: "Twitter / X", icon: Twitter, placeholder: "https://x.com/…" },
+  { key: "twitterUrl" as const, get label() { return i18n.t("uiSocialLinks.twitterX"); }, icon: Twitter, placeholder: "https://x.com/…" },
   { key: "instagramUrl" as const, label: "Instagram", icon: Instagram, placeholder: "https://instagram.com/…" },
 ] as const;
 

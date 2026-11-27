@@ -87,7 +87,7 @@ export function FundingPoolWizard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CurrencyIcon currency="ctg" className="h-4 w-4" />
-              <Label className="text-sm font-semibold">🌱 $CTG Pool</Label>
+              <Label className="text-sm font-semibold">{t("uiFundingPoolWizard.ctgPool")}</Label>
             </div>
             <Switch checked={ctgEnabled} onCheckedChange={setCtgEnabled} />
           </div>
@@ -115,7 +115,7 @@ export function FundingPoolWizard({
               {ctgVal > ctgBalance && (
                 <div className="flex items-center gap-1.5 text-xs text-destructive">
                   <AlertTriangle className="h-3 w-3" />
-                  Insufficient $CTG balance.
+                  {t("uiFundingPoolWizard.insufficientCtgBalance")}
                 </div>
               )}
             </>

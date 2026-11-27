@@ -74,8 +74,8 @@ export function SourceRoleTransfer({ entityType, entityId, members, currentUserI
             <AvatarFallback>{currentSourceMember.user?.name?.[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <p className="text-sm font-medium">{currentSourceMember.user?.name || "Unknown"}</p>
-            <p className="text-xs text-muted-foreground">Current Source</p>
+            <p className="text-sm font-medium">{currentSourceMember.user?.name || t("uiSourceRoleTransfer.unknown")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiSourceRoleTransfer.currentSource")}</p>
           </div>
         </div>
       ) : (
@@ -105,7 +105,7 @@ export function SourceRoleTransfer({ entityType, entityId, members, currentUserI
                   <AvatarImage src={m.user?.avatar_url} />
                   <AvatarFallback>{m.user?.name?.[0]}</AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium">{m.user?.name || "Unknown"}</span>
+                <span className="text-sm font-medium">{m.user?.name || t("uiSourceRoleTransfer.unknown")}</span>
               </button>
             ))}
             {eligibleMembers.length === 0 && (

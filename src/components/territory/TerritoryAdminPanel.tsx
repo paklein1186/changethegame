@@ -613,7 +613,7 @@ export function TerritoryAdminPanel({
         <div>
           <h2 className="text-sm font-semibold text-foreground">{t("territoryAdmin.header.title", { name: territoryName })}</h2>
           <p className="text-xs text-muted-foreground">
-            {t("territoryAdmin.header.yourLevel")} <span className="font-medium text-foreground">{levelLabel}</span> (lvl {currentUserXpLevel})
+            {t("territoryAdmin.header.yourLevel")} <span className="font-medium text-foreground">{levelLabel}</span> {t("uiTerritoryAdminPanel.lvl")} {currentUserXpLevel})
             {" · "}{currentUserCtgBalance} $CTG
           </p>
         </div>

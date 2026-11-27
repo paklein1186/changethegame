@@ -69,7 +69,7 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
       }
 
       setResult(data as ScrapeResult);
-      toast({ title: "Page analyzed!", description: t("uiUrlScrapePanel.reviewTheSuggestionsBelow") });
+      toast({ title: t("uiUrlScrapePanel.pageAnalyzed"), description: t("uiUrlScrapePanel.reviewTheSuggestionsBelow") });
     } catch (e: any) {
       toast({ title: t("uiUrlScrapePanel.scrapeFailed"), description: e.message || t("uiUrlScrapePanel.couldNotAnalyzeThisUrl"), variant: "destructive" });
     } finally {
@@ -123,7 +123,7 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
     if (result.description) parts.push("description");
     if (topicIds.length) parts.push(`${topicIds.length} topics`);
     if (territoryIds.length) parts.push(`${territoryIds.length} territories`);
-    toast({ title: "Applied!", description: parts.length ? `Pre-filled: ${parts.join(", ")}` : t("uiUrlScrapePanel.noMatchingDataFound") });
+    toast({ title: t("uiUrlScrapePanel.applied"), description: parts.length ? `Pre-filled: ${parts.join(", ")}` : t("uiUrlScrapePanel.noMatchingDataFound") });
   };
 
   return (
@@ -155,7 +155,7 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
           size="sm"
           variant="outline"
         >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Analyze"}
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("uiUrlScrapePanel.analyze")}
         </Button>
       </div>
 
@@ -237,7 +237,7 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
             disabled={applied}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            {applied ? "Applied ✓" : t("uiUrlScrapePanel.applySuggestions")}
+            {applied ? t("uiUrlScrapePanel.applied2") : t("uiUrlScrapePanel.applySuggestions")}
           </Button>
         </div>
       )}

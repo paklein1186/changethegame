@@ -23,7 +23,7 @@ export default function TermsPage({ embedded }: { embedded?: boolean }) {
       <ContentSection title={t("termsPage.s12Title")}>
         <p>
           {t("termsPage.s12P").split("<a>")[0]}
-          <a href="mailto:legal@changethegame.xyz" className="text-primary hover:underline">legal@changethegame.xyz</a>
+          <a href="mailto:legal@changethegame.xyz" className="text-primary hover:underline">{t("uiTermsPage.legalChangethegameXyz")}</a>
           {t("termsPage.s12P").split("</a>")[1] || "."}
         </p>
       </ContentSection>

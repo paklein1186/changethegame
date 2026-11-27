@@ -204,7 +204,7 @@ export function ProfileTerritoriesTab({ userId, territories }: Props) {
             className="h-7 px-2.5 text-xs"
             onClick={() => setView("map")}
           >
-            <MapIcon className="h-3.5 w-3.5 mr-1" /> Map
+            <MapIcon className="h-3.5 w-3.5 mr-1" /> {t("uiProfileTerritoriesTab.map")}
           </Button>
           <Button
             size="sm"
@@ -212,7 +212,7 @@ export function ProfileTerritoriesTab({ userId, territories }: Props) {
             className="h-7 px-2.5 text-xs"
             onClick={() => setView("tiles")}
           >
-            <List className="h-3.5 w-3.5 mr-1" /> Tiles
+            <List className="h-3.5 w-3.5 mr-1" /> {t("uiProfileTerritoriesTab.tiles")}
           </Button>
         </div>
       </div>

@@ -28,7 +28,7 @@ export function AdminBadge({ userId, className }: AdminBadgeProps) {
         className={`text-[10px] px-1.5 py-0 font-semibold border-amber-500/40 text-amber-600 bg-amber-500/10 gap-0.5 ${className ?? ""}`}
       >
         <Crown className="h-2.5 w-2.5" />
-        Superadmin
+        {t("uiAdminBadge.superadmin")}
       </Badge>
     );
   }

@@ -93,7 +93,7 @@ export default function AdminDistributionConcerns() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-display font-bold flex items-center gap-2">
-          <AlertTriangle className="h-6 w-6 text-amber-500" /> Distribution Concerns
+          <AlertTriangle className="h-6 w-6 text-amber-500" /> {t("uiAdminDistributionConcerns.distributionConcerns")}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           {t("uiAdminDistributionConcerns.confidentialReportsFromContributorsAboutDistribution")}
@@ -110,12 +110,12 @@ export default function AdminDistributionConcerns() {
             <thead>
               <tr className="bg-muted/50 border-b border-border">
                 <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.quest")}</th>
-                <th className="text-left p-3 font-medium">Reporter</th>
-                <th className="text-left p-3 font-medium">Severity</th>
-                <th className="text-left p-3 font-medium">Currency</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.reporter")}</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.severity")}</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.currency")}</th>
                 <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.date")}</th>
                 <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.status")}</th>
-                <th className="text-right p-3 font-medium">Actions</th>
+                <th className="text-right p-3 font-medium">{t("uiAdminDistributionConcerns.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -124,7 +124,7 @@ export default function AdminDistributionConcerns() {
                   <td className="p-3 font-medium max-w-[200px] truncate">
                     {questMap.get(r.quest_id) ?? r.quest_id.slice(0, 8)}
                   </td>
-                  <td className="p-3">{reporterMap.get(r.reporter_user_id) ?? "Unknown"}</td>
+                  <td className="p-3">{reporterMap.get(r.reporter_user_id) ?? t("uiAdminDistributionConcerns.unknown")}</td>
                   <td className="p-3">
                     <Badge variant="outline" className={`text-[10px] capitalize ${sevColor(r.severity)}`}>
                       {r.severity}
@@ -143,7 +143,7 @@ export default function AdminDistributionConcerns() {
                     <div className="flex items-center justify-end gap-1">
                       {r.status === "open" && (
                         <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateStatus(r.id, "reviewing")}>
-                          <Eye className="h-3 w-3 mr-1" /> Review
+                          <Eye className="h-3 w-3 mr-1" /> {t("uiAdminDistributionConcerns.review")}
                         </Button>
                       )}
                       {(r.status === "open" || r.status === "reviewing") && (
@@ -152,13 +152,13 @@ export default function AdminDistributionConcerns() {
                             size="sm" variant="outline" className="h-7 text-xs"
                             onClick={() => { setResolveId(r.id); setResolveNote(""); setResolveOpen(true); }}
                           >
-                            <CheckCircle2 className="h-3 w-3 mr-1" /> Resolve
+                            <CheckCircle2 className="h-3 w-3 mr-1" /> {t("uiAdminDistributionConcerns.resolve")}
                           </Button>
                           <Button
                             size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground"
                             onClick={() => updateStatus(r.id, "dismissed")}
                           >
-                            <X className="h-3 w-3 mr-1" /> Dismiss
+                            <X className="h-3 w-3 mr-1" /> {t("uiAdminDistributionConcerns.dismiss")}
                           </Button>
                         </>
                       )}
@@ -192,20 +192,20 @@ export default function AdminDistributionConcerns() {
       <Dialog open={resolveOpen} onOpenChange={setResolveOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Resolve Concern</DialogTitle>
+            <DialogTitle>{t("uiAdminDistributionConcerns.resolveConcern")}</DialogTitle>
             <DialogDescription>{t("uiAdminDistributionConcerns.addAnInternalNoteNotVisible")}</DialogDescription>
           </DialogHeader>
           <Textarea
             value={resolveNote}
             onChange={(e) => setResolveNote(e.target.value)}
-            placeholder="Internal resolution note..."
+            placeholder={t("uiAdminDistributionConcerns.internalResolutionNote")}
             rows={3}
           />
           <DialogFooter>
             <Button variant="outline" onClick={() => setResolveOpen(false)}>{t("uiAdminDistributionConcerns.cancel")}</Button>
             <Button onClick={() => resolveId && updateStatus(resolveId, "resolved")} disabled={processing}>
               {processing && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-              Resolve
+              {t("uiAdminDistributionConcerns.resolve")}
             </Button>
           </DialogFooter>
         </DialogContent>

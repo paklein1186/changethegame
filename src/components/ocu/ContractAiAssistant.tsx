@@ -93,7 +93,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
       setDrafts({});
       setStarted(true);
     } catch (e: any) {
-      toast({ title: "AI unavailable", description: e.message, variant: "destructive" });
+      toast({ title: t("uiContractAiAssistant.aiUnavailable"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -123,7 +123,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
       toast({ title: t("uiContractAiAssistant.contractUpdatedByAi"), description: t("uiContractAiAssistant.reviewTheTextBeforeSaving") });
       onOpenChange(false);
     } catch (e: any) {
-      toast({ title: "AI unavailable", description: e.message, variant: "destructive" });
+      toast({ title: t("uiContractAiAssistant.aiUnavailable"), description: e.message, variant: "destructive" });
     } finally {
       setGenerating(false);
     }
@@ -153,7 +153,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
         <DialogHeader>
           <DialogTitle className="text-sm flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            AI contract interview
+            {t("uiContractAiAssistant.aiContractInterview")}
           </DialogTitle>
         </DialogHeader>
 
@@ -174,7 +174,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
             <>
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span>Contract completeness</span>
+                  <span>{t("uiContractAiAssistant.contractCompleteness")}</span>
                   <span>{completeness}%</span>
                 </div>
                 <Progress value={completeness} className="h-1.5" />
@@ -183,7 +183,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
               {inconsistencies.length > 0 && (
                 <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-2 space-y-1">
                   <p className="text-[11px] font-medium text-amber-700 flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3" /> Possible inconsistencies
+                    <AlertTriangle className="h-3 w-3" /> {t("uiContractAiAssistant.possibleInconsistencies")}
                   </p>
                   <ul className="list-disc pl-4 text-[11px] text-amber-700/90">
                     {inconsistencies.map((x, i) => <li key={i}>{x}</li>)}
@@ -264,7 +264,7 @@ export function ContractAiAssistant({ open, onOpenChange, mode, draftHtml, conte
                 )}
                 <Button size="sm" className="gap-1" onClick={handleGenerate} disabled={generating || loading}>
                   {generating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                  {mode === "edit" ? t("uiContractAiAssistant.updateContractWithAi") : "Generate contract"}
+                  {mode === "edit" ? t("uiContractAiAssistant.updateContractWithAi") : t("uiContractAiAssistant.generateContract")}
                 </Button>
               </div>
               <p className="text-[10px] text-muted-foreground text-right">

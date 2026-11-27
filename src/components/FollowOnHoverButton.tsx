@@ -58,7 +58,7 @@ export function FollowOnHoverButton({
       if (error && !error.message.includes("duplicate")) throw error;
     },
     onSuccess: () => {
-      toast.success("Following!");
+      toast.success(t("uiFollowOnHoverButton.following"));
       if (userId) notifyNewFollower({ followerId: userId, targetUserId: targetUserId });
     },
     onSettled: () => {

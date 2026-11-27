@@ -59,18 +59,18 @@ import { translateCompanySize } from "@/lib/entityLabels";
 
 const TABS = [
   { key: "identity", get label() { return i18n.t("uiCompanySettings.identityProfile"); }, icon: Shield },
-  { key: "membership", label: "Membership Policy", icon: ClipboardList },
-  { key: "applications", label: "Applications", icon: Users },
+  { key: "membership", get label() { return i18n.t("uiCompanySettings.membershipPolicy"); }, icon: ClipboardList },
+  { key: "applications", get label() { return i18n.t("uiCompanySettings.applications"); }, icon: Users },
   { key: "members", get label() { return i18n.t("uiCompanySettings.membersRoles"); }, icon: Users },
   { key: "roles", get label() { return i18n.t("uiCompanySettings.customRoles"); }, icon: Tag },
   { key: "quests", get label() { return i18n.t("uiCompanySettings.quests"); }, icon: Zap },
-  { key: "activity", label: "Services & Bookings", icon: Briefcase },
-  { key: "services-visibility", label: "Services Display", icon: ShoppingBag },
-  { key: "availability", label: "Availability", icon: CalendarDays },
-  { key: "partnerships", label: "Partnerships", icon: Handshake },
-  { key: "documents", label: "Documents", icon: Briefcase },
-  { key: "billing", label: "Billing", icon: CreditCard },
-  { key: "website", label: "Website", icon: Globe },
+  { key: "activity", get label() { return i18n.t("uiCompanySettings.servicesBookings"); }, icon: Briefcase },
+  { key: "services-visibility", get label() { return i18n.t("uiCompanySettings.servicesDisplay"); }, icon: ShoppingBag },
+  { key: "availability", get label() { return i18n.t("uiCompanySettings.availability"); }, icon: CalendarDays },
+  { key: "partnerships", get label() { return i18n.t("uiCompanySettings.partnerships"); }, icon: Handshake },
+  { key: "documents", get label() { return i18n.t("uiCompanySettings.documents"); }, icon: Briefcase },
+  { key: "billing", get label() { return i18n.t("uiCompanySettings.billing"); }, icon: CreditCard },
+  { key: "website", get label() { return i18n.t("uiCompanySettings.website"); }, icon: Globe },
 ];
 
 export default function CompanySettings() {
@@ -180,7 +180,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
     if (!gm) return;
     const admins = members.filter((m: any) => m.role === "admin" || m.role === "ADMIN" || m.role === "owner");
     if (admins.length <= 1) {
-      toast({ title: "Cannot demote", description: t("uiCompanySettings.atLeastOneAdminMustExist"), variant: "destructive" });
+      toast({ title: t("uiCompanySettings.cannotDemote"), description: t("uiCompanySettings.atLeastOneAdminMustExist"), variant: "destructive" });
       return;
     }
     await supabase.from("company_members").update({ role: "member" as any }).eq("id", memberId);
@@ -299,14 +299,14 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
               {/* ── Identity & Profile ── */}
               {activeTab === "identity" && (
                 <div className="space-y-5 max-w-lg">
-                  <Section title="Organization Identity" icon={<Building2 className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.organizationIdentity")} icon={<Building2 className="h-5 w-5" />}>
                     <div className="space-y-4">
                       <div><label className="text-sm font-medium mb-1 block">{t("uiCompanySettings.name")}</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
-                      <ImageUpload label="Logo" currentImageUrl={logoUrl || undefined} onChange={(url) => setLogoUrl(url ?? "")} aspectRatio="1/1" description="Square logo, 256×256 recommended" />
-                      <ImageUpload label="Banner (optional)" currentImageUrl={bannerUrl || undefined} onChange={(url) => setBannerUrl(url ?? "")} aspectRatio="16/9" description="Wide banner, 1200×400 recommended" />
+                      <ImageUpload label={t("uiCompanySettings.logo")} currentImageUrl={logoUrl || undefined} onChange={(url) => setLogoUrl(url ?? "")} aspectRatio="1/1" description={t("uiCompanySettings.squareLogo256256Recommended")} />
+                      <ImageUpload label={t("uiCompanySettings.bannerOptional")} currentImageUrl={bannerUrl || undefined} onChange={(url) => setBannerUrl(url ?? "")} aspectRatio="16/9" description={t("uiCompanySettings.wideBanner1200400Recommended")} />
                       <div><label className="text-sm font-medium mb-1 block">{t("uiCompanySettings.description")}</label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} className="resize-none min-h-[120px]" /></div>
                       <div className="grid grid-cols-2 gap-3">
-                        <div><label className="text-sm font-medium mb-1 block">Sector</label><Input value={sector} onChange={(e) => setSector(e.target.value)} maxLength={50} /></div>
+                        <div><label className="text-sm font-medium mb-1 block">{t("uiCompanySettings.sector")}</label><Input value={sector} onChange={(e) => setSector(e.target.value)} maxLength={50} /></div>
                         <div><label className="text-sm font-medium mb-1 block">{t("companySize.sizeLabel")}</label>
                           <Select value={size} onValueChange={setSize}>
                             <SelectTrigger><SelectValue /></SelectTrigger>
@@ -319,7 +319,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                           </Select>
                         </div>
                       </div>
-                      <div><label className="text-sm font-medium mb-1 block">Website URL</label><Input value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://…" /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiCompanySettings.websiteUrl")}</label><Input value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://…" /></div>
                     </div>
                   </Section>
 
@@ -351,7 +351,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
 
                   <Separator />
 
-                  <Section title="Links & Social" icon={<Globe className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.linksSocial")} icon={<Globe className="h-5 w-5" />}>
                     <SocialLinksEdit
                       data={{ websiteUrl, twitterUrl: companyTwitterUrl, linkedinUrl: companyLinkedinUrl, instagramUrl: companyInstagramUrl }}
                       onChange={(key, value) => {
@@ -380,7 +380,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                       // These fields may not exist yet in the companies table
                       // but the save won't fail — it'll just skip unknown columns
                     } as any).eq("id", companyId);
-                    toast({ title: "Membership policy saved" });
+                    toast({ title: t("uiCompanySettings.membershipPolicySaved") });
                   }}
                 />
               )}
@@ -430,7 +430,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                               </Avatar>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <p className="font-medium text-sm truncate">{m.user?.name || "Unknown"}</p>
+                                  <p className="font-medium text-sm truncate">{m.user?.name || t("uiCompanySettings.unknown")}</p>
                                    {isAdminRole && (
                                      <Badge variant="secondary" className="text-xs gap-1"><Crown className="h-3 w-3" /> {t("uiCompanySettings.admin")}</Badge>
                                    )}
@@ -438,7 +438,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                                      <Badge key={r.id} className="text-[10px] h-5 text-white border-0" style={{ backgroundColor: r.color }}>{r.name}</Badge>
                                    ))}
                                 </div>
-                                <p className="text-xs text-muted-foreground">Joined {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</p>
+                                <p className="text-xs text-muted-foreground">{t("uiCompanySettings.joined")} {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}</p>
                               </div>
                               {!isSelf && (
                                 <div className="flex items-center gap-1">
@@ -504,15 +504,15 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                     <div className="grid gap-4 md:grid-cols-3 mb-4">
                       <div className="rounded-lg border border-border bg-card p-4 text-center">
                         <p className="text-2xl font-bold text-primary">{bookings.length}</p>
-                        <p className="text-sm text-muted-foreground">Total bookings</p>
+                        <p className="text-sm text-muted-foreground">{t("uiCompanySettings.totalBookings")}</p>
                       </div>
                       <div className="rounded-lg border border-border bg-card p-4 text-center">
                         <p className="text-2xl font-bold text-primary">{serviceUsage.size}</p>
-                        <p className="text-sm text-muted-foreground">Services used</p>
+                        <p className="text-sm text-muted-foreground">{t("uiCompanySettings.servicesUsed")}</p>
                       </div>
                       <div className="rounded-lg border border-border bg-card p-4 text-center">
                         <p className="text-2xl font-bold text-primary">{providerUsage.size}</p>
-                        <p className="text-sm text-muted-foreground">Providers engaged</p>
+                        <p className="text-sm text-muted-foreground">{t("uiCompanySettings.providersEngaged")}</p>
                       </div>
                     </div>
                   </Section>
@@ -543,7 +543,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
               {/* ── Availability ── */}
               {activeTab === "availability" && (
                 <div className="space-y-5 max-w-lg">
-                  <Section title="Unit Availability" icon={<CalendarDays className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.unitAvailability")} icon={<CalendarDays className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
                       {t("uiCompanySettings.configureWhenThisOrganizationIsAvailable")}
                     </p>
@@ -555,7 +555,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
               {/* ── Documents ── */}
               {activeTab === "documents" && (
                 <div className="space-y-6 max-w-lg">
-                  <Section title="Organization Documents" icon={<Briefcase className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.organizationDocuments")} icon={<Briefcase className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">{t("uiCompanySettings.uploadDocumentsContractsAndResourcesFor")}</p>
                     <AttachmentList targetType={AttachmentTargetType.COMPANY} targetId={companyId} />
                     <div className="mt-4">
@@ -568,10 +568,10 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
               {/* ── Billing ── */}
               {activeTab === "billing" && (
                 <div className="space-y-6 max-w-lg">
-                  <Section title="Organization Plan & Billing" icon={<CreditCard className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.organizationPlanBilling")} icon={<CreditCard className="h-5 w-5" />}>
                     <div className="rounded-lg border-2 border-dashed border-border bg-muted/30 p-8 text-center">
                       <CreditCard className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-                      <h4 className="font-display text-lg font-semibold mb-1">Coming soon</h4>
+                      <h4 className="font-display text-lg font-semibold mb-1">{t("uiCompanySettings.comingSoon")}</h4>
                       <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                         {t("uiCompanySettings.organizationSpecificSubscriptionPlansBillingManagement")}
                       </p>
@@ -712,7 +712,7 @@ function CompanyServicesVisibilityTab({ companyId }: { companyId: string }) {
     }
     refetchVis();
     qc.invalidateQueries({ queryKey: ["services-for-company", companyId] });
-    toast({ title: newVisible ? "Service shown" : "Service hidden" });
+    toast({ title: newVisible ? t("uiCompanySettings.serviceShown") : t("uiCompanySettings.serviceHidden") });
   };
 
   const services = memberServices ?? [];
@@ -721,10 +721,10 @@ function CompanyServicesVisibilityTab({ companyId }: { companyId: string }) {
     <div className="space-y-5 max-w-lg">
       <Section title={t("uiCompanySettings.memberServicesDisplay")} icon={<ShoppingBag className="h-5 w-5" />}>
         <p className="text-sm text-muted-foreground mb-4">
-          {t("uiCompanySettings.servicesFromMembersWith")} <strong>{t("uiCompanySettings.admin")}</strong> or <strong>Operations</strong> {t("uiCompanySettings.rolesAreEligibleToAppearOn")}
+          {t("uiCompanySettings.servicesFromMembersWith")} <strong>{t("uiCompanySettings.admin")}</strong> or <strong>{t("uiCompanySettings.operations")}</strong> {t("uiCompanySettings.rolesAreEligibleToAppearOn")}
         </p>
         {services.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("uiCompanySettings.noEligibleMemberServicesFoundAssign")} <strong>{t("uiCompanySettings.admin")}</strong> or <strong>Operations</strong> {t("uiCompanySettings.roleToMembersInTheCustom")}</p>
+          <p className="text-sm text-muted-foreground">{t("uiCompanySettings.noEligibleMemberServicesFoundAssign")} <strong>{t("uiCompanySettings.admin")}</strong> or <strong>{t("uiCompanySettings.operations")}</strong> {t("uiCompanySettings.roleToMembersInTheCustom")}</p>
         ) : (
           <div className="space-y-2">
             {services.map((svc) => {
@@ -734,7 +734,7 @@ function CompanyServicesVisibilityTab({ companyId }: { companyId: string }) {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{svc.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      by {profileMap.get(svc.provider_user_id ?? "") ?? "Unknown"}
+                      by {profileMap.get(svc.provider_user_id ?? "") ?? t("uiCompanySettings.unknown")}
                       {svc.price_amount != null && ` · €${svc.price_amount}`}
                     </p>
                   </div>
@@ -745,7 +745,7 @@ function CompanyServicesVisibilityTab({ companyId }: { companyId: string }) {
                     onClick={() => toggleVisibility(svc.id, isVisible)}
                   >
                     {isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
-                    {isVisible ? "Shown" : "Hidden"}
+                    {isVisible ? t("uiCompanySettings.shown") : t("uiCompanySettings.hidden")}
                   </Button>
                 </div>
               );

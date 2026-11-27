@@ -284,7 +284,7 @@ export function useValuePieActions() {
       if (params.territoryId && (params.territoryTokens ?? 0) > 0) parts.push("territoire");
       if ((params.ctgTokens ?? 0) > 0) parts.push("CTG");
 
-      toast({ title: "🟩 Value Pie distributed!", description: parts.join(" + ") });
+      toast({ title: t("uiUseValuePie.valuePieDistributed"), description: parts.join(" + ") });
       qc.invalidateQueries({ queryKey: ["quest-value-pie"] });
       qc.invalidateQueries({ queryKey: ["contribution-logs"] });
       qc.invalidateQueries({ queryKey: ["guild-ovn-data"] });

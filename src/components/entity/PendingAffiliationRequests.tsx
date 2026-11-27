@@ -65,7 +65,7 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
     if (error) {
       toast({ title: t("uiPendingAffiliationRequests.errorApproving"), description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Affiliation approved", description: t("uiPendingAffiliationRequests.theQuestIsNowLinkedTo") });
+      toast({ title: t("uiPendingAffiliationRequests.affiliationApproved"), description: t("uiPendingAffiliationRequests.theQuestIsNowLinkedTo") });
       qc.invalidateQueries({ queryKey: ["pending-affiliations", entityType, entityId] });
       qc.invalidateQueries({ queryKey: ["quests-for-guild", entityId] });
       qc.invalidateQueries({ queryKey: ["quests-for-company", entityId] });
@@ -80,7 +80,7 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
     if (error) {
       toast({ title: t("uiPendingAffiliationRequests.errorDeclining"), description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Affiliation declined" });
+      toast({ title: t("uiPendingAffiliationRequests.affiliationDeclined") });
       qc.invalidateQueries({ queryKey: ["pending-affiliations", entityType, entityId] });
     }
     setProcessing(null);
@@ -130,7 +130,7 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
                   disabled={processing === req.id}
                 >
                   <XCircle className="h-3 w-3 mr-1" />
-                  Decline
+                  {t("uiPendingAffiliationRequests.decline")}
                 </Button>
               </div>
             </div>

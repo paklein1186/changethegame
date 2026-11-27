@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Check, CheckCheck, RefreshCw, Newspaper, CalendarDays, Vote, ShieldCheck } from "lucide-react";
@@ -43,7 +45,7 @@ async function loadSections(uid: string): Promise<Section[]> {
       ...(posts.data ?? []).map((p: any) => ({ key: `post:${p.id}`, title: short(p.content) || "Nouveau post", sub: "Post dans une de vos guildes", href: `/guilds/${p.context_id}`, date: p.created_at })),
       ...(updates.data ?? []).map((u: any) => ({ key: `qupd:${u.id}`, title: u.title || "Mise à jour de quête", sub: "Quête suivie", href: `/quests/${u.quest_id}`, date: u.created_at })),
     ] },
-    { id: "agenda", label: "Agenda", icon: CalendarDays, items: [
+    { id: "agenda", get label() { return i18n.t("uiDigestSections.agenda"); }, icon: CalendarDays, items: [
       ...(events.data ?? []).map((e: any) => ({ key: `evt:${e.id}`, title: e.title, sub: `Événement · ${day(e.start_at)}`, href: `/guilds/${e.guild_id}`, date: e.start_at })),
       ...(rituals.data ?? []).map((r: any) => ({ key: `rit:${r.id}:${r.next_occurrence}`, title: r.title, sub: `Rituel · ${day(r.next_occurrence)}`, href: `/guilds/${r.guild_id}`, date: r.next_occurrence })),
       ...(bookings.data ?? []).map((b: any) => ({ key: `bk:${b.id}`, title: "Réservation à confirmer", sub: day(b.start_date_time ?? b.requested_date_time ?? b.created_at), href: `/me/bookings`, date: b.created_at })),
@@ -52,11 +54,12 @@ async function loadSections(uid: string): Promise<Section[]> {
       ...(polls.data ?? []).map((p: any) => ({ key: `poll:${p.id}`, title: p.question, sub: p.closes_at ? `Sondage · clôture ${day(p.closes_at)}` : "Sondage ouvert", href: `/guilds/${p.entity_id}`, date: p.created_at })),
       ...(proposals.data ?? []).map((p: any) => ({ key: `prop:${p.id}`, title: p.title, sub: "Proposition d'aide à valider", href: `/quests/${p.quest_id}`, date: p.created_at })),
     ] },
-    { id: "trust", label: "Confiance", icon: ShieldCheck, items: (trust.data ?? []).map((t: any) => ({ key: `trust:${t.id}`, title: "Nouvelle attestation reçue", sub: String(t.edge_type).replace(/_/g, " "), href: `/users/${t.created_by}`, date: t.created_at })) },
+    { id: "trust", get label() { return i18n.t("uiDigestSections.confiance"); }, icon: ShieldCheck, items: (trust.data ?? []).map((t: any) => ({ key: `trust:${t.id}`, title: "Nouvelle attestation reçue", sub: String(t.edge_type).replace(/_/g, " "), href: `/users/${t.created_by}`, date: t.created_at })) },
   ];
 }
 
 export function DigestSections({ userId }: { userId: string }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const sections = useQuery({ queryKey: ["digest-sections", userId], queryFn: () => loadSections(userId), staleTime: 60_000 });
   const reads = useQuery({
@@ -79,7 +82,7 @@ export function DigestSections({ userId }: { userId: string }) {
           <RefreshCw className={`h-3.5 w-3.5 mr-1 ${sections.isFetching ? "animate-spin" : ""}`} />Rafraîchir
         </Button>
         <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => markRead(visible.flatMap((s) => s.items.map((i) => i.key)))}>
-          <CheckCheck className="h-3.5 w-3.5 mr-1" />Tout marquer lu
+          <CheckCheck className="h-3.5 w-3.5 mr-1" />{t("uiDigestSections.toutMarquerLu")}
         </Button>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
@@ -87,7 +90,7 @@ export function DigestSections({ userId }: { userId: string }) {
           <div key={s.id} className="group/section rounded-lg border border-border bg-card p-3">
             <div className="flex items-center justify-between mb-2">
               <h3 className="flex items-center gap-1.5 text-sm font-semibold"><s.icon className="h-4 w-4 text-primary" />{s.label}<span className="text-xs text-muted-foreground font-normal">({s.items.length})</span></h3>
-              <button type="button" onClick={() => markRead(s.items.map((i) => i.key))} className="text-xs text-muted-foreground hover:text-foreground opacity-100 md:opacity-0 md:group-hover/section:opacity-100 focus:opacity-100 transition-opacity">Marquer lu</button>
+              <button type="button" onClick={() => markRead(s.items.map((i) => i.key))} className="text-xs text-muted-foreground hover:text-foreground opacity-100 md:opacity-0 md:group-hover/section:opacity-100 focus:opacity-100 transition-opacity">{t("uiDigestSections.marquerLu")}</button>
             </div>
             <ul className="space-y-1">
               {s.items.slice(0, 4).map((i) => (
@@ -96,7 +99,7 @@ export function DigestSections({ userId }: { userId: string }) {
                     <p className="text-sm truncate">{i.title}</p>
                     {i.sub && <p className="text-xs text-muted-foreground truncate">{i.sub}</p>}
                   </Link>
-                  <button type="button" aria-label="Marquer comme lu" title="Marquer comme lu" onClick={() => markRead([i.key])} className="shrink-0 p-1 text-muted-foreground hover:text-primary opacity-100 md:opacity-0 md:group-hover/item:opacity-100 focus:opacity-100 transition-opacity">
+                  <button type="button" aria-label={t("uiDigestSections.marquerCommeLu")} title={t("uiDigestSections.marquerCommeLu")} onClick={() => markRead([i.key])} className="shrink-0 p-1 text-muted-foreground hover:text-primary opacity-100 md:opacity-0 md:group-hover/item:opacity-100 focus:opacity-100 transition-opacity">
                     <Check className="h-3.5 w-3.5" />
                   </button>
                 </li>

@@ -94,7 +94,7 @@ export function MemoryEnginePanel({
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Brain className="h-5 w-5 text-primary" />
-        <h3 className="font-display text-lg font-semibold">Institutional Memory</h3>
+        <h3 className="font-display text-lg font-semibold">{t("uiMemoryEnginePanel.institutionalMemory")}</h3>
         <Badge variant="secondary" className="text-[10px]">AI</Badge>
       </div>
       <p className="text-sm text-muted-foreground">
@@ -103,11 +103,11 @@ export function MemoryEnginePanel({
 
       <Button onClick={generate} disabled={loading} className="gap-2">
         {loading ? (
-          <><Loader2 className="h-4 w-4 animate-spin" /> Generating…</>
+          <><Loader2 className="h-4 w-4 animate-spin" /> {t("uiMemoryEnginePanel.generating")}</>
         ) : summary ? (
-          <><RefreshCw className="h-4 w-4" /> Regenerate Summary</>
+          <><RefreshCw className="h-4 w-4" /> {t("uiMemoryEnginePanel.regenerateSummary")}</>
         ) : (
-          <><Brain className="h-4 w-4" /> Generate History Summary</>
+          <><Brain className="h-4 w-4" /> {t("uiMemoryEnginePanel.generateHistorySummary")}</>
         )}
       </Button>
 
@@ -117,13 +117,13 @@ export function MemoryEnginePanel({
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-primary" /> Memory Summary
+                  <BookOpen className="h-4 w-4 text-primary" /> {t("uiMemoryEnginePanel.memorySummary")}
                 </CardTitle>
                 <div className="flex gap-1">
                   <Button size="icon" variant="ghost" className="h-7 w-7" onClick={copyToClipboard} title={t("uiMemoryEnginePanel.copy")}>
                     {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
                   </Button>
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={generate} title="Regenerate">
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={generate} title={t("uiMemoryEnginePanel.regenerate")}>
                     <RefreshCw className="h-3.5 w-3.5" />
                   </Button>
                   {canSaveToDocs && (

@@ -73,7 +73,7 @@ function ReportPopover({ excerptId, userId }: { excerptId: string; userId: strin
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded" title="Report">
+        <button className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded" title={t("uiTerritoryLibraryTab.report")}>
           <Flag className="h-3.5 w-3.5" />
         </button>
       </PopoverTrigger>
@@ -104,7 +104,7 @@ function ReportPopover({ excerptId, userId }: { excerptId: string; userId: strin
             disabled={reportExcerpt.isPending || (reason === "Other" && !custom.trim())}
           >
             {reportExcerpt.isPending ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
-            Report
+            {t("uiTerritoryLibraryTab.report")}
           </Button>
         </div>
       </PopoverContent>
@@ -161,7 +161,7 @@ function ExcerptCard({
                 {excerpt.contributor_name?.[0]?.toUpperCase() || <User className="h-3 w-3" />}
               </AvatarFallback>
             </Avatar>
-            <span className="text-sm font-medium truncate">{excerpt.contributor_name || "Unknown user"}</span>
+            <span className="text-sm font-medium truncate">{excerpt.contributor_name || t("uiTerritoryLibraryTab.unknownUser")}</span>
           </Link>
         )}
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground shrink-0">
@@ -180,7 +180,7 @@ function ExcerptCard({
           <button
             onClick={(e) => { e.stopPropagation(); setExpanded(true); }}
             className="text-muted-foreground hover:text-primary transition-colors p-1 rounded"
-            title="Expand"
+            title={t("uiTerritoryLibraryTab.expand")}
           >
             <Maximize2 className="h-3.5 w-3.5" />
           </button>
@@ -223,7 +223,7 @@ function ExcerptCard({
       {hasSynthesis && (
         <div className="flex items-center gap-1.5 mb-2">
           <Badge variant="outline" className="text-[9px] gap-1 border-primary/20 text-primary/80 bg-primary/5">
-            <Sparkles className="h-2.5 w-2.5" /> Synthesis
+            <Sparkles className="h-2.5 w-2.5" /> {t("uiTerritoryLibraryTab.synthesis")}
           </Badge>
         </div>
       )}
@@ -238,7 +238,7 @@ function ExcerptCard({
           onClick={(e) => { e.stopPropagation(); setExpanded(true); }}
           className="mt-2 text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors"
         >
-          <Maximize2 className="h-3 w-3" /> Read full excerpt
+          <Maximize2 className="h-3 w-3" /> {t("uiTerritoryLibraryTab.readFullExcerpt")}
         </button>
       )}
     </div>
@@ -252,7 +252,7 @@ function ExcerptCard({
           className="flex items-center gap-1.5 text-xs text-primary/70 hover:text-primary font-medium transition-colors py-1"
         >
           <MessageSquare className="h-3 w-3" />
-          {showSource ? "Hide full source" : "Read full source"}
+          {showSource ? t("uiTerritoryLibraryTab.hideFullSource") : t("uiTerritoryLibraryTab.readFullSource")}
           {showSource ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </button>
         <AnimatePresence>
@@ -318,7 +318,7 @@ function ExcerptCard({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-base">
               <BookOpen className="h-4.5 w-4.5 text-primary" />
-              Library Excerpt
+              {t("uiTerritoryLibraryTab.libraryExcerpt")}
             </DialogTitle>
           </DialogHeader>
 
@@ -336,7 +336,7 @@ function ExcerptCard({
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <span className="text-sm font-medium">{excerpt.contributor_name || "Unknown user"}</span>
+                  <span className="text-sm font-medium">{excerpt.contributor_name || t("uiTerritoryLibraryTab.unknownUser")}</span>
                   <p className="text-[11px] text-muted-foreground">
                     {formatDistanceToNow(new Date(excerpt.created_at), { addSuffix: true })}
                   </p>
@@ -355,7 +355,7 @@ function ExcerptCard({
             {hasSynthesis && (
               <div className="flex items-center gap-1.5 mb-3">
                 <Badge variant="outline" className="text-[10px] gap-1 border-primary/20 text-primary/80 bg-primary/5">
-                  <Sparkles className="h-2.5 w-2.5" /> Synthesis
+                  <Sparkles className="h-2.5 w-2.5" /> {t("uiTerritoryLibraryTab.synthesis")}
                 </Badge>
               </div>
             )}
@@ -372,7 +372,7 @@ function ExcerptCard({
                 className="flex items-center gap-1.5 text-xs text-primary/70 hover:text-primary font-medium transition-colors py-1"
               >
                 <MessageSquare className="h-3 w-3" />
-                {showSource ? "Hide full source" : "Read full source"}
+                {showSource ? t("uiTerritoryLibraryTab.hideFullSource") : t("uiTerritoryLibraryTab.readFullSource")}
                 {showSource ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               </button>
               <AnimatePresence>
@@ -471,7 +471,7 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
               onClick={() => setSort(sort === "top" ? "recent" : "top")}
             >
               <ArrowUpDown className="h-3.5 w-3.5" />
-              {sort === "top" ? "Most valued" : "Most recent"}
+              {sort === "top" ? t("uiTerritoryLibraryTab.mostValued") : t("uiTerritoryLibraryTab.mostRecent")}
             </Button>
             {userId && (
               <Button size="sm" className="gap-1.5" onClick={() => setShowAdd(!showAdd)}>
@@ -493,7 +493,7 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
           >
             <div>
               <Label className="text-xs font-semibold text-muted-foreground mb-1 block">
-                Synthesis / Key insight
+                {t("uiTerritoryLibraryTab.synthesisKeyInsight")}
               </Label>
               <Textarea
                 value={newSynthesis}
@@ -504,7 +504,7 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
             </div>
             <div>
               <Label className="text-xs font-semibold text-muted-foreground mb-1 block">
-                Source / Full prompt (optional)
+                {t("uiTerritoryLibraryTab.sourceFullPromptOptional")}
               </Label>
               <Textarea
                 value={newSource}

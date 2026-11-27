@@ -166,7 +166,7 @@ export default function CourseCreate() {
           await supabase.from("notifications").insert(rows);
         }
       }
-      toast({ title: "Course created!" });
+      toast({ title: t("uiCourseCreate.courseCreated") });
       navigate(`/courses/${newCourse.id}/edit`);
       return;
     }
@@ -180,7 +180,7 @@ export default function CourseCreate() {
     existingCTR.forEach((ct) => { const i = courseTerritories.indexOf(ct); if (i !== -1) courseTerritories.splice(i, 1); });
     selectedTerritories.forEach((territoryId, i) => courseTerritories.push({ id: `crtr-${Date.now()}-${i}`, courseId, territoryId }));
 
-    toast({ title: "Course updated!" });
+    toast({ title: t("uiCourseCreate.courseUpdated") });
   };
 
   const handlePublish = () => {
@@ -190,7 +190,7 @@ export default function CourseCreate() {
     const target = courses.find((c) => c.id === existingCourse.id);
     if (target) {
       target.isPublished = !target.isPublished;
-      toast({ title: target.isPublished ? "Course published!" : "Course unpublished" });
+      toast({ title: target.isPublished ? t("uiCourseCreate.coursePublished") : t("uiCourseCreate.courseUnpublished") });
     }
   };
 
@@ -240,14 +240,14 @@ export default function CourseCreate() {
       setCourseLessons((prev) => [...prev, newLesson]);
     }
     setLessonDialogOpen(false);
-    toast({ title: editingLesson ? "Lesson updated!" : "Lesson added!" });
+    toast({ title: editingLesson ? t("uiCourseCreate.lessonUpdated") : t("uiCourseCreate.lessonAdded") });
   };
 
   const deleteLesson = (lessonId: string) => {
     const idx = lessons.findIndex((l) => l.id === lessonId);
     if (idx !== -1) lessons.splice(idx, 1);
     setCourseLessons((prev) => prev.filter((l) => l.id !== lessonId));
-    toast({ title: "Lesson removed" });
+    toast({ title: t("uiCourseCreate.lessonRemoved") });
   };
 
   const moveLesson = (index: number, direction: "up" | "down") => {
@@ -276,7 +276,7 @@ export default function CourseCreate() {
           </h1>
           {isEdit && existingCourse && (
             <Button variant={existingCourse.isPublished ? "outline" : "default"} onClick={handlePublish}>
-              {existingCourse.isPublished ? "Unpublish" : "Publish course"}
+              {existingCourse.isPublished ? t("uiCourseCreate.unpublish") : t("uiCourseCreate.publishCourse")}
             </Button>
           )}
         </div>
@@ -285,17 +285,17 @@ export default function CourseCreate() {
           {/* Left: Course details */}
           <div className="space-y-5">
             <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.title")}</label><Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("uiCourseCreate.courseTitle")} maxLength={120} /></div>
-            <div><label className="text-sm font-medium mb-1 block">Subtitle</label><Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="Short subtitle" maxLength={200} /></div>
-            <ImageUpload label="Cover Image" currentImageUrl={coverImageUrl} onChange={setCoverImageUrl} aspectRatio="16/9" description="Wide cover, recommended 1200×600" />
+            <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.subtitle")}</label><Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder={t("uiCourseCreate.shortSubtitle")} maxLength={200} /></div>
+            <ImageUpload label={t("uiCourseCreate.coverImage")} currentImageUrl={coverImageUrl} onChange={setCoverImageUrl} aspectRatio="16/9" description={t("uiCourseCreate.wideCoverRecommended1200600")} />
             <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.description")}</label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("uiCourseCreate.courseDescriptionSupportsMarkdown")} className="resize-none min-h-[150px]" /></div>
 
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Free course</label>
+              <label className="text-sm font-medium">{t("uiCourseCreate.freeCourse")}</label>
               <Switch checked={isFree} onCheckedChange={setIsFree} />
             </div>
             {!isFree && (
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="text-sm font-medium mb-1 block">Price (€)</label><Input type="number" value={priceAmount} onChange={(e) => setPriceAmount(e.target.value)} min={0} step={0.01} /></div>
+                <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.price")}</label><Input type="number" value={priceAmount} onChange={(e) => setPriceAmount(e.target.value)} min={0} step={0.01} /></div>
               </div>
             )}
 
@@ -304,21 +304,21 @@ export default function CourseCreate() {
                 <Select value={level} onValueChange={setLevel}>
                   <SelectTrigger><SelectValue placeholder={t("uiCourseCreate.selectLevel")} /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={CourseLevel.BEGINNER}>Beginner</SelectItem>
-                    <SelectItem value={CourseLevel.INTERMEDIATE}>Intermediate</SelectItem>
-                    <SelectItem value={CourseLevel.ADVANCED}>Advanced</SelectItem>
+                    <SelectItem value={CourseLevel.BEGINNER}>{t("uiCourseCreate.beginner")}</SelectItem>
+                    <SelectItem value={CourseLevel.INTERMEDIATE}>{t("uiCourseCreate.intermediate")}</SelectItem>
+                    <SelectItem value={CourseLevel.ADVANCED}>{t("uiCourseCreate.advanced")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div><label className="text-sm font-medium mb-1 block">Duration (min)</label><Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} min={0} /></div>
+              <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.durationMin")}</label><Input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} min={0} /></div>
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-1 block">Provider</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.provider")}</label>
               <Select value={providerType} onValueChange={(v) => setProviderType(v as "self" | "guild" | "company")}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="self">As myself</SelectItem>
+                  <SelectItem value="self">{t("uiCourseCreate.asMyself")}</SelectItem>
                   {adminGuilds.length > 0 && <SelectItem value="guild">{t("uiCourseCreate.underAGuild")}</SelectItem>}
                   {adminCompanies.length > 0 && <SelectItem value="company">{t("uiCourseCreate.underACompany")}</SelectItem>}
                 </SelectContent>
@@ -365,7 +365,7 @@ export default function CourseCreate() {
           {/* Right: Lessons management (edit mode only) */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display text-lg font-semibold flex items-center gap-2"><BookOpen className="h-5 w-5" /> Lessons ({courseLessons.length})</h2>
+              <h2 className="font-display text-lg font-semibold flex items-center gap-2"><BookOpen className="h-5 w-5" /> {t("uiCourseCreate.lessons")}{courseLessons.length})</h2>
               {isEdit && (
                 <Button size="sm" onClick={() => openLessonDialog()}><Plus className="h-4 w-4 mr-1" /> {t("uiCourseCreate.addLesson")}</Button>
               )}
@@ -383,8 +383,8 @@ export default function CourseCreate() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{lesson.title}</p>
                     <div className="flex gap-1.5 mt-0.5">
-                      {lesson.isPreview && <Badge variant="outline" className="text-[10px]"><Eye className="h-2.5 w-2.5 mr-0.5" />Preview</Badge>}
-                      {lesson.videoUrl && <Badge variant="secondary" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />Video</Badge>}
+                      {lesson.isPreview && <Badge variant="outline" className="text-[10px]"><Eye className="h-2.5 w-2.5 mr-0.5" />{t("uiCourseCreate.preview")}</Badge>}
+                      {lesson.videoUrl && <Badge variant="secondary" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />{t("uiCourseCreate.video")}</Badge>}
                     </div>
                   </div>
                   <Button size="sm" variant="ghost" onClick={() => openLessonDialog(lesson)} className="h-7 text-xs">{t("uiCourseCreate.edit")}</Button>
@@ -402,9 +402,9 @@ export default function CourseCreate() {
           <DialogHeader><DialogTitle>{editingLesson ? t("uiCourseCreate.editLesson") : t("uiCourseCreate.addLesson2")}</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.title")}</label><Input value={lesTitle} onChange={(e) => setLesTitle(e.target.value)} maxLength={120} /></div>
-            <div><label className="text-sm font-medium mb-1 block">Summary</label><Input value={lesSummary} onChange={(e) => setLesSummary(e.target.value)} maxLength={200} /></div>
-            <div><label className="text-sm font-medium mb-1 block">Content (Markdown)</label><Textarea value={lesContent} onChange={(e) => setLesContent(e.target.value)} className="resize-none min-h-[200px] font-mono text-sm" placeholder="# Lesson content&#10;&#10;Write in markdown..." /></div>
-            <div><label className="text-sm font-medium mb-1 block">Video URL (optional)</label><Input value={lesVideoUrl} onChange={(e) => setLesVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." /></div>
+            <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.summary")}</label><Input value={lesSummary} onChange={(e) => setLesSummary(e.target.value)} maxLength={200} /></div>
+            <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.contentMarkdown")}</label><Textarea value={lesContent} onChange={(e) => setLesContent(e.target.value)} className="resize-none min-h-[200px] font-mono text-sm" placeholder="# Lesson content&#10;&#10;Write in markdown..." /></div>
+            <div><label className="text-sm font-medium mb-1 block">{t("uiCourseCreate.videoUrlOptional")}</label><Input value={lesVideoUrl} onChange={(e) => setLesVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." /></div>
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">{t("uiCourseCreate.allowPreviewNonEnrolledUsersCan")}</label>
               <Switch checked={lesIsPreview} onCheckedChange={setLesIsPreview} />

@@ -108,7 +108,7 @@ export default function AdminMilestones() {
       })
       .eq("id", id);
     setEditingId(null);
-    toast({ title: "Milestone updated" });
+    toast({ title: t("uiAdminMilestones.milestoneUpdated") });
     qc.invalidateQueries({ queryKey: ["admin-milestones"] });
   };
 
@@ -117,7 +117,7 @@ export default function AdminMilestones() {
       .from("milestones")
       .update({ is_enabled: !m.is_enabled })
       .eq("id", m.id);
-    toast({ title: m.is_enabled ? "Milestone disabled" : "Milestone enabled" });
+    toast({ title: m.is_enabled ? t("uiAdminMilestones.milestoneDisabled") : t("uiAdminMilestones.milestoneEnabled") });
     qc.invalidateQueries({ queryKey: ["admin-milestones"] });
   };
 
@@ -126,7 +126,7 @@ export default function AdminMilestones() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-primary" /> Milestones Manager
+            <Trophy className="h-6 w-6 text-primary" /> {t("uiAdminMilestones.milestonesManager")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
             {t("uiAdminMilestones.manageMilestoneDefinitionsRewardsAndView")}
@@ -143,15 +143,15 @@ export default function AdminMilestones() {
             <TableRow>
               <TableHead className="w-10"></TableHead>
               <TableHead>{t("uiAdminMilestones.title")}</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>Reward</TableHead>
-              <TableHead>Persona</TableHead>
+              <TableHead>{t("uiAdminMilestones.code")}</TableHead>
+              <TableHead>{t("uiAdminMilestones.reward")}</TableHead>
+              <TableHead>{t("uiAdminMilestones.persona")}</TableHead>
               <TableHead className="text-right">
                 <span className="flex items-center gap-1 justify-end">
-                  <BarChart3 className="h-3.5 w-3.5" /> Completions
+                  <BarChart3 className="h-3.5 w-3.5" /> {t("uiAdminMilestones.completions")}
                 </span>
               </TableHead>
-              <TableHead>Enabled</TableHead>
+              <TableHead>{t("uiAdminMilestones.enabled")}</TableHead>
               <TableHead className="w-20"></TableHead>
             </TableRow>
           </TableHeader>
@@ -188,7 +188,7 @@ export default function AdminMilestones() {
                           <SelectContent>
                             <SelectItem value="XP">XP</SelectItem>
                             <SelectItem value="CREDITS">{t("uiAdminMilestones.credits")}</SelectItem>
-                            <SelectItem value="BADGE">Badge</SelectItem>
+                            <SelectItem value="BADGE">{t("uiAdminMilestones.badge")}</SelectItem>
                             <SelectItem value="NONE">{t("uiAdminMilestones.none")}</SelectItem>
                           </SelectContent>
                         </Select>

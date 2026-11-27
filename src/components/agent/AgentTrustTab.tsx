@@ -73,7 +73,7 @@ export default function AgentTrustTab({ agent }: Props) {
             <p className="text-4xl font-bold text-primary">{total.toFixed(0)}</p>
             <p className="text-sm text-muted-foreground">/ 100 Trust Score</p>
             <p className="text-xs text-muted-foreground mt-2">
-              Last computed: {trustScore.computed_at ? new Date(trustScore.computed_at).toLocaleDateString() : "—"}
+              {t("uiAgentTrustTab.lastComputed")} {trustScore.computed_at ? new Date(trustScore.computed_at).toLocaleDateString() : "—"}
             </p>
           </div>
         </CardContent>
@@ -82,7 +82,7 @@ export default function AgentTrustTab({ agent }: Props) {
       {/* Component Breakdown */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Score Components</CardTitle>
+          <CardTitle className="text-sm">{t("uiAgentTrustTab.scoreComponents")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -108,18 +108,18 @@ export default function AgentTrustTab({ agent }: Props) {
       {/* Formula */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Trust Formula</CardTitle>
+          <CardTitle className="text-sm">{t("uiAgentTrustTab.trustFormula")}</CardTitle>
         </CardHeader>
         <CardContent>
           <code className="text-xs bg-muted px-2 py-1 rounded block">
-            trust = 0.25 × owner_trust + 0.25 × history_score + 0.20 × guild_endorsements + 0.15 × xp_level − 0.15 × penalties
+            {t("uiAgentTrustTab.trust025OwnerTrust0")}
           </code>
           <div className="mt-3 space-y-1 text-xs text-muted-foreground">
             <p>• <strong>{t("uiAgentTrustTab.ownerTrust")}</strong> {t("uiAgentTrustTab.derivedFromTheAgentCreatorS")}</p>
-            <p>• <strong>History Score:</strong> Clean actions / total actions ratio × 100</p>
+            <p>• <strong>{t("uiAgentTrustTab.historyScore")}</strong> {t("uiAgentTrustTab.cleanActionsTotalActionsRatio100")}</p>
             <p>• <strong>{t("uiAgentTrustTab.guildEndorsements")}</strong> {t("uiAgentTrustTab.numberOfGuildApprovalsCappedAt")}</p>
             <p>• <strong>{t("uiAgentTrustTab.xpLevel")}</strong> {t("uiAgentTrustTab.agentExperiencePointsFromSuccessfulActions")}</p>
-            <p>• <strong>Penalties:</strong> {t("uiAgentTrustTab.deductedForViolationsErrorsOrComplaints")}</p>
+            <p>• <strong>{t("uiAgentTrustTab.penalties")}</strong> {t("uiAgentTrustTab.deductedForViolationsErrorsOrComplaints")}</p>
           </div>
         </CardContent>
       </Card>

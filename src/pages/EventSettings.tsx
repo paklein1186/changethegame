@@ -62,7 +62,7 @@ export default function EventSettings() {
     return (
       <PageShell><FrenchTextOverlay>
         <div className="text-center py-16">
-          <h2 className="text-xl font-bold mb-2">Access Denied</h2>
+          <h2 className="text-xl font-bold mb-2">{t("uiEventSettings.accessDenied")}</h2>
           <p className="text-muted-foreground mb-4">{t("uiEventSettings.youDonTHavePermissionTo")}</p>
           <Button asChild><Link to={`/events/${id}`}>{t("uiEventSettings.backToEvent")}</Link></Button>
         </div>
@@ -138,7 +138,7 @@ export default function EventSettings() {
 
         {/* Visibility */}
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Visibility</h2>
+          <h2 className="text-lg font-semibold">{t("uiEventSettings.visibility")}</h2>
           <div>
             <Label>{t("uiEventSettings.whoCanSeeThisEvent")}</Label>
             <Select value={visibility} onValueChange={setVisibility} disabled={isCancelled}>
@@ -156,13 +156,13 @@ export default function EventSettings() {
 
         {/* Participation Mode */}
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Participation Mode</h2>
+          <h2 className="text-lg font-semibold">{t("uiEventSettings.participationMode")}</h2>
           <div>
             <Label>{t("uiEventSettings.howAreParticipantsAccepted")}</Label>
             <Select value={acceptanceMode} onValueChange={setAcceptanceMode} disabled={isCancelled}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="AUTO">Automatic — First-come, first-served</SelectItem>
+                <SelectItem value="AUTO">{t("uiEventSettings.automaticFirstComeFirstServed")}</SelectItem>
                 <SelectItem value="MANUAL">{t("uiEventSettings.manualHostReviewsAndAccepts")}</SelectItem>
               </SelectContent>
             </Select>
@@ -173,7 +173,7 @@ export default function EventSettings() {
 
         {/* Ticketing & Payment */}
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Ticketing & Payment</h2>
+          <h2 className="text-lg font-semibold">{t("uiEventSettings.ticketingPayment")}</h2>
           <div className="flex items-center gap-3">
             <Switch
               checked={isPaid}
@@ -190,7 +190,7 @@ export default function EventSettings() {
           {isPaid && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Ticket price</Label>
+                <Label>{t("uiEventSettings.ticketPrice")}</Label>
                 <Input
                   type="number"
                   min={0}
@@ -202,13 +202,13 @@ export default function EventSettings() {
                 />
               </div>
               <div>
-                <Label>Currency</Label>
+                <Label>{t("uiEventSettings.currency")}</Label>
                 <Select value={currency} onValueChange={setCurrency} disabled={isCancelled || hasPaidRegistrations}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="EUR">EUR (€)</SelectItem>
-                    <SelectItem value="USD">USD ($)</SelectItem>
-                    <SelectItem value="GBP">GBP (£)</SelectItem>
+                    <SelectItem value="EUR">{t("uiEventSettings.eur")}</SelectItem>
+                    <SelectItem value="USD">{t("uiEventSettings.usd")}</SelectItem>
+                    <SelectItem value="GBP">{t("uiEventSettings.gbp")}</SelectItem>
                     <SelectItem value="CHF">CHF</SelectItem>
                   </SelectContent>
                 </Select>
@@ -221,7 +221,7 @@ export default function EventSettings() {
         {!isCancelled && (
           <div className="flex gap-3 pt-2">
             <Button onClick={handleSave} disabled={saving}>
-              <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : t("uiEventSettings.saveSettings")}
+              <Save className="h-4 w-4 mr-1" /> {saving ? t("uiEventSettings.saving") : t("uiEventSettings.saveSettings")}
             </Button>
           </div>
         )}
@@ -230,7 +230,7 @@ export default function EventSettings() {
 
         {/* Danger Zone */}
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
+          <h2 className="text-lg font-semibold text-destructive">{t("uiEventSettings.dangerZone")}</h2>
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 space-y-4">
             {!isCancelled && (
               <div className="flex items-center justify-between">

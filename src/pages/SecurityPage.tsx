@@ -21,8 +21,8 @@ export default function SecurityPage() {
         ]} />
       </ContentSection>
 
-      <ContentSection title="Responsible Disclosure">
-        <p>{t("uiSecurityPage.ifYouDiscoverAVulnerabilityPlease")} <a href="mailto:security@changethegame.xyz" className="text-primary hover:underline">security@changethegame.xyz</a>{t("uiSecurityPage.weTakeAllReportsSeriouslyAnd")}</p>
+      <ContentSection title={t("uiSecurityPage.responsibleDisclosure")}>
+        <p>{t("uiSecurityPage.ifYouDiscoverAVulnerabilityPlease")} <a href="mailto:security@changethegame.xyz" className="text-primary hover:underline">{t("uiSecurityPage.securityChangethegameXyz")}</a>{t("uiSecurityPage.weTakeAllReportsSeriouslyAnd")}</p>
       </ContentSection>
     </ContentPageShell>
   );

@@ -128,7 +128,7 @@ export default function RevenueModelsPage({ embedded }: { embedded?: boolean }) 
           <p className="text-muted-foreground text-sm sm:text-base">{t("pages.revenue.subtitle")}</p>
         </header>
 
-        <nav className="sticky top-0 z-30 bg-background/90 backdrop-blur-md border-b border-border/40 -mx-4 px-4 py-2 mb-6" aria-label="Page sections">
+        <nav className="sticky top-0 z-30 bg-background/90 backdrop-blur-md border-b border-border/40 -mx-4 px-4 py-2 mb-6" aria-label={t("uiRevenueModelsPage.pageSections")}>
           {isMobile ? (
             <Select value={activeTab} onValueChange={scrollTo}>
               <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>

@@ -15,11 +15,11 @@ type UnitType = "services" | "quests" | "guilds" | "partner_entities" | "posts";
 type MassMode = "private" | "public" | "custom";
 
 const UNIT_TYPES: { key: UnitType; label: string; unitTable?: string }[] = [
-  { key: "services", label: "Services", unitTable: "services" },
+  { key: "services", get label() { return i18n.t("uiFeedpointVisibilitySettings.services"); }, unitTable: "services" },
   { key: "quests", get label() { return i18n.t("uiFeedpointVisibilitySettings.quests"); }, unitTable: "quests" },
   { key: "guilds", get label() { return i18n.t("uiFeedpointVisibilitySettings.guilds"); } },
-  { key: "partner_entities", label: "Partner Entities" },
-  { key: "posts", label: "Posts", unitTable: "feed_posts" },
+  { key: "partner_entities", get label() { return i18n.t("uiFeedpointVisibilitySettings.partnerEntities"); } },
+  { key: "posts", get label() { return i18n.t("uiFeedpointVisibilitySettings.posts"); }, unitTable: "feed_posts" },
 ];
 
 interface Props {
@@ -281,7 +281,7 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
     <div className="rounded-xl border border-border bg-card p-5 space-y-5">
       <div>
         <h3 className="font-display font-semibold flex items-center gap-2 text-base">
-          <Rss className="h-4 w-4 text-primary" /> Website feedpoint visibility
+          <Rss className="h-4 w-4 text-primary" /> {t("uiFeedpointVisibilitySettings.websiteFeedpointVisibility")}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
           {t("uiFeedpointVisibilitySettings.decideWhichTypesOfItemsAppear")}
@@ -301,11 +301,11 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-sm">{ut.label}</span>
                     {mode === "custom" && (
-                      <Badge variant="secondary" className="text-xs">Custom</Badge>
+                      <Badge variant="secondary" className="text-xs">{t("uiFeedpointVisibilitySettings.custom")}</Badge>
                     )}
                     {items.length > 0 && (
                       <span className="text-xs text-muted-foreground">
-                        ({items.filter(i => getEffectiveVisibility(i, ut.key)).length}/{items.length} visible)
+                        ({items.filter(i => getEffectiveVisibility(i, ut.key)).length}/{items.length} {t("uiFeedpointVisibilitySettings.visible")}
                       </span>
                     )}
                   </div>
@@ -344,7 +344,7 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                       className="ml-auto"
                     >
                       <Settings2 className="h-3.5 w-3.5 mr-1" />
-                      {isExpanded ? "Collapse" : "Manage items"}
+                      {isExpanded ? t("uiFeedpointVisibilitySettings.collapse") : t("uiFeedpointVisibilitySettings.manageItems")}
                     </Button>
                   )}
                   {mode !== "custom" && ut.unitTable && items.length > 0 && (
@@ -355,7 +355,7 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                       className="ml-auto text-muted-foreground"
                     >
                       <Settings2 className="h-3.5 w-3.5 mr-1" />
-                      {isExpanded ? "Collapse" : t("uiFeedpointVisibilitySettings.editPerItem")}
+                      {isExpanded ? t("uiFeedpointVisibilitySettings.collapse") : t("uiFeedpointVisibilitySettings.editPerItem")}
                     </Button>
                   )}
                 </div>
@@ -377,7 +377,7 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                   ) : (
                     <>
                       <p className="text-xs text-muted-foreground mb-2">
-                        Default: <strong>{defaults[ut.key] ? t("uiFeedpointVisibilitySettings.showAll") : t("uiFeedpointVisibilitySettings.hideAll")}</strong>{t("uiFeedpointVisibilitySettings.toggleIndividualItemsToOverride")}
+                        {t("uiFeedpointVisibilitySettings.default")} <strong>{defaults[ut.key] ? t("uiFeedpointVisibilitySettings.showAll") : t("uiFeedpointVisibilitySettings.hideAll")}</strong>{t("uiFeedpointVisibilitySettings.toggleIndividualItemsToOverride")}
                       </p>
                       {items.map(item => {
                         const isVisible = getEffectiveVisibility(item, ut.key);
@@ -394,13 +394,13 @@ export function FeedpointVisibilitySettings({ ownerType, ownerId }: Props) {
                               <p className="text-sm font-medium truncate">{getItemLabel(item)}</p>
                               {isOverridden && (
                                 <p className="text-xs text-primary">
-                                  Manually {isVisible ? "shown" : "hidden"}
+                                  {t("uiFeedpointVisibilitySettings.manually")} {isVisible ? "shown" : "hidden"}
                                 </p>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="text-xs text-muted-foreground">
-                                {isVisible ? "Visible" : "Hidden"}
+                                {isVisible ? t("uiFeedpointVisibilitySettings.visible2") : t("uiFeedpointVisibilitySettings.hidden")}
                               </span>
                               <Switch
                                 checked={isVisible}

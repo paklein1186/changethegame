@@ -73,7 +73,7 @@ export function ReportConcernDialog({
       });
     }
 
-    toast({ title: "Concern submitted", description: t("uiReportConcernDialog.yourReportHasBeenSentConfidentially") });
+    toast({ title: t("uiReportConcernDialog.concernSubmitted"), description: t("uiReportConcernDialog.yourReportHasBeenSentConfidentially") });
     setSubmitting(false);
     setReason("");
     onOpenChange(false);
@@ -85,7 +85,7 @@ export function ReportConcernDialog({
         <DialogHeader>
           <DialogTitle>{t("uiReportConcernDialog.reportADistributionConcern")}</DialogTitle>
           <DialogDescription>
-            {t("uiReportConcernDialog.quest")} {questTitle} — Distribution: {new Date(distributionDate).toLocaleDateString()}
+            {t("uiReportConcernDialog.quest")} {questTitle} {t("uiReportConcernDialog.distribution")} {new Date(distributionDate).toLocaleDateString()}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -102,24 +102,24 @@ export function ReportConcernDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-sm font-medium mb-1 block">Severity</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiReportConcernDialog.severity")}</label>
               <Select value={severity} onValueChange={setSeverity}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="low">{t("uiReportConcernDialog.low")}</SelectItem>
+                  <SelectItem value="medium">{t("uiReportConcernDialog.medium")}</SelectItem>
+                  <SelectItem value="high">{t("uiReportConcernDialog.high")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Currency affected</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiReportConcernDialog.currencyAffected")}</label>
               <Select value={currency} onValueChange={setCurrency}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="coins">{t("uiReportConcernDialog.coins")}</SelectItem>
                   <SelectItem value="ctg">🌱 $CTG</SelectItem>
-                  <SelectItem value="both">Both</SelectItem>
+                  <SelectItem value="both">{t("uiReportConcernDialog.both")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -13,15 +13,15 @@ export default function AdminCommunityCompanies() {
   return (
     <div className="space-y-4">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-        <Building2 className="h-6 w-6 text-primary" /> Traditional Organizations
+        <Building2 className="h-6 w-6 text-primary" /> {t("uiAdminCommunityCompanies.traditionalOrganizations")}
       </h2>
       <div className="rounded-xl border border-border overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
               <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityCompanies.name")}</SortableTableHead>
-              <SortableTableHead sortKey="sector" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Sector</SortableTableHead>
-              <SortableTableHead sortKey="size" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Size</SortableTableHead>
+              <SortableTableHead sortKey="sector" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityCompanies.sector")}</SortableTableHead>
+              <SortableTableHead sortKey="size" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityCompanies.size")}</SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

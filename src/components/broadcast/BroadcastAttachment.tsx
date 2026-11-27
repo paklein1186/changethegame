@@ -23,7 +23,7 @@ export function BroadcastAttachment({ attachment, onAttach, disabled }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > MAX_FILE_SIZE) {
-      toast({ title: t("uiBroadcastAttachment.fileTooLarge"), description: "Max 25 MB per attachment.", variant: "destructive" });
+      toast({ title: t("uiBroadcastAttachment.fileTooLarge"), description: t("uiBroadcastAttachment.max25MbPerAttachment"), variant: "destructive" });
       return;
     }
     setUploading(true);
@@ -75,7 +75,7 @@ export function BroadcastAttachment({ attachment, onAttach, disabled }: Props) {
           onClick={() => inputRef.current?.click()}
         >
           {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Paperclip className="h-3.5 w-3.5" />}
-          {uploading ? "Uploading…" : t("uiBroadcastAttachment.attachFile")}
+          {uploading ? t("uiBroadcastAttachment.uploading") : t("uiBroadcastAttachment.attachFile")}
         </Button>
       )}
     </div>

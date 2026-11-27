@@ -181,7 +181,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
         <div className="space-y-3">
           {/* Distribution overview - editable per transaction */}
           <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground uppercase tracking-wide">Distribution</Label>
+            <Label className="text-xs text-muted-foreground uppercase tracking-wide">{t("uiGiveBackModal.distribution")}</Label>
             {rows.map((row, idx) => (
               <div key={idx} className="flex items-center gap-2 rounded-lg border border-border p-2 bg-muted/30">
                 <Select
@@ -196,7 +196,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="platform">
-                      <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> Platform</span>
+                      <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {t("uiGiveBackModal.platform")}</span>
                     </SelectItem>
                     {myGuilds.map((g: any) => (
                       <SelectItem key={g.id} value={`guild:${g.id}`}>
@@ -245,7 +245,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
                 className="flex-1 min-w-[80px]"
               >
                 {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Heart className="h-3 w-3 mr-1" />}
-                Give {amt}
+                {t("uiGiveBackModal.give")} {amt}
               </Button>
             ))}
           </div>
@@ -266,7 +266,7 @@ export function GiveBackModal({ open, onOpenChange, earnedAmount, serviceName, b
                 disabled={loading || !totalAmount || parseInt(totalAmount) < 1 || totalPercent !== 100}
                 onClick={() => processGiveBack(parseInt(totalAmount))}
               >
-                {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : "Give"}
+                {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : t("uiGiveBackModal.give")}
               </Button>
               <Button size="sm" variant="ghost" onClick={() => setShowCustom(false)}>
                 <X className="h-3 w-3" />

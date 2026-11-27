@@ -89,18 +89,18 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
   };
 
   const actions = [
-    { key: "summarize" as ActionType, label: "Summarize Discussions", icon: FileText, desc: t("uiFacilitatorPanel.aiSummaryOfRecentChatActivity") },
+    { key: "summarize" as ActionType, label: t("uiFacilitatorPanel.summarizeDiscussions"), icon: FileText, desc: t("uiFacilitatorPanel.aiSummaryOfRecentChatActivity") },
     { key: "next_steps" as ActionType, label: t("uiFacilitatorPanel.extractNextSteps"), icon: ListChecks, desc: t("uiFacilitatorPanel.actionableTasksFromDiscussions") },
-    { key: "agenda" as ActionType, label: "Generate Agenda", icon: CalendarDays, desc: t("uiFacilitatorPanel.meetingAgendaFromActivityRoles") },
-    { key: "rewrite" as ActionType, label: "Conflict-Friendly Rewrite", icon: MessageCircleHeart, desc: "Rephrase messages constructively" },
+    { key: "agenda" as ActionType, label: t("uiFacilitatorPanel.generateAgenda"), icon: CalendarDays, desc: t("uiFacilitatorPanel.meetingAgendaFromActivityRoles") },
+    { key: "rewrite" as ActionType, label: t("uiFacilitatorPanel.conflictFriendlyRewrite"), icon: MessageCircleHeart, desc: t("uiFacilitatorPanel.rephraseMessagesConstructively") },
   ];
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Sparkles className="h-5 w-5 text-primary" />
-        <h3 className="font-display text-lg font-semibold">AI Facilitator</h3>
-        <Badge variant="secondary" className="text-[10px]">Beta</Badge>
+        <h3 className="font-display text-lg font-semibold">{t("uiFacilitatorPanel.aiFacilitator")}</h3>
+        <Badge variant="secondary" className="text-[10px]">{t("uiFacilitatorPanel.beta")}</Badge>
       </div>
       <p className="text-sm text-muted-foreground">
         {t("uiFacilitatorPanel.aiToolsToHelpFacilitate")} {entityName}{t("uiFacilitatorPanel.resultsAreGeneratedFromRecentActivity")}
@@ -129,7 +129,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
-            <MessageCircleHeart className="h-4 w-4 text-primary" /> Conflict-Friendly Rewrite
+            <MessageCircleHeart className="h-4 w-4 text-primary" /> {t("uiFacilitatorPanel.conflictFriendlyRewrite")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -146,7 +146,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
             disabled={!rewriteInput.trim() || loading !== null}
           >
             {loading === "rewrite" ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <MessageCircleHeart className="h-4 w-4 mr-1" />}
-            Rewrite
+            {t("uiFacilitatorPanel.rewrite")}
           </Button>
         </CardContent>
       </Card>
@@ -156,7 +156,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
         {summaryResult && (
           <ResultCard
             key="summary"
-            title="Discussion Summary"
+            title={t("uiFacilitatorPanel.discussionSummary")}
             icon={FileText}
             onCopy={() => copyToClipboard(summaryResult, "summary")}
             copied={copied === "summary"}
@@ -204,7 +204,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
         {agendaResult && (
           <ResultCard
             key="agenda"
-            title="Meeting Agenda"
+            title={t("uiFacilitatorPanel.meetingAgenda")}
             icon={CalendarDays}
             onCopy={() => copyToClipboard(agendaResult, "agenda")}
             copied={copied === "agenda"}
@@ -220,7 +220,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
         {rewriteResult && (
           <ResultCard
             key="rewrite"
-            title="Rewritten Message"
+            title={t("uiFacilitatorPanel.rewrittenMessage")}
             icon={MessageCircleHeart}
             onCopy={() => copyToClipboard(rewriteResult.rewritten, "rewrite")}
             copied={copied === "rewrite"}
@@ -228,11 +228,11 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
           >
             <div className="space-y-3">
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">Original</p>
+                <p className="text-xs font-medium text-muted-foreground mb-1">{t("uiFacilitatorPanel.original")}</p>
                 <p className="text-sm bg-destructive/5 border border-destructive/10 rounded-lg p-3 italic">{rewriteResult.original}</p>
               </div>
               <div>
-                <p className="text-xs font-medium text-primary mb-1">Suggested Rewrite</p>
+                <p className="text-xs font-medium text-primary mb-1">{t("uiFacilitatorPanel.suggestedRewrite")}</p>
                 <p className="text-sm bg-primary/5 border border-primary/10 rounded-lg p-3">{rewriteResult.rewritten}</p>
               </div>
               <p className="text-xs text-muted-foreground italic">💡 {rewriteResult.tone_note}</p>
@@ -272,7 +272,7 @@ function ResultCard({
               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onCopy} title={t("uiFacilitatorPanel.copy")}>
                 {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
               </Button>
-              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onRegenerate} title="Regenerate">
+              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onRegenerate} title={t("uiFacilitatorPanel.regenerate")}>
                 <RefreshCw className="h-3.5 w-3.5" />
               </Button>
               {onSaveDoc && (

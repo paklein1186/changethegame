@@ -165,7 +165,7 @@ export function MonOVNPanel({ userId }: Props) {
             <CardContent className="p-4 text-center">
               <CurrencyIcon currency="weight" className="h-4 w-4 mx-auto mb-1" />
               <p className="text-2xl font-bold text-primary">{data.totalWu.toFixed(1)}</p>
-              <p className="text-[10px] text-muted-foreground">Weighted Units</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiMonOVNPanel.weightedUnits")}</p>
             </CardContent>
           </Card>
           <Card className="border-emerald-500/20">
@@ -220,7 +220,7 @@ export function MonOVNPanel({ userId }: Props) {
               <div className="grid grid-cols-[auto_1fr_auto_auto] gap-3 text-[10px] text-muted-foreground font-medium border-b border-border pb-1">
                 <span>{t("uiMonOVNPanel.date")}</span>
                 <span>{t("uiMonOVNPanel.quest")}</span>
-                <span>Type</span>
+                <span>{t("uiMonOVNPanel.type")}</span>
                 <span className="text-right">Wu</span>
               </div>
               {data.last5.map((c: any, i: number) => (

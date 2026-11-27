@@ -63,7 +63,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
       if (error) throw error;
 
       qc.invalidateQueries({ queryKey: ["natural-system", naturalSystemId] });
-      toast({ title: "Live config saved" });
+      toast({ title: t("uiNsLiveConfigEditor.liveConfigSaved") });
       onOpenChange(false);
     } catch (e: any) {
       toast({ title: t("uiNsLiveConfigEditor.error"), description: e.message, variant: "destructive" });
@@ -76,7 +76,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Configure Live Data Source</DialogTitle>
+          <DialogTitle>{t("uiNsLiveConfigEditor.configureLiveDataSource")}</DialogTitle>
           <DialogDescription>
             {t("uiNsLiveConfigEditor.setUpHowThisNaturalSystem")}
           </DialogDescription>
@@ -84,24 +84,24 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
 
         <div className="space-y-4">
           <div>
-            <Label>Source type</Label>
+            <Label>{t("uiNsLiveConfigEditor.sourceType")}</Label>
             <Select value={type} onValueChange={setType}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="http_api">HTTP API (JSON)</SelectItem>
-                <SelectItem value="scraper">Web Scraper (HTML)</SelectItem>
+                <SelectItem value="http_api">{t("uiNsLiveConfigEditor.httpApiJson")}</SelectItem>
+                <SelectItem value="scraper">{t("uiNsLiveConfigEditor.webScraperHtml")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label>Endpoint URL</Label>
+            <Label>{t("uiNsLiveConfigEditor.endpointUrl")}</Label>
             <Input value={endpoint} onChange={e => setEndpoint(e.target.value)} placeholder="https://..." />
           </div>
 
           {type === "http_api" && (
             <div>
-              <Label>Metrics map (JSON)</Label>
+              <Label>{t("uiNsLiveConfigEditor.metricsMapJson")}</Label>
               <Textarea
                 value={metricsMap}
                 onChange={e => setMetricsMap(e.target.value)}
@@ -118,7 +118,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
           {type === "scraper" && (
             <>
               <div>
-                <Label>CSS selector</Label>
+                <Label>{t("uiNsLiveConfigEditor.cssSelector")}</Label>
                 <Input value={selector} onChange={e => setSelector(e.target.value)} placeholder="#water-level-value" />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -127,7 +127,7 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
                   <Input value={metric} onChange={e => setMetric(e.target.value)} placeholder="water_level" />
                 </div>
                 <div>
-                  <Label>Unit</Label>
+                  <Label>{t("uiNsLiveConfigEditor.unit")}</Label>
                   <Input value={unit} onChange={e => setUnit(e.target.value)} placeholder="m" />
                 </div>
               </div>
@@ -135,14 +135,14 @@ export function NsLiveConfigEditor({ open, onOpenChange, naturalSystemId, curren
           )}
 
           <div>
-            <Label>Refresh interval (minutes)</Label>
+            <Label>{t("uiNsLiveConfigEditor.refreshIntervalMinutes")}</Label>
             <Input type="number" value={refreshMinutes} onChange={e => setRefreshMinutes(e.target.value)} min={5} />
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiNsLiveConfigEditor.cancel")}</Button>
             <Button onClick={handleSave} disabled={saving || !endpoint}>
-              {saving ? "Saving…" : t("uiNsLiveConfigEditor.saveConfig")}
+              {saving ? t("uiNsLiveConfigEditor.saving") : t("uiNsLiveConfigEditor.saveConfig")}
             </Button>
           </div>
         </div>

@@ -164,9 +164,9 @@ function GuildEditForm({ guildId }: { guildId: string }) {
 
         <div className="flex items-center gap-2 mb-6">
           {guild.isApproved ? (
-            <Badge className="bg-primary/10 text-primary border-0"><ShieldCheck className="h-3 w-3 mr-1" /> Approved</Badge>
+            <Badge className="bg-primary/10 text-primary border-0"><ShieldCheck className="h-3 w-3 mr-1" /> {t("uiGuildEdit.approved")}</Badge>
           ) : (
-            <Badge variant="outline">Awaiting moderation</Badge>
+            <Badge variant="outline">{t("uiGuildEdit.awaitingModeration")}</Badge>
           )}
         </div>
 
@@ -179,19 +179,19 @@ function GuildEditForm({ guildId }: { guildId: string }) {
             </div>
 
             <ImageUpload
-              label="Logo"
+              label={t("uiGuildEdit.logo")}
               currentImageUrl={logoUrl || undefined}
               onChange={(url) => setLogoUrl(url ?? "")}
               aspectRatio="1/1"
-              description="Square logo, recommended 256×256"
+              description={t("uiGuildEdit.squareLogoRecommended256256")}
             />
 
             <ImageUpload
-              label="Banner (optional)"
+              label={t("uiGuildEdit.bannerOptional")}
               currentImageUrl={bannerUrl || undefined}
               onChange={(url) => setBannerUrl(url ?? "")}
               aspectRatio="16/9"
-              description="Wide banner, recommended 1200×400"
+              description={t("uiGuildEdit.wideBannerRecommended1200400")}
             />
 
             <div>
@@ -199,13 +199,13 @@ function GuildEditForm({ guildId }: { guildId: string }) {
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} className="resize-none min-h-[120px]" />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Type</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEdit.type")}</label>
               <Select value={type} onValueChange={(v) => setType(v as GuildType)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value={GuildType.GUILD}>{t("uiGuildEdit.guild")}</SelectItem>
-                  <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
-                  <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
+                  <SelectItem value={GuildType.NETWORK}>{t("uiGuildEdit.network")}</SelectItem>
+                  <SelectItem value={GuildType.COLLECTIVE}>{t("uiGuildEdit.collective")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -294,7 +294,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
                       onClick={() => toggleMemberRole(m.id)}
                       title={m.role === GuildMemberRole.ADMIN ? t("uiGuildEdit.demoteToMember") : t("uiGuildEdit.promoteToAdmin")}
                     >
-                      {m.role === GuildMemberRole.ADMIN ? "Demote" : "Promote"}
+                      {m.role === GuildMemberRole.ADMIN ? t("uiGuildEdit.demote") : t("uiGuildEdit.promote")}
                     </Button>
                     {m.userId !== currentUser.id && (
                       <Button

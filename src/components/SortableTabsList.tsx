@@ -149,7 +149,7 @@ export function SortableTabsList({
           size="icon"
           className="h-7 w-7"
           onClick={() => setIsEditing(!isEditing)}
-          title={isEditing ? t("uiSortableTabsList.doneEditingTabs") : "Reorder tabs"}
+          title={isEditing ? t("uiSortableTabsList.doneEditingTabs") : t("uiSortableTabsList.reorderTabs")}
         >
           {isEditing ? (
             <Check className="h-3.5 w-3.5 text-primary" />

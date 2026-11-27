@@ -19,8 +19,8 @@ interface Props {
 
 const DECISION_OPTIONS = [
   { value: "admin", get label() { return i18n.t("uiExitProtocolSettings.guildAdminAlone"); } },
-  { value: "vote", label: "Governance vote" },
-  { value: "mediation_then_vote", label: "Mediation first, then vote" },
+  { value: "vote", get label() { return i18n.t("uiExitProtocolSettings.governanceVote"); } },
+  { value: "mediation_then_vote", get label() { return i18n.t("uiExitProtocolSettings.mediationFirstThenVote"); } },
 ];
 
 export function ExitProtocolSettings({ guild, guildId }: Props) {
@@ -58,13 +58,13 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
     <div className="space-y-5">
       <div className="flex items-center gap-2">
         <DoorOpen className="h-5 w-5 text-primary" />
-        <h3 className="font-display font-semibold text-base">Exit Protocol</h3>
+        <h3 className="font-display font-semibold text-base">{t("uiExitProtocolSettings.exitProtocol")}</h3>
       </div>
 
       <div className="space-y-4">
         {/* Good leaver */}
         <div>
-          <Label className="text-sm font-medium mb-1 block">Good leaver settlement: {goodPct}%</Label>
+          <Label className="text-sm font-medium mb-1 block">{t("uiExitProtocolSettings.goodLeaverSettlement")} {goodPct}%</Label>
           <p className="text-xs text-muted-foreground mb-2">
             {t("uiExitProtocolSettings.aContributorWhoLeavesVoluntarilyReceives")}
           </p>
@@ -80,7 +80,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
 
         {/* Graceful */}
         <div>
-          <Label className="text-sm font-medium mb-1 block">Graceful withdrawal settlement: {gracefulPct}%</Label>
+          <Label className="text-sm font-medium mb-1 block">{t("uiExitProtocolSettings.gracefulWithdrawalSettlement")} {gracefulPct}%</Label>
           <p className="text-xs text-muted-foreground mb-2">
             {t("uiExitProtocolSettings.aContributorWhoCommitsToA")}
           </p>
@@ -96,7 +96,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
 
         {/* Bad leaver */}
         <div>
-          <Label className="text-sm font-medium mb-1 block">Bad leaver settlement: {badPct}%</Label>
+          <Label className="text-sm font-medium mb-1 block">{t("uiExitProtocolSettings.badLeaverSettlement")} {badPct}%</Label>
           <p className="text-xs text-muted-foreground mb-2">
             {t("uiExitProtocolSettings.aContributorRemovedForCauseReceives")}
           </p>
@@ -112,7 +112,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
 
         {/* Decision authority */}
         <div>
-          <Label className="text-sm font-medium mb-1 block">Bad leaver decision authority</Label>
+          <Label className="text-sm font-medium mb-1 block">{t("uiExitProtocolSettings.badLeaverDecisionAuthority")}</Label>
           <Select value={decision} onValueChange={setDecision}>
             <SelectTrigger className="max-w-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -125,7 +125,7 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
 
         {/* Abandonment */}
         <div>
-          <Label className="text-sm font-medium mb-1 block">Abandonment threshold (days)</Label>
+          <Label className="text-sm font-medium mb-1 block">{t("uiExitProtocolSettings.abandonmentThresholdDays")}</Label>
           <p className="text-xs text-muted-foreground mb-2">
             {t("uiExitProtocolSettings.autoFlagContributorsWithNoApproved")}
           </p>
@@ -143,14 +143,14 @@ export function ExitProtocolSettings({ guild, guildId }: Props) {
       {/* Preview matrix */}
       <div className="rounded-lg border border-border overflow-hidden">
         <div className="bg-muted/50 px-3 py-2 text-xs font-medium text-muted-foreground">
-          Exit type preview
+          {t("uiExitProtocolSettings.exitTypePreview")}
         </div>
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-border bg-muted/30">
-              <th className="text-left p-2 font-medium">Exit type</th>
-              <th className="text-center p-2 font-medium">Settlement</th>
-              <th className="text-left p-2 font-medium">Who decides</th>
+              <th className="text-left p-2 font-medium">{t("uiExitProtocolSettings.exitType")}</th>
+              <th className="text-center p-2 font-medium">{t("uiExitProtocolSettings.settlement")}</th>
+              <th className="text-left p-2 font-medium">{t("uiExitProtocolSettings.whoDecides")}</th>
             </tr>
           </thead>
           <tbody>

@@ -11,6 +11,7 @@ interface Props {
 }
 
 function TopicConnectedHumans({ topicId }: { topicId: string }) {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: count = 0 } = useQuery({
@@ -32,7 +33,7 @@ function TopicConnectedHumans({ topicId }: { topicId: string }) {
         className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"
       >
         <p className="text-2xl font-bold text-primary">{count}</p>
-        <p className="text-sm text-muted-foreground">Connected Humans</p>
+        <p className="text-sm text-muted-foreground">{t("uiTopicOverviewTab.connectedHumans")}</p>
       </button>
       <FollowersDialog
         open={dialogOpen}
@@ -46,6 +47,7 @@ function TopicConnectedHumans({ topicId }: { topicId: string }) {
 }
 
 function TopicFollowers({ topicId }: { topicId: string }) {
+  const { t } = useTranslation();
   const { data: count = 0 } = useQuery({
     queryKey: ["topic-followers", topicId],
     queryFn: async () => {
@@ -62,7 +64,7 @@ function TopicFollowers({ topicId }: { topicId: string }) {
   return (
     <div className="rounded-lg border border-border bg-card p-4 text-center">
       <p className="text-2xl font-bold text-primary">{count}</p>
-      <p className="text-sm text-muted-foreground">Followers</p>
+      <p className="text-sm text-muted-foreground">{t("uiTopicOverviewTab.followers")}</p>
     </div>
   );
 }
@@ -95,16 +97,16 @@ function TopicEntityStats({ topicId }: { topicId: string }) {
   const stats = [
     { label: t("uiTopicOverviewTab.quests"), value: data.quests },
     { label: t("uiTopicOverviewTab.guilds"), value: data.guilds },
-    { label: "Organizations", value: data.companies },
-    { label: "Services", value: data.services },
-    { label: "Courses", value: data.courses },
+    { label: t("uiTopicOverviewTab.organizations"), value: data.companies },
+    { label: t("uiTopicOverviewTab.services"), value: data.services },
+    { label: t("uiTopicOverviewTab.courses"), value: data.courses },
   ].filter(s => s.value > 0);
 
   if (stats.length === 0) return null;
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
-      <h3 className="font-display text-base font-semibold">Ecosystem Snapshot</h3>
+      <h3 className="font-display text-base font-semibold">{t("uiTopicOverviewTab.ecosystemSnapshot")}</h3>
       <div className="flex flex-wrap gap-2">
         {stats.map(s => (
           <Badge key={s.label} variant="outline" className="gap-1.5 py-1 px-2.5">

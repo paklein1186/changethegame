@@ -133,9 +133,9 @@ export function QuestActivityTab({
                   ) : null}
                   <Icon className="h-3.5 w-3.5 text-muted-foreground" />
                   <Badge variant="secondary" className="text-[10px] capitalize">{update.type.toLowerCase().replace(/_/g, " ")}</Badge>
-                  {update.pinned && <Badge className="text-[10px] bg-primary/10 text-primary border-0">Pinned</Badge>}
+                  {update.pinned && <Badge className="text-[10px] bg-primary/10 text-primary border-0">{t("uiQuestActivityTab.pinned")}</Badge>}
                   {update.visibility && update.visibility !== "PUBLIC" && (
-                    <Badge variant="outline" className="text-[10px] capitalize">{update.visibility === "FOLLOWERS" ? "Followers" : "Internal"}</Badge>
+                    <Badge variant="outline" className="text-[10px] capitalize">{update.visibility === "FOLLOWERS" ? t("uiQuestActivityTab.followers") : t("uiQuestActivityTab.internal")}</Badge>
                   )}
                   <span className="text-muted-foreground text-xs">{formatDistanceToNow(new Date(update.created_at), { addSuffix: true })}</span>
                 </div>
@@ -168,7 +168,7 @@ export function QuestActivityTab({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => onEditUpdate(update)}><Pencil className="h-4 w-4 mr-2" /> {t("uiQuestActivityTab.edit")}</DropdownMenuItem>
-                    {isOwner && <DropdownMenuItem onClick={() => onTogglePin(update.id, update.pinned)}>{update.pinned ? "Unpin" : "Pin"}</DropdownMenuItem>}
+                    {isOwner && <DropdownMenuItem onClick={() => onTogglePin(update.id, update.pinned)}>{update.pinned ? t("uiQuestActivityTab.unpin") : t("uiQuestActivityTab.pin")}</DropdownMenuItem>}
                     <DropdownMenuItem className="text-destructive" onClick={() => onDeleteUpdate(update.id)}>{t("uiQuestActivityTab.delete")}</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

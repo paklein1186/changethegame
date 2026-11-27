@@ -56,7 +56,7 @@ export default function AdminEconomyPayments() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-          <Zap className="h-6 w-6 text-primary" /> Payments & Shares
+          <Zap className="h-6 w-6 text-primary" /> {t("uiAdminEconomyPayments.paymentsShares")}
         </h2>
         <Button variant="outline" size="sm" onClick={handleReconcile} disabled={reconciling}>
           {reconciling ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <RefreshCcw className="h-4 w-4 mr-1" />}
@@ -69,11 +69,11 @@ export default function AdminEconomyPayments() {
           <p className="text-2xl font-bold text-primary">{totalA}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Class B Shares</p>
+          <p className="text-xs text-muted-foreground">{t("uiAdminEconomyPayments.classBShares")}</p>
           <p className="text-2xl font-bold text-primary">{totalB}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Total Revenue</p>
+          <p className="text-xs text-muted-foreground">{t("uiAdminEconomyPayments.totalRevenue")}</p>
           <p className="text-2xl font-bold text-primary">€{totalPaid}</p>
         </div>
       </div>
@@ -82,10 +82,10 @@ export default function AdminEconomyPayments() {
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableTableHead sortKey="userName" currentKey={sort.key} direction={sort.direction} onSort={toggle}>User</SortableTableHead>
-                <SortableTableHead sortKey="share_class" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Class</SortableTableHead>
-                <SortableTableHead sortKey="number_of_shares" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Shares</SortableTableHead>
-                <SortableTableHead sortKey="total_paid" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Total Paid</SortableTableHead>
+                <SortableTableHead sortKey="userName" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminEconomyPayments.user")}</SortableTableHead>
+                <SortableTableHead sortKey="share_class" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminEconomyPayments.class")}</SortableTableHead>
+                <SortableTableHead sortKey="number_of_shares" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiAdminEconomyPayments.shares")}</SortableTableHead>
+                <SortableTableHead sortKey="total_paid" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiAdminEconomyPayments.totalPaid")}</SortableTableHead>
                 <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminEconomyPayments.date")}</SortableTableHead>
               </TableRow>
             </TableHeader>

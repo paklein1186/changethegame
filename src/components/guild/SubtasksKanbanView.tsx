@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { translateTaskStatus } from "@/lib/entityLabels";
 
 const COLUMNS = [
-  { key: "BACKLOG", label: "Backlog", color: "border-muted-foreground/30 bg-muted/20" },
+  { key: "BACKLOG", get label() { return i18n.t("uiSubtasksKanbanView.backlog"); }, color: "border-muted-foreground/30 bg-muted/20" },
   { key: "TODO", get label() { return i18n.t("uiSubtasksKanbanView.toDoNext"); }, color: "border-blue-400/50 bg-blue-50/30 dark:bg-blue-950/20" },
   { key: "IN_PROGRESS", get label() { return i18n.t("uiSubtasksKanbanView.inProgress"); }, color: "border-amber-400/50 bg-amber-50/30 dark:bg-amber-950/20" },
   { key: "DONE", get label() { return i18n.t("uiSubtasksKanbanView.done"); }, color: "border-emerald-400/50 bg-emerald-50/30 dark:bg-emerald-950/20" },
@@ -94,7 +94,7 @@ export function SubtasksKanbanView({
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-xs text-muted-foreground line-through truncate">{subtask.title}</span>
                         <Button variant="outline" size="sm" className="h-5 gap-1 text-[10px] shrink-0" onClick={() => onUndoDone(subtask.id)}>
-                          <Undo2 className="h-2.5 w-2.5" /> Undo
+                          <Undo2 className="h-2.5 w-2.5" /> {t("uiSubtasksKanbanView.undo")}
                         </Button>
                       </div>
                     </motion.div>

@@ -30,7 +30,7 @@ const ENTITY_CONFIG: Record<EntityType, {
   columns: string[];
 }> = {
   profiles: {
-    label: "Users",
+    get label() { return i18n.t("uiAdminEntityEditor.users"); },
     searchField: "name",
     nameField: "name",
     idField: "user_id",
@@ -46,7 +46,7 @@ const ENTITY_CONFIG: Record<EntityType, {
     columns: ["name", "type", "is_draft", "is_deleted", "created_at"],
   },
   companies: {
-    label: "Traditional Organizations",
+    get label() { return i18n.t("uiAdminEntityEditor.traditionalOrganizations"); },
     searchField: "name",
     nameField: "name",
     idField: "id",
@@ -62,7 +62,7 @@ const ENTITY_CONFIG: Record<EntityType, {
     columns: ["title", "status", "budget_amount", "is_deleted", "created_at"],
   },
   services: {
-    label: "Services",
+    get label() { return i18n.t("uiAdminEntityEditor.services"); },
     searchField: "title",
     nameField: "title",
     idField: "id",
@@ -70,7 +70,7 @@ const ENTITY_CONFIG: Record<EntityType, {
     columns: ["title", "price_amount", "is_deleted", "created_at"],
   },
   courses: {
-    label: "Courses",
+    get label() { return i18n.t("uiAdminEntityEditor.courses"); },
     searchField: "title",
     nameField: "title",
     idField: "id",
@@ -78,7 +78,7 @@ const ENTITY_CONFIG: Record<EntityType, {
     columns: ["title", "level", "is_published", "is_deleted", "created_at"],
   },
   pods: {
-    label: "Pods",
+    get label() { return i18n.t("uiAdminEntityEditor.pods"); },
     searchField: "name",
     nameField: "name",
     idField: "id",
@@ -186,7 +186,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
         .update(updatePayload as any) as any)
         .eq(config.idField, id);
       if (error) throw error;
-      toast.success("Record updated");
+      toast.success(t("uiAdminEntityEditor.recordUpdated"));
       setEditingId(null);
       doSearch();
     } catch (e: any) {
@@ -208,7 +208,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
         } as any) as any)
         .eq(config.idField, id);
       if (error) throw error;
-      toast.success(newVal ? "Record hidden" : "Record restored");
+      toast.success(newVal ? t("uiAdminEntityEditor.recordHidden") : t("uiAdminEntityEditor.recordRestored"));
       doSearch();
     } catch (e: any) {
       toast.error(e.message);
@@ -223,7 +223,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
         .delete() as any)
         .eq(config.idField, id);
       if (error) throw error;
-      toast.success("Record permanently deleted");
+      toast.success(t("uiAdminEntityEditor.recordPermanentlyDeleted"));
       doSearch();
     } catch (e: any) {
       toast.error(e.message);
@@ -236,7 +236,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
     if (maskPII && (key === "name" || key === "title") && typeof value === "string") return maskString(value);
     if (typeof value === "boolean") {
       return value
-        ? <Badge variant="default" className="text-[10px]">Yes</Badge>
+        ? <Badge variant="default" className="text-[10px]">{t("uiAdminEntityEditor.yes")}</Badge>
         : <Badge variant="outline" className="text-[10px]">{t("uiAdminEntityEditor.no")}</Badge>;
     }
     if (key === "created_at" || key === "updated_at") {
@@ -250,7 +250,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
       {/* Search bar */}
       <div className="flex gap-2 items-end flex-wrap">
         <div>
-          <Label className="text-xs mb-1 block">Entity type</Label>
+          <Label className="text-xs mb-1 block">{t("uiAdminEntityEditor.entityType")}</Label>
           <Select
             value={entityType}
             onValueChange={(v) => {
@@ -296,7 +296,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
                 {config.columns.map((col) => (
                   <TableHead key={col} className="text-xs uppercase">{col.replace(/_/g, " ")}</TableHead>
                 ))}
-                <TableHead className="text-xs uppercase text-right">Actions</TableHead>
+                <TableHead className="text-xs uppercase text-right">{t("uiAdminEntityEditor.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -357,7 +357,7 @@ export function AdminEntityEditor({ maskPII }: AdminEntityEditorProps) {
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => toggleSoftDelete(record)}
-                                title={record.is_deleted ? "Restore" : "Hide"}
+                                title={record.is_deleted ? t("uiAdminEntityEditor.restore") : t("uiAdminEntityEditor.hide")}
                               >
                                 {record.is_deleted ? <Eye className="h-3.5 w-3.5 text-primary" /> : <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />}
                               </Button>

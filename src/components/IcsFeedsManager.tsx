@@ -120,7 +120,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
     setRegeneratingFeed(null);
     setRevealedFeeds((prev) => { const n = new Set(prev); n.delete(feed.id); return n; });
     refetch();
-    toast({ title: "URL regenerated", description: t("uiIcsFeedsManager.theOldUrlIsNowInvalid") });
+    toast({ title: t("uiIcsFeedsManager.urlRegenerated"), description: t("uiIcsFeedsManager.theOldUrlIsNowInvalid") });
   };
 
   const handleToggleActive = async (feed: IcsFeed, active: boolean) => {
@@ -151,7 +151,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
           <div>
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Rss className="h-5 w-5 text-primary" />
-              ICS Calendar Feeds
+              {t("uiIcsFeedsManager.icsCalendarFeeds")}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
               {t("uiIcsFeedsManager.subscribeToYourChangethegameEventsIn")}
@@ -210,7 +210,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
                         size="sm"
                         className="h-7 w-7 p-0"
                         onClick={() => toggleReveal(feed.id)}
-                        title={isRevealed ? "Hide URL" : "Reveal URL"}
+                        title={isRevealed ? t("uiIcsFeedsManager.hideUrl") : t("uiIcsFeedsManager.revealUrl")}
                       >
                         {isRevealed ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                       </Button>
@@ -220,7 +220,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
                         className="h-7 w-7 p-0"
                         onClick={() => handleRegenerate(feed)}
                         disabled={isRegenerating}
-                        title="Regenerate URL (invalidates old one)"
+                        title={t("uiIcsFeedsManager.regenerateUrlInvalidatesOldOne")}
                       >
                         {isRegenerating ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -260,10 +260,10 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
               {t("uiIcsFeedsManager.howToSubscribe")}
             </h4>
             <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
-              <li><strong>Google Calendar:</strong> {t("uiIcsFeedsManager.settingsAddCalendarFromUrlPaste")}</li>
-              <li><strong>Apple Calendar:</strong> {t("uiIcsFeedsManager.fileNewCalendarSubscriptionPasteYour")}</li>
+              <li><strong>{t("uiIcsFeedsManager.googleCalendar")}</strong> {t("uiIcsFeedsManager.settingsAddCalendarFromUrlPaste")}</li>
+              <li><strong>{t("uiIcsFeedsManager.appleCalendar")}</strong> {t("uiIcsFeedsManager.fileNewCalendarSubscriptionPasteYour")}</li>
               <li><strong>Outlook:</strong> {t("uiIcsFeedsManager.addCalendarSubscribeFromWebPaste")}</li>
-              <li><strong>Infomaniak:</strong> {t("uiIcsFeedsManager.otherCalendarsSubscribePasteYourIcs")}</li>
+              <li><strong>{t("uiIcsFeedsManager.infomaniak")}</strong> {t("uiIcsFeedsManager.otherCalendarsSubscribePasteYourIcs")}</li>
             </ul>
             <div className="flex items-start gap-2 mt-3 p-2.5 rounded-lg bg-destructive/5 border border-destructive/10">
               <ShieldAlert className="h-4 w-4 text-destructive shrink-0 mt-0.5" />

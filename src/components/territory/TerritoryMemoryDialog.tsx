@@ -105,7 +105,7 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
           </div>
 
           <div>
-            <Label htmlFor="mem-category">Category</Label>
+            <Label htmlFor="mem-category">{t("uiTerritoryMemoryDialog.category")}</Label>
             <Select value={category} onValueChange={v => setCategory(v as MemoryCategory)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -117,18 +117,18 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
           </div>
 
           <div>
-            <Label htmlFor="mem-content">Content</Label>
+            <Label htmlFor="mem-content">{t("uiTerritoryMemoryDialog.content")}</Label>
             <Textarea
               id="mem-content"
               value={content}
               onChange={e => setContent(e.target.value)}
-              placeholder="Enter detailed knowledge, data, observations..."
+              placeholder={t("uiTerritoryMemoryDialog.enterDetailedKnowledgeDataObservations")}
               className="min-h-[140px]"
             />
           </div>
 
           <div>
-            <Label htmlFor="mem-visibility">Visibility</Label>
+            <Label htmlFor="mem-visibility">{t("uiTerritoryMemoryDialog.visibility")}</Label>
             <Select value={visibility} onValueChange={v => setVisibility(v as MemoryVisibility)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -140,7 +140,7 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
           </div>
 
           <div>
-            <Label>Tags</Label>
+            <Label>{t("uiTerritoryMemoryDialog.tags")}</Label>
             <div className="flex gap-2">
               <Input
                 value={tagInput}
@@ -167,7 +167,7 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiTerritoryMemoryDialog.cancel")}</Button>
           <Button onClick={handleSubmit} disabled={!title.trim() || !content.trim() || isSubmitting}>
-            {isSubmitting ? "Saving..." : editEntry ? t("uiTerritoryMemoryDialog.update") : t("uiTerritoryMemoryDialog.addEntry")}
+            {isSubmitting ? t("uiTerritoryMemoryDialog.saving") : editEntry ? t("uiTerritoryMemoryDialog.update") : t("uiTerritoryMemoryDialog.addEntry")}
           </Button>
         </DialogFooter>
       </DialogContent>

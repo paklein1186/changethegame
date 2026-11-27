@@ -425,20 +425,20 @@ export function WorkCalendarTab() {
       {/* Navigation + View Switcher */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={navigateBack}>← Previous</Button>
+          <Button variant="ghost" size="sm" onClick={navigateBack}>{t("uiWorkCalendarTab.previous")}</Button>
           <h3 className="font-display font-semibold text-lg whitespace-nowrap">{headerLabel}</h3>
           <Button variant="ghost" size="sm" onClick={navigateForward}>{t("uiWorkCalendarTab.next")}</Button>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => setSyncModalOpen(true)}>
-            <CalendarPlus className="h-3.5 w-3.5" /> Sync
+            <CalendarPlus className="h-3.5 w-3.5" /> {t("uiWorkCalendarTab.sync")}
           </Button>
-          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setCurrentMonth(new Date())}>Today</Button>
+          <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setCurrentMonth(new Date())}>{t("uiWorkCalendarTab.today")}</Button>
           <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && handleSetViewMode(v as ViewMode)} size="sm">
-            <ToggleGroupItem value="day" className="text-xs h-7 px-2.5">Day</ToggleGroupItem>
-            <ToggleGroupItem value="3day" className="text-xs h-7 px-2.5">3 Days</ToggleGroupItem>
-            <ToggleGroupItem value="week" className="text-xs h-7 px-2.5">Week</ToggleGroupItem>
-            <ToggleGroupItem value="month" className="text-xs h-7 px-2.5">Month</ToggleGroupItem>
+            <ToggleGroupItem value="day" className="text-xs h-7 px-2.5">{t("uiWorkCalendarTab.day")}</ToggleGroupItem>
+            <ToggleGroupItem value="3day" className="text-xs h-7 px-2.5">{t("uiWorkCalendarTab.3Days")}</ToggleGroupItem>
+            <ToggleGroupItem value="week" className="text-xs h-7 px-2.5">{t("uiWorkCalendarTab.week")}</ToggleGroupItem>
+            <ToggleGroupItem value="month" className="text-xs h-7 px-2.5">{t("uiWorkCalendarTab.month")}</ToggleGroupItem>
           </ToggleGroup>
         </div>
       </div>
@@ -446,7 +446,7 @@ export function WorkCalendarTab() {
       {/* Source calendar filters */}
       {sourceCalendars.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground mr-1">Calendars:</span>
+          <span className="text-xs font-medium text-muted-foreground mr-1">{t("uiWorkCalendarTab.calendars")}</span>
           {sourceCalendars.map((cal) => {
             const isHidden = hiddenCalendars.has(cal.id);
             return (
@@ -524,7 +524,7 @@ export function WorkCalendarTab() {
       {/* Upcoming event tiles */}
       <div>
         <h4 className="font-display font-semibold text-sm mb-3 flex items-center gap-2">
-          <Clock className="h-4 w-4 text-primary" /> Upcoming
+          <Clock className="h-4 w-4 text-primary" /> {t("uiWorkCalendarTab.upcoming")}
         </h4>
         {filteredEvents.filter((e) => new Date(e.date) >= new Date()).length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-8">{t("uiWorkCalendarTab.noUpcomingEventsOrRitualsYou")}</p>
@@ -580,7 +580,7 @@ export function WorkCalendarTab() {
                         className="h-7 text-xs gap-1"
                         onClick={() => generateIcs(evt.title, evt.date, evt.durationMinutes, evt.visioLink)}
                       >
-                        <CalendarPlus className="h-3 w-3" /> Export
+                        <CalendarPlus className="h-3 w-3" /> {t("uiWorkCalendarTab.export")}
                       </Button>
                       <div className="flex-1" />
                       {evt.type === "ritual" && evt.occurrenceId ? (
@@ -683,7 +683,7 @@ export function WorkCalendarTab() {
                     className="text-xs gap-1"
                     onClick={() => generateIcs(evt.title, evt.date, evt.durationMinutes, evt.visioLink)}
                   >
-                    <CalendarPlus className="h-3.5 w-3.5" /> Export .ics
+                    <CalendarPlus className="h-3.5 w-3.5" /> {t("uiWorkCalendarTab.exportIcs")}
                   </Button>
                   <div className="flex-1" />
                   {evt.type === "ritual" && evt.occurrenceId ? (

@@ -73,11 +73,12 @@ function renderMessageContent(text: string, isOwn: boolean) {
 }
 
 function BlockMenuItem({ targetUserId }: { targetUserId: string }) {
+  const { t } = useTranslation();
   const { isBlocked, toggle } = useBlock(targetUserId);
   return (
     <DropdownMenuItem onClick={toggle} className="text-destructive focus:text-destructive">
       <Ban className="h-4 w-4 mr-2" />
-      {isBlocked ? "Unblock user" : "Block user"}
+      {isBlocked ? t("uiInboxPage.unblockUser") : t("uiInboxPage.blockUser")}
     </DropdownMenuItem>
   );
 }
@@ -94,9 +95,9 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
       {data.headline && (
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
           <div className="flex items-center justify-between mb-1.5">
-            <p className="text-xs font-semibold flex items-center gap-1"><Briefcase className="h-3 w-3" /> Suggested Headline</p>
+            <p className="text-xs font-semibold flex items-center gap-1"><Briefcase className="h-3 w-3" /> {t("uiInboxPage.suggestedHeadline")}</p>
             <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={() => onAccept("headline", data.headline)}>
-              <Check className="h-3 w-3 mr-1" /> Accept
+              <Check className="h-3 w-3 mr-1" /> {t("uiInboxPage.accept")}
             </Button>
           </div>
           <p className="text-sm">{data.headline}</p>
@@ -105,7 +106,7 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
 
       {data.bioVariants && (
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
-          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Sparkles className="h-3 w-3" /> Bio Suggestions</p>
+          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Sparkles className="h-3 w-3" /> {t("uiInboxPage.bioSuggestions")}</p>
           {Object.entries(data.bioVariants).map(([key, value]) => (
             <div key={key} className="mb-2 last:mb-0">
               <div className="flex items-center justify-between mb-0.5">
@@ -150,7 +151,7 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
               <div>
                 <p className="text-sm font-medium">{q.title}</p>
                 <p className="text-xs text-muted-foreground">{q.description}</p>
-                <Badge variant="outline" className="text-[10px] mt-1">{q.type === "completed" ? "Past achievement" : t("uiInboxPage.openProject")}</Badge>
+                <Badge variant="outline" className="text-[10px] mt-1">{q.type === "completed" ? t("uiInboxPage.pastAchievement") : t("uiInboxPage.openProject")}</Badge>
               </div>
             </div>
           ))}
@@ -159,11 +160,11 @@ function EnrichmentCards({ data, onAccept }: { data: any; onAccept: (field: stri
 
       {data.detectedOrganizations?.length > 0 && (
         <div className="rounded-xl border border-accent/20 bg-accent/5 p-3">
-          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Building2 className="h-3 w-3" /> Detected Organizations</p>
+          <p className="text-xs font-semibold flex items-center gap-1 mb-2"><Building2 className="h-3 w-3" /> {t("uiInboxPage.detectedOrganizations")}</p>
           {data.detectedOrganizations.map((org: any, i: number) => (
             <div key={i} className="text-xs mb-1.5 last:mb-0">
               <span className="font-medium">{org.name}</span> — {org.role}
-              {org.isCurrent && <Badge variant="secondary" className="text-[9px] ml-1.5">Current</Badge>}
+              {org.isCurrent && <Badge variant="secondary" className="text-[9px] ml-1.5">{t("uiInboxPage.current")}</Badge>}
             </div>
           ))}
         </div>
@@ -316,7 +317,7 @@ export default function InboxPage() {
         qc.invalidateQueries({ queryKey: ["conversations", userId] });
       } catch (e: any) {
         console.error("Pulse bot error:", e);
-        toast({ title: "Pulse couldn't respond", description: e?.message || t("uiInboxPage.tryAgainInAMoment"), variant: "destructive" });
+        toast({ title: t("uiInboxPage.pulseCouldnTRespond"), description: e?.message || t("uiInboxPage.tryAgainInAMoment"), variant: "destructive" });
       } finally {
         setPulseLoading(false);
       }
@@ -341,7 +342,7 @@ export default function InboxPage() {
     if (!files.length) return;
     const remaining = MAX_ATTACHMENTS - attachments.length;
     if (remaining <= 0) {
-      toast({ title: "Maximum attachments reached", description: `You can attach up to ${MAX_ATTACHMENTS} files.`, variant: "destructive" });
+      toast({ title: t("uiInboxPage.maximumAttachmentsReached"), description: `You can attach up to ${MAX_ATTACHMENTS} files.`, variant: "destructive" });
       return;
     }
     const toAdd = files.slice(0, remaining);
@@ -411,7 +412,7 @@ export default function InboxPage() {
     setShowAddPeopleDialog(false);
     setNewParticipants([]);
     setNewGroupTitle("");
-    toast({ title: "Participants added" });
+    toast({ title: t("uiInboxPage.participantsAdded") });
   };
 
   const getConversationName = (conv: typeof conversations[0]) => {
@@ -439,7 +440,7 @@ export default function InboxPage() {
         {showConvList && (
           <div className={cn("flex flex-col border-r border-border", isMobile ? "w-full" : "w-80 shrink-0")}>
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <h2 className="font-semibold text-lg">Messages</h2>
+              <h2 className="font-semibold text-lg">{t("uiInboxPage.messages")}</h2>
               <Dialog open={showNewDialog} onOpenChange={setShowNewDialog}>
 
                 <DialogTrigger asChild>
@@ -476,7 +477,7 @@ export default function InboxPage() {
                       />
                     )}
                     <Button onClick={handleNewConversation} disabled={!selectedUsers.length || createConversation.isPending} className="w-full">
-                      {createConversation.isPending ? "Creating..." : t("uiInboxPage.startConversation")}
+                      {createConversation.isPending ? t("uiInboxPage.creating") : t("uiInboxPage.startConversation")}
                     </Button>
                   </div>
                 </DialogContent>
@@ -498,7 +499,7 @@ export default function InboxPage() {
 
             <ScrollArea className="flex-1">
               {isLoading ? (
-                <div className="p-4 text-sm text-muted-foreground">Loading...</div>
+                <div className="p-4 text-sm text-muted-foreground">{t("uiInboxPage.loading")}</div>
               ) : conversations.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground">
                   <MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-40" />
@@ -629,7 +630,7 @@ export default function InboxPage() {
                             />
                           )}
                           <Button onClick={handleAddPeople} disabled={!newParticipants.length || addParticipants.isPending} className="w-full">
-                            {addParticipants.isPending ? "Adding..." : t("uiInboxPage.addParticipants")}
+                            {addParticipants.isPending ? t("uiInboxPage.adding") : t("uiInboxPage.addParticipants")}
                           </Button>
                         </div>
                       </DialogContent>
@@ -707,7 +708,7 @@ export default function InboxPage() {
                               {!isOwn && (activeConv?.is_group || (msg as any).sender_label) && (
                                 <p className="text-[10px] font-medium opacity-70 mb-0.5">
                                   {(msg as any).sender_label || msg.sender?.name}
-                                  {(msg as any).sender_label && <span className="ml-1 text-primary">• Official</span>}
+                                  {(msg as any).sender_label && <span className="ml-1 text-primary">{t("uiInboxPage.official")}</span>}
                                 </p>
                               )}
                               {isEditing ? (
@@ -737,7 +738,7 @@ export default function InboxPage() {
                                       {msg.attachment_type && IMAGE_TYPES.includes(msg.attachment_type) ? (
                                         <img
                                           src={msg.attachment_url}
-                                          alt={msg.attachment_name || "Image"}
+                                          alt={msg.attachment_name || t("uiInboxPage.image")}
                                           className="rounded-lg max-h-48 max-w-full object-cover hover:opacity-90 transition-opacity cursor-pointer"
                                           onClick={() => setLightboxSrc(msg.attachment_url!)}
                                         />
@@ -755,7 +756,7 @@ export default function InboxPage() {
                                   )}
                                   {msg.content && (
                                     <p className="text-sm whitespace-pre-wrap break-words">
-                                      {msg.is_deleted ? <span className="italic opacity-60">Message deleted</span> : renderMessageContent(msg.content, isOwn)}
+                                      {msg.is_deleted ? <span className="italic opacity-60">{t("uiInboxPage.messageDeleted")}</span> : renderMessageContent(msg.content, isOwn)}
                                     </p>
                                   )}
                                 </>

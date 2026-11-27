@@ -1,9 +1,10 @@
+import i18n from "@/i18n/config";
 import { Badge } from "@/components/ui/badge";
 
 const HEALTH_DOTS: Record<string, { color: string; label: string }> = {
   healthy: { color: "bg-emerald-500", label: "" },
   degraded: { color: "bg-amber-500", label: "" },
-  unreachable: { color: "bg-destructive", label: "Unreachable" },
+  unreachable: { color: "bg-destructive", get label() { return i18n.t("uiAgentSourceBadge.unreachable"); } },
   unknown: { color: "bg-muted-foreground/40", label: "" },
 };
 

@@ -93,7 +93,7 @@ function MilestoneCard({
             )}
             {m.reward_type === "BADGE" && (
               <Badge variant="secondary" className="text-[10px] gap-1">
-                <Trophy className="h-3 w-3 text-purple-500" /> Badge
+                <Trophy className="h-3 w-3 text-purple-500" /> {t("uiMilestonesHub.badge")}
               </Badge>
             )}
           </div>
@@ -166,7 +166,7 @@ export default function MilestonesHub() {
         <div className="rounded-xl border border-border bg-card p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium">Overall progress</p>
+              <p className="text-sm font-medium">{t("uiMilestonesHub.overallProgress")}</p>
               <p className="text-2xl font-bold font-display">
                 {completedCount} / {totalCount}
               </p>
@@ -187,7 +187,7 @@ export default function MilestonesHub() {
             </div>
           </div>
           <Progress value={progressPct} className="h-2" />
-          <p className="text-xs text-muted-foreground">{progressPct}% complete</p>
+          <p className="text-xs text-muted-foreground">{progressPct}{t("uiMilestonesHub.complete")}</p>
         </div>
 
         {/* Upcoming — grouped by phase */}
@@ -203,7 +203,7 @@ export default function MilestonesHub() {
               )}>
                 <span>{meta?.emoji}</span> {meta?.label}
                 <span className="text-xs font-normal text-muted-foreground ml-1">
-                  ({items.length} remaining)
+                  ({items.length} {t("uiMilestonesHub.remaining")}
                 </span>
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -234,11 +234,11 @@ export default function MilestonesHub() {
               >
                 {showCompleted ? (
                   <>
-                    <ChevronUp className="h-3.5 w-3.5" /> Hide
+                    <ChevronUp className="h-3.5 w-3.5" /> {t("uiMilestonesHub.hide")}
                   </>
                 ) : (
                   <>
-                    <ChevronDown className="h-3.5 w-3.5" /> Show
+                    <ChevronDown className="h-3.5 w-3.5" /> {t("uiMilestonesHub.show")}
                   </>
                 )}
               </Button>

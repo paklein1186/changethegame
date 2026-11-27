@@ -27,11 +27,11 @@ import { FrenchTextOverlay } from "@/components/onboarding/FrenchTextOverlay";
 
 const ORG_TYPES = [
   { value: "public_sector", get label() { return i18n.t("uiOrganizationOnboarding.publicSector"); }, icon: Landmark, get desc() { return i18n.t("uiOrganizationOnboarding.governmentMunicipalityPublicInstitution"); } },
-  { value: "corporation", label: "Company / Corporation", icon: Building2, get desc() { return i18n.t("uiOrganizationOnboarding.privateCompanyStartupSme"); } },
-  { value: "academic", label: "Academic / Research", icon: GraduationCap, desc: "University, lab, research center" },
-  { value: "foundation", label: "Foundation", icon: Heart, get desc() { return i18n.t("uiOrganizationOnboarding.philanthropicOrGrantMakingOrganization"); } },
-  { value: "ngo", label: "NGO", icon: Leaf, desc: "Non-profit, association, structured NGO" },
-  { value: "cooperative", label: "Cooperative", icon: Handshake, desc: "Formal cooperative structure" },
+  { value: "corporation", get label() { return i18n.t("uiOrganizationOnboarding.companyCorporation"); }, icon: Building2, get desc() { return i18n.t("uiOrganizationOnboarding.privateCompanyStartupSme"); } },
+  { value: "academic", get label() { return i18n.t("uiOrganizationOnboarding.academicResearch"); }, icon: GraduationCap, get desc() { return i18n.t("uiOrganizationOnboarding.universityLabResearchCenter"); } },
+  { value: "foundation", get label() { return i18n.t("uiOrganizationOnboarding.foundation"); }, icon: Heart, get desc() { return i18n.t("uiOrganizationOnboarding.philanthropicOrGrantMakingOrganization"); } },
+  { value: "ngo", label: "NGO", icon: Leaf, get desc() { return i18n.t("uiOrganizationOnboarding.nonProfitAssociationStructuredNgo"); } },
+  { value: "cooperative", get label() { return i18n.t("uiOrganizationOnboarding.cooperative"); }, icon: Handshake, get desc() { return i18n.t("uiOrganizationOnboarding.formalCooperativeStructure"); } },
 ];
 
 const REDIRECT_TYPES = ["dao", "collective", "community", "informal_network"];
@@ -204,7 +204,7 @@ export default function OrganizationOnboarding() {
       }
 
       qc.invalidateQueries({ queryKey: ["my-companies"] });
-      toast({ title: "Organization created successfully!" });
+      toast({ title: t("uiOrganizationOnboarding.organizationCreatedSuccessfully") });
       navigate(`/organizations/${companyId}/next-steps`);
     } catch (e: any) {
       console.error(e);
@@ -261,7 +261,7 @@ export default function OrganizationOnboarding() {
               <div className="mt-6 rounded-xl border border-primary/20 bg-primary/5 p-4">
                 <p className="text-sm font-medium mb-2">{t("uiOrganizationOnboarding.notATraditionalOrganization")}</p>
                 <p className="text-xs text-muted-foreground mb-3">
-                  {t("uiOrganizationOnboarding.createA")} <strong>{t("uiOrganizationOnboarding.guild")}</strong> {t("uiOrganizationOnboarding.communityCollectiveDaoOrA")} <strong>Pod</strong> (micro-team, study group) instead.
+                  {t("uiOrganizationOnboarding.createA")} <strong>{t("uiOrganizationOnboarding.guild")}</strong> {t("uiOrganizationOnboarding.communityCollectiveDaoOrA")} <strong>{t("uiOrganizationOnboarding.pod")}</strong> {t("uiOrganizationOnboarding.microTeamStudyGroupInstead")}
                 </p>
                 <Button variant="outline" size="sm" onClick={() => setShowEntityWizard(true)} className="gap-1.5">
                   <Plus className="h-3.5 w-3.5" /> {t("uiOrganizationOnboarding.createAGuildOrPod")}
@@ -281,14 +281,14 @@ export default function OrganizationOnboarding() {
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.organizationName")}</label>
-                  <Input value={orgName} onChange={e => setOrgName(e.target.value)} placeholder="e.g. United Nations Development Programme" maxLength={100} />
+                  <Input value={orgName} onChange={e => setOrgName(e.target.value)} placeholder={t("uiOrganizationOnboarding.eGUnitedNationsDevelopmentProgramme")} maxLength={100} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Website URL</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.websiteUrl")}</label>
                   <Input value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} placeholder="https://yourorganization.org" type="url" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">LinkedIn Page (optional)</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.linkedinPageOptional")}</label>
                   <Input value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/company/..." type="url" />
                 </div>
               </div>
@@ -317,7 +317,7 @@ export default function OrganizationOnboarding() {
               {scraping ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-4">
                   <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                  <p className="text-muted-foreground">Extracting organization data...</p>
+                  <p className="text-muted-foreground">{t("uiOrganizationOnboarding.extractingOrganizationData")}</p>
                 </div>
               ) : (
                 <div className="space-y-4 mt-6">
@@ -326,7 +326,7 @@ export default function OrganizationOnboarding() {
                     <Input value={orgName} onChange={e => setOrgName(e.target.value)} maxLength={100} />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Mission Statement</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.missionStatement")}</label>
                     <Textarea value={mission} onChange={e => setMission(e.target.value)} placeholder={t("uiOrganizationOnboarding.whatSYourOrganizationSMission")} className="resize-none" rows={3} />
                   </div>
                   <div>
@@ -334,17 +334,17 @@ export default function OrganizationOnboarding() {
                     <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder={t("uiOrganizationOnboarding.briefDescription")} className="resize-none" rows={3} />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Scale</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.scale")}</label>
                     <Select value={scaleCategory} onValueChange={setScaleCategory}>
                       <SelectTrigger><SelectValue placeholder={t("uiOrganizationOnboarding.selectScale")} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="small">Small</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="large">Large</SelectItem>
+                        <SelectItem value="small">{t("uiOrganizationOnboarding.small")}</SelectItem>
+                        <SelectItem value="medium">{t("uiOrganizationOnboarding.medium")}</SelectItem>
+                        <SelectItem value="large">{t("uiOrganizationOnboarding.large")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <ImageUpload label="Logo" currentImageUrl={logoUrl} onChange={setLogoUrl} aspectRatio="1/1" description="Organization logo" />
+                  <ImageUpload label={t("uiOrganizationOnboarding.logo")} currentImageUrl={logoUrl} onChange={setLogoUrl} aspectRatio="1/1" description={t("uiOrganizationOnboarding.organizationLogo")} />
 
                   {suggestedTopics.length > 0 && (
                     <div>
@@ -364,7 +364,7 @@ export default function OrganizationOnboarding() {
                   )}
                   {collaborationInterests.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium mb-1 block">Collaboration Interests</label>
+                      <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.collaborationInterests")}</label>
                       <div className="flex flex-wrap gap-1.5">
                         {collaborationInterests.map(c => <Badge key={c} variant="outline" className="text-xs">{c}</Badge>)}
                       </div>
@@ -389,7 +389,7 @@ export default function OrganizationOnboarding() {
               <div className="space-y-6">
                 {/* Topics */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><Hash className="h-4 w-4" /> {t("uiOrganizationOnboarding.topics")}{selectedTopicIds.length} selected)</label>
+                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><Hash className="h-4 w-4" /> {t("uiOrganizationOnboarding.topics")}{selectedTopicIds.length} {t("uiOrganizationOnboarding.selected")}</label>
                   <Input value={topicSearch} onChange={e => setTopicSearch(e.target.value)} placeholder={t("uiOrganizationOnboarding.searchTopics")} className="mb-2" />
                   <div className="max-h-48 overflow-y-auto rounded-lg border border-border p-2 space-y-1">
                     {filteredTopics.map((t: any) => (
@@ -405,7 +405,7 @@ export default function OrganizationOnboarding() {
 
                 {/* Territories */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><MapPin className="h-4 w-4" /> {t("uiOrganizationOnboarding.territories")}{selectedTerritoryIds.length} selected)</label>
+                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><MapPin className="h-4 w-4" /> {t("uiOrganizationOnboarding.territories")}{selectedTerritoryIds.length} {t("uiOrganizationOnboarding.selected")}</label>
                   <Input value={terrSearch} onChange={e => setTerrSearch(e.target.value)} placeholder={t("uiOrganizationOnboarding.searchTerritories")} className="mb-2" />
                   <div className="max-h-48 overflow-y-auto rounded-lg border border-border p-2 space-y-1">
                     {filteredTerritories.map((t: any) => (
@@ -423,7 +423,7 @@ export default function OrganizationOnboarding() {
 
               <div className="flex justify-between mt-8">
                 <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> {t("uiOrganizationOnboarding.back")}</Button>
-                <Button onClick={() => setStep("review")}>Review <ChevronRight className="h-4 w-4 ml-1" /></Button>
+                <Button onClick={() => setStep("review")}>{t("uiOrganizationOnboarding.review")} <ChevronRight className="h-4 w-4 ml-1" /></Button>
               </div>
             </motion.div>
           )}
@@ -440,7 +440,7 @@ export default function OrganizationOnboarding() {
                 <div className="flex items-center gap-4">
                   {logoUrl && <img src={logoUrl} alt="" className="h-14 w-14 rounded-xl object-cover" />}
                   <div>
-                    <h2 className="font-display text-xl font-bold">{orgName || "Unnamed Organization"}</h2>
+                    <h2 className="font-display text-xl font-bold">{orgName || t("uiOrganizationOnboarding.unnamedOrganization")}</h2>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       {orgType && <Badge variant="outline" className="text-xs capitalize">{orgType.replace(/_/g, " ")}</Badge>}
                       {sector && <span>{sector}</span>}
@@ -448,7 +448,7 @@ export default function OrganizationOnboarding() {
                     </div>
                   </div>
                 </div>
-                {mission && <div><span className="text-xs font-medium text-muted-foreground">Mission</span><p className="text-sm">{mission}</p></div>}
+                {mission && <div><span className="text-xs font-medium text-muted-foreground">{t("uiOrganizationOnboarding.mission")}</span><p className="text-sm">{mission}</p></div>}
                 {description && <div><span className="text-xs font-medium text-muted-foreground">{t("uiOrganizationOnboarding.description")}</span><p className="text-sm">{description}</p></div>}
                 {selectedTopicIds.length > 0 && (
                   <div>

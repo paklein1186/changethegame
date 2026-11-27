@@ -83,7 +83,7 @@ export function StripeConnectSection() {
       <div className="space-y-6">
         <div className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold">Connected Apps</h3>
+          <h3 className="text-lg font-semibold">{t("uiStripeConnectSection.connectedApps")}</h3>
         </div>
         <div className="flex items-center justify-center py-8 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin mr-2" /> {t("uiStripeConnectSection.checkingStripeStatus")}
@@ -99,7 +99,7 @@ export function StripeConnectSection() {
     <div className="space-y-6">
       <div className="flex items-center gap-2">
         <Zap className="h-5 w-5 text-primary" />
-        <h3 className="text-lg font-semibold">Connected Apps</h3>
+        <h3 className="text-lg font-semibold">{t("uiStripeConnectSection.connectedApps")}</h3>
       </div>
 
       <Card>
@@ -110,7 +110,7 @@ export function StripeConnectSection() {
                 <Zap className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium">Stripe Connect</p>
+                <p className="font-medium">{t("uiStripeConnectSection.stripeConnect")}</p>
                 <p className="text-xs text-muted-foreground">
                   {t("uiStripeConnectSection.receivePayoutsFromBookingsQuestsEvents")}
                 </p>
@@ -118,11 +118,11 @@ export function StripeConnectSection() {
             </div>
             {isComplete ? (
               <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                <CheckCircle className="h-3 w-3 mr-1" /> Connected
+                <CheckCircle className="h-3 w-3 mr-1" /> {t("uiStripeConnectSection.connected")}
               </Badge>
             ) : isConnected ? (
               <Badge variant="secondary" className="text-amber-700 dark:text-amber-400">
-                <AlertTriangle className="h-3 w-3 mr-1" /> Onboarding incomplete
+                <AlertTriangle className="h-3 w-3 mr-1" /> {t("uiStripeConnectSection.onboardingIncomplete")}
               </Badge>
             ) : (
               <Badge variant="outline">{t("uiStripeConnectSection.notConnected")}</Badge>
@@ -133,11 +133,11 @@ export function StripeConnectSection() {
             <div className="text-sm text-muted-foreground space-y-1">
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-3.5 w-3.5 text-green-600" />
-                <span>Charges enabled</span>
+                <span>{t("uiStripeConnectSection.chargesEnabled")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-3.5 w-3.5 text-green-600" />
-                <span>Payouts enabled</span>
+                <span>{t("uiStripeConnectSection.payoutsEnabled")}</span>
               </div>
             </div>
           )}
@@ -156,7 +156,7 @@ export function StripeConnectSection() {
                 ) : (
                   <Plug className="h-4 w-4 mr-1" />
                 )}
-                {isConnected ? t("uiStripeConnectSection.continueOnboarding") : "Connect Stripe"}
+                {isConnected ? t("uiStripeConnectSection.continueOnboarding") : t("uiStripeConnectSection.connectStripe")}
               </Button>
             )}
             {isComplete && (

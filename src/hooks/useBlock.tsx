@@ -31,10 +31,10 @@ export function useBlock(targetUserId: string) {
     if (!currentUser.id) return;
     if (isBlocked) {
       await supabase.from("user_blocks").delete().eq("blocker_id", currentUser.id).eq("blocked_id", targetUserId);
-      toast({ title: "User unblocked" });
+      toast({ title: t("uiUseBlock.userUnblocked") });
     } else {
       await supabase.from("user_blocks").insert({ blocker_id: currentUser.id, blocked_id: targetUserId });
-      toast({ title: "User blocked", description: t("uiUseBlock.theyWonTBeAbleTo") });
+      toast({ title: t("uiUseBlock.userBlocked"), description: t("uiUseBlock.theyWonTBeAbleTo") });
     }
     qc.invalidateQueries({ queryKey: ["user-block", currentUser.id, targetUserId] });
   }, [isBlocked, currentUser.id, targetUserId, toast, qc]);

@@ -10,7 +10,7 @@ export default function CreateGuildInfoPage() {
         <ContentList items={[t("uiCreateGuildInfoPage.quests"), t("uiCreateGuildInfoPage.collaborationTools"), t("uiCreateGuildInfoPage.events"), t("uiCreateGuildInfoPage.services"), t("uiCreateGuildInfoPage.membersAndRoles"), t("uiCreateGuildInfoPage.anAiAgentForCoordination")]} />
       </ContentSection>
 
-      <ContentSection title="Membership">
+      <ContentSection title={t("uiCreateGuildInfoPage.membership")}>
         <p>{t("uiCreateGuildInfoPage.youCanRequireApplicationsOrKeep")}</p>
       </ContentSection>
 

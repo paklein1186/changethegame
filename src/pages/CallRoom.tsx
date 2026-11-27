@@ -193,7 +193,7 @@ function getSessionStatus(booking: any): {
   }
 
   if (end && now > end) {
-    return { label: "Finished", variant: "outline", canJoin: true, get message() { return i18n.t("uiCallRoom.thisSessionHasEndedNotesAre"); } };
+    return { get label() { return i18n.t("uiCallRoom.finished"); }, variant: "outline", canJoin: true, get message() { return i18n.t("uiCallRoom.thisSessionHasEndedNotesAre"); } };
   }
 
   return { get label() { return i18n.t("uiCallRoom.liveNow"); }, variant: "default", canJoin: true };
@@ -290,7 +290,7 @@ export default function CallRoom() {
       <PageShell>
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
-          <h1 className="font-display text-2xl font-bold mb-2">Access denied</h1>
+          <h1 className="font-display text-2xl font-bold mb-2">{t("uiCallRoom.accessDenied")}</h1>
           <p className="text-muted-foreground mb-6">{t("uiCallRoom.youDonTHavePermissionTo")}</p>
           <Button variant="outline" asChild>
             <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCallRoom.backToWork")}</Link>
@@ -321,7 +321,7 @@ export default function CallRoom() {
             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
           </>
         )}
-        <span className="font-medium text-foreground">Call</span>
+        <span className="font-medium text-foreground">{t("uiCallRoom.call")}</span>
         <div className="ml-auto flex items-center gap-2">
           <Badge variant={status.variant} className="text-xs">
             {status.label === "Live now" && <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse" />}
@@ -383,7 +383,7 @@ export default function CallRoom() {
             {/* Date/time */}
             <div className="space-y-1">
               <h3 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" /> Schedule
+                <Clock className="h-3.5 w-3.5" /> {t("uiCallRoom.schedule")}
               </h3>
               {booking.start_date_time ? (
                 <p className="text-sm">
@@ -400,14 +400,14 @@ export default function CallRoom() {
                 <p className="text-sm text-muted-foreground">{t("uiCallRoom.noTimeSet")}</p>
               )}
               {service?.duration_minutes && (
-                <p className="text-xs text-muted-foreground">{service.duration_minutes} min session</p>
+                <p className="text-xs text-muted-foreground">{service.duration_minutes} {t("uiCallRoom.minSession")}</p>
               )}
             </div>
 
             {/* Participants */}
             <div className="space-y-2">
               <h3 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-1">
-                <Users className="h-3.5 w-3.5" /> Participants
+                <Users className="h-3.5 w-3.5" /> {t("uiCallRoom.participants")}
               </h3>
 
               {/* Provider */}
@@ -417,8 +417,8 @@ export default function CallRoom() {
                   <AvatarFallback>{providerProfile?.name?.[0] || "?"}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{providerProfile?.name || "Provider"}</p>
-                  <p className="text-xs text-muted-foreground">Host</p>
+                  <p className="text-sm font-medium truncate">{providerProfile?.name || t("uiCallRoom.provider")}</p>
+                  <p className="text-xs text-muted-foreground">{t("uiCallRoom.host")}</p>
                 </div>
               </Link>
 
@@ -429,8 +429,8 @@ export default function CallRoom() {
                   <AvatarFallback>{requesterProfile?.name?.[0] || "?"}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{requesterProfile?.name || "Guest"}</p>
-                  <p className="text-xs text-muted-foreground">Guest</p>
+                  <p className="text-sm font-medium truncate">{requesterProfile?.name || t("uiCallRoom.guest")}</p>
+                  <p className="text-xs text-muted-foreground">{t("uiCallRoom.guest")}</p>
                 </div>
               </Link>
             </div>
@@ -439,10 +439,10 @@ export default function CallRoom() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-1">
-                  <FileText className="h-3.5 w-3.5" /> Session Notes
+                  <FileText className="h-3.5 w-3.5" /> {t("uiCallRoom.sessionNotes")}
                 </h3>
                 <span className="text-[10px] text-muted-foreground">
-                  {notesSaved ? "✓ Saved" : "Saving…"}
+                  {notesSaved ? t("uiCallRoom.saved") : t("uiCallRoom.saving")}
                 </span>
               </div>
               <Textarea
@@ -456,14 +456,14 @@ export default function CallRoom() {
 
             {/* Links */}
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground">Links</h3>
+              <h3 className="text-xs font-semibold uppercase text-muted-foreground">{t("uiCallRoom.links")}</h3>
               <div className="flex flex-col gap-1">
                 <Link to={`/bookings/${booking.id}`} className="text-sm text-primary hover:underline">
                   {t("uiCallRoom.bookingDetails")}
                 </Link>
                 {service && (
                   <a href={`/services/${service.id}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
-                    Service page <ExternalLink className="inline h-3 w-3" />
+                    {t("uiCallRoom.servicePage")} <ExternalLink className="inline h-3 w-3" />
                   </a>
                 )}
                 {booking.call_url && (

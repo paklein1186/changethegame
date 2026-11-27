@@ -12,9 +12,9 @@ interface FeedDisplayToggleProps {
 
 const modes: { mode: FeedDisplayMode; icon: React.ElementType; label: string }[] = [
   { mode: "list", icon: LayoutList, get label() { return i18n.t("uiFeedDisplayToggle.listView"); } },
-  { mode: "small", icon: Grid3X3, label: "Small tiles" },
-  { mode: "medium", icon: Grid2X2, label: "Medium tiles" },
-  { mode: "large", icon: LayoutGrid, label: "Large tiles" },
+  { mode: "small", icon: Grid3X3, get label() { return i18n.t("uiFeedDisplayToggle.smallTiles"); } },
+  { mode: "medium", icon: Grid2X2, get label() { return i18n.t("uiFeedDisplayToggle.mediumTiles"); } },
+  { mode: "large", icon: LayoutGrid, get label() { return i18n.t("uiFeedDisplayToggle.largeTiles"); } },
 ];
 
 export function FeedDisplayToggle({ value, onChange }: FeedDisplayToggleProps) {

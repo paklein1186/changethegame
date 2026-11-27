@@ -128,7 +128,7 @@ export function ThisWeekInEcosystem() {
         {data.topics.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 mb-3">
-              <Hash className="h-4 w-4" /> Featured Houses
+              <Hash className="h-4 w-4" /> {t("uiThisWeekInEcosystem.featuredHouses")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {data.topics.map((t: any) => (

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function ContractRichEditor({ initialContent, onChange }: Props) {
+  const { t } = useTranslation();
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] } }),
@@ -63,64 +65,64 @@ export function ContractRichEditor({ initialContent, onChange }: Props) {
     <div className="border border-input rounded-md overflow-hidden bg-background">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-border bg-muted/30">
-        <Btn active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()} title="Bold">
+        <Btn active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()} title={t("uiContractRichEditor.bold")}>
           <Bold className={ic} />
         </Btn>
-        <Btn active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()} title="Italic">
+        <Btn active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()} title={t("uiContractRichEditor.italic")}>
           <Italic className={ic} />
         </Btn>
-        <Btn active={editor.isActive("underline")} onClick={() => editor.chain().focus().toggleUnderline().run()} title="Underline">
+        <Btn active={editor.isActive("underline")} onClick={() => editor.chain().focus().toggleUnderline().run()} title={t("uiContractRichEditor.underline")}>
           <UnderlineIcon className={ic} />
         </Btn>
-        <Btn active={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()} title="Strikethrough">
+        <Btn active={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()} title={t("uiContractRichEditor.strikethrough")}>
           <Strikethrough className={ic} />
         </Btn>
-        <Btn active={editor.isActive("highlight")} onClick={() => editor.chain().focus().toggleHighlight().run()} title="Highlight">
+        <Btn active={editor.isActive("highlight")} onClick={() => editor.chain().focus().toggleHighlight().run()} title={t("uiContractRichEditor.highlight")}>
           <Highlighter className={ic} />
         </Btn>
 
         <span className="w-px h-5 bg-border mx-1" />
 
-        <Btn active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} title="Heading 2">
+        <Btn active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} title={t("uiContractRichEditor.heading2")}>
           <Heading2 className={ic} />
         </Btn>
-        <Btn active={editor.isActive("heading", { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} title="Heading 3">
+        <Btn active={editor.isActive("heading", { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} title={t("uiContractRichEditor.heading3")}>
           <Heading3 className={ic} />
         </Btn>
 
         <span className="w-px h-5 bg-border mx-1" />
 
-        <Btn active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()} title="Bullet list">
+        <Btn active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()} title={t("uiContractRichEditor.bulletList")}>
           <List className={ic} />
         </Btn>
-        <Btn active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()} title="Numbered list">
+        <Btn active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()} title={t("uiContractRichEditor.numberedList")}>
           <ListOrdered className={ic} />
         </Btn>
 
         <span className="w-px h-5 bg-border mx-1" />
 
-        <Btn active={editor.isActive({ textAlign: "left" })} onClick={() => editor.chain().focus().setTextAlign("left").run()} title="Align left">
+        <Btn active={editor.isActive({ textAlign: "left" })} onClick={() => editor.chain().focus().setTextAlign("left").run()} title={t("uiContractRichEditor.alignLeft")}>
           <AlignLeft className={ic} />
         </Btn>
-        <Btn active={editor.isActive({ textAlign: "center" })} onClick={() => editor.chain().focus().setTextAlign("center").run()} title="Align center">
+        <Btn active={editor.isActive({ textAlign: "center" })} onClick={() => editor.chain().focus().setTextAlign("center").run()} title={t("uiContractRichEditor.alignCenter")}>
           <AlignCenter className={ic} />
         </Btn>
-        <Btn active={editor.isActive({ textAlign: "right" })} onClick={() => editor.chain().focus().setTextAlign("right").run()} title="Align right">
+        <Btn active={editor.isActive({ textAlign: "right" })} onClick={() => editor.chain().focus().setTextAlign("right").run()} title={t("uiContractRichEditor.alignRight")}>
           <AlignRight className={ic} />
         </Btn>
 
         <span className="w-px h-5 bg-border mx-1" />
 
-        <Btn onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Horizontal rule">
+        <Btn onClick={() => editor.chain().focus().setHorizontalRule().run()} title={t("uiContractRichEditor.horizontalRule")}>
           <Minus className={ic} />
         </Btn>
 
         <span className="w-px h-5 bg-border mx-1" />
 
-        <Btn onClick={() => editor.chain().focus().undo().run()} title="Undo">
+        <Btn onClick={() => editor.chain().focus().undo().run()} title={t("uiContractRichEditor.undo")}>
           <Undo className={ic} />
         </Btn>
-        <Btn onClick={() => editor.chain().focus().redo().run()} title="Redo">
+        <Btn onClick={() => editor.chain().focus().redo().run()} title={t("uiContractRichEditor.redo")}>
           <Redo className={ic} />
         </Btn>
       </div>

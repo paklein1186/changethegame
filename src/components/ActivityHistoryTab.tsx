@@ -16,14 +16,14 @@ import {
 
 const ACTION_META: Record<string, { label: string; icon: typeof History; color: string; revertable?: boolean }> = {
   post_created: { get label() { return i18n.t("uiActivityHistoryTab.createdAPost"); }, icon: FileText, color: "text-blue-500", revertable: true },
-  comment_created: { label: "Commented", icon: MessageSquare, color: "text-green-500", revertable: true },
+  comment_created: { get label() { return i18n.t("uiActivityHistoryTab.commented"); }, icon: MessageSquare, color: "text-green-500", revertable: true },
   post_upvoted: { get label() { return i18n.t("uiActivityHistoryTab.upvotedAPost"); }, icon: Heart, color: "text-pink-500", revertable: true },
   quest_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedAQuest"); }, icon: Swords, color: "text-orange-500", revertable: true },
   quest_highlighted: { get label() { return i18n.t("uiActivityHistoryTab.highlightedAQuest"); }, icon: Swords, color: "text-yellow-500", revertable: true },
   guild_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedAGuild"); }, icon: UserPlus, color: "text-purple-500" },
   company_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedACompany"); }, icon: UserPlus, color: "text-indigo-500" },
   pod_joined: { get label() { return i18n.t("uiActivityHistoryTab.joinedAPod"); }, icon: UserPlus, color: "text-teal-500" },
-  followed: { label: "Followed", icon: Heart, color: "text-pink-400", revertable: true },
+  followed: { get label() { return i18n.t("uiActivityHistoryTab.followed"); }, icon: Heart, color: "text-pink-400", revertable: true },
   course_enrolled: { get label() { return i18n.t("uiActivityHistoryTab.enrolledInACourse"); }, icon: FileText, color: "text-cyan-500" },
   event_registered: { get label() { return i18n.t("uiActivityHistoryTab.registeredForAnEvent"); }, icon: FileText, color: "text-emerald-500" },
   quest_deleted: { get label() { return i18n.t("uiActivityHistoryTab.deletedAQuest"); }, icon: Trash2, color: "text-red-500", revertable: true },
@@ -60,18 +60,18 @@ export function ActivityHistoryTab() {
       switch (action.action_type) {
         case "post_created": {
           await supabase.from("feed_posts").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", action.target_id).eq("author_user_id", user.id);
-          toast({ title: "Post deleted" });
+          toast({ title: t("uiActivityHistoryTab.postDeleted") });
           break;
         }
         case "comment_created": {
           const commentId = action.metadata?.comment_id || action.target_id;
           await supabase.from("comments").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", commentId).eq("author_id", user.id);
-          toast({ title: "Comment deleted" });
+          toast({ title: t("uiActivityHistoryTab.commentDeleted") });
           break;
         }
         case "post_upvoted": {
           await supabase.from("post_upvotes").delete().eq("post_id", action.target_id).eq("user_id", user.id);
-          toast({ title: "Upvote removed" });
+          toast({ title: t("uiActivityHistoryTab.upvoteRemoved") });
           break;
         }
         case "quest_joined": {
@@ -81,12 +81,12 @@ export function ActivityHistoryTab() {
         }
         case "quest_highlighted": {
           await supabase.from("highlighted_quests").delete().eq("quest_id", action.target_id).eq("user_id", user.id);
-          toast({ title: "Highlight removed" });
+          toast({ title: t("uiActivityHistoryTab.highlightRemoved") });
           break;
         }
         case "followed": {
           await supabase.from("follows").delete().eq("target_id", action.target_id).eq("follower_id", user.id);
-          toast({ title: "Unfollowed" });
+          toast({ title: t("uiActivityHistoryTab.unfollowed") });
           break;
         }
         case "quest_deleted": {
@@ -94,7 +94,7 @@ export function ActivityHistoryTab() {
           const deletedAt = new Date(action.created_at);
           const daysSince = (Date.now() - deletedAt.getTime()) / (1000 * 60 * 60 * 24);
           if (daysSince > 10) {
-            toast({ title: "Grace period expired (10 days)", variant: "destructive" });
+            toast({ title: t("uiActivityHistoryTab.gracePeriodExpired10Days"), variant: "destructive" });
             break;
           }
           await supabase.from("quests").update({ is_deleted: false, deleted_at: null }).eq("id", action.target_id);
@@ -163,7 +163,7 @@ export function ActivityHistoryTab() {
                       <span className="ml-2 text-orange-500 font-medium">· {daysLeft}{t("uiActivityHistoryTab.dLeftToRestore")}</span>
                     )}
                     {graceExpired && (
-                      <span className="ml-2 text-muted-foreground">· grace period expired</span>
+                      <span className="ml-2 text-muted-foreground">{t("uiActivityHistoryTab.gracePeriodExpired")}</span>
                     )}
                   </p>
                 </div>
@@ -172,7 +172,7 @@ export function ActivityHistoryTab() {
                     <AlertDialogTrigger asChild>
                       <Button variant="ghost" size="sm" className="shrink-0 text-destructive hover:text-destructive" disabled={reverting === a.id}>
                         {reverting === a.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Undo2 className="h-3.5 w-3.5" />}
-                        <span className="ml-1 text-xs">Undo</span>
+                        <span className="ml-1 text-xs">{t("uiActivityHistoryTab.undo")}</span>
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
@@ -190,7 +190,7 @@ export function ActivityHistoryTab() {
                   </AlertDialog>
                 )}
                 {!canRevert && (
-                  <Badge variant="outline" className="text-xs shrink-0">Permanent</Badge>
+                  <Badge variant="outline" className="text-xs shrink-0">{t("uiActivityHistoryTab.permanent")}</Badge>
                 )}
               </div>
             );

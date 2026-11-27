@@ -127,11 +127,11 @@ export default function WorkHub() {
           const workTabs: TabDefinition[] = [
             { value: "tasks", label: <><ListTodo className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("tabs.tasks")}</span><HintTooltip {...HINTS.tooltips.workTasks} /></> },
             { value: "quests", label: <><span className="hidden sm:inline">{t("work.myQuests")}</span><span className="sm:hidden">{t("explore.quests")}</span> ({nonIdeaQuests.length})</> },
-            { value: "ideas", label: <><Lightbulb className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Ideas</span> ({ideasList.length})<HintTooltip {...HINTS.tooltips.workIdeas} /></> },
+            { value: "ideas", label: <><Lightbulb className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiWorkHub.ideas")}</span> ({ideasList.length})<HintTooltip {...HINTS.tooltips.workIdeas} /></> },
             { value: "teams", label: <><span className="hidden sm:inline">{t("tabs.myEntities")}</span><span className="sm:hidden">{t("tabs.teams")}</span> ({teamsList.length})<HintTooltip {...HINTS.tooltips.workTeams} /></> },
             { value: "services", label: <><span className="hidden sm:inline">{t("work.services")}</span><span className="sm:hidden">{t("tabs.services")}</span> ({servicesList.length})</> },
             { value: "bookings", label: <>{t("tabs.bookings")}<HintTooltip {...HINTS.tooltips.workBookings} /></> },
-            { value: "calendar", label: <><Calendar className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Calendar</span></> },
+            { value: "calendar", label: <><Calendar className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiWorkHub.calendar")}</span></> },
             { value: "contributions", label: <><Scale className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiWorkHub.contributions")}</span></> },
             { value: "drafts", label: <>{t("tabs.drafts")} ({drafts ? totalDrafts : "…"})</> },
           ];
@@ -162,7 +162,7 @@ export default function WorkHub() {
                     <div className="flex gap-2 mt-2">
                       <Badge variant="secondary" className="text-[10px] capitalize">{qp.role.toLowerCase()}</Badge>
                       <Badge variant="outline" className="text-[10px] capitalize">{qp.status.toLowerCase()}</Badge>
-                      {qp.quests?.company_id && <Badge className="bg-accent text-accent-foreground border-0 text-[10px]"><Building2 className="h-2.5 w-2.5 mr-0.5" />Client</Badge>}
+                      {qp.quests?.company_id && <Badge className="bg-accent text-accent-foreground border-0 text-[10px]"><Building2 className="h-2.5 w-2.5 mr-0.5" />{t("uiWorkHub.client")}</Badge>}
                     </div>
                   </div>
                 </Link>
@@ -196,12 +196,12 @@ export default function WorkHub() {
             {ideasList.map((qp: any, i: number) => (
               <motion.div key={qp.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
                 <Link to={`/quests/${qp.quest_id}`} className="flex gap-3 rounded-xl border border-amber-400/30 bg-amber-400/5 p-4 hover:border-amber-400/50 transition-all">
-                  <Thumb src={qp.quests?.cover_image_url} fallback={questPattern} alt={qp.quests?.title || "Idea"} />
+                  <Thumb src={qp.quests?.cover_image_url} fallback={questPattern} alt={qp.quests?.title || t("uiWorkHub.idea")} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <h4 className="font-display font-semibold truncate">{qp.quests?.title}</h4>
                       <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-400/30 shrink-0 gap-1">
-                        <Lightbulb className="h-2.5 w-2.5" /> Idea
+                        <Lightbulb className="h-2.5 w-2.5" /> {t("uiWorkHub.idea")}
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-1 mt-1">{qp.quests?.description}</p>
@@ -268,7 +268,7 @@ export default function WorkHub() {
                       <h4 className="font-display font-semibold truncate">{svc.title}</h4>
                       {svc.price_amount != null && (
                         <Badge className="bg-primary/10 text-primary border-0 text-xs shrink-0">
-                          {svc.price_amount === 0 ? "Free" : `€${svc.price_amount}`}
+                          {svc.price_amount === 0 ? t("uiWorkHub.free") : `€${svc.price_amount}`}
                         </Badge>
                       )}
                     </div>

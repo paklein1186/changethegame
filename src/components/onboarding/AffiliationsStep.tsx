@@ -83,12 +83,12 @@ export function AffiliationsStep({
       {/* Part A: Links */}
       <div className="space-y-3">
         <p className="text-xs text-muted-foreground">
-          {t("uiAffiliationsStep.optionalAdd13LinksWe")} {persona === "CREATIVE" ? "skill sessions" : "services"} {t("uiAffiliationsStep.youCouldOfferYouWillBe")}
+          {t("uiAffiliationsStep.optionalAdd13LinksWe")} {persona === "CREATIVE" ? t("uiAffiliationsStep.skillSessions") : "services"} {t("uiAffiliationsStep.youCouldOfferYouWillBe")}
         </p>
 
         <div>
           <label className="text-sm font-medium mb-1 flex items-center gap-1.5">
-            <Globe className="h-3.5 w-3.5" /> Website / Portfolio
+            <Globe className="h-3.5 w-3.5" /> {t("uiAffiliationsStep.websitePortfolio")}
           </label>
           <Input
             value={links.website}

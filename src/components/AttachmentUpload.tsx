@@ -99,7 +99,7 @@ export function AttachmentUpload({ targetType, targetId, onAttachmentsChange, cl
 
   return (
     <div className={cn("space-y-3", className)}>
-      <label className="text-sm font-medium block">Attachments</label>
+      <label className="text-sm font-medium block">{t("uiAttachmentUpload.attachments")}</label>
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
@@ -181,7 +181,7 @@ export function AttachmentList({ targetType, targetId }: { targetType: Attachmen
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: listKey });
-      toast.success("Document deleted");
+      toast.success(t("uiAttachmentUpload.documentDeleted"));
     },
     onError: () => toast.error(t("uiAttachmentUpload.failedToDeleteDocument")),
   });
@@ -218,7 +218,7 @@ export function AttachmentList({ targetType, targetId }: { targetType: Attachmen
   return (
     <div className="space-y-2">
       <h4 className="font-display font-semibold text-sm flex items-center gap-2">
-        <Paperclip className="h-4 w-4" /> Documents ({items.length})
+        <Paperclip className="h-4 w-4" /> {t("uiAttachmentUpload.documents")}{items.length})
       </h4>
       <div className="space-y-1.5">
         {items.map((att) => {
@@ -296,7 +296,7 @@ export function AttachmentList({ targetType, targetId }: { targetType: Attachmen
               </div>
               <div className="flex items-center gap-3 mt-1 ml-6 text-xs text-muted-foreground">
                 <span>{formatSize(att.file_size ?? 0)}</span>
-                <span>Uploaded {formatDistanceToNow(new Date(att.created_at), { addSuffix: true })}</span>
+                <span>{t("uiAttachmentUpload.uploaded")} {formatDistanceToNow(new Date(att.created_at), { addSuffix: true })}</span>
               </div>
             </div>
           );

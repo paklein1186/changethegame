@@ -129,7 +129,7 @@ export function PiActionCard({
         {isInProgress ? (
           <>
             <Loader2 className="h-3 w-3 animate-spin mr-1" />
-            Processing…
+            {t("uiPiActionCard.processing")}
           </>
         ) : isCompleted ? (
           <>

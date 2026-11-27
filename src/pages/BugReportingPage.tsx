@@ -28,7 +28,7 @@ export default function BugReportingPage() {
       <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
         <Input placeholder={t("uiBugReportingPage.bugTitle")} value={title} onChange={e => setTitle(e.target.value)} required />
         <Textarea placeholder={t("uiBugReportingPage.stepsToReproduce")} value={steps} onChange={e => setSteps(e.target.value)} required rows={4} />
-        <Input placeholder="Device / Browser" value={device} onChange={e => setDevice(e.target.value)} />
+        <Input placeholder={t("uiBugReportingPage.deviceBrowser")} value={device} onChange={e => setDevice(e.target.value)} />
         <Input placeholder={t("uiBugReportingPage.linkToImpactedPageOptional")} value={link} onChange={e => setLink(e.target.value)} />
         <Button type="submit">{t("uiBugReportingPage.submitBugReport")}</Button>
       </form>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,12 +30,13 @@ export function useGuildAdherents(guildId: string) {
 
 /** « Adhérent » si la cotisation est à jour ; sinon « Observateur » quand la guilde propose une adhésion. */
 export function GuildAdherentBadge({ guild, userId }: { guild: any; userId: string }) {
+  const { t } = useTranslation();
   const offers = Boolean(guild?.euro_membership_enabled || guild?.enable_membership);
   const { data: adherents } = useGuildAdherents(guild.id);
   if (!offers || !adherents) return null;
   return adherents.has(userId) || guild.created_by_user_id === userId ? (
     <Badge className="text-[10px] px-1.5 py-0">Adhérent</Badge>
   ) : (
-    <Badge variant="outline" className="text-[10px] px-1.5 py-0">Observateur</Badge>
+    <Badge variant="outline" className="text-[10px] px-1.5 py-0">{t("uiGuildAdherentBadge.observateur")}</Badge>
   );
 }

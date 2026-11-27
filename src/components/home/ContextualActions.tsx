@@ -25,7 +25,7 @@ const ACTIONS: Record<PersonaType | "ORG_REP", ActionItem[]> = {
     { get label() { return i18n.t("uiContextualActions.startAMission"); }, icon: PlusCircle, route: "/quests/new" },
     { get label() { return i18n.t("uiContextualActions.postAService"); }, icon: Briefcase, route: "/services/new" },
     { get label() { return i18n.t("uiContextualActions.joinAGuild"); }, icon: Shield, route: "/explore?tab=guilds" },
-    { label: "Review partnership requests", icon: Handshake, route: "/work" },
+    { get label() { return i18n.t("uiContextualActions.reviewPartnershipRequests"); }, icon: Handshake, route: "/work" },
     { get label() { return i18n.t("uiContextualActions.exploreOpportunitiesInYourTerritories"); }, icon: Compass, route: "/explore" },
   ],
   HYBRID: [
@@ -39,14 +39,14 @@ const ACTIONS: Record<PersonaType | "ORG_REP", ActionItem[]> = {
     { get label() { return i18n.t("uiContextualActions.manageMyOrganizations"); }, icon: Users, route: "/me/companies" },
     { get label() { return i18n.t("uiContextualActions.createAService"); }, icon: Briefcase, route: "/services/new" },
     { get label() { return i18n.t("uiContextualActions.postAJob"); }, icon: Compass, route: "/jobs" },
-    { label: "Find partners", icon: Handshake, route: "/explore?tab=companies" },
+    { get label() { return i18n.t("uiContextualActions.findPartners"); }, icon: Handshake, route: "/explore?tab=companies" },
     { get label() { return i18n.t("uiContextualActions.exploreGuildsNetworks"); }, icon: Shield, route: "/explore?tab=guilds" },
   ],
   UNSET: [
     { get label() { return i18n.t("uiContextualActions.startAQuest"); }, icon: PlusCircle, route: "/quests/new" },
     { get label() { return i18n.t("uiContextualActions.offerAService"); }, icon: Briefcase, route: "/services/new" },
     { get label() { return i18n.t("uiContextualActions.joinACommunity"); }, icon: Shield, route: "/explore?tab=guilds" },
-    { label: "Explore", icon: Eye, route: "/explore" },
+    { get label() { return i18n.t("uiContextualActions.explore"); }, icon: Eye, route: "/explore" },
   ],
 };
 

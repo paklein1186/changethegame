@@ -359,7 +359,7 @@ export function TerritoryExplorer() {
         {/* Compare / Aggregate */}
         <div>
           <Label className="text-sm font-semibold flex items-center gap-1.5 mb-2">
-            <BarChart3 className="h-4 w-4 text-primary" /> Analysis mode
+            <BarChart3 className="h-4 w-4 text-primary" /> {t("uiTerritoryExplorer.analysisMode")}
           </Label>
           <RadioGroup value={mode} onValueChange={(v) => { setMode(v as AnalysisMode); setFiltersDirty(true); }} className="flex gap-4">
             <div className="flex items-center gap-2">
@@ -441,8 +441,8 @@ export function TerritoryExplorer() {
             <SelectContent>
               <SelectItem value="any">{t("uiTerritoryExplorer.anyTime")}</SelectItem>
               <SelectItem value="active">{t("uiTerritoryExplorer.activeNow")}</SelectItem>
-              <SelectItem value="3months">Last 3 months</SelectItem>
-              <SelectItem value="12months">Last 12 months</SelectItem>
+              <SelectItem value="3months">{t("uiTerritoryExplorer.last3Months")}</SelectItem>
+              <SelectItem value="12months">{t("uiTerritoryExplorer.last12Months")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -460,7 +460,7 @@ export function TerritoryExplorer() {
             {analysisLoading ? (
               <><Loader2 className="h-4 w-4 animate-spin" /> {t("uiTerritoryExplorer.analyzingTerritories")}</>
             ) : (
-              <><Play className="h-4 w-4" /> Run analysis</>
+              <><Play className="h-4 w-4" /> {t("uiTerritoryExplorer.runAnalysis")}</>
             )}
           </Button>
           {filtersDirty && analysisResults && (
@@ -491,7 +491,7 @@ export function TerritoryExplorer() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="text-left py-2 pr-4 text-muted-foreground font-medium">Metric</th>
+                      <th className="text-left py-2 pr-4 text-muted-foreground font-medium">{t("uiTerritoryExplorer.metric")}</th>
                       {analysisResults.stats.map(s => (
                         <th key={s.territoryId} className="text-center py-2 px-3 font-medium">{s.territoryName}</th>
                       ))}
@@ -542,11 +542,11 @@ export function TerritoryExplorer() {
             className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 p-5 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-display font-semibold text-lg flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-primary" /> AI Territorial Synthesis
+                <Sparkles className="h-5 w-5 text-primary" /> {t("uiTerritoryExplorer.aiTerritorialSynthesis")}
               </h3>
               {synthesisData && !synthesisLoading && (
                 <Button size="sm" variant="ghost" onClick={() => runSynthesis()} className="text-xs gap-1">
-                  <RefreshCw className="h-3.5 w-3.5" /> Regenerate
+                  <RefreshCw className="h-3.5 w-3.5" /> {t("uiTerritoryExplorer.regenerate")}
                 </Button>
               )}
             </div>
@@ -563,7 +563,7 @@ export function TerritoryExplorer() {
                 <AlertCircle className="h-5 w-5 text-destructive mx-auto mb-2" />
                 <p className="text-sm text-destructive mb-2">{synthesisError}</p>
                 <Button size="sm" variant="outline" onClick={() => runSynthesis()}>
-                  <RefreshCw className="h-3.5 w-3.5 mr-1" /> Retry
+                  <RefreshCw className="h-3.5 w-3.5 mr-1" /> {t("uiTerritoryExplorer.retry")}
                 </Button>
               </div>
             )}
@@ -598,7 +598,7 @@ export function TerritoryExplorer() {
 
                 {/* Collaborations */}
                 {synthesisData.collaborations?.length > 0 && (
-                  <SynthesisSection icon={Users} title="Suggested Collaborations">
+                  <SynthesisSection icon={Users} title={t("uiTerritoryExplorer.suggestedCollaborations")}>
                     {synthesisData.collaborations.map((c: any, i: number) => (
                       <div key={i} className="flex items-start gap-2 rounded-lg border border-border bg-background p-2.5">
                         <Lightbulb className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
@@ -620,7 +620,7 @@ export function TerritoryExplorer() {
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium">{f.area}</p>
                           <p className="text-xs text-muted-foreground">{f.reason}</p>
-                          {f.estimatedImpact && <Badge variant="secondary" className="text-[10px] mt-1">Impact: {f.estimatedImpact}</Badge>}
+                          {f.estimatedImpact && <Badge variant="secondary" className="text-[10px] mt-1">{t("uiTerritoryExplorer.impact")} {f.estimatedImpact}</Badge>}
                         </div>
                       </div>
                     ))}
@@ -633,7 +633,7 @@ export function TerritoryExplorer() {
                     {synthesisData.trends?.length > 0 && (
                       <div>
                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1 mb-2">
-                          <TrendingUp className="h-3.5 w-3.5" /> Emerging Trends
+                          <TrendingUp className="h-3.5 w-3.5" /> {t("uiTerritoryExplorer.emergingTrends")}
                         </p>
                         <ul className="space-y-1">
                           {synthesisData.trends.map((t: string, i: number) => (
@@ -648,7 +648,7 @@ export function TerritoryExplorer() {
                     {synthesisData.risks?.length > 0 && (
                       <div>
                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-1 mb-2">
-                          <AlertTriangle className="h-3.5 w-3.5" /> Risks
+                          <AlertTriangle className="h-3.5 w-3.5" /> {t("uiTerritoryExplorer.risks")}
                         </p>
                         <ul className="space-y-1">
                           {synthesisData.risks.map((r: string, i: number) => (

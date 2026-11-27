@@ -143,7 +143,7 @@ export function GuildMembershipCard({ guild }: Props) {
     <div className="rounded-xl border border-border bg-card p-4 space-y-3">
       <div className="flex items-center gap-2">
         <Users className="h-4 w-4 text-primary" />
-        <h3 className="font-semibold text-sm">Membership</h3>
+        <h3 className="font-semibold text-sm">{t("uiGuildMembershipCard.membership")}</h3>
       </div>
 
       {!session ? (
@@ -173,7 +173,7 @@ export function GuildMembershipCard({ guild }: Props) {
               <span>
                 {monthly ? (
                   <>
-                    {yearly ? "Yearly" : "Monthly"} fee:{" "}
+                    {yearly ? t("uiGuildMembershipCard.yearly") : t("uiGuildMembershipCard.monthly")} {t("uiGuildMembershipCard.fee")}{" "}
                     <strong className="text-foreground">
                       🟩 {isRange ? `${minFee} – ${maxFee}` : recurringFee} {t("uiGuildMembershipCard.coins")} {period}
                     </strong>{" "}
@@ -267,7 +267,7 @@ export function GuildMembershipCard({ guild }: Props) {
               )}
               {membership?.last_payment_at && (
                 <p className="text-[11px] text-muted-foreground">
-                  Last payment: {formatDate(membership.last_payment_at)}
+                  {t("uiGuildMembershipCard.lastPayment")} {formatDate(membership.last_payment_at)}
                 </p>
               )}
               {monthly && (
@@ -277,7 +277,7 @@ export function GuildMembershipCard({ guild }: Props) {
                   className="w-full"
                   onClick={() => cancelRenewal(!membership?.cancel_at_period_end)}
                 >
-                  {membership?.cancel_at_period_end ? "Reactivate automatic renewal" : t("uiGuildMembershipCard.stopAutomaticRenewal")}
+                  {membership?.cancel_at_period_end ? t("uiGuildMembershipCard.reactivateAutomaticRenewal") : t("uiGuildMembershipCard.stopAutomaticRenewal")}
                 </Button>
               )}
             </div>
@@ -285,7 +285,7 @@ export function GuildMembershipCard({ guild }: Props) {
 
           {isMember && !active && (
             <div className="space-y-2">
-              <Badge variant="destructive" className="text-xs">Membership expired</Badge>
+              <Badge variant="destructive" className="text-xs">{t("uiGuildMembershipCard.membershipExpired")}</Badge>
               {dueNow > 0 && <PayButton label={`Renew membership (${dueNow} Coins)`} />}
             </div>
           )}

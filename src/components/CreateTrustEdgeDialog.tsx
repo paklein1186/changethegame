@@ -31,16 +31,16 @@ interface CreateTrustEdgeDialogProps {
 }
 
 const EDGE_TYPE_LABELS: Record<string, { label: string; desc: string; icon: string }> = {
-  skill_trust: { label: "Skill Trust", get desc() { return i18n.t("uiCreateTrustEdgeDialog.trustInTheirTechnicalOrDomain"); }, icon: "🎯" },
-  reliability: { label: "Reliability", get desc() { return i18n.t("uiCreateTrustEdgeDialog.dependableFollowsThroughOnCommitments"); }, icon: "🤝" },
-  collaboration: { label: "Collaboration", get desc() { return i18n.t("uiCreateTrustEdgeDialog.greatToWorkWithCoCreates"); }, icon: "🔗" },
-  stewardship: { label: "Stewardship", get desc() { return i18n.t("uiCreateTrustEdgeDialog.takesCareOfCommonsGovernanceShared"); }, icon: "🌿" },
-  financial_trust: { label: "Financial Trust", get desc() { return i18n.t("uiCreateTrustEdgeDialog.trustworthyInFinancialMatters"); }, icon: "💎" },
+  skill_trust: { get label() { return i18n.t("uiCreateTrustEdgeDialog.skillTrust"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.trustInTheirTechnicalOrDomain"); }, icon: "🎯" },
+  reliability: { get label() { return i18n.t("uiCreateTrustEdgeDialog.reliability"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.dependableFollowsThroughOnCommitments"); }, icon: "🤝" },
+  collaboration: { get label() { return i18n.t("uiCreateTrustEdgeDialog.collaboration"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.greatToWorkWithCoCreates"); }, icon: "🔗" },
+  stewardship: { get label() { return i18n.t("uiCreateTrustEdgeDialog.stewardship"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.takesCareOfCommonsGovernanceShared"); }, icon: "🌿" },
+  financial_trust: { get label() { return i18n.t("uiCreateTrustEdgeDialog.financialTrust"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.trustworthyInFinancialMatters"); }, icon: "💎" },
 };
 
 const VISIBILITY_OPTIONS = [
   { value: "public", get label() { return i18n.t("uiCreateTrustEdgeDialog.public"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.visibleToEveryoneEarns1Credit"); }, icon: Eye },
-  { value: "network", label: "Network", get desc() { return i18n.t("uiCreateTrustEdgeDialog.visibleToAuthenticatedUsersOnly"); }, icon: Users },
+  { value: "network", get label() { return i18n.t("uiCreateTrustEdgeDialog.network"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.visibleToAuthenticatedUsersOnly"); }, icon: Users },
   { value: "private", get label() { return i18n.t("uiCreateTrustEdgeDialog.private"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.onlyVisibleToYouNoXp"); }, icon: EyeOff },
 ];
 
@@ -204,7 +204,7 @@ export function CreateTrustEdgeDialog({
       return;
     }
     if (note.length > 300) {
-      toast({ title: "Note too long", description: t("uiCreateTrustEdgeDialog.noteMustBe300CharactersOr"), variant: "destructive" });
+      toast({ title: t("uiCreateTrustEdgeDialog.noteTooLong"), description: t("uiCreateTrustEdgeDialog.noteMustBe300CharactersOr"), variant: "destructive" });
       return;
     }
 
@@ -234,7 +234,7 @@ export function CreateTrustEdgeDialog({
       return;
     }
 
-    toast({ title: "Trust attestation created ✨", description: `You attested ${EDGE_TYPE_LABELS[edgeType]?.label} for ${targetName ?? "this entity"}.` });
+    toast({ title: t("uiCreateTrustEdgeDialog.trustAttestationCreated"), description: `You attested ${EDGE_TYPE_LABELS[edgeType]?.label} for ${targetName ?? "this entity"}.` });
 
     // Emit $CTG for trust given
     supabase.rpc('emit_ctg_for_contribution', {
@@ -267,7 +267,7 @@ export function CreateTrustEdgeDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
-            Give Trust — Step {step}/{TOTAL_STEPS}
+            {t("uiCreateTrustEdgeDialog.giveTrustStep")} {step}/{TOTAL_STEPS}
           </DialogTitle>
           <DialogDescription className="sr-only">{t("uiCreateTrustEdgeDialog.createATrustAttestation")}</DialogDescription>
         </DialogHeader>
@@ -333,7 +333,7 @@ export function CreateTrustEdgeDialog({
             <div className="space-y-4">
               {/* Tags */}
               <div className="space-y-1.5">
-                <Label className="text-sm font-semibold">Tags <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.determinesXpSpecialization")}</span></Label>
+                <Label className="text-sm font-semibold">{t("uiCreateTrustEdgeDialog.tags")} <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.determinesXpSpecialization")}</span></Label>
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {tags.map((tag) => {
                     const spec = classifyTagSpecialization(tag);
@@ -378,7 +378,7 @@ export function CreateTrustEdgeDialog({
 
               {/* Context */}
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Context <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.optionalEarnsBonusXp")}</span></Label>
+                <Label className="text-sm font-semibold">{t("uiCreateTrustEdgeDialog.context")} <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.optionalEarnsBonusXp")}</span></Label>
                 <div className="space-y-2">
                   <div>
                     <Label className="text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.quest1Xp")}</Label>
@@ -420,7 +420,7 @@ export function CreateTrustEdgeDialog({
             <div className="space-y-4">
               {/* Score */}
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Trust score</Label>
+                <Label className="text-sm font-semibold">{t("uiCreateTrustEdgeDialog.trustScore")}</Label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <button key={s} onClick={() => setScore(s)} className="group flex flex-col items-center gap-0.5">
@@ -431,13 +431,13 @@ export function CreateTrustEdgeDialog({
                   <span className="ml-2 text-sm font-semibold text-primary">{score}/5</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {score <= 2 ? t("uiCreateTrustEdgeDialog.lowTrustStillValuableForHonest") : score <= 4 ? t("uiCreateTrustEdgeDialog.solidTrustBasedOnDirectExperience") : "Exceptional trust — strong conviction"}
+                  {score <= 2 ? t("uiCreateTrustEdgeDialog.lowTrustStillValuableForHonest") : score <= 4 ? t("uiCreateTrustEdgeDialog.solidTrustBasedOnDirectExperience") : t("uiCreateTrustEdgeDialog.exceptionalTrustStrongConviction")}
                 </p>
               </div>
 
               {/* Note */}
               <div className="space-y-1.5">
-                <Label className="text-sm font-semibold">Note <span className="font-normal text-xs text-muted-foreground">({note.length}/300)</span></Label>
+                <Label className="text-sm font-semibold">{t("uiCreateTrustEdgeDialog.note")} <span className="font-normal text-xs text-muted-foreground">({note.length}/300)</span></Label>
                 <Textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value.slice(0, 300))}
@@ -450,7 +450,7 @@ export function CreateTrustEdgeDialog({
               {/* Evidence */}
               <div className="space-y-1.5">
                 <Label className="flex items-center gap-1.5 text-sm font-semibold">
-                  <Link2 className="h-3.5 w-3.5" /> Evidence URL
+                  <Link2 className="h-3.5 w-3.5" /> {t("uiCreateTrustEdgeDialog.evidenceUrl")}
                   <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.1Credit")}</span>
                 </Label>
                 <Input
@@ -472,7 +472,7 @@ export function CreateTrustEdgeDialog({
           {/* ── Step 5: Visibility & Review ── */}
           {step === 5 && (
             <div className="space-y-4">
-              <Label className="text-sm font-semibold">Visibility</Label>
+              <Label className="text-sm font-semibold">{t("uiCreateTrustEdgeDialog.visibility")}</Label>
               <div className="grid gap-2">
                 {VISIBILITY_OPTIONS.map((opt) => {
                   const Icon = opt.icon;
@@ -506,32 +506,32 @@ export function CreateTrustEdgeDialog({
 
               {/* Summary */}
               <div className="rounded-lg border bg-muted/30 p-3 space-y-1.5">
-                <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Summary</p>
+                <p className="text-xs font-semibold text-foreground uppercase tracking-wider">{t("uiCreateTrustEdgeDialog.summary")}</p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                  <span className="text-muted-foreground">Target</span>
+                  <span className="text-muted-foreground">{t("uiCreateTrustEdgeDialog.target")}</span>
                   <span className="font-medium text-foreground">{targetName ?? targetNodeId.slice(0, 8)}</span>
-                  <span className="text-muted-foreground">Type</span>
+                  <span className="text-muted-foreground">{t("uiCreateTrustEdgeDialog.type")}</span>
                   <span className="font-medium text-foreground">{EDGE_TYPE_LABELS[edgeType]?.label}</span>
-                  <span className="text-muted-foreground">Score</span>
+                  <span className="text-muted-foreground">{t("uiCreateTrustEdgeDialog.score")}</span>
                   <span className="font-medium text-foreground">{score}/5</span>
-                  <span className="text-muted-foreground">Visibility</span>
+                  <span className="text-muted-foreground">{t("uiCreateTrustEdgeDialog.visibility")}</span>
                   <span className="font-medium text-foreground capitalize">{visibility}</span>
                   {tags.length > 0 && (
                     <>
-                      <span className="text-muted-foreground">Tags</span>
+                      <span className="text-muted-foreground">{t("uiCreateTrustEdgeDialog.tags")}</span>
                       <span className="font-medium text-foreground">{tags.join(", ")}</span>
                     </>
                   )}
                   {note && (
                     <>
-                      <span className="text-muted-foreground">Note</span>
+                      <span className="text-muted-foreground">{t("uiCreateTrustEdgeDialog.note")}</span>
                       <span className="font-medium text-foreground truncate">{note.slice(0, 60)}{note.length > 60 ? "…" : ""}</span>
                     </>
                   )}
                   {evidenceUrl && (
                     <>
-                      <span className="text-muted-foreground">Evidence</span>
-                      <span className="font-medium text-foreground truncate">✓ Provided</span>
+                      <span className="text-muted-foreground">{t("uiCreateTrustEdgeDialog.evidence")}</span>
+                      <span className="font-medium text-foreground truncate">{t("uiCreateTrustEdgeDialog.provided")}</span>
                     </>
                   )}
                 </div>
@@ -551,7 +551,7 @@ export function CreateTrustEdgeDialog({
             </Button>
           ) : (
             <Button onClick={handleSubmit} disabled={submitting || checkLoading || !canProceed()} className="gap-1">
-              {submitting ? "Creating…" : <>{t("uiCreateTrustEdgeDialog.createAttestation")} <Check className="h-4 w-4" /></>}
+              {submitting ? t("uiCreateTrustEdgeDialog.creating") : <>{t("uiCreateTrustEdgeDialog.createAttestation")} <Check className="h-4 w-4" /></>}
             </Button>
           )}
         </DialogFooter>

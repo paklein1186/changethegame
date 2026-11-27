@@ -294,13 +294,13 @@ export default function SettingsPage() {
 
   // ── Handlers ──
   const handleChangePassword = async () => {
-    if (newPw !== confirmPw) { toast({ title: "Passwords don't match", variant: "destructive" }); return; }
+    if (newPw !== confirmPw) { toast({ title: t("uiSettingsPage.passwordsDonTMatch"), variant: "destructive" }); return; }
     if (newPw.length < 6) { toast({ title: t("uiSettingsPage.passwordMustBeAtLeast6"), variant: "destructive" }); return; }
     setPwLoading(true);
     const { error } = await updatePassword(newPw);
     setPwLoading(false);
     if (error) toast({ title: t("uiSettingsPage.error"), description: error, variant: "destructive" });
-    else { toast({ title: "Password updated!" }); setCurrentPw(""); setNewPw(""); setConfirmPw(""); }
+    else { toast({ title: t("uiSettingsPage.passwordUpdated") }); setCurrentPw(""); setNewPw(""); setConfirmPw(""); }
   };
 
   const [profileSaving, setProfileSaving] = useState(false);
@@ -428,7 +428,7 @@ export default function SettingsPage() {
                       {([
                         { value: "IMPACT" as PersonaType, label: t("uiSettingsPage.mainlyForImpactWorkMissions"), desc: t("uiSettingsPage.labelsLikeServicesGuildsQuestsMissions") },
                         { value: "CREATIVE" as PersonaType, label: t("uiSettingsPage.mainlyForCreativeProjectsArt"), desc: t("uiSettingsPage.labelsLikeSkillSessionsCollectivesQuests") },
-                        { value: "HYBRID" as PersonaType, label: "Both", desc: t("uiSettingsPage.aMixOfImpactAndCreative") },
+                        { value: "HYBRID" as PersonaType, label: t("uiSettingsPage.both"), desc: t("uiSettingsPage.aMixOfImpactAndCreative") },
                       ]).map((opt) => (
                         <button
                           key={opt.value}
@@ -456,7 +456,7 @@ export default function SettingsPage() {
 
                   <Separator />
 
-                  <Section title="World / Lexicon Toggle" icon={<Globe className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.worldLexiconToggle")} icon={<Globe className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">{t("uiSettingsPage.overrideTheUiLanguageWithoutChanging")}</p>
                     <div className="space-y-2 max-w-md">
                       {LEXICON_MODES.map((mode) => {
@@ -525,19 +525,19 @@ export default function SettingsPage() {
               {/* ── Account & Security ── */}
               {activeTab === "account" && (
                 <div className="space-y-6">
-                  <Section title="Email" icon={<Shield className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.email")} icon={<Shield className="h-5 w-5" />}>
                     <div className="flex items-center gap-3">
                       <Input value={authUser?.email || ""} disabled className="max-w-sm" />
-                      <Badge variant="secondary">Verified</Badge>
+                      <Badge variant="secondary">{t("uiSettingsPage.verified")}</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">{t("uiSettingsPage.contactSupportToChangeYourEmail")}</p>
                   </Section>
 
                   <Separator />
 
-                  <Section title="Change Password" icon={<Lock className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.changePassword")} icon={<Lock className="h-5 w-5" />}>
                     <div className="space-y-3 max-w-sm">
-                      <Input type="password" placeholder="Current password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} />
+                      <Input type="password" placeholder={t("uiSettingsPage.currentPassword")} value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} />
                       <Input type="password" placeholder={t("uiSettingsPage.newPassword")} value={newPw} onChange={(e) => setNewPw(e.target.value)} />
                       <Input type="password" placeholder={t("uiSettingsPage.confirmNewPassword")} value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} />
                       <Button onClick={handleChangePassword} disabled={pwLoading || !newPw}>
@@ -548,7 +548,7 @@ export default function SettingsPage() {
 
                   <Separator />
 
-                  <Section title="Linked Accounts" icon={<Plug className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.linkedAccounts")} icon={<Plug className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground">{t("uiSettingsPage.emailPasswordSignInIsCurrently")}</p>
                   </Section>
 
@@ -583,7 +583,7 @@ export default function SettingsPage() {
                         a.click();
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
-                        toast({ title: "Data exported!", description: t("uiSettingsPage.yourDataHasBeenDownloaded") });
+                        toast({ title: t("uiSettingsPage.dataExported"), description: t("uiSettingsPage.yourDataHasBeenDownloaded") });
                       } finally {
                         setExportLoading(false);
                       }
@@ -594,7 +594,7 @@ export default function SettingsPage() {
 
                   <Separator />
 
-                  <Section title="Danger Zone" icon={<Trash2 className="h-5 w-5 text-destructive" />}>
+                  <Section title={t("uiSettingsPage.dangerZone")} icon={<Trash2 className="h-5 w-5 text-destructive" />}>
                     <p className="text-sm text-muted-foreground mb-3">{t("uiSettingsPage.permanentlyDeleteYourAccountAndAll")}</p>
                     <Button variant="destructive" size="sm" onClick={() => { setDeleteDialogOpen(true); setDeleteStep(0); setDeleteConfirmText(""); }}>
                       <Trash2 className="h-4 w-4 mr-1" /> {t("uiSettingsPage.deleteMyAccount")}
@@ -627,7 +627,7 @@ export default function SettingsPage() {
                         {deleteStep === 1 && (
                           <div className="space-y-4">
                             <p className="text-sm text-muted-foreground">
-                              Type <span className="font-mono font-semibold text-destructive">DELETE</span> {t("uiSettingsPage.toConfirmYouUnderstandThisIs")}
+                              {t("uiSettingsPage.type")} <span className="font-mono font-semibold text-destructive">DELETE</span> {t("uiSettingsPage.toConfirmYouUnderstandThisIs")}
                             </p>
                             <Input
                               value={deleteConfirmText}
@@ -666,12 +666,12 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="space-y-4">
-                      <ImageUpload label="Avatar" currentImageUrl={avatarUrl || undefined} onChange={(url) => setAvatarUrl(url ?? "")} aspectRatio="1/1" description="Square image works best" />
+                      <ImageUpload label={t("uiSettingsPage.avatar")} currentImageUrl={avatarUrl || undefined} onChange={(url) => setAvatarUrl(url ?? "")} aspectRatio="1/1" description={t("uiSettingsPage.squareImageWorksBest")} />
                       <div><label className="text-sm font-medium mb-1 block">{t("uiSettingsPage.name")}</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
-                      <div><label className="text-sm font-medium mb-1 block">Headline</label><Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Community Builder" maxLength={120} /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiSettingsPage.headline")}</label><Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder={t("uiSettingsPage.eGCommunityBuilder")} maxLength={120} /></div>
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <label className="text-sm font-medium">Bio</label>
+                          <label className="text-sm font-medium">{t("uiSettingsPage.bio")}</label>
                           <AIWriterButton
                             type="bio"
                             context={{ name, persona, role, headline, houses: dbTopics.filter(t => selectedTopics.includes(t.id)).map(t => t.name), territories: dbTerritories.filter(t => selectedTerritories.includes(t.id)).map(t => t.name) }}
@@ -695,7 +695,7 @@ export default function SettingsPage() {
 
                   <Separator />
 
-                  <Section title="Social & Web Links" icon={<ExternalLink className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.socialWebLinks")} icon={<ExternalLink className="h-5 w-5" />}>
                     <SocialLinksEdit
                       data={{ websiteUrl, twitterUrl, linkedinUrl, instagramUrl }}
                       onChange={(key, value) => {
@@ -710,13 +710,13 @@ export default function SettingsPage() {
 
                   <Separator />
 
-                  <Section title="Onboarding Wizard" icon={<Compass className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.onboardingWizard")} icon={<Compass className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-3">{t("uiSettingsPage.reopenTheOnboardingWizardToReview")}</p>
                     <Button variant="outline" asChild>
                       <Link to="/onboarding"><Sparkles className="h-4 w-4 mr-1" /> {t("uiSettingsPage.openWizard")}</Link>
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => setEconomyOpen(true)}>
-                      Re-watch economy tour
+                      {t("uiSettingsPage.reWatchEconomyTour")}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={async () => { await clearAllHints(currentUser.id); window.location.reload(); }}>
                       {t("uiSettingsPage.resetAllPageHints")}
@@ -728,7 +728,7 @@ export default function SettingsPage() {
               {/* ── Starred Excerpts ── */}
               {activeTab === "starred" && (
                 <div className="space-y-4">
-                  <Section title="Starred Excerpts" icon={<Star className="h-5 w-5 text-yellow-500" />}>
+                  <Section title={t("uiSettingsPage.starredExcerpts")} icon={<Star className="h-5 w-5 text-yellow-500" />}>
                     <p className="text-sm text-muted-foreground mb-3">
                       {t("uiSettingsPage.yourSavedHighlightsFromAiAnd")}
                     </p>
@@ -796,7 +796,7 @@ export default function SettingsPage() {
 
                   <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card">
                     <div>
-                      <p className="text-sm font-medium">Personalize feed & suggestions</p>
+                      <p className="text-sm font-medium">{t("uiSettingsPage.personalizeFeedSuggestions")}</p>
                       <p className="text-xs text-muted-foreground">{t("uiSettingsPage.useYourTopicsTerritoriesToPersonalize")}</p>
                     </div>
                     <Switch checked={usePrefs} onCheckedChange={setUsePrefs} />
@@ -826,7 +826,7 @@ export default function SettingsPage() {
               {activeTab === "services" && (
                 <div className="space-y-6">
                   <MyServicesPanel userId={currentUser.id} />
-                  <Section title="Availability" icon={<Clock className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.availability")} icon={<Clock className="h-5 w-5" />}>
                     <MyAvailability bare />
                   </Section>
                 </div>
@@ -865,7 +865,7 @@ export default function SettingsPage() {
                     </div>
                   </Section>
 
-                  <Section title="Social & Privacy" icon={<Shield className="h-5 w-5" />}>
+                  <Section title={t("uiSettingsPage.socialPrivacy")} icon={<Shield className="h-5 w-5" />}>
                     <div className="space-y-3">
                       <NotifToggle label={t("uiSettingsPage.allowPeopleToFollowMe")} checked={allowFollow} onChange={(v) => updatePrivacy("allowFollows", v, setAllowFollow)} />
                       <NotifToggle label={t("uiSettingsPage.allowCommentsOnMyProfileWall")} checked={allowWallComments} onChange={(v) => updatePrivacy("allowProfileComments", v, setAllowWallComments, "allow_wall_comments")} />
@@ -975,13 +975,13 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
     if (enabled) {
       const granted = await requestPushPermissionFn();
       if (!granted) {
-        toast({ title: "Push notifications blocked", description: t("uiSettingsPage.pleaseEnableNotificationsInYourBrowser"), variant: "destructive" });
+        toast({ title: t("uiSettingsPage.pushNotificationsBlocked"), description: t("uiSettingsPage.pleaseEnableNotificationsInYourBrowser"), variant: "destructive" });
         return;
       }
       setPushPermission("granted");
     }
     updatePrefs({ push_enabled: enabled });
-    toast({ title: enabled ? "Push notifications enabled" : "Push notifications disabled" });
+    toast({ title: enabled ? t("uiSettingsPage.pushNotificationsEnabled") : t("uiSettingsPage.pushNotificationsDisabled") });
   };
 
   const toggle = (key: keyof typeof prefs, label_text: string) => (
@@ -1028,7 +1028,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
   return (
     <div className="space-y-6">
       {/* Global channel toggles */}
-      <Section title="Channels" icon={<Bell className="h-5 w-5" />}>
+      <Section title={t("uiSettingsPage.channels")} icon={<Bell className="h-5 w-5" />}>
         <div className="space-y-3">
           {toggle("channel_in_app_enabled", "In-app notifications")}
           {toggle("channel_email_enabled", "Email notifications")}
@@ -1037,7 +1037,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
 
       {/* Superadmin section */}
       {isSuperAdmin && (
-        <Section title="Superadmin Notifications" icon={<Shield className="h-5 w-5" />}>
+        <Section title={t("uiSettingsPage.superadminNotifications")} icon={<Shield className="h-5 w-5" />}>
           <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.platformLevelAlertsVisibleOnlyTo")}</p>
           <div className="space-y-3">
             {toggle("notify_new_user_registrations", "New user registrations")}
@@ -1052,7 +1052,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
       {/* Unit admin section */}
       {(isUnitAdmin || isSuperAdmin) && (
         <Section title={t("uiSettingsPage.unitAdminNotifications")} icon={<Users className="h-5 w-5" />}>
-          <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.notificationsForEntitiesYouManage")}{label("guild.label")}s, {label("pod.label")}s, organizations, {label("quest.label")}s).</p>
+          <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.notificationsForEntitiesYouManage")}{label("guild.label")}s, {label("pod.label")}{t("uiSettingsPage.sOrganizations")} {label("quest.label")}s).</p>
           <div className="space-y-3">
             {toggle("notify_new_join_requests_guilds", `New join requests (${label("guild.label")}s)`)}
             {toggle("notify_new_join_requests_pods", `New join requests (${label("pod.label")}s)`)}
@@ -1095,7 +1095,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
        </Section>
 
        {/* Direct Messages */}
-       <Section title="Direct Messages" icon={<MessageSquare className="h-5 w-5" />}>
+       <Section title={t("uiSettingsPage.directMessages")} icon={<MessageSquare className="h-5 w-5" />}>
          <p className="text-xs text-muted-foreground mb-3">{t("uiSettingsPage.controlHowYouReNotifiedWhen")}</p>
          <div className="space-y-3">
            {toggle("notify_direct_messages_in_app" as any, "In-app notification for new messages")}
@@ -1104,11 +1104,11 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
        </Section>
 
       {/* Push */}
-      <Section title="Push Notifications" icon={<Bell className="h-5 w-5" />}>
+      <Section title={t("uiSettingsPage.pushNotifications")} icon={<Bell className="h-5 w-5" />}>
         <div className="space-y-3">
           <div className="flex items-center justify-between py-1.5">
             <div>
-              <p className="text-sm font-medium">Browser push notifications</p>
+              <p className="text-sm font-medium">{t("uiSettingsPage.browserPushNotifications")}</p>
               <p className="text-xs text-muted-foreground">
                 {pushPermission === "unsupported" ? t("uiSettingsPage.notSupportedInThisBrowser") :
                  pushPermission === "denied" ? t("uiSettingsPage.blockedByBrowserEnableInBrowser") :
@@ -1125,7 +1125,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
       </Section>
 
       {/* Email Digest & Instant Emails — simplified */}
-      <Section title="Email Digest" icon={<Rss className="h-5 w-5" />}>
+      <Section title={t("uiSettingsPage.emailDigest")} icon={<Rss className="h-5 w-5" />}>
         <p className="text-xs text-muted-foreground mb-3">
           {t("uiSettingsPage.mostNotificationsAreBundledIntoA")}
         </p>
@@ -1133,7 +1133,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
           {/* Digest frequency */}
           <div className="flex items-center justify-between py-2">
             <div>
-              <p className="text-sm font-medium">Digest frequency</p>
+              <p className="text-sm font-medium">{t("uiSettingsPage.digestFrequency")}</p>
               <p className="text-xs text-muted-foreground">{t("uiSettingsPage.howOftenYouReceiveYourNetwork")}</p>
             </div>
             <Select
@@ -1143,8 +1143,8 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
               <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="twice_weekly">{t("uiSettingsPage.twiceAWeekMonThu")}</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="never">Never</SelectItem>
+                <SelectItem value="weekly">{t("uiSettingsPage.weekly")}</SelectItem>
+                <SelectItem value="never">{t("uiSettingsPage.never")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1155,7 +1155,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
               <p className="text-xs text-muted-foreground">
                 {t("uiSettingsPage.nextDigest")} <span className="font-medium text-foreground">{nextDigest}</span>
                 {unreadCount > 0 && (
-                  <> · <span className="font-medium text-primary">{unreadCount} unread notification{unreadCount !== 1 ? "s" : ""}</span> queued</>
+                  <> · <span className="font-medium text-primary">{unreadCount} {t("uiSettingsPage.unreadNotification")}{unreadCount !== 1 ? "s" : ""}</span> queued</>
                 )}
               </p>
             </div>
@@ -1170,14 +1170,14 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
       </Section>
 
       {/* Instant email overrides */}
-      <Section title="Instant Emails" icon={<Mail className="h-5 w-5" />}>
+      <Section title={t("uiSettingsPage.instantEmails")} icon={<Mail className="h-5 w-5" />}>
         <p className="text-xs text-muted-foreground mb-3">
           {t("uiSettingsPage.theseTimeSensitiveNotificationsAreSent")}
         </p>
         <div className="space-y-3">
           <div className="flex items-center justify-between py-1.5">
             <div>
-              <p className="text-sm font-medium">Booking confirmations & updates</p>
+              <p className="text-sm font-medium">{t("uiSettingsPage.bookingConfirmationsUpdates")}</p>
               <p className="text-xs text-muted-foreground">{t("uiSettingsPage.getImmediateEmailWhenABooking")}</p>
             </div>
             <Switch
@@ -1187,7 +1187,7 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
           </div>
           <div className="flex items-center justify-between py-1.5">
             <div>
-              <p className="text-sm font-medium">Invitations & applications</p>
+              <p className="text-sm font-medium">{t("uiSettingsPage.invitationsApplications")}</p>
               <p className="text-xs text-muted-foreground">{t("uiSettingsPage.getImmediateEmailWhenYouRe")}</p>
             </div>
             <Switch
@@ -1198,8 +1198,8 @@ function NotificationsSettingsTab({ toast }: { toast: (opts: any) => void }) {
         </div>
       </Section>
 
-      <Button onClick={() => toast({ title: "Preferences saved automatically!" })} disabled={isSaving}>
-        <Save className="h-4 w-4 mr-1" /> {isSaving ? "Saving..." : "Preferences saved automatically"}
+      <Button onClick={() => toast({ title: t("uiSettingsPage.preferencesSavedAutomatically") })} disabled={isSaving}>
+        <Save className="h-4 w-4 mr-1" /> {isSaving ? t("uiSettingsPage.saving") : t("uiSettingsPage.preferencesSavedAutomatically2")}
       </Button>
     </div>
   );
@@ -1252,18 +1252,18 @@ function ReferralsSection({ userId }: { userId: string }) {
       </Section>
 
       {myReferrals.length > 0 && (
-        <Section title="Referral History" icon={<Zap className="h-5 w-5" />}>
+        <Section title={t("uiSettingsPage.referralHistory")} icon={<Zap className="h-5 w-5" />}>
           <div className="space-y-2">
             {myReferrals.map((r) => (
               <div key={r.id} className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
                 <div>
                   <p className="text-sm font-medium font-mono">{r.code}</p>
                   <p className="text-xs text-muted-foreground">
-                    {r.used_by_user_id ? "Signed up ✓" : t("uiSettingsPage.pending")}
+                    {r.used_by_user_id ? t("uiSettingsPage.signedUp") : t("uiSettingsPage.pending")}
                   </p>
                 </div>
                 <Badge variant={r.is_used ? "default" : "secondary"}>
-                  {r.is_used ? `+${r.bonus_xp} XP earned` : "Waiting"}
+                  {r.is_used ? `+${r.bonus_xp} XP earned` : t("uiSettingsPage.waiting")}
                 </Badge>
               </div>
             ))}

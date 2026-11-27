@@ -7,16 +7,16 @@ import { useXpCredits } from "@/hooks/useXpCredits";
 import { XP_EVENT_TYPES } from "@/lib/xpCreditsConfig";
 
 export const MEMORY_CATEGORIES = [
-  { value: "ECONOMY", label: "Economy", icon: "💰" },
+  { value: "ECONOMY", get label() { return i18n.t("uiUseTerritoryMemory.economy"); }, icon: "💰" },
   { value: "EVENTS", get label() { return i18n.t("uiUseTerritoryMemory.events"); }, icon: "📅" },
-  { value: "HISTORY", label: "History", icon: "📜" },
-  { value: "SOCIOLOGY", label: "Sociology", icon: "👥" },
-  { value: "BUSINESS", label: "Business", icon: "🏢" },
-  { value: "CULTURE", label: "Culture", icon: "🎭" },
-  { value: "INFRASTRUCTURE", label: "Infrastructure", icon: "🏗️" },
-  { value: "RISKS", label: "Risks", icon: "⚠️" },
-  { value: "OPPORTUNITIES", label: "Opportunities", icon: "🌱" },
-  { value: "RAW_NOTES", label: "Raw Notes", icon: "📝" },
+  { value: "HISTORY", get label() { return i18n.t("uiUseTerritoryMemory.history"); }, icon: "📜" },
+  { value: "SOCIOLOGY", get label() { return i18n.t("uiUseTerritoryMemory.sociology"); }, icon: "👥" },
+  { value: "BUSINESS", get label() { return i18n.t("uiUseTerritoryMemory.business"); }, icon: "🏢" },
+  { value: "CULTURE", get label() { return i18n.t("uiUseTerritoryMemory.culture"); }, icon: "🎭" },
+  { value: "INFRASTRUCTURE", get label() { return i18n.t("uiUseTerritoryMemory.infrastructure"); }, icon: "🏗️" },
+  { value: "RISKS", get label() { return i18n.t("uiUseTerritoryMemory.risks"); }, icon: "⚠️" },
+  { value: "OPPORTUNITIES", get label() { return i18n.t("uiUseTerritoryMemory.opportunities"); }, icon: "🌱" },
+  { value: "RAW_NOTES", get label() { return i18n.t("uiUseTerritoryMemory.rawNotes"); }, icon: "📝" },
 ] as const;
 
 export type MemoryCategory = typeof MEMORY_CATEGORIES[number]["value"];
@@ -155,7 +155,7 @@ export function useAddTerritoryMemory() {
     onSuccess: async (data, vars) => {
       qc.invalidateQueries({ queryKey: ["territory-memory", vars.territory_id] });
       qc.invalidateQueries({ queryKey: ["territory-contributors", vars.territory_id] });
-      toast({ title: "Memory entry added" });
+      toast({ title: t("uiUseTerritoryMemory.memoryEntryAdded") });
 
       // Grant XP for contribution
       try {
@@ -190,7 +190,7 @@ export function useUpdateTerritoryMemory() {
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ["territory-memory", vars.territory_id] });
-      toast({ title: "Memory entry updated" });
+      toast({ title: t("uiUseTerritoryMemory.memoryEntryUpdated") });
     },
     onError: (e: any) => {
       toast({ title: t("uiUseTerritoryMemory.failedToUpdate"), description: e.message, variant: "destructive" });
@@ -214,7 +214,7 @@ export function useDeleteTerritoryMemory() {
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ["territory-memory", vars.territory_id] });
       qc.invalidateQueries({ queryKey: ["territory-contributors", vars.territory_id] });
-      toast({ title: "Memory entry deleted" });
+      toast({ title: t("uiUseTerritoryMemory.memoryEntryDeleted") });
     },
     onError: (e: any) => {
       toast({ title: t("uiUseTerritoryMemory.failedToDelete"), description: e.message, variant: "destructive" });

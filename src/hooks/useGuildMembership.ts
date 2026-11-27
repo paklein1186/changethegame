@@ -147,7 +147,7 @@ export function useGuildMembership(guildId: string | undefined) {
     if (error || (data as any)?.error) {
       toast({
         title: t("uiUseGuildMembership.paymentCouldNotBeCompleted"),
-        description: errMsg ?? "Please try again.",
+        description: errMsg ?? t("uiUseGuildMembership.pleaseTryAgain"),
         variant: "destructive",
       });
       return false;
@@ -155,7 +155,7 @@ export function useGuildMembership(guildId: string | undefined) {
 
     const amount = (data as any)?.amount ?? 0;
     toast({
-      title: "Membership activated",
+      title: t("uiUseGuildMembership.membershipActivated"),
       description: `${amount} Coins were transferred to the guild. Your remaining balance: ${(data as any)?.new_balance ?? "—"} Coins.`,
     });
     refresh();
@@ -174,7 +174,7 @@ export function useGuildMembership(guildId: string | undefined) {
         return;
       }
       toast({
-        title: cancel ? "Renewal stopped" : "Renewal reactivated",
+        title: cancel ? t("uiUseGuildMembership.renewalStopped") : t("uiUseGuildMembership.renewalReactivated"),
         description: cancel
           ? t("uiUseGuildMembership.yourMembershipStaysActiveUntilThe")
           : t("uiUseGuildMembership.yourMembershipWillRenewAutomaticallyAgain"),

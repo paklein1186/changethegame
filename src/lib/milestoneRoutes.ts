@@ -11,15 +11,15 @@ export const MILESTONE_ROUTES: Record<string, { label: string; to: string }> = {
   first_comment:          { get label() { return i18n.t("uiMilestoneRoutes.goToFeed"); },               to: "/feed" },
   follow_3_quests:        { get label() { return i18n.t("uiMilestoneRoutes.browseQuests"); },            to: "/explore?tab=quests" },
   visit_territory:        { get label() { return i18n.t("uiMilestoneRoutes.exploreTerritories"); },      to: "/territories" },
-  read_guide:             { label: "Read guides",              to: "/guides" },
+  read_guide:             { get label() { return i18n.t("uiMilestoneRoutes.readGuides"); },              to: "/guides" },
   set_spoken_languages:   { get label() { return i18n.t("uiMilestoneRoutes.editProfile"); },             to: "/profile/edit" },
-  explore_services:       { label: "Browse services",          to: "/explore?tab=services" },
-  view_user_profile:      { label: "Explore people",           to: "/explore/users" },
-  follow_user:            { label: "Explore people",           to: "/explore/users" },
+  explore_services:       { get label() { return i18n.t("uiMilestoneRoutes.browseServices"); },          to: "/explore?tab=services" },
+  view_user_profile:      { get label() { return i18n.t("uiMilestoneRoutes.explorePeople"); },           to: "/explore/users" },
+  follow_user:            { get label() { return i18n.t("uiMilestoneRoutes.explorePeople"); },           to: "/explore/users" },
   send_first_message:     { get label() { return i18n.t("uiMilestoneRoutes.openInbox"); },               to: "/inbox" },
 
   // ── Phase 2: Contribute ────────────────────────────────────
-  respond_opportunity:    { label: "Browse opportunities",     to: "/explore?tab=jobs&sub=opportunities" },
+  respond_opportunity:    { get label() { return i18n.t("uiMilestoneRoutes.browseOpportunities"); },     to: "/explore?tab=jobs&sub=opportunities" },
   join_quest:             { get label() { return i18n.t("uiMilestoneRoutes.browseQuests"); },            to: "/explore?tab=quests" },
   complete_subtask:       { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },           to: "/work" },
   log_contribution:       { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },           to: "/work" },
@@ -28,8 +28,8 @@ export const MILESTONE_ROUTES: Record<string, { label: string; to: string }> = {
   react_discussion:       { get label() { return i18n.t("uiMilestoneRoutes.goToFeed"); },               to: "/feed" },
   help_or_resource:       { get label() { return i18n.t("uiMilestoneRoutes.browseQuests"); },            to: "/explore?tab=quests" },
   fund_quest:             { get label() { return i18n.t("uiMilestoneRoutes.browseQuests"); },            to: "/explore?tab=quests" },
-  give_trust:             { label: "Explore people",           to: "/explore/users" },
-  book_service:           { label: "Browse services",          to: "/explore?tab=services" },
+  give_trust:             { get label() { return i18n.t("uiMilestoneRoutes.explorePeople"); },           to: "/explore/users" },
+  book_service:           { get label() { return i18n.t("uiMilestoneRoutes.browseServices"); },          to: "/explore?tab=services" },
   join_second_guild:      { get label() { return i18n.t("uiMilestoneRoutes.browseGuilds"); },            to: "/explore?tab=entities" },
   complete_5_subtasks:    { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },           to: "/work" },
   get_contribution_verified: { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },        to: "/work" },
@@ -43,7 +43,7 @@ export const MILESTONE_ROUTES: Record<string, { label: string; to: string }> = {
   create_event:           { get label() { return i18n.t("uiMilestoneRoutes.myGuilds"); },                to: "/me/guilds" },
   create_course:          { get label() { return i18n.t("uiMilestoneRoutes.createACourse"); },          to: "/courses/new" },
   open_fundraising:       { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },           to: "/work" },
-  set_availability:       { label: "Set availability",         to: "/me/availability" },
+  set_availability:       { get label() { return i18n.t("uiMilestoneRoutes.setAvailability"); },         to: "/me/availability" },
   add_quest_needs:        { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },           to: "/work" },
   receive_first_proposal: { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },           to: "/work" },
   quest_with_3_participants: { get label() { return i18n.t("uiMilestoneRoutes.goToWorkHub"); },        to: "/work" },
@@ -85,8 +85,8 @@ export const MILESTONE_ROUTES: Record<string, { label: string; to: string }> = {
 
 /** Phase display metadata */
 export const PHASE_META: Record<string, { label: string; emoji: string; color: string }> = {
-  discover:   { label: "Discover",    emoji: "🌱", color: "text-emerald-600" },
-  contribute: { label: "Contribute",  emoji: "🔗", color: "text-blue-600" },
+  discover:   { get label() { return i18n.t("uiMilestoneRoutes.discover"); },    emoji: "🌱", color: "text-emerald-600" },
+  contribute: { get label() { return i18n.t("uiMilestoneRoutes.contribute"); },  emoji: "🔗", color: "text-blue-600" },
   create:     { get label() { return i18n.t("uiMilestoneRoutes.create"); },      emoji: "🚀", color: "text-purple-600" },
-  structure:  { label: "Structure",   emoji: "🏛️", color: "text-amber-600" },
+  structure:  { get label() { return i18n.t("uiMilestoneRoutes.structure"); },   emoji: "🏛️", color: "text-amber-600" },
 };

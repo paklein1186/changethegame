@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
@@ -37,6 +38,7 @@ interface SupabaseError {
  *   if (error) handleError(error, "[QuestCreate]");
  */
 export function useSupabaseError() {
+  const { t } = useTranslation();
   const { toast } = useToast();
 
   /** Parse a Supabase error into a user-friendly string. */
@@ -74,7 +76,7 @@ export function useSupabaseError() {
       }
 
       toast({
-        title: customTitle ?? "Something went wrong",
+        title: customTitle ?? t("uiUseSupabaseError.somethingWentWrong"),
         description: message,
         variant: "destructive",
       });

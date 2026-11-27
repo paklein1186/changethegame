@@ -26,7 +26,7 @@ export function useRateLimit() {
 
       if (res.error || res.data?.allowed === false) {
         toast({
-          title: "Slow down",
+          title: t("uiUseRateLimit.slowDown"),
           description: res.data?.message ?? t("uiUseRateLimit.youReDoingTooMuchToo"),
           variant: "destructive",
         });

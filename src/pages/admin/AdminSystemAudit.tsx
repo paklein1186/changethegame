@@ -23,7 +23,7 @@ export default function AdminSystemAudit() {
   return (
     <div className="space-y-4">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-        <ScrollText className="h-6 w-6 text-primary" /> Audit Logs
+        <ScrollText className="h-6 w-6 text-primary" /> {t("uiAdminSystemAudit.auditLogs")}
       </h2>
       {recentActions.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("uiAdminSystemAudit.noAuditLogEntriesYet")}</p>
@@ -32,7 +32,7 @@ export default function AdminSystemAudit() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Type</TableHead>
+                <TableHead>{t("uiAdminSystemAudit.type")}</TableHead>
                 <TableHead>{t("uiAdminSystemAudit.title")}</TableHead>
                 <TableHead>{t("uiAdminSystemAudit.date")}</TableHead>
               </TableRow>

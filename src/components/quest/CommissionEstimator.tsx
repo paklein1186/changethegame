@@ -57,7 +57,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
       <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm space-y-1">
         <div className="flex items-center gap-2">
           <TrendingDown className="h-4 w-4 text-primary shrink-0" />
-          <span className="font-medium">Commission: {resultMin.finalRate}%</span>
+          <span className="font-medium">{t("uiCommissionEstimator.commission")} {resultMin.finalRate}%</span>
           {planDiscount > 0 && (
             <Badge variant="secondary" className="text-[10px]">-{planDiscount}% {plan.planName}</Badge>
           )}
@@ -75,12 +75,12 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
   return (
     <div className="rounded-lg border border-border bg-card p-4 space-y-3">
       <h4 className="text-sm font-semibold flex items-center gap-2">
-        <TrendingDown className="h-4 w-4 text-primary" /> Commission Preview
+        <TrendingDown className="h-4 w-4 text-primary" /> {t("uiCommissionEstimator.commissionPreview")}
       </h4>
 
       <div className="grid gap-2 text-sm">
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground">Base commission</span>
+          <span className="text-muted-foreground">{t("uiCommissionEstimator.baseCommission")}</span>
           <span className="font-medium">{resultMin.baseRate}%{resultMax.baseRate !== resultMin.baseRate ? ` – ${resultMax.baseRate}%` : ""}</span>
         </div>
 
@@ -104,7 +104,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
         )}
 
         <div className="flex items-center justify-between border-t border-border pt-2">
-          <span className="font-semibold">Final commission</span>
+          <span className="font-semibold">{t("uiCommissionEstimator.finalCommission")}</span>
           <span className="font-bold text-primary">{resultMin.finalRate}%</span>
         </div>
       </div>
@@ -136,7 +136,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
             </span>
           </div>
           <p className="text-[10px] text-muted-foreground">
-            Max reduction: {maxSteps}% • Floor: {COMMISSION_FLOOR}{t("uiCommissionEstimator.youHave")} {userCredits} credits
+            {t("uiCommissionEstimator.maxReduction")} {maxSteps}{t("uiCommissionEstimator.floor")} {COMMISSION_FLOOR}{t("uiCommissionEstimator.youHave")} {userCredits} credits
           </p>
         </div>
       )}
@@ -150,7 +150,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
             {max > min ? ` – €${resultMax.payoutAmount.toLocaleString()}` : ""}
           </p>
           <p className="text-[10px] text-muted-foreground mt-1">
-            Commission: €{resultMin.commissionAmount.toLocaleString()}
+            {t("uiCommissionEstimator.commission2")}{resultMin.commissionAmount.toLocaleString()}
             {max > min ? ` – €${resultMax.commissionAmount.toLocaleString()}` : ""}
           </p>
         </div>

@@ -647,7 +647,7 @@ export function WorkTasksTab() {
           className="h-8 text-xs gap-1.5"
           onClick={() => setStatusFilter("BACKLOG")}
         >
-          Backlog
+          {t("uiWorkTasksTab.backlog")}
           <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 ml-0.5">{backlogCount}</Badge>
         </Button>
         <Button
@@ -752,7 +752,7 @@ export function WorkTasksTab() {
           onClick={() => setSortBy(sortBy === "status" ? "priority" : sortBy === "priority" ? "recent" : "status")}
         >
           <ArrowDownUp className="h-3.5 w-3.5" />
-          {sortBy === "status" ? t("uiWorkTasksTab.status") : sortBy === "priority" ? "Priority" : "Recent"}
+          {sortBy === "status" ? t("uiWorkTasksTab.status") : sortBy === "priority" ? t("uiWorkTasksTab.priority") : t("uiWorkTasksTab.recent")}
         </Button>
 
         {/* View mode toggle */}
@@ -800,7 +800,7 @@ export function WorkTasksTab() {
           <ListTodo className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
           <p className="text-muted-foreground mb-3">{t("uiWorkTasksTab.noTasksMatchYourFilters")}</p>
           <Button size="sm" variant="outline" onClick={() => { setFilter("all"); setStatusFilter("all"); setEntityFilter("all"); setSearchQuery(""); }}>
-            Clear filters
+            {t("uiWorkTasksTab.clearFilters")}
           </Button>
         </div>
       ) : viewMode === "kanban" ? (
@@ -819,10 +819,10 @@ export function WorkTasksTab() {
                   <th className="w-7 sm:w-10 px-1.5 sm:px-3 py-1.5 sm:py-2.5"></th>
                   <th className="w-7 sm:w-8 px-1 py-1.5 sm:py-2.5"></th>
                   <th className="text-left px-1.5 sm:px-3 py-1.5 sm:py-2.5 font-medium">{t("uiWorkTasksTab.task")}</th>
-                  <th className="text-left px-2 sm:px-3 py-1.5 sm:py-2.5 font-medium hidden md:table-cell">Source</th>
+                  <th className="text-left px-2 sm:px-3 py-1.5 sm:py-2.5 font-medium hidden md:table-cell">{t("uiWorkTasksTab.source")}</th>
                   <th className="text-left px-1.5 md:px-3 py-1.5 sm:py-2.5 font-medium w-[40px] md:w-[140px]"><span className="hidden md:inline">{t("uiWorkTasksTab.status")}</span></th>
                   <th className="text-left px-3 py-1.5 sm:py-2.5 font-medium hidden lg:table-cell">
-                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> Created</span>
+                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {t("uiWorkTasksTab.created")}</span>
                   </th>
                   <th className="text-left px-3 py-1.5 sm:py-2.5 font-medium hidden xl:table-cell">{t("uiWorkTasksTab.link")}</th>
                   <th className="text-left px-3 py-1.5 sm:py-2.5 font-medium hidden md:table-cell">
@@ -843,7 +843,7 @@ export function WorkTasksTab() {
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-muted-foreground line-through">{task.title}</span>
                             <Button variant="outline" size="sm" className="h-7 gap-1.5 text-xs" onClick={() => undoDone(task)}>
-                              <Undo2 className="h-3 w-3" /> Undo
+                              <Undo2 className="h-3 w-3" /> {t("uiWorkTasksTab.undo")}
                             </Button>
                           </div>
                         </td>
@@ -903,7 +903,7 @@ export function WorkTasksTab() {
                             <div className="flex items-center gap-1 mt-0.5">
                               {task.convertedToQuestId && <Badge variant="outline" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4">{t("uiWorkTasksTab.quest2")}</Badge>}
                               {task.convertedToSubtaskId && <Badge variant="outline" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4">{t("uiWorkTasksTab.subtask2")}</Badge>}
-                              <span className="md:hidden" title={task.source === "personal" ? "Personal" : (task.sourceLabel || task.source)}>
+                              <span className="md:hidden" title={task.source === "personal" ? t("uiWorkTasksTab.personal") : (task.sourceLabel || task.source)}>
                                 <Badge variant="secondary" className="text-[8px] sm:text-[9px] h-3.5 sm:h-4 px-1">
                                   {task.source === "personal" ? <User className="h-2.5 w-2.5" /> : task.source === "quest" ? <Compass className="h-2.5 w-2.5" /> : <ListChecks className="h-2.5 w-2.5" />}
                                 </Badge>
@@ -915,7 +915,7 @@ export function WorkTasksTab() {
                       <td className="px-3 py-2.5 hidden md:table-cell max-w-[160px]">
                         <div className="flex flex-col gap-0.5">
                           {task.source === "personal" && (
-                            <Badge variant="secondary" className="text-[10px] truncate max-w-full inline-block">Personal</Badge>
+                            <Badge variant="secondary" className="text-[10px] truncate max-w-full inline-block">{t("uiWorkTasksTab.personal")}</Badge>
                           )}
                           {task.source === "quest" && (
                             <>
@@ -1013,13 +1013,13 @@ export function WorkTasksTab() {
                                   </div>
                                 ) : (
                                   <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 group-hover/assign:opacity-100 transition-opacity">
-                                    <Plus className="h-3 w-3 inline" /> Assign
+                                    <Plus className="h-3 w-3 inline" /> {t("uiWorkTasksTab.assign")}
                                   </span>
                                 )}
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="w-64 p-3" align="start">
-                              <p className="text-xs font-medium mb-2">Assigned users</p>
+                              <p className="text-xs font-medium mb-2">{t("uiWorkTasksTab.assignedUsers")}</p>
                               {(task.assignees?.length ?? 0) > 0 && (
                                 <div className="space-y-1.5 mb-2">
                                   {task.assignees!.map((a) => (
@@ -1030,7 +1030,7 @@ export function WorkTasksTab() {
                                           {a.display_name?.[0]?.toUpperCase() || "?"}
                                         </AvatarFallback>
                                       </Avatar>
-                                      <span className="text-xs flex-1 truncate">{a.display_name || "Unnamed"}</span>
+                                      <span className="text-xs flex-1 truncate">{a.display_name || t("uiWorkTasksTab.unnamed")}</span>
                                       <Button
                                         variant="ghost"
                                         size="icon"
@@ -1152,7 +1152,7 @@ export function WorkTasksTab() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{unit.name}</p>
-                        <p className="text-xs text-muted-foreground">{unit.type === "GUILD" ? t("uiWorkTasksTab.guild") : "Organisation"}</p>
+                        <p className="text-xs text-muted-foreground">{unit.type === "GUILD" ? t("uiWorkTasksTab.guild") : t("uiWorkTasksTab.organisation")}</p>
                       </div>
                     </button>
                   ))}
@@ -1170,7 +1170,7 @@ export function WorkTasksTab() {
                   </label>
                   <div className="flex gap-1">
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics((allTopics ?? []).map((t: any) => t.id))}>{t("uiWorkTasksTab.selectAll")}</Button>
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics([])}>Clear</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics([])}>{t("uiWorkTasksTab.clear")}</Button>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
@@ -1193,7 +1193,7 @@ export function WorkTasksTab() {
                   </label>
                   <div className="flex gap-1">
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories((allTerritories ?? []).map((t: any) => t.id))}>{t("uiWorkTasksTab.selectAll")}</Button>
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories([])}>Clear</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories([])}>{t("uiWorkTasksTab.clear")}</Button>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">

@@ -120,7 +120,7 @@ export function MiniChatWindow({ bubble, index }: Props) {
               <Maximize2 className="h-3.5 w-3.5" />
             </Link>
           </Button>
-          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => toggleMinimize(bubble.conversationId)} title="Minimize">
+          <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => toggleMinimize(bubble.conversationId)} title={t("uiMiniChatWindow.minimize")}>
             <Minus className="h-3.5 w-3.5" />
           </Button>
           <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => closeBubble(bubble.conversationId)} title={t("uiMiniChatWindow.close")}>

@@ -24,7 +24,7 @@ export function PlanLimitBadge({ freeRemaining = 0, itemLabel, xpCost, limitReac
   if (inGracePeriod) {
     return (
       <Badge variant="secondary" className="text-[10px] gap-1 border-primary/30 text-primary">
-        <Gift className="h-3 w-3" /> Free trial — {gracePeriodDaysLeft} day{gracePeriodDaysLeft !== 1 ? "s" : ""} left
+        <Gift className="h-3 w-3" /> {t("uiPlanLimitBadge.freeTrial")} {gracePeriodDaysLeft} day{gracePeriodDaysLeft !== 1 ? "s" : ""} left
       </Badge>
     );
   }
@@ -42,7 +42,7 @@ export function PlanLimitBadge({ freeRemaining = 0, itemLabel, xpCost, limitReac
 
   return (
     <Badge variant="outline" className="text-[10px] gap-1 border-warning/40 text-warning">
-      <Zap className="h-3 w-3" /> Extra {itemLabel} cost {xpCost} XP
+      <Zap className="h-3 w-3" /> {t("uiPlanLimitBadge.extra")} {itemLabel} cost {xpCost} XP
     </Badge>
   );
 }

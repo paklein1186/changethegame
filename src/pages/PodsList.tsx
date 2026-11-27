@@ -89,7 +89,7 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
       });
       setCreateOpen(false);
       setNewName(""); setNewDesc(""); setNewTopicId("none"); setNewQuestId("none"); setNewStart(""); setNewEnd(""); setNewDraft(false);
-      toast({ title: "Pod created!" });
+      toast({ title: t("uiPodsList.podCreated") });
     } catch (err: any) {
       toast({ title: t("uiPodsList.error"), description: err.message, variant: "destructive" });
     }
@@ -114,12 +114,12 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
             <Textarea value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder={t("uiPodsList.whatIsThisPodAbout")} maxLength={500} className="resize-none" />
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Type</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiPodsList.type")}</label>
             <Select value={newType} onValueChange={setNewType}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value={PodType.QUEST_POD}>{t("uiPodsList.questPod")}</SelectItem>
-                <SelectItem value={PodType.STUDY_POD}>Study Pod</SelectItem>
+                <SelectItem value={PodType.STUDY_POD}>{t("uiPodsList.studyPod")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -178,7 +178,7 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
         <>
            <div className="flex items-center justify-between mb-6">
              <div>
-               <h1 className="font-display text-3xl font-bold">Pods</h1>
+               <h1 className="font-display text-3xl font-bold">{t("uiPodsList.pods")}</h1>
                <p className="text-muted-foreground mt-1">{t("uiPodsList.smallCollaborationGroupsAroundQuestsAnd")}</p>
              </div>
              {isLoggedIn && createDialog}

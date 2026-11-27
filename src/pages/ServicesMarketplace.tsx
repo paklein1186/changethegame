@@ -71,7 +71,7 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
   return (
     <PageShell bare={bare}>
       <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold">Services</h1>
+        <h1 className="font-display text-3xl font-bold">{t("uiServicesMarketplace.services")}</h1>
         <p className="text-muted-foreground mt-1">{t("uiServicesMarketplace.browseConsultancyServicesOfferedByUsers")}</p>
       </div>
 
@@ -85,8 +85,8 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
       <div className="mb-6 space-y-3">
         <div className="flex items-center gap-2 flex-wrap">
           <Button variant={hostFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("all")}>{t("uiServicesMarketplace.all")}</Button>
-          <Button variant={hostFilter === "user" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("user")}>User services</Button>
-          <Button variant={hostFilter === "unit" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("unit")}>Unit services</Button>
+          <Button variant={hostFilter === "user" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("user")}>{t("uiServicesMarketplace.userServices")}</Button>
+          <Button variant={hostFilter === "unit" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("unit")}>{t("uiServicesMarketplace.unitServices")}</Button>
         </div>
         <ExploreFilters
           filters={filters}
@@ -135,7 +135,7 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
                         {svc.price_amount != null && (
                           <Badge className="bg-primary/10 text-primary border-0 shrink-0">
                             <Euro className="h-3 w-3 mr-0.5" />
-                            {svc.price_amount === 0 ? "Free" : `${svc.price_amount}`}
+                            {svc.price_amount === 0 ? t("uiServicesMarketplace.free") : `${svc.price_amount}`}
                           </Badge>
                         )}
                       </div>
@@ -156,9 +156,9 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
                         {svc.duration_minutes && (
                           <span className="flex items-center gap-0.5"><Clock className="h-3 w-3" /> {svc.duration_minutes} min</span>
                         )}
-                        {(svc as any).service_type === "service_mission" && <Badge variant="outline" className="text-[10px]"><Briefcase className="h-2.5 w-2.5 mr-0.5" />Mission</Badge>}
+                        {(svc as any).service_type === "service_mission" && <Badge variant="outline" className="text-[10px]"><Briefcase className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesMarketplace.mission")}</Badge>}
                         {(svc as any).service_type === "event_attendance" && <Badge variant="outline" className="text-[10px]"><Users className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesMarketplace.event")}</Badge>}
-                        {(svc as any).service_type === "online_call" && <Badge variant="outline" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />Call</Badge>}
+                        {(svc as any).service_type === "online_call" && <Badge variant="outline" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesMarketplace.call")}</Badge>}
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {svcTopics.slice(0, 5).map((topic: any) => <Badge key={topic.id} variant="secondary" className="text-[10px]"><Hash className="h-2.5 w-2.5 mr-0.5" />{translateTopicName(topic.name, t)}</Badge>)}

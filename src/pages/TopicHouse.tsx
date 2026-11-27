@@ -105,7 +105,7 @@ export default function TopicHouse() {
                 className="gap-1.5"
               >
                 <Heart className={cn("h-3.5 w-3.5", isFollowing && "fill-current")} />
-                {isFollowing ? "Following" : t("uiTopicHouse.follow")}
+                {isFollowing ? t("uiTopicHouse.following") : t("uiTopicHouse.follow")}
               </Button>
               <ShareLinkButton entityType="topic" entityId={topic.slug || topic.id} entityName={topic.name} />
             </div>
@@ -116,7 +116,7 @@ export default function TopicHouse() {
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="w-full justify-start">
             <TabsTrigger value="overview">{t("uiTopicHouse.overview")}</TabsTrigger>
-            <TabsTrigger value="ecosystem">Ecosystem</TabsTrigger>
+            <TabsTrigger value="ecosystem">{t("uiTopicHouse.ecosystem")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">

@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 const LANGUAGES = [
-  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "en", get label() { return i18n.t("uiLanguageSwitcher.english"); }, flag: "🇬🇧" },
   { code: "fr", label: "Français", flag: "🇫🇷" },
 ];
 

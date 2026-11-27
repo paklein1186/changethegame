@@ -163,7 +163,7 @@ export function TerritoryPortalHero({
           <div className="absolute inset-0 flex items-center justify-center bg-muted/60">
             <div className="flex items-center gap-2 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              Generating landscape…
+              {t("uiTerritoryPortalHero.generatingLandscape")}
             </div>
           </div>
         )}
@@ -238,7 +238,7 @@ export function TerritoryPortalHero({
           <div className="flex items-center gap-2 shrink-0">
             {isPioneerTerritory ? (
               <Button size="sm" onClick={onUnlock} className="gap-1.5 bg-amber-500 hover:bg-amber-600 text-white">
-                <Sprout className="h-3.5 w-3.5" /> Pioneer
+                <Sprout className="h-3.5 w-3.5" /> {t("uiTerritoryPortalHero.pioneer")}
               </Button>
             ) : (
               <Button
@@ -249,7 +249,7 @@ export function TerritoryPortalHero({
                 className="gap-1.5"
               >
                 <Heart className={cn("h-3.5 w-3.5", isFollowing && "fill-current")} />
-                {isFollowing ? "Following" : t("uiTerritoryPortalHero.follow")}
+                {isFollowing ? t("uiTerritoryPortalHero.following") : t("uiTerritoryPortalHero.follow")}
               </Button>
             )}
             <ShareLinkButton
@@ -264,7 +264,7 @@ export function TerritoryPortalHero({
           <StatPill icon={Users} value={memberCount} label="members" color="text-blue-500" />
           <StatPill icon={Compass} value={questCount} label="quests" color="text-violet-500" />
           <StatPill icon={Shield} value={guildCount} label="guilds" color="text-amber-500" />
-          <StatPill icon={Leaf} value={naturalSystemCount} label="natural systems" color="text-green-500" />
+          <StatPill icon={Leaf} value={naturalSystemCount} label={t("uiTerritoryPortalHero.naturalSystems")} color="text-green-500" />
         </div>
 
         {isPioneerTerritory && (
@@ -286,7 +286,7 @@ export function TerritoryPortalHero({
                 onClick={onUnlock}
                 className="shrink-0 bg-amber-500 hover:bg-amber-600 text-white border-0"
               >
-                Unlock
+                {t("uiTerritoryPortalHero.unlock")}
               </Button>
             </div>
           </div>

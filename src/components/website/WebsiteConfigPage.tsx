@@ -159,7 +159,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website", ownerType, ownerId] });
       queryClient.invalidateQueries({ queryKey: ["website-pages"] });
-      toast.success(website ? "Website saved" : t("uiWebsiteConfigPage.websiteCreatedWithDefaultPages"));
+      toast.success(website ? t("uiWebsiteConfigPage.websiteSaved") : t("uiWebsiteConfigPage.websiteCreatedWithDefaultPages"));
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -179,7 +179,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website-pages", website?.id] });
-      toast.success("Page added");
+      toast.success(t("uiWebsiteConfigPage.pageAdded"));
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -193,7 +193,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website-pages", website?.id] });
-      toast.success("Page removed");
+      toast.success(t("uiWebsiteConfigPage.pageRemoved"));
     },
   });
 
@@ -203,12 +203,12 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold flex items-center gap-2">
-          <Globe className="h-5 w-5" /> Website Configuration
+          <Globe className="h-5 w-5" /> {t("uiWebsiteConfigPage.websiteConfiguration")}
         </h2>
         {website && (
           <div className="flex items-center gap-2 text-sm">
             {form.isPublished ? (
-              <span className="text-primary flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> Published</span>
+              <span className="text-primary flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {t("uiWebsiteConfigPage.published")}</span>
             ) : (
               <span className="text-muted-foreground flex items-center gap-1"><EyeOff className="h-3.5 w-3.5" /> {t("uiWebsiteConfigPage.draft")}</span>
             )}
@@ -218,7 +218,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
 
       {/* General settings */}
       <Card>
-        <CardHeader><CardTitle className="text-base">General</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{t("uiWebsiteConfigPage.general")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -226,12 +226,12 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
               <Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder={t("uiWebsiteConfigPage.myWebsite")} />
             </div>
             <div className="space-y-1.5">
-              <Label>Slug (URL path)</Label>
+              <Label>{t("uiWebsiteConfigPage.slugUrlPath")}</Label>
               <Input value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="my-website" />
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label>Subtitle</Label>
+            <Label>{t("uiWebsiteConfigPage.subtitle")}</Label>
             <Input value={form.subtitle} onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))} />
           </div>
           <div className="space-y-1.5">
@@ -241,24 +241,24 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <Label>Theme Mode</Label>
+              <Label>{t("uiWebsiteConfigPage.themeMode")}</Label>
               <Select value={form.themeMode} onValueChange={(v) => setForm((f) => ({ ...f, themeMode: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="solar">Solar (Light)</SelectItem>
-                  <SelectItem value="lunar">Lunar (Dark)</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
+                  <SelectItem value="solar">{t("uiWebsiteConfigPage.solarLight")}</SelectItem>
+                  <SelectItem value="lunar">{t("uiWebsiteConfigPage.lunarDark")}</SelectItem>
+                  <SelectItem value="custom">{t("uiWebsiteConfigPage.custom")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {form.themeMode === "custom" && (
               <>
                 <div className="space-y-1.5">
-                  <Label>Primary Color</Label>
+                  <Label>{t("uiWebsiteConfigPage.primaryColor")}</Label>
                   <Input value={form.primaryColor} onChange={(e) => setForm((f) => ({ ...f, primaryColor: e.target.value }))} placeholder="#3B82F6" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Accent Color</Label>
+                  <Label>{t("uiWebsiteConfigPage.accentColor")}</Label>
                   <Input value={form.accentColor} onChange={(e) => setForm((f) => ({ ...f, accentColor: e.target.value }))} placeholder="#10B981" />
                 </div>
               </>
@@ -267,12 +267,12 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label>Heading Font</Label>
-              <Input value={form.fontHeading} onChange={(e) => setForm((f) => ({ ...f, fontHeading: e.target.value }))} placeholder="Space Grotesk" />
+              <Label>{t("uiWebsiteConfigPage.headingFont")}</Label>
+              <Input value={form.fontHeading} onChange={(e) => setForm((f) => ({ ...f, fontHeading: e.target.value }))} placeholder={t("uiWebsiteConfigPage.spaceGrotesk")} />
             </div>
             <div className="space-y-1.5">
-              <Label>Body Font</Label>
-              <Input value={form.fontBody} onChange={(e) => setForm((f) => ({ ...f, fontBody: e.target.value }))} placeholder="Inter" />
+              <Label>{t("uiWebsiteConfigPage.bodyFont")}</Label>
+              <Input value={form.fontBody} onChange={(e) => setForm((f) => ({ ...f, fontBody: e.target.value }))} placeholder={t("uiWebsiteConfigPage.inter")} />
             </div>
           </div>
 
@@ -282,7 +282,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
           </div>
 
           <Button onClick={() => upsertWebsite.mutate()} disabled={!form.title || !form.slug || upsertWebsite.isPending}>
-            {upsertWebsite.isPending ? "Saving…" : website ? t("uiWebsiteConfigPage.saveChanges") : t("uiWebsiteConfigPage.createWebsite")}
+            {upsertWebsite.isPending ? t("uiWebsiteConfigPage.saving") : website ? t("uiWebsiteConfigPage.saveChanges") : t("uiWebsiteConfigPage.createWebsite")}
           </Button>
           {!website && (
             <p className="text-xs text-muted-foreground">
@@ -297,7 +297,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Pages</CardTitle>
+              <CardTitle className="text-base">{t("uiWebsiteConfigPage.pages")}</CardTitle>
               <Button variant="outline" size="sm" onClick={() => addPage.mutate()}>
                 <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiWebsiteConfigPage.addPage")}
               </Button>
@@ -346,7 +346,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
               {t("uiWebsiteConfigPage.getFunctionsV1PublicWebsite")}{website.slug}/full
             </code>
             <code className="block bg-muted p-2 rounded text-xs break-all">
-              {t("uiWebsiteConfigPage.getFunctionsV1PublicWebsite")}{website.slug}/pages/{"<pageSlug>"}/resolved
+              {t("uiWebsiteConfigPage.getFunctionsV1PublicWebsite")}{website.slug}/pages/{t("uiWebsiteConfigPage.pageslug")}/resolved
             </code>
           </CardContent>
         </Card>

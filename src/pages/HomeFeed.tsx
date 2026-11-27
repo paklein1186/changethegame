@@ -198,7 +198,7 @@ function TerritoryFlow({
           
             {result.questDraft.suggestedSkills?.length > 0 &&
           <div className="flex flex-wrap gap-1.5">
-                <span className="text-xs text-muted-foreground mr-1">Skills:</span>
+                <span className="text-xs text-muted-foreground mr-1">{t("uiHomeFeed.skills")}</span>
                 {result.questDraft.suggestedSkills.map((s: string) =>
             <span key={s} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{s}</span>
             )}
@@ -342,7 +342,7 @@ export default function HomeFeed() {
       setResult(data);
     } catch (e: any) {
       console.error(e);
-      toast.error(e?.message || "Something went wrong");
+      toast.error(e?.message || t("uiHomeFeed.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -625,7 +625,7 @@ export default function HomeFeed() {
             {loading &&
             <div className="flex items-center gap-2 text-muted-foreground py-8">
                 <Loader2 className="h-5 w-5 animate-spin" />
-                <span className="text-sm">Thinking…</span>
+                <span className="text-sm">{t("uiHomeFeed.thinking")}</span>
               </div>
             }
           </div>

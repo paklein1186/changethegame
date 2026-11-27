@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Download, FlaskConical, Loader2, RotateCcw, Trash2 } from "lucide-react";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function DemoFeveAdminCard() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [action, setAction] = useState<string | null>(null);
   const { data: count = 0, refetch } = useQuery({
@@ -42,9 +44,9 @@ export function DemoFeveAdminCard() {
       <CardDescription>Données fictives isolées des comptes réels et réservées aux comptes démo autorisés. {count} lignes actuellement inventoriées.</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-wrap gap-2">
-      <Button disabled={!!action} onClick={() => run("seed")}>{action === "seed" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />} Charger</Button>
+      <Button disabled={!!action} onClick={() => run("seed")}>{action === "seed" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />} {t("uiDemoFeveAdminCard.charger")}</Button>
       <Button variant="outline" disabled={!!action} onClick={() => run("reset")}>{action === "reset" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />} Réinitialiser</Button>
-      <Button variant="destructive" disabled={!!action || count === 0} onClick={() => run("purge")}>{action === "purge" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />} Purger</Button>
+      <Button variant="destructive" disabled={!!action || count === 0} onClick={() => run("purge")}>{action === "purge" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />} {t("uiDemoFeveAdminCard.purger")}</Button>
     </CardContent>
   </Card>;
 }

@@ -67,7 +67,7 @@ export default function MyAgents() {
           <p className="text-muted-foreground mt-1">{t("uiMyAgents.agentsYouVeHiredAndCan")}</p>
         </div>
         <Button variant="outline" size="sm" asChild>
-          <Link to="/agents">Browse Agents</Link>
+          <Link to="/agents">{t("uiMyAgents.browseAgents")}</Link>
         </Button>
       </div>
 
@@ -83,7 +83,7 @@ export default function MyAgents() {
             {t("uiMyAgents.browseTheAgentMarketplaceToDiscover")}
           </p>
           <Button asChild>
-            <Link to="/agents">Browse Agents</Link>
+            <Link to="/agents">{t("uiMyAgents.browseAgents")}</Link>
           </Button>
         </Card>
       ) : (
@@ -127,14 +127,14 @@ export default function MyAgents() {
                           className="flex-1"
                           onClick={() => setAttachAgentId(agent.id)}
                         >
-                          <Link2 className="h-3.5 w-3.5 mr-1" /> Attach
+                          <Link2 className="h-3.5 w-3.5 mr-1" /> {t("uiMyAgents.attach")}
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => {
                             archiveMut.mutate({ hireId: hire.id, newStatus: "archived" });
-                            toast.success("Agent archived");
+                            toast.success(t("uiMyAgents.agentArchived"));
                           }}
                         >
                           <Archive className="h-3.5 w-3.5" />
@@ -150,7 +150,7 @@ export default function MyAgents() {
           {archivedHires.length > 0 && (
             <div className="space-y-4">
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                Archived ({archivedHires.length})
+                {t("uiMyAgents.archived")}{archivedHires.length})
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {archivedHires.map((hire: any) => {
@@ -171,10 +171,10 @@ export default function MyAgents() {
                           variant="ghost"
                           onClick={() => {
                             archiveMut.mutate({ hireId: hire.id, newStatus: "active" });
-                            toast.success("Agent re-activated");
+                            toast.success(t("uiMyAgents.agentReActivated"));
                           }}
                         >
-                          <RotateCcw className="h-3.5 w-3.5 mr-1" /> Restore
+                          <RotateCcw className="h-3.5 w-3.5 mr-1" /> {t("uiMyAgents.restore")}
                         </Button>
                       </div>
                     </Card>

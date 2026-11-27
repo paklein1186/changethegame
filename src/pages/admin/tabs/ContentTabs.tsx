@@ -88,12 +88,12 @@ export function UsersRolesTab() {
         <TableHeader>
           <TableRow>
             <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.name")}</SortableTableHead>
-            <SortableTableHead sortKey="email" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Email</SortableTableHead>
+            <SortableTableHead sortKey="email" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.email")}</SortableTableHead>
             <SortableTableHead sortKey="role" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.role")}</SortableTableHead>
             <SortableTableHead sortKey="xp" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">XP</SortableTableHead>
             <SortableTableHead sortKey="contribution_index" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">CI</SortableTableHead>
             <TableHead>{t("uiContentTabs.admin")}</TableHead>
-            <TableHead>Superadmin</TableHead>
+            <TableHead>{t("uiContentTabs.superadmin")}</TableHead>
             <TableHead className="w-[80px]"></TableHead>
           </TableRow>
         </TableHeader>
@@ -131,7 +131,7 @@ export function UsersRolesTab() {
                       </AlertDialogContent>
                     </AlertDialog>
                   ) : (
-                    <Badge variant={isTargetAdmin ? "default" : "secondary"} className="text-xs">{isTargetAdmin ? "Yes" : t("uiContentTabs.no")}</Badge>
+                    <Badge variant={isTargetAdmin ? "default" : "secondary"} className="text-xs">{isTargetAdmin ? t("uiContentTabs.yes") : t("uiContentTabs.no")}</Badge>
                   )}
                 </TableCell>
                 <TableCell>
@@ -140,7 +140,7 @@ export function UsersRolesTab() {
                       <AlertDialogTrigger asChild><Switch checked={isTargetSuperadmin} /></AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>{isTargetSuperadmin ? t("uiContentTabs.removeSuperadmin") : "Grant Superadmin"}</AlertDialogTitle>
+                          <AlertDialogTitle>{isTargetSuperadmin ? t("uiContentTabs.removeSuperadmin") : t("uiContentTabs.grantSuperadmin")}</AlertDialogTitle>
                           <AlertDialogDescription>
                             {isTargetSuperadmin ? `Remove superadmin from ${p.name}?` : `Grant superadmin to ${p.name}? Admin will also be granted.`}
                           </AlertDialogDescription>
@@ -152,7 +152,7 @@ export function UsersRolesTab() {
                       </AlertDialogContent>
                     </AlertDialog>
                   ) : (
-                    <Badge variant={isTargetSuperadmin ? "default" : "secondary"} className="text-xs">{isTargetSuperadmin ? "Yes" : isSelf && isSuperAdmin ? t("uiContentTabs.you") : t("uiContentTabs.no")}</Badge>
+                    <Badge variant={isTargetSuperadmin ? "default" : "secondary"} className="text-xs">{isTargetSuperadmin ? t("uiContentTabs.yes") : isSelf && isSuperAdmin ? t("uiContentTabs.you") : t("uiContentTabs.no")}</Badge>
                   )}
                 </TableCell>
                 <TableCell>
@@ -249,11 +249,11 @@ export function GuildsTab() {
         <TableHeader>
           <TableRow>
             <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.name")}</SortableTableHead>
-            <SortableTableHead sortKey="type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Type</SortableTableHead>
+            <SortableTableHead sortKey="type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.type")}</SortableTableHead>
             <SortableTableHead sortKey="_creator" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.createdBy")}</SortableTableHead>
             <SortableTableHead sortKey="_members" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.members")}</SortableTableHead>
             <SortableTableHead sortKey="_quests" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.quests")}</SortableTableHead>
-            <TableHead>Approved</TableHead>
+            <TableHead>{t("uiContentTabs.approved")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -346,9 +346,9 @@ export function QuestsTab() {
               <SortableTableHead sortKey="title" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.title")}</SortableTableHead>
               <SortableTableHead sortKey="_guild" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.guild")}</SortableTableHead>
               <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.status")}</SortableTableHead>
-              <SortableTableHead sortKey="monetization_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Monetization</SortableTableHead>
+              <SortableTableHead sortKey="monetization_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.monetization")}</SortableTableHead>
               <SortableTableHead sortKey="reward_xp" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.rewardXp")}</SortableTableHead>
-              <TableHead>Featured</TableHead>
+              <TableHead>{t("uiContentTabs.featured")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -394,11 +394,11 @@ export function PlansXpTab() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><CreditCard className="h-5 w-5" /> Subscription Plans</h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><CreditCard className="h-5 w-5" /> {t("uiContentTabs.subscriptionPlans")}</h3>
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3 mb-4">
           <span className="text-amber-500 text-lg">⚠️</span>
           <div>
-            <p className="text-sm font-semibold text-foreground">Alpha Phase</p>
+            <p className="text-sm font-semibold text-foreground">{t("uiContentTabs.alphaPhase")}</p>
             <p className="text-sm text-muted-foreground">{t("uiContentTabs.platformCreditPlansAreProvisionalAnd")}</p>
           </div>
         </div>
@@ -407,7 +407,7 @@ export function PlansXpTab() {
             <TableHeader>
               <TableRow>
                 <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.name")}</SortableTableHead>
-                <SortableTableHead sortKey="code" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Code</SortableTableHead>
+                <SortableTableHead sortKey="code" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.code")}</SortableTableHead>
                 <SortableTableHead sortKey="monthly_price_amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">€/mo</SortableTableHead>
                 <SortableTableHead sortKey="free_quests_per_week" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.questsWk")}</SortableTableHead>
                 <SortableTableHead sortKey="xp_multiplier" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.xp")}</SortableTableHead>
@@ -422,7 +422,7 @@ export function PlansXpTab() {
                   <TableCell className="text-right">{plan.monthly_price_amount ?? 0}</TableCell>
                   <TableCell className="text-right">{plan.free_quests_per_week === -1 ? "∞" : plan.free_quests_per_week ?? "—"}</TableCell>
                   <TableCell className="text-right">{plan.xp_multiplier ?? 1}×</TableCell>
-                  <TableCell>{plan.is_public ? <Badge variant="secondary" className="text-xs">{t("uiContentTabs.public")}</Badge> : <Badge variant="outline" className="text-xs">Internal</Badge>}</TableCell>
+                  <TableCell>{plan.is_public ? <Badge variant="secondary" className="text-xs">{t("uiContentTabs.public")}</Badge> : <Badge variant="outline" className="text-xs">{t("uiContentTabs.internal")}</Badge>}</TableCell>
                 </TableRow>
               ))}
               {plans.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noPlansConfigured")}</TableCell></TableRow>}
@@ -496,7 +496,7 @@ export function HousesTerritoriesTab() {
             <TableHeader>
               <TableRow>
                 <SortableTableHead sortKey="name" currentKey={topicSort.sort.key} direction={topicSort.sort.direction} onSort={topicSort.toggle}>{t("uiContentTabs.name")}</SortableTableHead>
-                <SortableTableHead sortKey="slug" currentKey={topicSort.sort.key} direction={topicSort.sort.direction} onSort={topicSort.toggle}>Slug</SortableTableHead>
+                <SortableTableHead sortKey="slug" currentKey={topicSort.sort.key} direction={topicSort.sort.direction} onSort={topicSort.toggle}>{t("uiContentTabs.slug")}</SortableTableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -526,7 +526,7 @@ export function HousesTerritoriesTab() {
               <TableRow>
                 <SortableTableHead sortKey="name" currentKey={territorySort.sort.key} direction={territorySort.sort.direction} onSort={territorySort.toggle}>{t("uiContentTabs.name")}</SortableTableHead>
                 <SortableTableHead sortKey="level" currentKey={territorySort.sort.key} direction={territorySort.sort.direction} onSort={territorySort.toggle}>{t("uiContentTabs.level")}</SortableTableHead>
-                <TableHead className="w-24 text-right">Actions</TableHead>
+                <TableHead className="w-24 text-right">{t("uiContentTabs.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -586,7 +586,7 @@ export function GovernanceTab() {
 
   return (
     <div className="space-y-4">
-      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Star className="h-5 w-5" /> Decisions & Polls</h3>
+      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Star className="h-5 w-5" /> {t("uiContentTabs.decisionsPolls")}</h3>
       {polls.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("uiContentTabs.noDecisionsOrPollsYet")}</p>
       ) : (
@@ -594,10 +594,10 @@ export function GovernanceTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableTableHead sortKey="question" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Question</SortableTableHead>
-                <SortableTableHead sortKey="decision_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Type</SortableTableHead>
+                <SortableTableHead sortKey="question" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.question")}</SortableTableHead>
+                <SortableTableHead sortKey="decision_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.type")}</SortableTableHead>
                 <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.status")}</SortableTableHead>
-                <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Created</SortableTableHead>
+                <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.created")}</SortableTableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -677,9 +677,9 @@ export function ServicesSection() {
         <TableHeader>
           <TableRow>
             <SortableTableHead sortKey="title" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.title")}</SortableTableHead>
-            <SortableTableHead sortKey="_provider" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Provider</SortableTableHead>
-            <SortableTableHead sortKey="price_amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Price</SortableTableHead>
-            <SortableTableHead sortKey="_bookings" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Bookings</SortableTableHead>
+            <SortableTableHead sortKey="_provider" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.provider")}</SortableTableHead>
+            <SortableTableHead sortKey="price_amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.price")}</SortableTableHead>
+            <SortableTableHead sortKey="_bookings" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.bookings")}</SortableTableHead>
             <SortableTableHead sortKey="is_active" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.active")}</SortableTableHead>
           </TableRow>
         </TableHeader>
@@ -688,9 +688,9 @@ export function ServicesSection() {
             <TableRow key={svc.id} className={!svc.is_active ? "opacity-50" : ""}>
               <TableCell><Link to={`/services/${svc.id}`} className="font-medium hover:underline">{svc.title}</Link></TableCell>
               <TableCell className="text-sm text-muted-foreground">{svc._provider}</TableCell>
-              <TableCell className="text-right">{svc.price_amount != null ? `${svc.price_amount} ${svc.price_currency}` : "Free"}</TableCell>
+              <TableCell className="text-right">{svc.price_amount != null ? `${svc.price_amount} ${svc.price_currency}` : t("uiContentTabs.free")}</TableCell>
               <TableCell className="text-right">{svc._bookings}</TableCell>
-              <TableCell><Badge variant={svc.is_active ? "default" : "secondary"} className="text-xs">{svc.is_active ? t("uiContentTabs.active") : "Inactive"}</Badge></TableCell>
+              <TableCell><Badge variant={svc.is_active ? "default" : "secondary"} className="text-xs">{svc.is_active ? t("uiContentTabs.active") : t("uiContentTabs.inactive")}</Badge></TableCell>
             </TableRow>
           ))}
           {services.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noServicesYet")}</TableCell></TableRow>}
@@ -774,7 +774,7 @@ export function BookingsSection() {
           <SelectContent>
             <SelectItem value="all">{t("uiContentTabs.allStatuses")}</SelectItem>
             <SelectItem value="PENDING">{t("uiContentTabs.pending")}</SelectItem>
-            <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+            <SelectItem value="CONFIRMED">{t("uiContentTabs.confirmed")}</SelectItem>
             <SelectItem value="CANCELLED">{t("uiContentTabs.cancelled")}</SelectItem>
             <SelectItem value="COMPLETED">{t("uiContentTabs.completed")}</SelectItem>
           </SelectContent>
@@ -784,11 +784,11 @@ export function BookingsSection() {
         <Table>
           <TableHeader>
             <TableRow>
-              <SortableTableHead sortKey="_service" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Service</SortableTableHead>
-              <SortableTableHead sortKey="_requester" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Requester</SortableTableHead>
-              <SortableTableHead sortKey="_provider" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Provider</SortableTableHead>
+              <SortableTableHead sortKey="_service" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.service")}</SortableTableHead>
+              <SortableTableHead sortKey="_requester" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.requester")}</SortableTableHead>
+              <SortableTableHead sortKey="_provider" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.provider")}</SortableTableHead>
               <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.status")}</SortableTableHead>
-              <SortableTableHead sortKey="payment_status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Payment</SortableTableHead>
+              <SortableTableHead sortKey="payment_status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.payment")}</SortableTableHead>
               <SortableTableHead sortKey="amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.amount")}</SortableTableHead>
             </TableRow>
           </TableHeader>
@@ -803,7 +803,7 @@ export function BookingsSection() {
                     <SelectTrigger className="h-7 w-[130px] text-xs"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="PENDING">{t("uiContentTabs.pending")}</SelectItem>
-                      <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+                      <SelectItem value="CONFIRMED">{t("uiContentTabs.confirmed")}</SelectItem>
                       <SelectItem value="CANCELLED">{t("uiContentTabs.cancelled")}</SelectItem>
                       <SelectItem value="COMPLETED">{t("uiContentTabs.completed")}</SelectItem>
                     </SelectContent>
@@ -906,7 +906,7 @@ export function ModerationTab() {
       deleted_at: !isDeleted ? new Date().toISOString() : null,
     }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-comments"] });
-    toast({ title: "Comment visibility toggled" });
+    toast({ title: t("uiContentTabs.commentVisibilityToggled") });
   };
 
   const targetLink = (r: any) => {
@@ -918,16 +918,16 @@ export function ModerationTab() {
     <div className="space-y-8">
       {/* Reports */}
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Flag className="h-5 w-5" /> Reports ({reports.length})</h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Flag className="h-5 w-5" /> {t("uiContentTabs.reports")}{reports.length})</h3>
         <div className="flex flex-wrap gap-3 mb-4">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[160px] h-9"><SelectValue placeholder={t("uiContentTabs.status")} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("uiContentTabs.allStatuses2")}</SelectItem>
               <SelectItem value="OPEN">{t("uiContentTabs.open")}</SelectItem>
-              <SelectItem value="REVIEWED">Reviewed</SelectItem>
-              <SelectItem value="RESOLVED">Resolved</SelectItem>
-              <SelectItem value="DISMISSED">Dismissed</SelectItem>
+              <SelectItem value="REVIEWED">{t("uiContentTabs.reviewed")}</SelectItem>
+              <SelectItem value="RESOLVED">{t("uiContentTabs.resolved")}</SelectItem>
+              <SelectItem value="DISMISSED">{t("uiContentTabs.dismissed")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -940,12 +940,12 @@ export function ModerationTab() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <SortableTableHead sortKey="_reporter" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Reporter</SortableTableHead>
-                  <SortableTableHead sortKey="target_type" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Type</SortableTableHead>
-                  <SortableTableHead sortKey="reason" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Reason</SortableTableHead>
+                  <SortableTableHead sortKey="_reporter" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>{t("uiContentTabs.reporter")}</SortableTableHead>
+                  <SortableTableHead sortKey="target_type" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>{t("uiContentTabs.type")}</SortableTableHead>
+                  <SortableTableHead sortKey="reason" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>{t("uiContentTabs.reason")}</SortableTableHead>
                   <SortableTableHead sortKey="status" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>{t("uiContentTabs.status")}</SortableTableHead>
                   <SortableTableHead sortKey="created_at" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>{t("uiContentTabs.date")}</SortableTableHead>
-                  <TableHead className="w-[240px]">Actions</TableHead>
+                  <TableHead className="w-[240px]">{t("uiContentTabs.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -961,9 +961,9 @@ export function ModerationTab() {
                         {targetLink(r) !== "#" && <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" asChild><Link to={targetLink(r)}><ExternalLink className="h-3 w-3 mr-1" /> {t("uiContentTabs.view")}</Link></Button>}
                         {r.status === "OPEN" && (
                           <>
-                            <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => updateReportStatus(r.id, "REVIEWED")}><Eye className="h-3 w-3 mr-1" /> Reviewed</Button>
-                            <Button size="sm" variant="default" className="h-7 px-2 text-xs" onClick={() => updateReportStatus(r.id, "RESOLVED")}><Check className="h-3 w-3 mr-1" /> Resolve</Button>
-                            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => updateReportStatus(r.id, "DISMISSED")}><X className="h-3 w-3 mr-1" /> Dismiss</Button>
+                            <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => updateReportStatus(r.id, "REVIEWED")}><Eye className="h-3 w-3 mr-1" /> {t("uiContentTabs.reviewed")}</Button>
+                            <Button size="sm" variant="default" className="h-7 px-2 text-xs" onClick={() => updateReportStatus(r.id, "RESOLVED")}><Check className="h-3 w-3 mr-1" /> {t("uiContentTabs.resolve")}</Button>
+                            <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => updateReportStatus(r.id, "DISMISSED")}><X className="h-3 w-3 mr-1" /> {t("uiContentTabs.dismiss")}</Button>
                           </>
                         )}
                       </div>
@@ -988,11 +988,11 @@ export function ModerationTab() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <SortableTableHead sortKey="_author" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle}>Author</SortableTableHead>
-                  <SortableTableHead sortKey="content" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle}>Content</SortableTableHead>
-                  <SortableTableHead sortKey="target_type" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle}>Target</SortableTableHead>
-                  <SortableTableHead sortKey="upvote_count" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle} className="text-right">Upvotes</SortableTableHead>
-                  <TableHead>Visible</TableHead>
+                  <SortableTableHead sortKey="_author" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle}>{t("uiContentTabs.author")}</SortableTableHead>
+                  <SortableTableHead sortKey="content" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle}>{t("uiContentTabs.content")}</SortableTableHead>
+                  <SortableTableHead sortKey="target_type" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle}>{t("uiContentTabs.target")}</SortableTableHead>
+                  <SortableTableHead sortKey="upvote_count" currentKey={commentSort.sort.key} direction={commentSort.sort.direction} onSort={commentSort.toggle} className="text-right">{t("uiContentTabs.upvotes")}</SortableTableHead>
+                  <TableHead>{t("uiContentTabs.visible")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1004,7 +1004,7 @@ export function ModerationTab() {
                     <TableCell className="text-right">{c.upvote_count}</TableCell>
                     <TableCell>
                       <Button size="sm" variant={c.is_deleted ? "destructive" : "ghost"} className="h-7 px-2 text-xs" onClick={() => toggleCommentVisibility(c.id, c.is_deleted)}>
-                        {c.is_deleted ? <><EyeOff className="h-3 w-3 mr-1" /> Hidden</> : <><Eye className="h-3 w-3 mr-1" /> Visible</>}
+                        {c.is_deleted ? <><EyeOff className="h-3 w-3 mr-1" /> {t("uiContentTabs.hidden")}</> : <><Eye className="h-3 w-3 mr-1" /> {t("uiContentTabs.visible")}</>}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -1061,11 +1061,11 @@ export function NotificationsMonitoringTab() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Total sent (7d)</p>
+          <p className="text-xs text-muted-foreground">{t("uiContentTabs.totalSent7d")}</p>
           <p className="text-2xl font-bold">{isLoading ? "…" : notifStats?.total ?? 0}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Unique types</p>
+          <p className="text-xs text-muted-foreground">{t("uiContentTabs.uniqueTypes")}</p>
           <p className="text-2xl font-bold">{isLoading ? "…" : notifStats?.byType.length ?? 0}</p>
         </div>
       </div>
@@ -1080,8 +1080,8 @@ export function NotificationsMonitoringTab() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <SortableTableHead sortKey="type" currentKey={notifSort.sort.key} direction={notifSort.sort.direction} onSort={notifSort.toggle}>Type</SortableTableHead>
-                  <SortableTableHead sortKey="count" currentKey={notifSort.sort.key} direction={notifSort.sort.direction} onSort={notifSort.toggle} className="text-right">Count</SortableTableHead>
+                  <SortableTableHead sortKey="type" currentKey={notifSort.sort.key} direction={notifSort.sort.direction} onSort={notifSort.toggle}>{t("uiContentTabs.type")}</SortableTableHead>
+                  <SortableTableHead sortKey="count" currentKey={notifSort.sort.key} direction={notifSort.sort.direction} onSort={notifSort.toggle} className="text-right">{t("uiContentTabs.count")}</SortableTableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1100,20 +1100,20 @@ export function NotificationsMonitoringTab() {
         <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><Settings className="h-5 w-5" /> {t("uiContentTabs.adminTools")}</h3>
         <div className="space-y-4">
           <div className="rounded-xl border border-border bg-card p-4">
-            <h4 className="text-sm font-semibold mb-2">Test Push Notification</h4>
+            <h4 className="text-sm font-semibold mb-2">{t("uiContentTabs.testPushNotification")}</h4>
             <div className="flex gap-2">
               <Select value={testUserId} onValueChange={setTestUserId}>
                 <SelectTrigger className="w-[200px]"><SelectValue placeholder={t("uiContentTabs.selectUser")} /></SelectTrigger>
                 <SelectContent>{users.map((u) => (<SelectItem key={u.user_id} value={u.user_id}>{u.name}</SelectItem>))}</SelectContent>
               </Select>
-              <Button size="sm" variant="outline" disabled={!testUserId} onClick={() => toast({ title: "Test push sent" })}><Send className="h-4 w-4 mr-1" /> {t("uiContentTabs.sendTestPush")}</Button>
+              <Button size="sm" variant="outline" disabled={!testUserId} onClick={() => toast({ title: t("uiContentTabs.testPushSent") })}><Send className="h-4 w-4 mr-1" /> {t("uiContentTabs.sendTestPush")}</Button>
             </div>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
-            <h4 className="text-sm font-semibold mb-2">Trigger Digest Manually</h4>
+            <h4 className="text-sm font-semibold mb-2">{t("uiContentTabs.triggerDigestManually")}</h4>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => toast({ title: "Daily digest triggered" })}><Mail className="h-4 w-4 mr-1" /> Run daily digest</Button>
-              <Button size="sm" variant="outline" onClick={() => toast({ title: "Weekly digest triggered" })}><Mail className="h-4 w-4 mr-1" /> Run weekly digest</Button>
+              <Button size="sm" variant="outline" onClick={() => toast({ title: t("uiContentTabs.dailyDigestTriggered") })}><Mail className="h-4 w-4 mr-1" /> {t("uiContentTabs.runDailyDigest")}</Button>
+              <Button size="sm" variant="outline" onClick={() => toast({ title: t("uiContentTabs.weeklyDigestTriggered") })}><Mail className="h-4 w-4 mr-1" /> {t("uiContentTabs.runWeeklyDigest")}</Button>
             </div>
           </div>
         </div>
@@ -1130,7 +1130,7 @@ interface EmailTemplate {
 const DEFAULT_EMAIL_TEMPLATES: EmailTemplate[] = [
   { id: "welcome", name: "Welcome Email", get description() { return i18n.t("uiContentTabs.sentWhenANewUserSigns"); }, enabled: true, subject: "Welcome to the platform!", introText: "We're excited to have you join our community." },
   { id: "digest_daily", name: "Daily Digest", get description() { return i18n.t("uiContentTabs.summaryOfRecentActivity"); }, enabled: true, subject: "Your daily digest", introText: "Here's what happened today." },
-  { id: "digest_weekly", name: "Weekly Summary", description: "Weekly recap email.", enabled: true, subject: "Your weekly summary", introText: "Here's your week in review." },
+  { id: "digest_weekly", name: "Weekly Summary", get description() { return i18n.t("uiContentTabs.weeklyRecapEmail"); }, enabled: true, subject: "Your weekly summary", introText: "Here's your week in review." },
   { id: "booking_confirmed", name: "Booking Confirmed", get description() { return i18n.t("uiContentTabs.sentWhenBookingIsConfirmed"); }, enabled: true, subject: "Your booking is confirmed!", introText: "Your session has been confirmed." },
   { id: "quest_update", name: "Quest Update", get description() { return i18n.t("uiContentTabs.sentWhenAQuestYouFollow"); }, enabled: true, subject: "Quest update", introText: "A quest you're following has been updated." },
 ];
@@ -1149,20 +1149,20 @@ export function EmailsDigestsTab() {
   const saveEdit = () => {
     if (!editId) return;
     setTemplates((prev) => prev.map((t) => t.id === editId ? { ...t, subject: editSubject, introText: editIntro } : t));
-    setEditId(null); toast({ title: "Template updated" });
+    setEditId(null); toast({ title: t("uiContentTabs.templateUpdated") });
   };
 
   return (
     <div className="space-y-6">
-      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Mail className="h-5 w-5" /> Email Templates & Digests</h3>
+      <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Mail className="h-5 w-5" /> {t("uiContentTabs.emailTemplatesDigests")}</h3>
       <p className="text-sm text-muted-foreground">{t("uiContentTabs.manageEmailTemplatesSentToUsers")}</p>
       <div className="rounded-xl border border-border overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
-              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Template</SortableTableHead>
-              <SortableTableHead sortKey="subject" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Subject</SortableTableHead>
-              <TableHead>Enabled</TableHead>
+              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.template")}</SortableTableHead>
+              <SortableTableHead sortKey="subject" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.subject")}</SortableTableHead>
+              <TableHead>{t("uiContentTabs.enabled")}</TableHead>
               <TableHead className="w-[80px]"></TableHead>
             </TableRow>
           </TableHeader>

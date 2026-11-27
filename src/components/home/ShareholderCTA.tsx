@@ -41,17 +41,17 @@ export function ShareholderCTA() {
           <Shield className="h-5 w-5 text-primary" />
           <div>
             <p className="text-sm font-medium flex items-center gap-1 flex-wrap">
-              {hasA && <Badge variant="default" className="text-[10px]">Guardian</Badge>}
-              {hasB && <Badge variant="secondary" className="text-[10px]">Steward</Badge>}
+              {hasA && <Badge variant="default" className="text-[10px]">{t("uiShareholderCTA.guardian")}</Badge>}
+              {hasB && <Badge variant="secondary" className="text-[10px]">{t("uiShareholderCTA.steward")}</Badge>}
               <Badge variant="secondary" className="text-[10px]">
-                Weight: {Number(profile.governance_weight).toFixed(2)}
+                {t("uiShareholderCTA.weight")} {Number(profile.governance_weight).toFixed(2)}
               </Badge>
             </p>
           </div>
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/governance">Governance <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+            <Link to="/governance">{t("uiShareholderCTA.governance")} <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
           </Button>
           <Button variant="outline" size="sm" asChild>
             <Link to="/shares">{t("uiShareholderCTA.buyMoreClassB")}</Link>
@@ -75,7 +75,7 @@ export function ShareholderCTA() {
         {t("uiShareholderCTA.coOwnThePlatformVoteOn")}
       </p>
       <Button asChild>
-        <Link to="/shares">Explore Stewardship Options <ArrowRight className="ml-2 h-4 w-4" /></Link>
+        <Link to="/shares">{t("uiShareholderCTA.exploreStewardshipOptions")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
       </Button>
     </motion.div>
   );

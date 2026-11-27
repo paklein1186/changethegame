@@ -5,7 +5,7 @@ export default function RoadmapPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.roadmap.title")} subtitle={t("pages.roadmap.subtitle")}>
-      <ContentSection title="Upcoming Features">
+      <ContentSection title={t("uiRoadmapPage.upcomingFeatures")}>
         <ContentList items={[
           t("uiRoadmapPage.enhancedTerritoryIntelligenceDashboards"),
           t("uiRoadmapPage.advancedGuildGovernanceTools"),
@@ -15,7 +15,7 @@ export default function RoadmapPage() {
         ]} />
       </ContentSection>
 
-      <ContentSection title="Recent Updates">
+      <ContentSection title={t("uiRoadmapPage.recentUpdates")}>
         <ContentList items={[
           t("uiRoadmapPage.networkHubWithRelationalEcosystemView"),
           t("uiRoadmapPage.aiMatchmakerIntegrationAcrossAllUnits"),

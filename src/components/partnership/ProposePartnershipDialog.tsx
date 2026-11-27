@@ -125,7 +125,7 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
         <Tabs value={tab} onValueChange={v => { setTab(v as any); setSelectedId(null); setSearch(""); }}>
           <TabsList className="w-full">
             <TabsTrigger value="GUILD" className="flex-1 gap-1"><Shield className="h-3.5 w-3.5" /> {t("uiProposePartnershipDialog.guild")}</TabsTrigger>
-            <TabsTrigger value="COMPANY" className="flex-1 gap-1"><Building2 className="h-3.5 w-3.5" /> Trad. Organization</TabsTrigger>
+            <TabsTrigger value="COMPANY" className="flex-1 gap-1"><Building2 className="h-3.5 w-3.5" /> {t("uiProposePartnershipDialog.tradOrganization")}</TabsTrigger>
           </TabsList>
 
           <div className="mt-4 space-y-4">
@@ -161,7 +161,7 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-1 block">Message (optional)</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiProposePartnershipDialog.messageOptional")}</label>
               <Textarea
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
@@ -178,7 +178,7 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
               className="w-full"
             >
               <Send className="h-4 w-4 mr-1" />
-              {createPartnership.isPending ? "Sending…" : `Send request to ${selectedEntity?.name ?? "…"}`}
+              {createPartnership.isPending ? t("uiProposePartnershipDialog.sending") : `Send request to ${selectedEntity?.name ?? "…"}`}
             </Button>
           </div>
         </Tabs>

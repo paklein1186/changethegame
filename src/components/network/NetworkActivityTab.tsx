@@ -37,10 +37,10 @@ const ACTION_CONFIG: Record<string, {
 
 const FILTER_OPTIONS = [
   { key: "all",        get label() { return i18n.t("uiNetworkActivityTab.all"); } },
-  { key: "social",     label: "Social" },
-  { key: "membership", label: "Membership" },
-  { key: "content",    label: "Content" },
-  { key: "engagement", label: "Engagement" },
+  { key: "social",     get label() { return i18n.t("uiNetworkActivityTab.social"); } },
+  { key: "membership", get label() { return i18n.t("uiNetworkActivityTab.membership"); } },
+  { key: "content",    get label() { return i18n.t("uiNetworkActivityTab.content"); } },
+  { key: "engagement", get label() { return i18n.t("uiNetworkActivityTab.engagement"); } },
 ] as const;
 
 const FILTER_ACTIONS: Record<string, string[]> = {

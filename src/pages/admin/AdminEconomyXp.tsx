@@ -78,10 +78,10 @@ export default function AdminEconomyXp() {
 
       <Tabs defaultValue="distribution">
         <TabsList>
-          <TabsTrigger value="distribution" className="gap-1.5"><BarChart3 className="h-3.5 w-3.5" /> Distribution</TabsTrigger>
-          <TabsTrigger value="transactions" className="gap-1.5"><TrendingUp className="h-3.5 w-3.5" /> Transactions</TabsTrigger>
+          <TabsTrigger value="distribution" className="gap-1.5"><BarChart3 className="h-3.5 w-3.5" /> {t("uiAdminEconomyXp.distribution")}</TabsTrigger>
+          <TabsTrigger value="transactions" className="gap-1.5"><TrendingUp className="h-3.5 w-3.5" /> {t("uiAdminEconomyXp.transactions")}</TabsTrigger>
           <TabsTrigger value="levels" className="gap-1.5"><Settings2 className="h-3.5 w-3.5" /> {t("uiAdminEconomyXp.levelConfig")}</TabsTrigger>
-          <TabsTrigger value="governance" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Governance</TabsTrigger>
+          <TabsTrigger value="governance" className="gap-1.5"><Users className="h-3.5 w-3.5" /> {t("uiAdminEconomyXp.governance")}</TabsTrigger>
         </TabsList>
 
         {/* ─── Distribution ─── */}
@@ -91,7 +91,7 @@ export default function AdminEconomyXp() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Card><CardContent className="pt-4">
                   <p className="text-2xl font-bold">{distributionStats.totalUsers}</p>
-                  <p className="text-xs text-muted-foreground">Total Users</p>
+                  <p className="text-xs text-muted-foreground">{t("uiAdminEconomyXp.totalUsers")}</p>
                 </CardContent></Card>
                 <Card><CardContent className="pt-4">
                   <p className="text-2xl font-bold">{distributionStats.totalXp.toLocaleString()}</p>
@@ -139,8 +139,8 @@ export default function AdminEconomyXp() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <SortableTableHead sortKey="userName" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>User</SortableTableHead>
-                    <SortableTableHead sortKey="type" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>Type</SortableTableHead>
+                    <SortableTableHead sortKey="userName" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>{t("uiAdminEconomyXp.user")}</SortableTableHead>
+                    <SortableTableHead sortKey="type" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>{t("uiAdminEconomyXp.type")}</SortableTableHead>
                     <SortableTableHead sortKey="amount_xp" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle} className="text-right">XP</SortableTableHead>
                     <SortableTableHead sortKey="created_at" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>{t("uiAdminEconomyXp.date")}</SortableTableHead>
                   </TableRow>
@@ -160,7 +160,7 @@ export default function AdminEconomyXp() {
             </div>
           )}
 
-          <h3 className="font-semibold text-lg mb-2">Recent Achievements</h3>
+          <h3 className="font-semibold text-lg mb-2">{t("uiAdminEconomyXp.recentAchievements")}</h3>
           {achievements.length === 0 ? <p className="text-sm text-muted-foreground">{t("uiAdminEconomyXp.noAchievementsUnlockedYet")}</p> : (
             <div className="rounded-xl border border-border overflow-hidden">
               <Table>
@@ -186,7 +186,7 @@ export default function AdminEconomyXp() {
         {/* ─── Level Config Reference ─── */}
         <TabsContent value="levels" className="space-y-4 mt-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm">Regenerative Collaboration Ladder – Thresholds</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm">{t("uiAdminEconomyXp.regenerativeCollaborationLadderThresholds")}</CardTitle></CardHeader>
             <CardContent>
               <div className="rounded-xl border border-border overflow-hidden">
                 <Table>
@@ -209,7 +209,7 @@ export default function AdminEconomyXp() {
                 </Table>
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                {t("uiAdminEconomyXp.thresholdsAreDefinedIn")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">src/lib/xpCreditsConfig.ts</code> {t("uiAdminEconomyXp.andTheDatabaseFunction")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">grant_user_xp</code>{t("uiAdminEconomyXp.bothMustBeUpdatedTogether")}
+                {t("uiAdminEconomyXp.thresholdsAreDefinedIn")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">{t("uiAdminEconomyXp.srcLibXpcreditsconfigTs")}</code> {t("uiAdminEconomyXp.andTheDatabaseFunction")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">grant_user_xp</code>{t("uiAdminEconomyXp.bothMustBeUpdatedTogether")}
               </p>
             </CardContent>
           </Card>
@@ -225,8 +225,8 @@ export default function AdminEconomyXp() {
                   <TableHeader>
                     <TableRow>
                       <SortableTableHead sortKey="minLevel" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>{t("uiAdminEconomyXp.level")}</SortableTableHead>
-                      <SortableTableHead sortKey="label" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>Right</SortableTableHead>
-                      <SortableTableHead sortKey="sphere" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>Sphere</SortableTableHead>
+                      <SortableTableHead sortKey="label" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>{t("uiAdminEconomyXp.right")}</SortableTableHead>
+                      <SortableTableHead sortKey="sphere" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>{t("uiAdminEconomyXp.sphere")}</SortableTableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -246,7 +246,7 @@ export default function AdminEconomyXp() {
                 </Table>
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                {t("uiAdminEconomyXp.governanceRightsAreDefinedIn")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">src/lib/governanceConfig.ts</code>. SuperAdmin can customize these per deployment.
+                {t("uiAdminEconomyXp.governanceRightsAreDefinedIn")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">{t("uiAdminEconomyXp.srcLibGovernanceconfigTs")}</code>{t("uiAdminEconomyXp.superadminCanCustomizeThesePerDeployment")}
               </p>
             </CardContent>
           </Card>

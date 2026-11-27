@@ -168,6 +168,7 @@ CarouselItem.displayName = "CarouselItem";
 
 const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
   ({ className, variant = "outline", size = "icon", ...props }, ref) => {
+  const { t } = useTranslation();
     const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
     return (
@@ -187,7 +188,7 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
         {...props}
       >
         <ArrowLeft className="h-4 w-4" />
-        <span className="sr-only">Previous slide</span>
+        <span className="sr-only">{t("uiCarousel.previousSlide")}</span>
       </Button>
     );
   },

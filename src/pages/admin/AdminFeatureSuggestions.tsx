@@ -55,7 +55,7 @@ export default function AdminFeatureSuggestions() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-feature-suggestions"] });
-      toast.success("Updated");
+      toast.success(t("uiAdminFeatureSuggestions.updated"));
       setEditingId(null);
     },
     onError: (e: any) => toast.error(e.message),
@@ -66,7 +66,7 @@ export default function AdminFeatureSuggestions() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-xl font-display font-bold flex items-center gap-2">
           <Lightbulb className="h-5 w-5 text-amber-500" />
-          Feature Suggestions & Ideas
+          {t("uiAdminFeatureSuggestions.featureSuggestionsIdeas")}
         </h1>
         <div className="flex gap-2">
           <Select value={filterStatus} onValueChange={setFilterStatus}>
@@ -86,10 +86,10 @@ export default function AdminFeatureSuggestions() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">{t("uiAdminFeatureSuggestions.allPersonas")}</SelectItem>
-              <SelectItem value="IMPACT">Impact</SelectItem>
-              <SelectItem value="CREATIVE">Creative</SelectItem>
-              <SelectItem value="HYBRID">Hybrid</SelectItem>
-              <SelectItem value="UNSET">Unset</SelectItem>
+              <SelectItem value="IMPACT">{t("uiAdminFeatureSuggestions.impact")}</SelectItem>
+              <SelectItem value="CREATIVE">{t("uiAdminFeatureSuggestions.creative")}</SelectItem>
+              <SelectItem value="HYBRID">{t("uiAdminFeatureSuggestions.hybrid")}</SelectItem>
+              <SelectItem value="UNSET">{t("uiAdminFeatureSuggestions.unset")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -121,7 +121,7 @@ export default function AdminFeatureSuggestions() {
                       <Badge variant="outline" className="text-[10px]">{s.interpreted_action_type}</Badge>
                     )}
                     {s.confidence_score != null && (
-                      <Badge variant="outline" className="text-[10px]">conf: {Number(s.confidence_score).toFixed(2)}</Badge>
+                      <Badge variant="outline" className="text-[10px]">{t("uiAdminFeatureSuggestions.conf")} {Number(s.confidence_score).toFixed(2)}</Badge>
                     )}
                     {(s.tags ?? []).map((t: string) => (
                       <Badge key={t} className="text-[10px] bg-primary/10 text-primary border-primary/20">{t}</Badge>
@@ -148,7 +148,7 @@ export default function AdminFeatureSuggestions() {
                   <Input
                     value={editTags}
                     onChange={(e) => setEditTags(e.target.value)}
-                    placeholder="Tags (comma separated)"
+                    placeholder={t("uiAdminFeatureSuggestions.tagsCommaSeparated")}
                     className="text-xs h-8"
                   />
                   <div className="flex gap-2">
@@ -187,7 +187,7 @@ export default function AdminFeatureSuggestions() {
                       setEditTags((s.tags ?? []).join(", "));
                     }}
                   >
-                    <Eye className="h-3 w-3 mr-1" /> Review
+                    <Eye className="h-3 w-3 mr-1" /> {t("uiAdminFeatureSuggestions.review")}
                   </Button>
                   {s.status === "NEW" && (
                     <>
@@ -197,7 +197,7 @@ export default function AdminFeatureSuggestions() {
                         className="text-[10px] h-6 px-2 text-emerald-600"
                         onClick={() => updateMutation.mutate({ id: s.id, status: "REVIEWED" })}
                       >
-                        <Check className="h-3 w-3 mr-1" /> Mark reviewed
+                        <Check className="h-3 w-3 mr-1" /> {t("uiAdminFeatureSuggestions.markReviewed")}
                       </Button>
                       <Button
                         variant="ghost"
@@ -205,7 +205,7 @@ export default function AdminFeatureSuggestions() {
                         className="text-[10px] h-6 px-2 text-muted-foreground"
                         onClick={() => updateMutation.mutate({ id: s.id, status: "DISMISSED" })}
                       >
-                        <X className="h-3 w-3 mr-1" /> Dismiss
+                        <X className="h-3 w-3 mr-1" /> {t("uiAdminFeatureSuggestions.dismiss")}
                       </Button>
                     </>
                   )}

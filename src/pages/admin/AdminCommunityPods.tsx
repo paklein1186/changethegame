@@ -22,14 +22,14 @@ export default function AdminCommunityPods() {
   return (
     <div className="space-y-4">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-        <Hash className="h-6 w-6 text-primary" /> Pods
+        <Hash className="h-6 w-6 text-primary" /> {t("uiAdminCommunityPods.pods")}
       </h2>
       <div className="rounded-xl border border-border overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
               <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityPods.name")}</SortableTableHead>
-              <SortableTableHead sortKey="_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Type</SortableTableHead>
+              <SortableTableHead sortKey="_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityPods.type")}</SortableTableHead>
               <SortableTableHead sortKey="_status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityPods.status")}</SortableTableHead>
             </TableRow>
           </TableHeader>

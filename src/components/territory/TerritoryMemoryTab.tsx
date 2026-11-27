@@ -34,7 +34,7 @@ interface Props {
 const VISIBILITY_LABELS: Record<string, { label: string; icon: typeof Eye }> = {
   PUBLIC: { get label() { return i18n.t("uiTerritoryMemoryTab.public"); }, icon: Eye },
   ADMINS: { get label() { return i18n.t("uiTerritoryMemoryTab.membersOnly"); }, icon: EyeOff },
-  AI_ONLY: { label: "AI only", icon: Bot },
+  AI_ONLY: { get label() { return i18n.t("uiTerritoryMemoryTab.aiOnly"); }, icon: Bot },
 };
 
 export function TerritoryMemoryTab({ territoryId, territoryName, isMember }: Props) {
@@ -136,7 +136,7 @@ export function TerritoryMemoryTab({ territoryId, territoryName, isMember }: Pro
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-[160px] h-9">
                 <Filter className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder={t("uiTerritoryMemoryTab.category")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">{t("uiTerritoryMemoryTab.allCategories")}</SelectItem>
@@ -248,7 +248,7 @@ function MemoryEntryCard({
           </Badge>
           {entry.ai_score > 0 && (
             <Badge variant="secondary" className="text-[10px]">
-              Score: {Math.round(entry.ai_score)}
+              {t("uiTerritoryMemoryTab.score")} {Math.round(entry.ai_score)}
             </Badge>
           )}
         </div>

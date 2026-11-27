@@ -385,7 +385,7 @@ export function PiChat({ className }: PiChatProps) {
             </span>
             <span className="capitalize font-medium text-foreground">{pathInfo.path}</span>
             <span>·</span>
-            <span>Step {pathInfo.step} of {pathInfo.totalSteps}</span>
+            <span>{t("uiPiChat.step")} {pathInfo.step} of {pathInfo.totalSteps}</span>
           </div>
         </div>
       )}

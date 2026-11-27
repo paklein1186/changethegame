@@ -21,9 +21,9 @@ import { toast } from "sonner";
 type TimePeriod = "7d" | "quarter" | "year" | "all";
 
 const TIME_PERIODS: { key: TimePeriod; label: string; icon: React.ReactNode }[] = [
-  { key: "7d", label: "7 days", icon: <Clock className="h-3.5 w-3.5" /> },
-  { key: "quarter", label: "Quarter", icon: <CalendarDays className="h-3.5 w-3.5" /> },
-  { key: "year", label: "Year", icon: <Calendar className="h-3.5 w-3.5" /> },
+  { key: "7d", get label() { return i18n.t("uiLeaderboardTab.7Days"); }, icon: <Clock className="h-3.5 w-3.5" /> },
+  { key: "quarter", get label() { return i18n.t("uiLeaderboardTab.quarter"); }, icon: <CalendarDays className="h-3.5 w-3.5" /> },
+  { key: "year", get label() { return i18n.t("uiLeaderboardTab.year"); }, icon: <Calendar className="h-3.5 w-3.5" /> },
   { key: "all", get label() { return i18n.t("uiLeaderboardTab.allTime"); }, icon: <Trophy className="h-3.5 w-3.5" /> },
 ];
 
@@ -591,7 +591,7 @@ export default function LeaderboardTab() {
     setRefreshing(true);
     try {
       await refreshLeaderboard();
-      toast.success("Leaderboard refreshed");
+      toast.success(t("uiLeaderboardTab.leaderboardRefreshed"));
     } catch {
       toast.error(t("uiLeaderboardTab.failedToRefreshLeaderboard"));
     } finally {
@@ -608,7 +608,7 @@ export default function LeaderboardTab() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-primary" /> Leaderboard
+            <Trophy className="h-5 w-5 text-primary" /> {t("uiLeaderboardTab.leaderboard")}
           </h2>
           <p className="text-sm text-muted-foreground mt-0.5">
             {t("uiLeaderboardTab.recognizingValueAcrossTheEcosystem")}
@@ -645,7 +645,7 @@ export default function LeaderboardTab() {
       {/* 4-section grid */}
       <div className="grid gap-5 lg:grid-cols-2">
         <UserSection
-          title="🌱 $CTG Champions"
+          title={t("uiLeaderboardTab.ctgChampions")}
           subtitle={period === "all" ? t("uiLeaderboardTab.topContributorsByCtgTokenBalance") : `Top $CTG earned${subtitleSuffix}.`}
           icon={<CurrencyIcon currency="ctg" className="h-5 w-5" />}
           accentClass="bg-amber-500/5"
@@ -674,7 +674,7 @@ export default function LeaderboardTab() {
         />
 
         <UserSection
-          title="🤝 Trust Network"
+          title={t("uiLeaderboardTab.trustNetwork")}
           subtitle={period === "all" ? t("uiLeaderboardTab.mostTrustedHumansByPeerAttestations") : `New attestations${subtitleSuffix}.`}
           icon={<Handshake className="h-5 w-5 text-blue-500" />}
           accentClass="bg-blue-500/5"
@@ -684,7 +684,7 @@ export default function LeaderboardTab() {
         />
 
         <EntitySection
-          title="🏛️ Partnership Champions"
+          title={t("uiLeaderboardTab.partnershipChampions")}
           subtitle={period === "all" ? t("uiLeaderboardTab.entitiesWithTheMostAcceptedPartnerships") : `Partnerships formed${subtitleSuffix}.`}
           icon={<Shield className="h-5 w-5 text-violet-500" />}
           accentClass="bg-violet-500/5"

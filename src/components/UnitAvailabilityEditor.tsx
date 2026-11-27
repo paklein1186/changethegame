@@ -91,7 +91,7 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
         exceptions,
         maxBookingsPerDay: maxPerDay ? Number(maxPerDay) : null,
       });
-      toast({ title: "Availability saved!" });
+      toast({ title: t("uiUnitAvailabilityEditor.availabilitySaved") });
     } catch {
       toast({ title: t("uiUnitAvailabilityEditor.failedToSaveAvailability"), variant: "destructive" });
     }
@@ -103,13 +103,13 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
     <div className="space-y-6 max-w-lg">
       {/* Mode */}
       <div>
-        <label className="text-sm font-medium mb-1 block">Availability mode</label>
+        <label className="text-sm font-medium mb-1 block">{t("uiUnitAvailabilityEditor.availabilityMode")}</label>
         <Select value={mode} onValueChange={setMode}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="always_available">{t("uiUnitAvailabilityEditor.alwaysAvailableDefaultMonFri9")}</SelectItem>
             <SelectItem value="specific_slots">{t("uiUnitAvailabilityEditor.specificTimeSlots")}</SelectItem>
-            <SelectItem value="custom_calendar">Custom calendar</SelectItem>
+            <SelectItem value="custom_calendar">{t("uiUnitAvailabilityEditor.customCalendar")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -117,13 +117,13 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
       {/* Weekly schedule */}
       {mode !== "always_available" && (
         <div className="space-y-3">
-          <h4 className="text-sm font-medium flex items-center gap-2"><Clock className="h-4 w-4" /> Weekly Schedule</h4>
+          <h4 className="text-sm font-medium flex items-center gap-2"><Clock className="h-4 w-4" /> {t("uiUnitAvailabilityEditor.weeklySchedule")}</h4>
           {schedule.map(day => (
             <div key={day.weekday} className="rounded-lg border border-border bg-card p-3">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">{WEEKDAY_LABELS[day.weekday]}</span>
                 {day.ranges.length === 0 ? (
-                  <Badge variant="outline" className="text-xs">Unavailable</Badge>
+                  <Badge variant="outline" className="text-xs">{t("uiUnitAvailabilityEditor.unavailable")}</Badge>
                 ) : (
                   <Badge variant="secondary" className="text-xs">{day.ranges.length} slot{day.ranges.length > 1 ? "s" : ""}</Badge>
                 )}
@@ -149,7 +149,7 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
       {/* Exceptions */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-medium flex items-center gap-2"><CalendarOff className="h-4 w-4" /> Exceptions</h4>
+          <h4 className="text-sm font-medium flex items-center gap-2"><CalendarOff className="h-4 w-4" /> {t("uiUnitAvailabilityEditor.exceptions")}</h4>
           <Button variant="outline" size="sm" onClick={addException}><Plus className="h-3.5 w-3.5 mr-1" /> {t("uiUnitAvailabilityEditor.addException")}</Button>
         </div>
         {exceptions.map((exc, i) => (
@@ -162,10 +162,10 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
             {exc.isAvailable && (
               <>
                 <Input type="time" value={exc.startTime || ""} onChange={e => updateException(i, { startTime: e.target.value })} className="w-24" placeholder={t("uiUnitAvailabilityEditor.start")} />
-                <Input type="time" value={exc.endTime || ""} onChange={e => updateException(i, { endTime: e.target.value })} className="w-24" placeholder="End" />
+                <Input type="time" value={exc.endTime || ""} onChange={e => updateException(i, { endTime: e.target.value })} className="w-24" placeholder={t("uiUnitAvailabilityEditor.end")} />
               </>
             )}
-            <Input value={exc.label || ""} onChange={e => updateException(i, { label: e.target.value })} placeholder="Reason" className="flex-1" />
+            <Input value={exc.label || ""} onChange={e => updateException(i, { label: e.target.value })} placeholder={t("uiUnitAvailabilityEditor.reason")} className="flex-1" />
             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeException(i)}>
               <Trash2 className="h-3.5 w-3.5 text-destructive" />
             </Button>
@@ -176,7 +176,7 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
 
       {/* Max bookings */}
       <div>
-        <label className="text-sm font-medium mb-1 block">Max bookings per day (optional)</label>
+        <label className="text-sm font-medium mb-1 block">{t("uiUnitAvailabilityEditor.maxBookingsPerDayOptional")}</label>
         <Input type="number" value={maxPerDay} onChange={e => setMaxPerDay(e.target.value)} min={0} placeholder={t("uiUnitAvailabilityEditor.noLimit")} className="w-32" />
       </div>
 

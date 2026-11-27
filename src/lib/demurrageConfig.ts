@@ -39,7 +39,7 @@ export const DEMURRAGE_TX_TYPES = {
 export const ECONOMY_LAYERS = [
   {
     key: "fiat",
-    label: "Fiat Currency (€)",
+    get label() { return i18n.t("uiDemurrageConfig.fiatCurrency"); },
     purpose: "Real economic exchange",
     icon: "Banknote",
     convertible: true,
@@ -79,7 +79,7 @@ export const ECONOMY_LAYERS = [
   },
   {
     key: "shares",
-    label: "Shares",
+    get label() { return i18n.t("uiDemurrageConfig.shares"); },
     purpose: "Stewardship participation",
     icon: "Compass",
     convertible: false,

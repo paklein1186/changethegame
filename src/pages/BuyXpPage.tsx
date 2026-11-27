@@ -65,7 +65,7 @@ export default function BuyXpPage() {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       toast({
-        title: "Exchange successful!",
+        title: t("uiBuyXpPage.exchangeSuccessful"),
         description: `${data.ctg_spent} $CTG → ${data.credits_received} Credits`,
       });
       setExchangeAmount("");
@@ -95,7 +95,7 @@ export default function BuyXpPage() {
         } else if (data?.alreadyGranted) {
           toast({ title: t("uiBuyXpPage.creditsAlreadyAdded"), description: t("uiBuyXpPage.thisPurchaseWasAlreadyProcessed") });
         } else if (error) {
-          toast({ title: "Verification issue", description: t("uiBuyXpPage.creditsMayTakeAMomentTo"), variant: "destructive" });
+          toast({ title: t("uiBuyXpPage.verificationIssue"), description: t("uiBuyXpPage.creditsMayTakeAMomentTo"), variant: "destructive" });
         }
       });
     }
@@ -127,7 +127,7 @@ export default function BuyXpPage() {
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="rounded-lg border border-success/30 bg-success/5 p-4 mb-6 flex items-center gap-3">
             {verifying ? <Loader2 className="h-5 w-5 animate-spin text-primary" /> : <CheckCircle className="h-5 w-5 text-success" />}
             <div>
-              <p className="font-medium text-sm">{verifying ? "Verifying payment…" : "Payment successful!"}</p>
+              <p className="font-medium text-sm">{verifying ? t("uiBuyXpPage.verifyingPayment") : t("uiBuyXpPage.paymentSuccessful")}</p>
               <p className="text-xs text-muted-foreground">{verifying ? t("uiBuyXpPage.pleaseWaitWhileWeConfirmYour") : t("uiBuyXpPage.yourCreditsHaveBeenAddedTo")}</p>
             </div>
           </motion.div>
@@ -144,11 +144,11 @@ export default function BuyXpPage() {
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-2">
               <span className="text-sm font-medium">{userXp} XP</span>
-              <span className="text-xs text-muted-foreground">(reputation)</span>
+              <span className="text-xs text-muted-foreground">{t("uiBuyXpPage.reputation")}</span>
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            {t("uiBuyXpPage.yourPlan")}{plan.planName}) includes {plan.monthlyIncludedCredits} {t("uiBuyXpPage.creditsMonth")}
+            {t("uiBuyXpPage.yourPlan")}{plan.planName}{t("uiBuyXpPage.includes")} {plan.monthlyIncludedCredits} {t("uiBuyXpPage.creditsMonth")}
           </p>
         </div>
 
@@ -204,8 +204,8 @@ export default function BuyXpPage() {
               </div>
               <Button onClick={handleCtgExchange} disabled={exchangeLoading || !parseFloat(exchangeAmount)}>
                 {exchangeLoading
-                  ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Exchanging…</>
-                  : <><RefreshCw className="h-4 w-4 mr-1" /> Exchange</>}
+                  ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> {t("uiBuyXpPage.exchanging")}</>
+                  : <><RefreshCw className="h-4 w-4 mr-1" /> {t("uiBuyXpPage.exchange")}</>}
               </Button>
             </div>
 
@@ -225,7 +225,7 @@ export default function BuyXpPage() {
               className="rounded-xl border border-border bg-card p-6 text-center relative overflow-hidden"
             >
               {bundle.code === "CREATOR_300" && (
-                <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px]">Popular</Badge>
+                <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px]">{t("uiBuyXpPage.popular")}</Badge>
               )}
               <Package className="h-8 w-8 mx-auto mb-3 text-primary" />
               <h3 className="font-display text-lg font-bold">{bundle.label}</h3>
@@ -243,9 +243,9 @@ export default function BuyXpPage() {
                 className="w-full"
               >
                 {loading === bundle.code ? (
-                  <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Processing…</>
+                  <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> {t("uiBuyXpPage.processing")}</>
                 ) : (
-                  <><CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> Buy {bundle.credits} {t("uiBuyXpPage.credits")}</>
+                  <><CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> {t("uiBuyXpPage.buy")} {bundle.credits} {t("uiBuyXpPage.credits")}</>
                 )}
               </Button>
             </motion.div>

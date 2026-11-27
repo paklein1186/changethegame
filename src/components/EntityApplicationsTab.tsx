@@ -156,7 +156,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
     setActing(false);
     setSelectedApp(null);
     setAdminNote("");
-    toast({ title: action === "APPROVED" ? "Application approved" : "Application rejected" });
+    toast({ title: action === "APPROVED" ? t("uiEntityApplicationsTab.applicationApproved") : t("uiEntityApplicationsTab.applicationRejected") });
     // Notify applicant
     notifyApplicationDecision({ entityType, entityId, entityName: entityName || "entity", applicantUserId: app.applicant_user_id, decision: action });
     // If approved, also notify them they were added
@@ -173,7 +173,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-lg font-semibold flex items-center gap-2">
-          Applications
+          {t("uiEntityApplicationsTab.applications")}
           {filter === "PENDING" && pendingCount > 0 && (
             <Badge variant="secondary">{pendingCount}</Badge>
           )}
@@ -182,8 +182,8 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
           <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="PENDING">{t("uiEntityApplicationsTab.pending")}</SelectItem>
-            <SelectItem value="APPROVED">Approved</SelectItem>
-            <SelectItem value="REJECTED">Rejected</SelectItem>
+            <SelectItem value="APPROVED">{t("uiEntityApplicationsTab.approved")}</SelectItem>
+            <SelectItem value="REJECTED">{t("uiEntityApplicationsTab.rejected")}</SelectItem>
             <SelectItem value="ALL">{t("uiEntityApplicationsTab.all")}</SelectItem>
           </SelectContent>
         </Select>
@@ -200,10 +200,10 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="text-left px-4 py-2 font-medium">Applicant</th>
-                <th className="text-left px-4 py-2 font-medium">Submitted</th>
+                <th className="text-left px-4 py-2 font-medium">{t("uiEntityApplicationsTab.applicant")}</th>
+                <th className="text-left px-4 py-2 font-medium">{t("uiEntityApplicationsTab.submitted")}</th>
                 <th className="text-left px-4 py-2 font-medium">{t("uiEntityApplicationsTab.status")}</th>
-                <th className="text-right px-4 py-2 font-medium">Actions</th>
+                <th className="text-right px-4 py-2 font-medium">{t("uiEntityApplicationsTab.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -217,7 +217,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
                       </Avatar>
                       <div>
                         <Link to={`/users/${app.applicant?.user_id || app.applicant_user_id}`} className="font-medium hover:text-primary transition-colors">
-                          {app.applicant?.name || "Unknown user"}
+                          {app.applicant?.name || t("uiEntityApplicationsTab.unknownUser")}
                         </Link>
                         {app.applicant?.headline && (
                           <p className="text-xs text-muted-foreground line-clamp-1">{app.applicant.headline}</p>
@@ -260,7 +260,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
                 </Avatar>
                 <div>
                   <Link to={`/users/${selectedApp.applicant?.user_id || selectedApp.applicant_user_id}`} className="font-medium hover:text-primary">
-                    {selectedApp.applicant?.name || "Unknown user"}
+                    {selectedApp.applicant?.name || t("uiEntityApplicationsTab.unknownUser")}
                   </Link>
                   {selectedApp.applicant?.headline && <p className="text-xs text-muted-foreground">{selectedApp.applicant.headline}</p>}
                   {selectedApp.applicant?.xp != null && <Badge variant="secondary" className="text-[10px] mt-1">{selectedApp.applicant.xp} XP</Badge>}
@@ -269,7 +269,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
 
               {selectedApp.answers && selectedApp.answers.length > 0 && (
                 <div className="space-y-3">
-                  <h4 className="text-sm font-medium">Answers</h4>
+                  <h4 className="text-sm font-medium">{t("uiEntityApplicationsTab.answers")}</h4>
                   {selectedApp.answers.map((qa, i) => (
                     <div key={i} className="rounded-lg border border-border p-3">
                       <p className="text-sm font-medium text-muted-foreground">{qa.question}</p>
@@ -282,7 +282,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
               {selectedApp.status === "PENDING" && (
                 <div>
                   <label className="text-sm font-medium mb-1 block">{t("uiEntityApplicationsTab.adminNoteOptional")}</label>
-                  <Textarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder="Internal note…" maxLength={500} className="resize-none" />
+                  <Textarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder={t("uiEntityApplicationsTab.internalNote")} maxLength={500} className="resize-none" />
                 </div>
               )}
 
@@ -306,7 +306,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
 
               {selectedApp.status !== "PENDING" && (
                 <p className="text-xs text-muted-foreground text-center">
-                  {selectedApp.status === "APPROVED" ? "Approved" : "Rejected"}
+                  {selectedApp.status === "APPROVED" ? t("uiEntityApplicationsTab.approved") : t("uiEntityApplicationsTab.rejected")}
                   {selectedApp.reviewed_at && ` ${formatDistanceToNow(new Date(selectedApp.reviewed_at), { addSuffix: true })}`}
                 </p>
               )}

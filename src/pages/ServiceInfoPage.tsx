@@ -7,10 +7,10 @@ export default function ServiceInfoPage() {
     <ContentPageShell title={t("pages.serviceInfo.title")} subtitle={t("pages.serviceInfo.subtitle")}>
       <ContentSection title={t("uiServiceInfoPage.whatYouCanOffer")}>
         <p>{t("uiServiceInfoPage.servicesOrSkillSessionsLetYou")}</p>
-        <ContentList items={["Expertise", "Creative sessions", "Workshops", "Mentoring", "Coaching", "Artistic practices"]} />
+        <ContentList items={[t("uiServiceInfoPage.expertise"), t("uiServiceInfoPage.creativeSessions"), t("uiServiceInfoPage.workshops"), t("uiServiceInfoPage.mentoring"), t("uiServiceInfoPage.coaching"), t("uiServiceInfoPage.artisticPractices")]} />
       </ContentSection>
 
-      <ContentSection title="Features">
+      <ContentSection title={t("uiServiceInfoPage.features")}>
         <p>{t("uiServiceInfoPage.integratedBookingCalendarAndOptionalCredit")}</p>
       </ContentSection>
 

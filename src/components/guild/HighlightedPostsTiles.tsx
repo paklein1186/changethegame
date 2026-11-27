@@ -55,7 +55,7 @@ export function HighlightedPostsTiles({ guildId, onViewAll }: HighlightedPostsTi
     <div>
       <div className="flex items-center justify-between mb-2">
         <h3 className="font-display font-semibold flex items-center gap-1.5">
-          <MessageCircle className="h-4 w-4" /> Highlighted Posts
+          <MessageCircle className="h-4 w-4" /> {t("uiHighlightedPostsTiles.highlightedPosts")}
         </h3>
         <Button variant="ghost" size="sm" onClick={onViewAll} className="text-xs">
           {t("uiHighlightedPostsTiles.viewAll")} <ArrowRight className="h-3 w-3 ml-1" />

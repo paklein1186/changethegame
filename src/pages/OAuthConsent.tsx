@@ -83,7 +83,7 @@ export default function OAuthConsent() {
 
         {error ? (
           <div className="space-y-2">
-            <h1 className="text-lg font-semibold">Authorization unavailable</h1>
+            <h1 className="text-lg font-semibold">{t("uiOAuthConsent.authorizationUnavailable")}</h1>
             <p className="text-sm text-muted-foreground">{error}</p>
           </div>
         ) : !details ? (
@@ -95,7 +95,7 @@ export default function OAuthConsent() {
             <div className="space-y-2">
               <h1 className="text-lg font-semibold flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-primary" />
-                Connect {clientName}
+                {t("uiOAuthConsent.connect")} {clientName}
               </h1>
               <p className="text-sm text-muted-foreground">
                 {clientName} {t("uiOAuthConsent.isAskingToUseChangethegameAs")}
@@ -106,7 +106,7 @@ export default function OAuthConsent() {
                 {busy && <Loader2 className="h-4 w-4 mr-2 animate-spin" />} {t("uiOAuthConsent.approve")}
               </Button>
               <Button variant="outline" className="flex-1" disabled={busy} onClick={() => decide(false)}>
-                Deny
+                {t("uiOAuthConsent.deny")}
               </Button>
             </div>
           </>

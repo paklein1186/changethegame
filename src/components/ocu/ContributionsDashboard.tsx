@@ -196,10 +196,10 @@ export function ContributionsDashboard() {
     <div className="space-y-5">
       {/* ── $CTG wallets ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <WalletCard label="🌱 $CTG Balance" value={data.ctg.balance} accent />
-        <WalletCard label="Lifetime earned" value={data.ctg.lifetime_earned} />
-        <WalletCard label="Lifetime spent" value={data.ctg.lifetime_spent} />
-        <WalletCard label="Entity wallets 🟩" value={data.guildWallets.reduce((s, w) => s + w.coins, 0)} />
+        <WalletCard label={t("uiContributionsDashboard.ctgBalance")} value={data.ctg.balance} accent />
+        <WalletCard label={t("uiContributionsDashboard.lifetimeEarned")} value={data.ctg.lifetime_earned} />
+        <WalletCard label={t("uiContributionsDashboard.lifetimeSpent")} value={data.ctg.lifetime_spent} />
+        <WalletCard label={t("uiContributionsDashboard.entityWallets")} value={data.guildWallets.reduce((s, w) => s + w.coins, 0)} />
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -255,7 +255,7 @@ export function ContributionsDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-1.5">
-              <FileSignature className="h-4 w-4 text-primary" /> OCU contracts & conventions
+              <FileSignature className="h-4 w-4 text-primary" /> {t("uiContributionsDashboard.ocuContractsConventions")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -282,7 +282,7 @@ export function ContributionsDashboard() {
                             : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
                         }`}
                       >
-                        {c.signed_at ? "Signed" : t("uiContributionsDashboard.pending")}
+                        {c.signed_at ? t("uiContributionsDashboard.signed") : t("uiContributionsDashboard.pending")}
                       </Badge>
                     </div>
                   </div>
@@ -328,7 +328,7 @@ export function ContributionsDashboard() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-1.5">
-              <Sprout className="h-4 w-4 text-emerald-600" /> Entity wallets
+              <Sprout className="h-4 w-4 text-emerald-600" /> {t("uiContributionsDashboard.entityWallets2")}
             </CardTitle>
           </CardHeader>
           <CardContent>

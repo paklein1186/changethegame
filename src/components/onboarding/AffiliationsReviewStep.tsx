@@ -161,7 +161,7 @@ export function AffiliationsReviewStep({
       {affiliations.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
-            <Building2 className="h-4 w-4 text-primary" /> Suggested Affiliations
+            <Building2 className="h-4 w-4 text-primary" /> {t("uiAffiliationsReviewStep.suggestedAffiliations")}
           </h3>
           {affiliations.map((aff, i) => (
             <div
@@ -218,7 +218,7 @@ export function AffiliationsReviewStep({
       {houses.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
-            <Hash className="h-4 w-4 text-primary" /> Additional {getLabel("houses.label", persona)}
+            <Hash className="h-4 w-4 text-primary" /> {t("uiAffiliationsReviewStep.additional")} {getLabel("houses.label", persona)}
           </h3>
           <p className="text-xs text-muted-foreground">
             {t("uiAffiliationsReviewStep.weVeLookedAtYourLinks")}
@@ -248,7 +248,7 @@ export function AffiliationsReviewStep({
       {services.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold flex items-center gap-1.5">
-            <Sparkles className="h-4 w-4 text-primary" /> Suggested {getLabel("service.label", persona)}
+            <Sparkles className="h-4 w-4 text-primary" /> {t("uiAffiliationsReviewStep.suggested")} {getLabel("service.label", persona)}
           </h3>
           {services.map((svc, i) => (
             <div
@@ -318,8 +318,8 @@ export function AffiliationsReviewStep({
               <Textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} maxLength={500} className="min-h-[80px] resize-none text-sm" />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Tags (comma-separated)</label>
-              <Input value={editTags} onChange={(e) => setEditTags(e.target.value)} placeholder="coaching, workshop, design" maxLength={200} />
+              <label className="text-sm font-medium mb-1 block">{t("uiAffiliationsReviewStep.tagsCommaSeparated")}</label>
+              <Input value={editTags} onChange={(e) => setEditTags(e.target.value)} placeholder={t("uiAffiliationsReviewStep.coachingWorkshopDesign")} maxLength={200} />
             </div>
           </div>
           <DialogFooter>

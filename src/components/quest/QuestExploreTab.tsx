@@ -111,7 +111,7 @@ export function QuestExploreTab({
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       qc.invalidateQueries({ queryKey: ["quest-detail"] });
-      toast({ title: "Summary generated!" });
+      toast({ title: t("uiQuestExploreTab.summaryGenerated") });
     } catch (e: any) {
       toast({ title: t("uiQuestExploreTab.failedToGenerateSummary"), description: e.message, variant: "destructive" });
     } finally {
@@ -134,7 +134,7 @@ export function QuestExploreTab({
                 <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm leading-relaxed">{aiSummary}</p>
-                  {isSummaryTranslated && <p className="text-[10px] text-muted-foreground mt-1 italic">🌐 Auto-translated</p>}
+                  {isSummaryTranslated && <p className="text-[10px] text-muted-foreground mt-1 italic">{t("uiQuestExploreTab.autoTranslated")}</p>}
                 </div>
               </div>
               {isOwner && (
@@ -146,7 +146,7 @@ export function QuestExploreTab({
                   disabled={generatingSummary}
                 >
                   {generatingSummary ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <RefreshCw className="h-3 w-3 mr-1" />}
-                  Regenerate
+                  {t("uiQuestExploreTab.regenerate")}
                 </Button>
               )}
             </div>
@@ -159,7 +159,7 @@ export function QuestExploreTab({
               className="gap-2"
             >
               {generatingSummary ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Generate AI Summary
+              {t("uiQuestExploreTab.generateAiSummary")}
             </Button>
           ) : null}
         </section>
@@ -194,7 +194,7 @@ export function QuestExploreTab({
                 <Avatar className="h-9 w-9"><AvatarImage src={host.logo_url ?? undefined} /><AvatarFallback>{host.name?.[0]}</AvatarFallback></Avatar>
                 <div>
                   <p className="text-sm font-medium">{host.name}</p>
-                  <Badge variant="outline" className="text-[10px] capitalize">{host.role === "PRIMARY" ? "Host" : "Co-host"}</Badge>
+                  <Badge variant="outline" className="text-[10px] capitalize">{host.role === "PRIMARY" ? t("uiQuestExploreTab.host") : t("uiQuestExploreTab.coHost")}</Badge>
                 </div>
               </Link>
             ))}
@@ -270,7 +270,7 @@ export function QuestExploreTab({
                                 toast({ title: t("uiQuestExploreTab.userFoundAndAddedAsParticipant") });
                                 setInviteOpen(false);
                               } else {
-                                toast({ title: data?.emailSent ? "Invitation email sent!" : t("uiQuestExploreTab.inviteRecordedEmailDeliveryPending") });
+                                toast({ title: data?.emailSent ? t("uiQuestExploreTab.invitationEmailSent") : t("uiQuestExploreTab.inviteRecordedEmailDeliveryPending") });
                                 setInviteOpen(false);
                               }
                             } catch (err: any) {
@@ -281,7 +281,7 @@ export function QuestExploreTab({
                             }
                           }}
                         >
-                          <Input type="email" placeholder="colleague@example.com" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="flex-1" />
+                          <Input type="email" placeholder={t("uiQuestExploreTab.colleagueExampleCom")} value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="flex-1" />
                           <Button type="submit" size="sm" disabled={inviteEmailSending}>
                             {inviteEmailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Mail className="h-4 w-4 mr-1" /> {t("uiQuestExploreTab.send")}</>}
                           </Button>
@@ -311,7 +311,7 @@ export function QuestExploreTab({
           <AccordionTrigger className="hover:no-underline">
             <div className="flex items-center gap-3">
               <Users className="h-5 w-5 text-primary" />
-              <span className="font-display font-semibold">Participants</span>
+              <span className="font-display font-semibold">{t("uiQuestExploreTab.participants")}</span>
               <Badge variant="secondary" className="text-xs ml-1">{(participants || []).length}</Badge>
               {nonParticipantFollowers.length > 0 && (
                 <Badge variant="outline" className="text-xs">
@@ -340,7 +340,7 @@ export function QuestExploreTab({
               <div>
                 <h4 className="font-display font-semibold flex items-center gap-2 mb-2 text-sm">
                   <Heart className="h-4 w-4 text-muted-foreground" />
-                  Following ({nonParticipantFollowers.length})
+                  {t("uiQuestExploreTab.following")}{nonParticipantFollowers.length})
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {nonParticipantFollowers.slice(0, 6).map((f) => (
@@ -373,7 +373,7 @@ export function QuestExploreTab({
               <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {quest.credit_reward > 0 && (
                   <div className="rounded-lg border border-border bg-background p-3">
-                    <p className="text-xs text-muted-foreground font-medium">$CTG Reward</p>
+                    <p className="text-xs text-muted-foreground font-medium">{t("uiQuestExploreTab.ctgReward")}</p>
                     <p className="text-lg font-bold text-primary">{quest.credit_reward} $CTG</p>
                     <p className="text-[10px] text-muted-foreground">{t("uiQuestExploreTab.perParticipantOnCompletion")}</p>
                   </div>
@@ -387,7 +387,7 @@ export function QuestExploreTab({
                 )}
                 {Number((quest as any).ctg_budget ?? 0) > 0 && (
                   <div className="rounded-lg border border-border bg-background p-3">
-                    <p className="text-xs text-muted-foreground font-medium">$CTG Pool</p>
+                    <p className="text-xs text-muted-foreground font-medium">{t("uiQuestExploreTab.ctgPool")}</p>
                     <p className="text-lg font-bold">{Number((quest as any).ctg_escrow ?? 0).toLocaleString()} $CTG</p>
                     <p className="text-[10px] text-muted-foreground">{t("uiQuestExploreTab.frozenInEscrow")}</p>
                   </div>
@@ -403,7 +403,7 @@ export function QuestExploreTab({
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-3">
                 <Link2 className="h-5 w-5 text-primary" />
-                <span className="font-display font-semibold">Resources</span>
+                <span className="font-display font-semibold">{t("uiQuestExploreTab.resources")}</span>
                 <Badge variant="secondary" className="text-xs ml-1">{links.length}</Badge>
               </div>
             </AccordionTrigger>

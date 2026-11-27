@@ -46,7 +46,7 @@ export function XpSpendDialog({
           <DialogTitle className="flex items-center gap-2">
             {canAfford
               ? <><CurrencyIcon currency="credits" className="h-5 w-5" /> {t("uiXpSpendDialog.spendCreditsToContinue")}</>
-              : <><AlertTriangle className="h-5 w-5 text-warning" /> Limit reached</>}
+              : <><AlertTriangle className="h-5 w-5 text-warning" /> {t("uiXpSpendDialog.limitReached")}</>}
           </DialogTitle>
           <DialogDescription>
             {t("uiXpSpendDialog.youVeUsedAllYour")} {limitLabel}.
@@ -57,7 +57,7 @@ export function XpSpendDialog({
           <div className="space-y-4">
             <div className="rounded-lg border border-border bg-muted/50 p-4 text-center">
               <p className="text-sm text-muted-foreground mb-1">
-                Spend <span className="font-bold text-primary">{xpCost} {t("uiXpSpendDialog.credits")}</span> to {actionLabel}?
+                {t("uiXpSpendDialog.spend")} <span className="font-bold text-primary">{xpCost} {t("uiXpSpendDialog.credits")}</span> to {actionLabel}?
               </p>
               <p className="text-xs text-muted-foreground">
                 {t("uiXpSpendDialog.yourBalance")} <span className="font-semibold">{userXp} {t("uiXpSpendDialog.credits")}</span> → <span className="font-semibold">{userXp - xpCost} {t("uiXpSpendDialog.credits")}</span>
@@ -66,7 +66,7 @@ export function XpSpendDialog({
             <DialogFooter className="gap-2 sm:gap-0">
               <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiXpSpendDialog.cancel")}</Button>
               <Button onClick={handleConfirm} disabled={confirming}>
-                <CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> {confirming ? "Spending…" : `Spend ${xpCost} Credits`}
+                <CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> {confirming ? t("uiXpSpendDialog.spending") : `Spend ${xpCost} Credits`}
               </Button>
             </DialogFooter>
           </div>

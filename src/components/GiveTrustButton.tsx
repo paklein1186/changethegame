@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
@@ -28,6 +29,7 @@ export function GiveTrustButton({
   size = "sm",
   variant = "outline",
 }: GiveTrustButtonProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
 
@@ -39,7 +41,7 @@ export function GiveTrustButton({
   return (
     <>
       <Button size={size} variant={variant} onClick={() => setOpen(true)}>
-        <Shield className="h-4 w-4 mr-1" /> Give Trust
+        <Shield className="h-4 w-4 mr-1" /> {t("uiGiveTrustButton.giveTrust")}
       </Button>
       <CreateTrustEdgeDialog
         open={open}

@@ -45,23 +45,23 @@ const healthLabel = (v: number) =>
   v < 30 ? "Critical" : v < 60 ? "Stressed" : v < 80 ? "Stable" : "Thriving";
 
 const INDICATOR_OPTIONS = [
-  { value: "forest_cover", label: "Forest Cover" },
-  { value: "carbon_stock", label: "Carbon Stock" },
-  { value: "forest_change_rate", label: "Forest Change Rate" },
-  { value: "disturbances_index", label: "Disturbances Index" },
+  { value: "forest_cover", get label() { return i18n.t("uiQuestLivingTab.forestCover"); } },
+  { value: "carbon_stock", get label() { return i18n.t("uiQuestLivingTab.carbonStock"); } },
+  { value: "forest_change_rate", get label() { return i18n.t("uiQuestLivingTab.forestChangeRate"); } },
+  { value: "disturbances_index", get label() { return i18n.t("uiQuestLivingTab.disturbancesIndex"); } },
 ];
 
 const COMPARISON_OPTIONS = [
-  { value: "INCREASE", label: "Increases" },
-  { value: "DECREASE", label: "Decreases" },
-  { value: "ABOVE", label: "Goes above" },
-  { value: "BELOW", label: "Goes below" },
+  { value: "INCREASE", get label() { return i18n.t("uiQuestLivingTab.increases"); } },
+  { value: "DECREASE", get label() { return i18n.t("uiQuestLivingTab.decreases"); } },
+  { value: "ABOVE", get label() { return i18n.t("uiQuestLivingTab.goesAbove"); } },
+  { value: "BELOW", get label() { return i18n.t("uiQuestLivingTab.goesBelow"); } },
 ];
 
 const REWARD_OPTIONS = [
   { value: "XP", get label() { return i18n.t("uiQuestLivingTab.xpReputation"); }, icon: TrendingUp },
   { value: "CTG", get label() { return i18n.t("uiQuestLivingTab.ctgContributionToken"); }, icon: Leaf },
-  { value: "BADGE", label: "🏅 Badge (milestone)", icon: Trophy },
+  { value: "BADGE", get label() { return i18n.t("uiQuestLivingTab.badgeMilestone"); }, icon: Trophy },
 ];
 
 const REWARD_LABELS: Record<string, string> = {
@@ -70,8 +70,8 @@ const REWARD_LABELS: Record<string, string> = {
 
 const PERIOD_OPTIONS = [
   { value: "ON_COMPLETE", get label() { return i18n.t("uiQuestLivingTab.onQuestComplete"); } },
-  { value: "AFTER_3_MONTHS", label: "After 3 months" },
-  { value: "AFTER_1_YEAR", label: "After 1 year" },
+  { value: "AFTER_3_MONTHS", get label() { return i18n.t("uiQuestLivingTab.after3Months"); } },
+  { value: "AFTER_1_YEAR", get label() { return i18n.t("uiQuestLivingTab.after1Year"); } },
 ];
 
 /* ─── Living System Card (enhanced for quests) ─── */
@@ -160,7 +160,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
         evaluation_period: period,
         created_by_user_id: currentUser.id!,
       });
-      toast({ title: "Eco-impact rule created!" });
+      toast({ title: t("uiQuestLivingTab.ecoImpactRuleCreated") });
       setOpen(false);
     } catch {
       toast({ title: t("uiQuestLivingTab.failedToCreateRule"), variant: "destructive" });
@@ -181,7 +181,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
         <div className="space-y-3">
           {/* Living System */}
           <div>
-            <label className="text-xs font-medium">Living System</label>
+            <label className="text-xs font-medium">{t("uiQuestLivingTab.livingSystem")}</label>
             <Select value={nsId} onValueChange={setNsId}>
               <SelectTrigger className="text-xs"><SelectValue placeholder={t("uiQuestLivingTab.selectASystem")} /></SelectTrigger>
               <SelectContent>
@@ -193,7 +193,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
           </div>
           {/* Indicator */}
           <div>
-            <label className="text-xs font-medium">When indicator</label>
+            <label className="text-xs font-medium">{t("uiQuestLivingTab.whenIndicator")}</label>
             <Select value={indicator} onValueChange={setIndicator}>
               <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -206,7 +206,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
           {/* Comparison */}
           <div className="flex gap-2">
             <div className="flex-1">
-              <label className="text-xs font-medium">Condition</label>
+              <label className="text-xs font-medium">{t("uiQuestLivingTab.condition")}</label>
               <Select value={comparison} onValueChange={setComparison}>
                 <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -218,7 +218,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
             </div>
             {(comparison === "ABOVE" || comparison === "BELOW") && (
               <div className="w-24">
-                <label className="text-xs font-medium">Value</label>
+                <label className="text-xs font-medium">{t("uiQuestLivingTab.value")}</label>
                 <Input type="number" value={targetVal} onChange={(e) => setTargetVal(e.target.value)} className="text-xs" />
               </div>
             )}
@@ -226,7 +226,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
           {/* Reward */}
           <div className="flex gap-2">
             <div className="flex-1">
-              <label className="text-xs font-medium">Reward</label>
+              <label className="text-xs font-medium">{t("uiQuestLivingTab.reward")}</label>
               <Select value={rewardType} onValueChange={setRewardType}>
                 <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -243,7 +243,7 @@ function AddEcoImpactRuleDialog({ questId, systems }: { questId: string; systems
           </div>
           {/* Period */}
           <div>
-            <label className="text-xs font-medium">Evaluation period</label>
+            <label className="text-xs font-medium">{t("uiQuestLivingTab.evaluationPeriod")}</label>
             <Select value={period} onValueChange={setPeriod}>
               <SelectTrigger className="text-xs"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -285,7 +285,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
   const handleEvaluate = async () => {
     try {
       await evaluateMutation.mutateAsync(linkedId);
-      toast({ title: "Eco-impact rules evaluated!" });
+      toast({ title: t("uiQuestLivingTab.ecoImpactRulesEvaluated") });
     } catch {
       toast({ title: t("uiQuestLivingTab.evaluationFailed"), variant: "destructive" });
     }
@@ -297,7 +297,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="font-display font-semibold text-base flex items-center gap-2">
-            <Leaf className="h-4 w-4 text-emerald-600" /> Ecosystems Involved
+            <Leaf className="h-4 w-4 text-emerald-600" /> {t("uiQuestLivingTab.ecosystemsInvolved")}
             {systems && <span className="text-muted-foreground font-normal text-sm">({systems.length})</span>}
           </h3>
           <Button size="sm" onClick={() => setModalOpen(true)}>
@@ -332,7 +332,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
           <div className="flex items-center justify-between">
             <button onClick={() => setShowRules(!showRules)} className="flex items-center gap-2 group">
               <h3 className="font-display font-semibold text-base flex items-center gap-2 group-hover:text-primary transition-colors">
-                <Target className="h-4 w-4 text-primary" /> Eco-Impact Rules
+                <Target className="h-4 w-4 text-primary" /> {t("uiQuestLivingTab.ecoImpactRules")}
                 {rules && <span className="text-muted-foreground font-normal text-sm">({rules.length})</span>}
               </h3>
               {showRules ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
@@ -360,7 +360,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium text-foreground">
-                          When <span className="font-semibold">{rule.target_indicator.replace(/_/g, " ")}</span>{" "}
+                          {t("uiQuestLivingTab.when")} <span className="font-semibold">{rule.target_indicator.replace(/_/g, " ")}</span>{" "}
                           <span className="text-primary">{rule.comparison_type.toLowerCase()}</span>
                           {["ABOVE", "BELOW"].includes(rule.comparison_type) && (
                             <span className="font-semibold"> {String(rule.target_value)}</span>
@@ -371,7 +371,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
                         </p>
                       </div>
                       {rule.is_fulfilled ? (
-                        <Badge className="text-[9px] bg-success/15 text-success border-success/30">✅ Fulfilled</Badge>
+                        <Badge className="text-[9px] bg-success/15 text-success border-success/30">{t("uiQuestLivingTab.fulfilled")}</Badge>
                       ) : (
                         <Badge variant="outline" className="text-[9px]">{t("uiQuestLivingTab.active")}</Badge>
                       )}
@@ -399,7 +399,7 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
         <section className="space-y-3">
           <button onClick={() => setShowTimeline(!showTimeline)} className="flex items-center gap-2 group">
             <h3 className="font-display font-semibold text-base flex items-center gap-2 group-hover:text-primary transition-colors">
-              <Clock className="h-4 w-4 text-amber-600" /> Ecosystem Timeline
+              <Clock className="h-4 w-4 text-amber-600" /> {t("uiQuestLivingTab.ecosystemTimeline")}
               <span className="text-muted-foreground font-normal text-sm">({events.length})</span>
             </h3>
             {showTimeline ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
@@ -444,11 +444,11 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
       {/* ── Impact stats ── */}
       {systems && systems.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-4">
-          <h4 className="font-display font-semibold text-sm mb-3">Impact Summary</h4>
+          <h4 className="font-display font-semibold text-sm mb-3">{t("uiQuestLivingTab.impactSummary")}</h4>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="text-center">
               <p className="text-xl font-bold text-primary">{systems.length}</p>
-              <p className="text-[10px] text-muted-foreground">Ecosystems</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiQuestLivingTab.ecosystems")}</p>
             </div>
             <div className="text-center">
               <p className="text-xl font-bold text-emerald-600">
@@ -456,15 +456,15 @@ export function QuestLivingTab({ linkedType, linkedId, defaultTerritoryId, isOwn
                   ? Math.round(systems.reduce((s, ns) => s + (ns.health_index ?? 0), 0) / systems.length)
                   : "—"}
               </p>
-              <p className="text-[10px] text-muted-foreground">Avg Health</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiQuestLivingTab.avgHealth")}</p>
             </div>
             <div className="text-center">
               <p className="text-xl font-bold text-primary">{rules?.length ?? 0}</p>
-              <p className="text-[10px] text-muted-foreground">Impact Rules</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiQuestLivingTab.impactRules")}</p>
             </div>
             <div className="text-center">
               <p className="text-xl font-bold text-amber-600">{rules?.filter((r) => r.is_fulfilled).length ?? 0}</p>
-              <p className="text-[10px] text-muted-foreground">Fulfilled</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiQuestLivingTab.fulfilled2")}</p>
             </div>
           </div>
         </div>

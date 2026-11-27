@@ -1,11 +1,12 @@
+import i18n from "@/i18n/config";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePiPanel } from "@/hooks/usePiPanel";
 
 const AI_MODELS = [
-  { id: "gemini-flash", label: "Gemini Flash", provider: "Google", icon: "🔵" },
-  { id: "gemini-pro", label: "Gemini Pro", provider: "Google", icon: "🔵" },
-  { id: "gpt-5-mini", label: "GPT-5 Mini", provider: "OpenAI", icon: "🟢" },
-  { id: "gpt-5", label: "GPT-5", provider: "OpenAI", icon: "🟢" },
+  { id: "gemini-flash", get label() { return i18n.t("uiPiModelSelector.geminiFlash"); }, provider: "Google", icon: "🔵" },
+  { id: "gemini-pro", get label() { return i18n.t("uiPiModelSelector.geminiPro"); }, provider: "Google", icon: "🔵" },
+  { id: "gpt-5-mini", get label() { return i18n.t("uiPiModelSelector.gpt5Mini"); }, provider: "OpenAI", icon: "🟢" },
+  { id: "gpt-5", get label() { return i18n.t("uiPiModelSelector.gpt5"); }, provider: "OpenAI", icon: "🟢" },
 ];
 
 // Map display IDs to actual Lovable AI model identifiers

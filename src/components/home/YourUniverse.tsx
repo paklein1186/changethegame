@@ -160,7 +160,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
       {/* Pods & Courses row */}
       <div className="grid gap-6 md:grid-cols-2">
         {data.pods.length > 0 && (
-          <SubSection title="Pods" icon={CircleDot} viewAllLink="/explore?tab=pods">
+          <SubSection title={t("uiYourUniverse.pods")} icon={CircleDot} viewAllLink="/explore?tab=pods">
             <div className="space-y-2">
               {data.pods.map((pod: any, i: number) => (
                 <motion.div key={pod.id} custom={i} variants={fadeUp} initial="hidden" animate="show">
@@ -179,7 +179,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
         )}
 
         {data.courses.length > 0 && (
-          <SubSection title="Courses" icon={BookOpen} viewAllLink="/explore?tab=courses">
+          <SubSection title={t("uiYourUniverse.courses")} icon={BookOpen} viewAllLink="/explore?tab=courses">
             <div className="space-y-2">
               {data.courses.map((course: any, i: number) => (
                 <motion.div key={course.id} custom={i} variants={fadeUp} initial="hidden" animate="show">
@@ -190,7 +190,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
                       <p className="text-sm font-medium truncate">{course.title}</p>
                       <div className="flex gap-1">
                         <Badge variant="outline" className="text-[10px] capitalize">{course.level}</Badge>
-                        {course.is_free && <Badge variant="secondary" className="text-[10px]">Free</Badge>}
+                        {course.is_free && <Badge variant="secondary" className="text-[10px]">{t("uiYourUniverse.free")}</Badge>}
                       </div>
                     </div>
                   </Link>
@@ -234,7 +234,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
                   <h4 className="font-display font-semibold text-sm mb-1 truncate">{svc.title}</h4>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     {svc.duration_minutes && <span>{svc.duration_minutes} min</span>}
-                    <span>{!svc.price_amount ? "Free" : `€${svc.price_amount}`}</span>
+                    <span>{!svc.price_amount ? t("uiYourUniverse.free") : `€${svc.price_amount}`}</span>
                   </div>
                 </Link>
               </motion.div>

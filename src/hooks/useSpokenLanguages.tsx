@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,14 +11,14 @@ export interface SpokenLanguageRow {
 }
 
 const AVAILABLE_LANGUAGES = [
-  { code: "en", label: "English", native: "English", flag: "🇬🇧" },
-  { code: "fr", label: "French", native: "Français", flag: "🇫🇷" },
-  { code: "es", label: "Spanish", native: "Español", flag: "🇪🇸" },
-  { code: "de", label: "German", native: "Deutsch", flag: "🇩🇪" },
-  { code: "it", label: "Italian", native: "Italiano", flag: "🇮🇹" },
-  { code: "pt", label: "Portuguese", native: "Português", flag: "🇧🇷" },
-  { code: "nl", label: "Dutch", native: "Nederlands", flag: "🇳🇱" },
-  { code: "sv", label: "Swedish", native: "Svenska", flag: "🇸🇪" },
+  { code: "en", get label() { return i18n.t("uiUseSpokenLanguages.english"); }, native: "English", flag: "🇬🇧" },
+  { code: "fr", get label() { return i18n.t("uiUseSpokenLanguages.french"); }, native: "Français", flag: "🇫🇷" },
+  { code: "es", get label() { return i18n.t("uiUseSpokenLanguages.spanish"); }, native: "Español", flag: "🇪🇸" },
+  { code: "de", get label() { return i18n.t("uiUseSpokenLanguages.german"); }, native: "Deutsch", flag: "🇩🇪" },
+  { code: "it", get label() { return i18n.t("uiUseSpokenLanguages.italian"); }, native: "Italiano", flag: "🇮🇹" },
+  { code: "pt", get label() { return i18n.t("uiUseSpokenLanguages.portuguese"); }, native: "Português", flag: "🇧🇷" },
+  { code: "nl", get label() { return i18n.t("uiUseSpokenLanguages.dutch"); }, native: "Nederlands", flag: "🇳🇱" },
+  { code: "sv", get label() { return i18n.t("uiUseSpokenLanguages.swedish"); }, native: "Svenska", flag: "🇸🇪" },
 ];
 
 export { AVAILABLE_LANGUAGES };

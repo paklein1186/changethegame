@@ -14,12 +14,12 @@ import { WebsiteItemSelector } from "./WebsiteItemSelector";
 import { PLACEMENT_TAGS } from "./WebVisibilityEditor";
 
 const SECTION_TYPES = [
-  { value: "hero", label: "Hero" },
-  { value: "text_block", label: "Text Block" },
-  { value: "services_list", label: "Services List" },
+  { value: "hero", get label() { return i18n.t("uiWebsiteSectionEditor.hero"); } },
+  { value: "text_block", get label() { return i18n.t("uiWebsiteSectionEditor.textBlock"); } },
+  { value: "services_list", get label() { return i18n.t("uiWebsiteSectionEditor.servicesList"); } },
   { value: "quests_list", get label() { return i18n.t("uiWebsiteSectionEditor.questsList"); } },
   { value: "guilds_list", get label() { return i18n.t("uiWebsiteSectionEditor.guildsList"); } },
-  { value: "projects_list", label: "Projects List" },
+  { value: "projects_list", get label() { return i18n.t("uiWebsiteSectionEditor.projectsList"); } },
   { value: "cta", get label() { return i18n.t("uiWebsiteSectionEditor.callToAction"); } },
 ];
 
@@ -65,7 +65,7 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website-sections", pageId] });
-      toast.success("Section saved");
+      toast.success(t("uiWebsiteSectionEditor.sectionSaved"));
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -78,7 +78,7 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
     <div className="space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="space-y-1">
-          <Label className="text-xs">Section Type</Label>
+          <Label className="text-xs">{t("uiWebsiteSectionEditor.sectionType")}</Label>
           <Select value={type} onValueChange={setType}>
             <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -93,14 +93,14 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
           <Input value={title} onChange={(e) => setTitle(e.target.value)} className="h-8 text-sm" />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">Subtitle</Label>
+          <Label className="text-xs">{t("uiWebsiteSectionEditor.subtitle")}</Label>
           <Input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className="h-8 text-sm" />
         </div>
       </div>
 
       {(type === "text_block" || type === "hero" || type === "cta") && (
         <div className="space-y-1">
-          <Label className="text-xs">Body (Markdown)</Label>
+          <Label className="text-xs">{t("uiWebsiteSectionEditor.bodyMarkdown")}</Label>
           <Textarea value={bodyMarkdown} onChange={(e) => setBodyMarkdown(e.target.value)} rows={4} className="text-sm" />
         </div>
       )}
@@ -109,23 +109,23 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">Source</Label>
+              <Label className="text-xs">{t("uiWebsiteSectionEditor.source")}</Label>
               <Select value={source} onValueChange={setSource}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="manual">Manual Selection</SelectItem>
-                  <SelectItem value="auto">Auto (Filters)</SelectItem>
+                  <SelectItem value="manual">{t("uiWebsiteSectionEditor.manualSelection")}</SelectItem>
+                  <SelectItem value="auto">{t("uiWebsiteSectionEditor.autoFilters")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Layout</Label>
+              <Label className="text-xs">{t("uiWebsiteSectionEditor.layout")}</Label>
               <Select value={layout} onValueChange={setLayout}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="grid">Grid</SelectItem>
-                  <SelectItem value="list">List</SelectItem>
-                  <SelectItem value="carousel">Carousel</SelectItem>
+                  <SelectItem value="grid">{t("uiWebsiteSectionEditor.grid")}</SelectItem>
+                  <SelectItem value="list">{t("uiWebsiteSectionEditor.list")}</SelectItem>
+                  <SelectItem value="carousel">{t("uiWebsiteSectionEditor.carousel")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -143,10 +143,10 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
 
           {source === "auto" && (
             <div className="space-y-2 p-3 bg-muted/50 rounded-md">
-              <Label className="text-xs font-medium">Auto Filters</Label>
+              <Label className="text-xs font-medium">{t("uiWebsiteSectionEditor.autoFilters2")}</Label>
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Web Tags</Label>
+                  <Label className="text-xs">{t("uiWebsiteSectionEditor.webTags")}</Label>
                   <div className="flex flex-wrap gap-1.5">
                     {PLACEMENT_TAGS.map(tag => {
                       const active = (filters.webTags || []).includes(tag.value);
@@ -175,7 +175,7 @@ export function WebsiteSectionEditor({ section, pageId, ownerType, ownerId }: Pr
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Limit</Label>
+                  <Label className="text-xs">{t("uiWebsiteSectionEditor.limit")}</Label>
                   <Input
                     type="number"
                     value={filters.limit || ""}

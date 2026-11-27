@@ -29,7 +29,7 @@ export default function OnboardingChecklist() {
         >
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight flex items-center gap-3">
             <Rocket className="h-8 w-8 text-primary" />
-            Getting Started
+            {t("uiOnboardingChecklist.gettingStarted")}
           </h1>
           <p className="mt-2 text-muted-foreground">
             {t("uiOnboardingChecklist.completeTheseStepsToGetThe")}

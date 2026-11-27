@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useParams, Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useMemo } from "react";
@@ -62,9 +63,9 @@ import { CapabilitiesPanel } from "@/components/opportunities/CapabilitiesPanel"
 
 // ─── Persona badge helper ──────────────────────────────────
 const PERSONA_META: Record<string, { label: string; color: string }> = {
-  IMPACT: { label: "Impact Maker", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
-  CREATIVE: { label: "Creative Soul", color: "bg-violet-500/10 text-violet-700 border-violet-500/30" },
-  HYBRID: { label: "Hybrid Explorer", color: "bg-amber-500/10 text-amber-700 border-amber-500/30" },
+  IMPACT: { get label() { return i18n.t("uiUserProfile.impactMaker"); }, color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
+  CREATIVE: { get label() { return i18n.t("uiUserProfile.creativeSoul"); }, color: "bg-violet-500/10 text-violet-700 border-violet-500/30" },
+  HYBRID: { get label() { return i18n.t("uiUserProfile.hybridExplorer"); }, color: "bg-amber-500/10 text-amber-700 border-amber-500/30" },
 };
 
 function PersonaBadge({ persona }: { persona: PersonaType }) {
@@ -126,10 +127,11 @@ function XpWidget({ xp, xpRecent12m, level, userId }: { xp: number; xpRecent12m:
 
 // ─── Social links row ──────────────────────────────────────
 function SocialRow({ profile }: { profile: ProfileData }) {
+  const { t } = useTranslation();
   const links = [
-    { url: profile.websiteUrl, icon: Globe, label: "Website" },
+    { url: profile.websiteUrl, icon: Globe, label: t("uiUserProfile.website") },
     { url: profile.linkedinUrl, icon: Linkedin, label: "LinkedIn" },
-    { url: profile.twitterUrl, icon: Twitter, label: "Twitter" },
+    { url: profile.twitterUrl, icon: Twitter, label: t("uiUserProfile.twitter") },
     { url: profile.instagramUrl, icon: Instagram, label: "Instagram" },
   ].filter((l) => l.url);
   if (links.length === 0) return null;
@@ -518,7 +520,7 @@ function UserProfileInner() {
                     <Link to="/shares">
                       <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/30">
                         <Shield className="h-3 w-3 mr-1" />
-                        Guardian
+                        {t("uiUserProfile.guardian")}
                       </Badge>
                     </Link>
                   )}
@@ -526,7 +528,7 @@ function UserProfileInner() {
                     <Link to="/shares">
                       <Badge variant="outline" className="text-xs bg-accent/10 text-accent border-accent/30">
                         <Shield className="h-3 w-3 mr-1" />
-                        Steward
+                        {t("uiUserProfile.steward")}
                       </Badge>
                     </Link>
                   )}
@@ -558,14 +560,14 @@ function UserProfileInner() {
                     disabled={chatPending}
                     onClick={() => requireAuth(() => openChat({ id: profile.userId, name: profile.name, avatarUrl: profile.avatarUrl || undefined }), "message this user")}
                   >
-                    <MessageSquare className="h-4 w-4 mr-1" /> Message
+                    <MessageSquare className="h-4 w-4 mr-1" /> {t("uiUserProfile.message")}
                   </Button>
                   <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => requireAuth(toggleFollow, "follow this user")}>
-                    {isFollowing ? <><UserMinus className="h-4 w-4 mr-1" /> Unfollow</> : <><UserPlus className="h-4 w-4 mr-1" /> {t("uiUserProfile.follow")}</>}
+                    {isFollowing ? <><UserMinus className="h-4 w-4 mr-1" /> {t("uiUserProfile.unfollow")}</> : <><UserPlus className="h-4 w-4 mr-1" /> {t("uiUserProfile.follow")}</>}
                   </Button>
                   {isLoggedIn && (
                     <Button size="sm" variant={isBlocked ? "destructive" : "outline"} onClick={toggleBlock}>
-                      <Ban className="h-4 w-4 mr-1" /> {isBlocked ? "Unblock" : "Block"}
+                      <Ban className="h-4 w-4 mr-1" /> {isBlocked ? t("uiUserProfile.unblock") : t("uiUserProfile.block")}
                     </Button>
                   )}
                   <ShareLinkButton entityType="profile" entityId={profile.userId} entityName={profile.name} />
@@ -660,16 +662,16 @@ function UserProfileInner() {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-5 h-auto w-full justify-start flex-wrap gap-1 rounded-lg p-1">
           <TabsTrigger value="overview">{t("uiUserProfile.overview")}</TabsTrigger>
-          <TabsTrigger value="wall">Wall</TabsTrigger>
+          <TabsTrigger value="wall">{t("uiUserProfile.wall")}</TabsTrigger>
           <TabsTrigger value="quests">{t("uiUserProfile.quests")}</TabsTrigger>
           <TabsTrigger value="services">{serviceLabel}</TabsTrigger>
           <TabsTrigger value="territories"><Globe className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.territories")}</TabsTrigger>
-          <TabsTrigger value="entities">Entities</TabsTrigger>
-          <TabsTrigger value="trust"><Shield className="h-3.5 w-3.5 mr-1" /> Trust</TabsTrigger>
-          <TabsTrigger value="living"><Leaf className="h-3.5 w-3.5 mr-1" /> Living</TabsTrigger>
-          <TabsTrigger value="graph"><Compass className="h-3.5 w-3.5 mr-1" /> Graph</TabsTrigger>
+          <TabsTrigger value="entities">{t("uiUserProfile.entities")}</TabsTrigger>
+          <TabsTrigger value="trust"><Shield className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.trust")}</TabsTrigger>
+          <TabsTrigger value="living"><Leaf className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.living")}</TabsTrigger>
+          <TabsTrigger value="graph"><Compass className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.graph")}</TabsTrigger>
           {isOwnProfile && <TabsTrigger value="contributions"><CurrencyIcon currency="coins" className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.contributions")}</TabsTrigger>}
-          {isOwnProfile && <TabsTrigger value="matchmaker"><Sparkles className="h-3.5 w-3.5 mr-1" /> Matchmaker</TabsTrigger>}
+          {isOwnProfile && <TabsTrigger value="matchmaker"><Sparkles className="h-3.5 w-3.5 mr-1" /> {t("uiUserProfile.matchmaker")}</TabsTrigger>}
           {isOwnProfile && <TabsTrigger value="agents"><Bot className="h-3.5 w-3.5 mr-1" /> {t("profileAgents.tab")}</TabsTrigger>}
         </TabsList>
 
@@ -683,7 +685,7 @@ function UserProfileInner() {
             {totalEntities > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-display font-semibold">Entities ({totalEntities})</h3>
+                  <h3 className="font-display font-semibold">{t("uiUserProfile.entities2")}{totalEntities})</h3>
                   <Button size="sm" variant="ghost" onClick={() => setTab("entities")} className="text-xs">{t("uiUserProfile.viewAll")}</Button>
                 </div>
                 <div className="grid gap-3 md:grid-cols-3">
@@ -709,7 +711,7 @@ function UserProfileInner() {
                         </Avatar>
                         <div className="min-w-0">
                           <h4 className="font-display font-semibold text-sm truncate">{pm.pod?.name}</h4>
-                          <p className="text-[10px] text-muted-foreground capitalize">Pod · {pm.role?.toLowerCase()}</p>
+                          <p className="text-[10px] text-muted-foreground capitalize">{t("uiUserProfile.pod")} {pm.role?.toLowerCase()}</p>
                         </div>
                       </div>
                     </Link>
@@ -723,7 +725,7 @@ function UserProfileInner() {
                         </Avatar>
                         <div className="min-w-0">
                           <h4 className="font-display font-semibold text-sm truncate">{cm.company?.name}</h4>
-                          <p className="text-[10px] text-muted-foreground capitalize">Organization · {cm.role?.toLowerCase()}</p>
+                          <p className="text-[10px] text-muted-foreground capitalize">{t("uiUserProfile.organization")} {cm.role?.toLowerCase()}</p>
                         </div>
                       </div>
                     </Link>
@@ -751,15 +753,15 @@ function UserProfileInner() {
 
             {/* Stat badges */}
             <div className="flex flex-wrap gap-3">
-              {followersCount > 0 && <StatCard icon={UserPlus} label="Followers" count={followersCount} onClick={() => setFollowDialogMode("followers")} />}
-              {followingCount > 0 && <StatCard icon={Users} label="Following people" count={followingCount} onClick={() => setFollowDialogMode("following")} />}
+              {followersCount > 0 && <StatCard icon={UserPlus} label={t("uiUserProfile.followers")} count={followersCount} onClick={() => setFollowDialogMode("followers")} />}
+              {followingCount > 0 && <StatCard icon={Users} label={t("uiUserProfile.followingPeople")} count={followingCount} onClick={() => setFollowDialogMode("following")} />}
               {filteredQuestsCreated.length > 0 && <StatCard icon={Compass} label={t("uiUserProfile.questsCreated")} count={filteredQuestsCreated.length} onClick={() => setListDialog("quests-created")} />}
               {filteredQuestsJoined.length > 0 && <StatCard icon={Compass} label={t("uiUserProfile.questsJoined")} count={filteredQuestsJoined.length} onClick={() => setListDialog("quests-joined")} />}
               {filteredGuilds.length > 0 && <StatCard icon={Shield} label={t("uiUserProfile.guilds")} count={filteredGuilds.length} onClick={() => setListDialog("guilds")} />}
               {followedGuildsCount > 0 && <StatCard icon={Shield} label={t("uiUserProfile.guildsFollowed")} count={followedGuildsCount} onClick={() => setFollowedEntityDialog("GUILD")} />}
               {followedQuestsCount > 0 && <StatCard icon={Compass} label={t("uiUserProfile.questsFollowed")} count={followedQuestsCount} onClick={() => setFollowedEntityDialog("QUEST")} />}
-              {filteredPods.length > 0 && <StatCard icon={CircleDot} label="Pods" count={filteredPods.length} onClick={() => setListDialog("pods")} />}
-              {filteredCompanies.length > 0 && <StatCard icon={Building2} label="Organizations" count={filteredCompanies.length} onClick={() => setListDialog("companies")} />}
+              {filteredPods.length > 0 && <StatCard icon={CircleDot} label={t("uiUserProfile.pods")} count={filteredPods.length} onClick={() => setListDialog("pods")} />}
+              {filteredCompanies.length > 0 && <StatCard icon={Building2} label={t("uiUserProfile.organizations")} count={filteredCompanies.length} onClick={() => setListDialog("companies")} />}
               {filteredServices.length > 0 && <StatCard icon={Briefcase} label={serviceLabel} count={filteredServices.length} onClick={() => setListDialog("services")} />}
             </div>
 
@@ -780,7 +782,7 @@ function UserProfileInner() {
               return (
                 <section>
                   <h3 className="font-display font-semibold mb-3 flex items-center gap-2">
-                    <Star className="h-4 w-4 text-amber-500 fill-amber-500" /> Highlights
+                    <Star className="h-4 w-4 text-amber-500 fill-amber-500" /> {t("uiUserProfile.highlights")}
                   </h3>
                   <div className="grid gap-3 md:grid-cols-3">
                     {items.map((item) =>
@@ -804,7 +806,7 @@ function UserProfileInner() {
                             <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{getLabel("service.label", persona)}</p>
                             <h4 className="font-display font-semibold truncate">{item.data.title}</h4>
                             {item.data.price_amount != null && (
-                              <Badge variant="secondary" className="text-[10px] mt-1">{item.data.price_amount === 0 ? "Free" : `€${item.data.price_amount}`}</Badge>
+                              <Badge variant="secondary" className="text-[10px] mt-1">{item.data.price_amount === 0 ? t("uiUserProfile.free") : `€${item.data.price_amount}`}</Badge>
                             )}
                           </div>
                         </Link>
@@ -906,7 +908,7 @@ function UserProfileInner() {
                   <h4 className="font-display font-semibold truncate">{svc.title}</h4>
                   {svc.price_amount != null && (
                     <Badge className="bg-primary/10 text-primary border-0 text-xs shrink-0 ml-2">
-                      {svc.price_amount === 0 ? "Free" : `€${svc.price_amount}`}
+                      {svc.price_amount === 0 ? t("uiUserProfile.free") : `€${svc.price_amount}`}
                     </Badge>
                   )}
                 </div>
@@ -954,7 +956,7 @@ function UserProfileInner() {
                 <h3 className="font-display font-semibold">{getLabel("guild.label", persona)} ({guilds.length})</h3>
                 {isOwnProfile && (
                   <Button size="sm" variant="outline" asChild>
-                    <Link to="/explore?tab=entities"><Compass className="h-4 w-4 mr-1" /> Explore</Link>
+                    <Link to="/explore?tab=entities"><Compass className="h-4 w-4 mr-1" /> {t("uiUserProfile.explore")}</Link>
                   </Button>
                 )}
               </div>
@@ -975,7 +977,7 @@ function UserProfileInner() {
             </section>
 
             <section>
-              <h3 className="font-display font-semibold mb-3">Pods ({pods.length})</h3>
+              <h3 className="font-display font-semibold mb-3">{t("uiUserProfile.pods2")}{pods.length})</h3>
               <EntityGrid items={pods} emptyMsg="Not part of any pods yet." renderItem={(pm: any) => (
                 <Link key={pm.id} to={`/pods/${pm.podId}`} className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-all block">
                   <div className="flex items-center gap-3">
@@ -995,7 +997,7 @@ function UserProfileInner() {
             </section>
 
             <section>
-              <h3 className="font-display font-semibold mb-3">Organizations ({companies.length})</h3>
+              <h3 className="font-display font-semibold mb-3">{t("uiUserProfile.organizations2")}{companies.length})</h3>
               <EntityGrid items={companies} emptyMsg="Not part of any organizations yet." renderItem={(cm: any) => (
                 <Link key={cm.id} to={`/companies/${cm.companyId}`} className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-all block">
                   <div className="flex items-center gap-3">
@@ -1090,8 +1092,8 @@ function UserProfileInner() {
             listDialog === "quests-created" ? t("uiUserProfile.questsCreated2") :
             listDialog === "quests-joined" ? t("uiUserProfile.questsJoined2") :
             listDialog === "guilds" ? t("uiUserProfile.guilds") :
-            listDialog === "pods" ? "Pods" :
-            listDialog === "companies" ? "Organizations" :
+            listDialog === "pods" ? t("uiUserProfile.pods") :
+            listDialog === "companies" ? t("uiUserProfile.organizations") :
             listDialog === "services" ? serviceLabel : ""
           }
           icon={
@@ -1106,7 +1108,7 @@ function UserProfileInner() {
             listDialog === "guilds" ? filteredGuilds.map((gm: any) => ({ id: gm.guildId, name: gm.guild?.name || "Guild", imageUrl: gm.guild?.logo_url, subtitle: gm.role?.toLowerCase(), link: `/guilds/${gm.guildId}` })) :
             listDialog === "pods" ? filteredPods.map((pm: any) => ({ id: pm.podId, name: pm.pod?.name || "Pod", subtitle: pm.role?.toLowerCase(), link: `/pods/${pm.podId}` })) :
             listDialog === "companies" ? filteredCompanies.map((cm: any) => ({ id: cm.companyId, name: cm.company?.name || "Organization", imageUrl: cm.company?.logo_url, subtitle: cm.role?.toLowerCase(), link: `/companies/${cm.companyId}` })) :
-            listDialog === "services" ? filteredServices.map((s: any) => ({ id: s.id, name: s.title, imageUrl: s.image_url, subtitle: s.price_amount != null ? (s.price_amount === 0 ? "Free" : `€${s.price_amount}`) : undefined, link: `/services/${s.id}` })) :
+            listDialog === "services" ? filteredServices.map((s: any) => ({ id: s.id, name: s.title, imageUrl: s.image_url, subtitle: s.price_amount != null ? (s.price_amount === 0 ? t("uiUserProfile.free") : `€${s.price_amount}`) : undefined, link: `/services/${s.id}` })) :
             []
           }
         />

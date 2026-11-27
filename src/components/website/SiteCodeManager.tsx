@@ -61,7 +61,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Site code generated!");
+      toast.success(t("uiSiteCodeManager.siteCodeGenerated"));
       fetchCode();
     }
   };
@@ -78,7 +78,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Site code regenerated!");
+      toast.success(t("uiSiteCodeManager.siteCodeRegenerated"));
       fetchCode();
     }
   };
@@ -94,7 +94,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Site code revoked");
+      toast.success(t("uiSiteCodeManager.siteCodeRevoked"));
       fetchCode();
     }
   };
@@ -122,7 +122,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
     <div className="rounded-xl border border-border bg-card p-5 space-y-5">
       <div>
         <h3 className="font-display font-semibold flex items-center gap-2 text-base">
-          <Key className="h-4 w-4 text-primary" /> Site Code
+          <Key className="h-4 w-4 text-primary" /> {t("uiSiteCodeManager.siteCode")}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
           {t("uiSiteCodeManager.generateACodeThatExternalWebsites")}
@@ -132,7 +132,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
       {!siteCode ? (
         <Button onClick={createCode} disabled={acting} variant="outline" size="sm">
           <Globe className="h-3.5 w-3.5 mr-1" />
-          {acting ? "Generating…" : "Generate Site Code"}
+          {acting ? t("uiSiteCodeManager.generating") : t("uiSiteCodeManager.generateSiteCode")}
         </Button>
       ) : (
         <div className="space-y-4">
@@ -160,12 +160,12 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
             </div>
             <div className="flex items-center gap-2">
               {siteCode.revoked ? (
-                <Badge variant="destructive" className="text-xs">Revoked</Badge>
+                <Badge variant="destructive" className="text-xs">{t("uiSiteCodeManager.revoked")}</Badge>
               ) : (
                 <Badge variant="secondary" className="text-xs">{t("uiSiteCodeManager.active")}</Badge>
               )}
               <span className="text-xs text-muted-foreground">
-                Created {new Date(siteCode.created_at).toLocaleDateString()}
+                {t("uiSiteCodeManager.created")} {new Date(siteCode.created_at).toLocaleDateString()}
               </span>
             </div>
           </div>
@@ -173,7 +173,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
           {/* Feed URL preview */}
           {feedUrl && (
             <div className="space-y-1">
-              <Label className="text-sm font-medium">Feed Endpoint</Label>
+              <Label className="text-sm font-medium">{t("uiSiteCodeManager.feedEndpoint")}</Label>
               <div className="flex items-center gap-2">
                 <code className="text-xs bg-muted px-2 py-1 rounded break-all max-w-lg block">
                   {feedUrl}
@@ -197,7 +197,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
               disabled={acting}
             >
               <RefreshCw className="h-3.5 w-3.5 mr-1" />
-              {acting ? "…" : "Regenerate"}
+              {acting ? "…" : t("uiSiteCodeManager.regenerate")}
             </Button>
             {!siteCode.revoked && (
               <Button
@@ -207,7 +207,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
                 disabled={acting}
               >
                 <XCircle className="h-3.5 w-3.5 mr-1" />
-                Revoke
+                {t("uiSiteCodeManager.revoke")}
               </Button>
             )}
           </div>

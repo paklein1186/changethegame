@@ -145,10 +145,10 @@ export default function OpenValueNetworkPage({ embedded }: Props) {
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
             {[
               { icon: <CurrencyIcon currency="xp" className="h-4 w-4" />, label: t("uiOpenValueNetworkPage.xp") },
-              { icon: <Shield className="h-4 w-4 text-primary" />, label: "Trust Index" },
+              { icon: <Shield className="h-4 w-4 text-primary" />, label: t("uiOpenValueNetworkPage.trustIndex") },
               { icon: <CurrencyIcon currency="credits" className="h-4 w-4" />, label: t("uiOpenValueNetworkPage.credits") },
               { icon: <CurrencyIcon currency="ctg" className="h-4 w-4" />, label: "🌱 $CTG" },
-              { icon: <FileText className="h-4 w-4 text-primary" />, label: "History" },
+              { icon: <FileText className="h-4 w-4 text-primary" />, label: t("uiOpenValueNetworkPage.history") },
             ].map((v) => (
               <div key={v.label} className="flex items-center gap-2 rounded-md border border-border bg-card p-2">
                 {v.icon}
@@ -185,13 +185,13 @@ export default function OpenValueNetworkPage({ embedded }: Props) {
               icon={<Zap className="h-5 w-5" />}
             />
             <ValueCard
-              title="B. Trust Index"
+              title={t("uiOpenValueNetworkPage.bTrustIndex")}
               color="text-primary"
               desc=""
               icon={<Shield className="h-5 w-5" />}
             />
             <ValueCard
-              title="C. Commons Impact (🌱 $CTG)"
+              title={t("uiOpenValueNetworkPage.cCommonsImpactCtg")}
               color="text-primary"
               desc=""
               icon={<Leaf className="h-5 w-5" />}
@@ -328,7 +328,7 @@ function TokenFlowDiagram({ t }: { t: (k: string) => string }) {
   return (
     <div className="flex justify-center">
       <div className="relative" style={{ width: 400, height: 320 }}>
-        <svg viewBox="0 0 400 320" className="w-full h-full" aria-label="Token flow diagram">
+        <svg viewBox="0 0 400 320" className="w-full h-full" aria-label={t("uiOpenValueNetworkPage.tokenFlowDiagram")}>
           <style>{`
             @keyframes travel {
               0% { offset-distance: 0%; opacity: 0; }

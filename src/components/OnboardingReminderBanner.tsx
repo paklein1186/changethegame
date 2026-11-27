@@ -64,7 +64,7 @@ export function OnboardingReminderBanner() {
         </Button>
         <button
           onClick={dismiss}
-          aria-label="Dismiss"
+          aria-label={t("uiOnboardingReminderBanner.dismiss")}
           className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
         >
           <X className="h-4 w-4" />

@@ -199,7 +199,7 @@ export function CTGEmissionRulesTab() {
     <div className="space-y-6">
       {/* Actions bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h3 className="text-lg font-semibold">Emission Rules</h3>
+        <h3 className="text-lg font-semibold">{t("uiCTGEmissionRulesTab.emissionRules")}</h3>
         <div className="flex items-center gap-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -210,20 +210,20 @@ export function CTGEmissionRulesTab() {
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Reset rules?</AlertDialogTitle>
+                <AlertDialogTitle>{t("uiCTGEmissionRulesTab.resetRules")}</AlertDialogTitle>
                 <AlertDialogDescription>
                   {t("uiCTGEmissionRulesTab.allEmissionRulesWillBeRestored")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>{t("uiCTGEmissionRulesTab.cancel")}</AlertDialogCancel>
-                <AlertDialogAction onClick={handleReset}>Reset</AlertDialogAction>
+                <AlertDialogAction onClick={handleReset}>{t("uiCTGEmissionRulesTab.reset")}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
           <Button size="sm" disabled={changedIds.length === 0 || saving} onClick={handleSave}>
             <Save className="h-4 w-4 mr-1.5" />
-            {saving ? "Saving…" : `Save (${changedIds.length})`}
+            {saving ? t("uiCTGEmissionRulesTab.saving") : `Save (${changedIds.length})`}
           </Button>
         </div>
       </div>
@@ -235,10 +235,10 @@ export function CTGEmissionRulesTab() {
             <TableHeader>
               <TableRow>
                 <TableHead>{t("uiCTGEmissionRulesTab.contributionType")}</TableHead>
-                <TableHead className="text-right w-[130px]">$CTG emitted</TableHead>
+                <TableHead className="text-right w-[130px]">{t("uiCTGEmissionRulesTab.ctgEmitted")}</TableHead>
                 <TableHead className="text-right w-[130px]">{t("uiCTGEmissionRulesTab.commonsShare")}</TableHead>
                 <TableHead className="w-[80px] text-center">{t("uiCTGEmissionRulesTab.active")}</TableHead>
-                <TableHead className="hidden sm:table-cell">Modified</TableHead>
+                <TableHead className="hidden sm:table-cell">{t("uiCTGEmissionRulesTab.modified")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -313,7 +313,7 @@ export function CTGEmissionRulesTab() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <Sprout className="h-4 w-4 text-primary" />
-              Impact Preview
+              {t("uiCTGEmissionRulesTab.impactPreview")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -322,7 +322,7 @@ export function CTGEmissionRulesTab() {
               <strong className="text-foreground">{impact.contributorAmount} $CTG</strong> {t("uiCTGEmissionRulesTab.toTheContributor")}
               {" "}+{" "}
               <strong className="text-foreground">{impact.commonsAmount} $CTG</strong> {t("uiCTGEmissionRulesTab.toTheCommons")}
-              {" "}({impact.totalGross} $CTG gross total)
+              {" "}({impact.totalGross} {t("uiCTGEmissionRulesTab.ctgGrossTotal")}
             </p>
           </CardContent>
         </Card>
@@ -382,20 +382,20 @@ function CommonsWalletCard() {
       <CardHeader className="pb-2">
         <CardTitle className="text-base flex items-center gap-2">
           <Globe className="h-5 w-5 text-primary" />
-            Commons Wallet
+            {t("uiCTGEmissionRulesTab.commonsWallet")}
           </CardTitle>
           <CardDescription>{t("uiCTGEmissionRulesTab.collectiveFundsFedByTheCommons")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-lg bg-muted/50 p-3">
-             <p className="text-xs text-muted-foreground">Current balance</p>
+             <p className="text-xs text-muted-foreground">{t("uiCTGEmissionRulesTab.currentBalance")}</p>
             <p className="text-2xl font-bold tabular-nums">
               {(commons?.balance ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} $CTG
             </p>
           </div>
           <div className="rounded-lg bg-muted/50 p-3">
-             <p className="text-xs text-muted-foreground">Total received (lifetime)</p>
+             <p className="text-xs text-muted-foreground">{t("uiCTGEmissionRulesTab.totalReceivedLifetime")}</p>
             <p className="text-2xl font-bold tabular-nums">
               {(commons?.lifetime_received ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2 })} $CTG
             </p>

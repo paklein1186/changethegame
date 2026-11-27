@@ -66,7 +66,7 @@ export function ExternalLinksPanel({ links, onLinksChange, canEdit }: ExternalLi
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold text-sm flex items-center gap-2">
           <LinkIcon className="h-4 w-4 text-primary" />
-          External Resources
+          {t("uiExternalLinksPanel.externalResources")}
         </h3>
         {canEdit && (
           <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
@@ -119,7 +119,7 @@ export function ExternalLinksPanel({ links, onLinksChange, canEdit }: ExternalLi
           <DialogHeader><DialogTitle>{t("uiExternalLinksPanel.addExternalLink")}</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div>
-              <label className="text-sm font-medium mb-1 block">Label</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiExternalLinksPanel.label")}</label>
               <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder={t("uiExternalLinksPanel.eGSharedDriveProjectFiles")} maxLength={100} />
             </div>
             <div>

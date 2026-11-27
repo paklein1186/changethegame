@@ -148,7 +148,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
       {hasGalaxy && (
         <div className="space-y-3">
           <h3 className="font-display text-sm font-semibold flex items-center gap-2">
-            <Orbit className="h-4 w-4 text-primary" /> Galaxy
+            <Orbit className="h-4 w-4 text-primary" /> {t("uiNsEcosystemTab.galaxy")}
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{galaxy!.length}</Badge>
           </h3>
           <p className="text-xs text-muted-foreground -mt-1">
@@ -224,7 +224,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
       {/* Companies */}
       <SectionCard
         icon={Building2}
-        label="Organizations"
+        label={t("uiNsEcosystemTab.organizations")}
         linkPrefix="/companies"
         items={data.companies.map((c: any) => ({ id: c.id, name: c.name, description: c.description, avatar: c.logo_url }))}
       />
@@ -233,7 +233,7 @@ export function NsEcosystemTab({ naturalSystemId }: Props) {
       {data.profiles.length > 0 && (
         <div className="space-y-2">
           <h3 className="font-display text-sm font-semibold flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" /> Connected People
+            <Users className="h-4 w-4 text-primary" /> {t("uiNsEcosystemTab.connectedPeople")}
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{data.profiles.length}</Badge>
           </h3>
           <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">

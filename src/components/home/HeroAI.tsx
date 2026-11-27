@@ -328,7 +328,7 @@ export function HeroAI({ userName, userContext }: HeroAIProps) {
       <div className="relative z-10 max-w-2xl mx-auto text-center space-y-5">
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-3">
-            <Bot className="h-3.5 w-3.5" /> AI Assistant
+            <Bot className="h-3.5 w-3.5" /> {t("uiHeroAI.aiAssistant")}
           </div>
           <p className="text-sm text-muted-foreground">{label("hero.tagline")}</p>
         </motion.div>
@@ -339,7 +339,7 @@ export function HeroAI({ userName, userContext }: HeroAIProps) {
           <div className="relative flex-1">
             <Input
               ref={inputRef}
-              placeholder={isListening ? "Listening..." : "Ask me anything..."}
+              placeholder={isListening ? t("uiHeroAI.listening") : t("uiHeroAI.askMeAnything")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -357,7 +357,7 @@ export function HeroAI({ userName, userContext }: HeroAIProps) {
                   ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
                   : "text-muted-foreground hover:text-primary hover:bg-primary/10"
               }`}
-              title={isListening ? t("uiHeroAI.stopListening") : "Voice input"}
+              title={isListening ? t("uiHeroAI.stopListening") : t("uiHeroAI.voiceInput")}
             >
               {isListening ? (
                 <MicOff className="h-4 w-4 animate-pulse" />
@@ -390,7 +390,7 @@ export function HeroAI({ userName, userContext }: HeroAIProps) {
         {loading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-4">
-            <Loader2 className="h-4 w-4 animate-spin" /> Thinking...
+            <Loader2 className="h-4 w-4 animate-spin" /> {t("uiHeroAI.thinking")}
           </motion.div>
         )}
 
@@ -461,7 +461,7 @@ export function HeroAI({ userName, userContext }: HeroAIProps) {
               )}
 
               <Button variant="ghost" size="sm" onClick={() => { setResponse(null); setQuery(""); inputRef.current?.focus(); }}>
-                Ask something else
+                {t("uiHeroAI.askSomethingElse")}
               </Button>
             </motion.div>
           )}

@@ -115,7 +115,7 @@ function RelatedTerritoriesSection({ territoryId }: { territoryId: string }) {
       {parent && (
         <div className="space-y-1.5">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-            <ChevronUp className="h-3 w-3" /> Parent
+            <ChevronUp className="h-3 w-3" /> {t("uiTerritoryOverviewTab.parent")}
           </p>
           <div className="flex flex-wrap gap-2">
             <TerritoryChip territory={parent} />
@@ -140,7 +140,7 @@ function RelatedTerritoriesSection({ territoryId }: { territoryId: string }) {
       {siblings.length > 0 && (
         <div className="space-y-1.5">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-            <ArrowLeftRight className="h-3 w-3" /> Neighbours
+            <ArrowLeftRight className="h-3 w-3" /> {t("uiTerritoryOverviewTab.neighbours")}
             <span className="text-[10px] ml-0.5">({siblings.length})</span>
           </p>
           <div className="flex flex-wrap gap-2">
@@ -202,6 +202,7 @@ export function TerritoryOverviewTab({ territoryId, territoryName }: Props) {
 
 /** Connected Humans = user_territories associations (direct + descendants) */
 function TerritoryConnectedHumans({ territoryId }: { territoryId: string }) {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data: count = 0 } = useQuery({
@@ -230,7 +231,7 @@ function TerritoryConnectedHumans({ territoryId }: { territoryId: string }) {
         className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"
       >
         <p className="text-2xl font-bold text-primary">{count}</p>
-        <p className="text-sm text-muted-foreground">Connected Humans</p>
+        <p className="text-sm text-muted-foreground">{t("uiTerritoryOverviewTab.connectedHumans")}</p>
       </button>
       <FollowersDialog
         open={dialogOpen}
@@ -245,6 +246,7 @@ function TerritoryConnectedHumans({ territoryId }: { territoryId: string }) {
 
 /** Exclusive Followers = follows MINUS user_territories associations */
 function TerritoryExclusiveFollowers({ territoryId }: { territoryId: string }) {
+  const { t } = useTranslation();
   const { data: count = 0 } = useQuery({
     queryKey: ["territory-exclusive-followers", territoryId],
     queryFn: async () => {
@@ -274,7 +276,7 @@ function TerritoryExclusiveFollowers({ territoryId }: { territoryId: string }) {
   return (
     <div className="rounded-lg border border-border bg-card p-4 text-center">
       <p className="text-2xl font-bold text-primary">{count}</p>
-      <p className="text-sm text-muted-foreground">Followers</p>
+      <p className="text-sm text-muted-foreground">{t("uiTerritoryOverviewTab.followers")}</p>
     </div>
   );
 }

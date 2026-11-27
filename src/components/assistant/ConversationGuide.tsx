@@ -208,7 +208,7 @@ function ChatBody({
           onClick={() => setPathsExpanded((v) => !v)}
           className="flex items-center justify-between w-full px-3 py-2 text-xs text-muted-foreground hover:bg-muted/40 transition-colors"
         >
-          <span className="font-medium">Quick actions</span>
+          <span className="font-medium">{t("uiConversationGuide.quickActions")}</span>
           {pathsExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
         </button>
         <AnimatePresence>
@@ -269,7 +269,7 @@ function ChatBody({
                 {msg.pendingConfirmation && msg.proposedActions && msg.proposedActions.length > 0 && (
                   <div className="mt-2 space-y-1.5">
                     <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                      Proposed actions:
+                      {t("uiConversationGuide.proposedActions")}
                     </p>
                     {msg.proposedActions.map((a, i) => (
                       <div key={i} className="text-xs px-2 py-1 rounded-md bg-background/60 border border-border">
@@ -320,7 +320,7 @@ function ChatBody({
                         className="text-[10px] cursor-pointer hover:bg-primary/10"
                         onClick={() => navigate(entityRoute(e.type, e.id))}
                       >
-                        ✏️ Updated {entityLabel(e.type)}
+                        {t("uiConversationGuide.updated")} {entityLabel(e.type)}
                       </Badge>
                     ))}
                   </div>
@@ -366,7 +366,7 @@ function ChatBody({
                       className="h-6 text-[10px] gap-1"
                       onClick={() => onUndo(msg.id)}
                     >
-                      <Undo2 className="h-3 w-3" /> Undo
+                      <Undo2 className="h-3 w-3" /> {t("uiConversationGuide.undo")}
                     </Button>
                   </div>
                 )}
@@ -377,7 +377,7 @@ function ChatBody({
             <div className="flex justify-start">
               <div className="bg-muted rounded-xl px-3 py-2 text-sm flex items-center gap-2 text-muted-foreground">
                 <Loader2 className="h-3 w-3 animate-spin" />
-                Thinking…
+                {t("uiConversationGuide.thinking")}
               </div>
             </div>
           )}
@@ -547,7 +547,7 @@ export default function ConversationGuide({
         {
           id: crypto.randomUUID(),
           role: "assistant",
-          text: "Sorry, something went wrong. Please try again.",
+          text: t("uiConversationGuide.sorrySomethingWentWrongPleaseTry"),
         },
       ]);
     } finally {

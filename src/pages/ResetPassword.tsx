@@ -22,7 +22,7 @@ export default function ResetPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast({ title: "Passwords don't match", variant: "destructive" });
+      toast({ title: t("uiResetPassword.passwordsDonTMatch"), variant: "destructive" });
       return;
     }
     if (password.length < 6) {
@@ -35,7 +35,7 @@ export default function ResetPassword() {
     if (error) {
       toast({ title: t("uiResetPassword.error"), description: error, variant: "destructive" });
     } else {
-      toast({ title: "Password updated!" });
+      toast({ title: t("uiResetPassword.passwordUpdated") });
       // Redirect based on onboarding status — profile is already loaded via auth state
       navigate("/");
     }
@@ -59,7 +59,7 @@ export default function ResetPassword() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min 6 characters"
+              placeholder={t("uiResetPassword.min6Characters")}
               required
               minLength={6}
               autoComplete="new-password"
@@ -72,7 +72,7 @@ export default function ResetPassword() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Repeat password"
+              placeholder={t("uiResetPassword.repeatPassword")}
               required
               autoComplete="new-password"
             />

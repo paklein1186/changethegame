@@ -140,7 +140,7 @@ export function ProfileMaskingSettings() {
                   <Badge variant="outline" className="text-[10px] shrink-0">{TYPE_LABELS[r.type]}</Badge>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => addMask(r)} className="text-xs shrink-0">
-                  <EyeOff className="h-3.5 w-3.5 mr-1" /> Hide
+                  <EyeOff className="h-3.5 w-3.5 mr-1" /> {t("uiProfileMaskingSettings.hide")}
                 </Button>
               </div>
             );
@@ -151,7 +151,7 @@ export function ProfileMaskingSettings() {
       {/* Currently masked items */}
       {maskedItems.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium mb-2">Hidden items ({maskedItems.length})</h4>
+          <h4 className="text-sm font-medium mb-2">{t("uiProfileMaskingSettings.hiddenItems")}{maskedItems.length})</h4>
           <div className="rounded-lg border border-border bg-card divide-y divide-border">
             {maskedItems.map((item) => {
               const Icon = TYPE_ICONS[item.target_type] || Shield;
@@ -163,7 +163,7 @@ export function ProfileMaskingSettings() {
                     <Badge variant="outline" className="text-[10px] shrink-0">{TYPE_LABELS[item.target_type] || item.target_type}</Badge>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => removeMask(item)} className="text-xs text-destructive hover:text-destructive shrink-0">
-                    <X className="h-3.5 w-3.5 mr-1" /> Show
+                    <X className="h-3.5 w-3.5 mr-1" /> {t("uiProfileMaskingSettings.show")}
                   </Button>
                 </div>
               );

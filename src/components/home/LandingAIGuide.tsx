@@ -101,7 +101,7 @@ export function LandingAIGuide() {
         <div className="max-w-2xl mx-auto text-center space-y-6">
           <motion.div initial={{ opacity: 0, y: -8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-3">
-              <Bot className="h-3.5 w-3.5" /> AI Guide
+              <Bot className="h-3.5 w-3.5" /> {t("uiLandingAIGuide.aiGuide")}
             </div>
             <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
               {t("uiLandingAIGuide.notSureWhereToStart")}
@@ -149,7 +149,7 @@ export function LandingAIGuide() {
           {loading && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-4">
-              <Loader2 className="h-4 w-4 animate-spin" /> Thinking...
+              <Loader2 className="h-4 w-4 animate-spin" /> {t("uiLandingAIGuide.thinking")}
             </motion.div>
           )}
 
@@ -199,7 +199,7 @@ export function LandingAIGuide() {
                 {hasRecommended && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
                     className="space-y-2 pt-2">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Explore related</p>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("uiLandingAIGuide.exploreRelated")}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {rec.quests?.map((q, i) => (
                         <Badge key={`q-${i}`} variant="secondary" className="text-xs cursor-pointer hover:bg-primary/10"
@@ -231,7 +231,7 @@ export function LandingAIGuide() {
 
                 <div className="flex items-center gap-3 pt-2">
                   <Button variant="ghost" size="sm" onClick={() => { setResponse(null); setQuery(""); inputRef.current?.focus(); }}>
-                    Ask something else
+                    {t("uiLandingAIGuide.askSomethingElse")}
                   </Button>
                   <Button size="sm" asChild>
                     <Link to="/welcome">{t("uiLandingAIGuide.signUpToGetStarted")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>

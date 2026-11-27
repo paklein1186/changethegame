@@ -373,7 +373,7 @@ export function DeepAnalyticsSection() {
             </div>
             <div className="space-y-3">
               <div className="rounded-xl border border-border bg-card p-4">
-                <p className="text-xs text-muted-foreground">Grand Total Revenue</p>
+                <p className="text-xs text-muted-foreground">{t("uiDeepAnalyticsSection.grandTotalRevenue")}</p>
                 <p className="text-3xl font-bold text-primary">€{breakdown?.grandTotal ?? 0}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
@@ -397,7 +397,7 @@ export function DeepAnalyticsSection() {
       {/* ── Feed / Post Engagement ── */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4">
-          <MessageSquare className="h-5 w-5" /> Feed & Post Engagement (90d) <LiveLabel />
+          <MessageSquare className="h-5 w-5" /> {t("uiDeepAnalyticsSection.feedPostEngagement90d")} <LiveLabel />
         </h3>
         {loadingFeed ? <ChartLoader /> : (
           <div className="rounded-xl border border-border bg-card p-4">
@@ -461,7 +461,7 @@ export function DeepAnalyticsSection() {
       {/* ── Week-over-Week Growth ── */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4">
-          <TrendingUp className="h-5 w-5" /> Week-over-Week Growth <LiveLabel />
+          <TrendingUp className="h-5 w-5" /> {t("uiDeepAnalyticsSection.weekOverWeekGrowth")} <LiveLabel />
         </h3>
         {loadingGrowth ? <ChartLoader /> : (
           <div className="grid sm:grid-cols-3 gap-4">
@@ -475,7 +475,7 @@ export function DeepAnalyticsSection() {
                   </div>
                   <div className="text-right">
                     <p className="text-lg text-muted-foreground">{g.lastWeek}</p>
-                    <p className="text-[10px] text-muted-foreground">last week</p>
+                    <p className="text-[10px] text-muted-foreground">{t("uiDeepAnalyticsSection.lastWeek")}</p>
                   </div>
                   <Badge
                     variant="outline"

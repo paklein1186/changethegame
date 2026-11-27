@@ -67,7 +67,7 @@ export default function AchievementDetail() {
       </motion.div>
 
       <section>
-        <h2 className="font-display text-lg font-semibold mb-3">Comments & Celebrations</h2>
+        <h2 className="font-display text-lg font-semibold mb-3">{t("uiAchievementDetail.commentsCelebrations")}</h2>
         <CommentThread targetType={CommentTargetType.ACHIEVEMENT} targetId={achievement.id} />
       </section>
     </PageShell>

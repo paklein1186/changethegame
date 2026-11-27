@@ -99,7 +99,7 @@ export function GuildJoinButton({
     } else {
       setPendingApp(true);
       setApplyOpen(false);
-      toast({ title: "Application submitted!", description: t("uiGuildJoinButton.guildAdminsWillReviewIt") });
+      toast({ title: t("uiGuildJoinButton.applicationSubmitted"), description: t("uiGuildJoinButton.guildAdminsWillReviewIt") });
       notifyJoinRequest({ entityType: "guild", entityId: guildId, entityName: guildName || "guild", applicantName: currentUserName || "Someone" });
     }
   };

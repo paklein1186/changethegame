@@ -708,7 +708,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               qc.invalidateQueries({ queryKey: ["my-subtasks-home", userId] });
             }}
           >
-            Undo
+            {t("uiMyTaskBoard.undo")}
           </ToastAction>
         ),
       });
@@ -1066,7 +1066,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("uiMyTaskBoard.all")}</SelectItem>
-              <SelectItem value="personal">Personal</SelectItem>
+              <SelectItem value="personal">{t("uiMyTaskBoard.personal")}</SelectItem>
               <SelectItem value="quest">{t("uiMyTaskBoard.quests")}</SelectItem>
               <SelectItem value="subtask">{t("uiMyTaskBoard.subtasks")}</SelectItem>
             </SelectContent>
@@ -1080,7 +1080,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                 onClick={() => setSortBy(sortBy === "status" ? "priority" : sortBy === "priority" ? "recent" : "status")}
               >
                 <ArrowDownUp className="h-3.5 w-3.5" />
-                <span>{sortBy === "status" ? t("uiMyTaskBoard.status") : sortBy === "priority" ? "Priority" : "Recent"}</span>
+                <span>{sortBy === "status" ? t("uiMyTaskBoard.status") : sortBy === "priority" ? t("uiMyTaskBoard.priority") : t("uiMyTaskBoard.recent")}</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>{t("uiMyTaskBoard.sortTasksByStatusPriorityOr")}</TooltipContent>
@@ -1151,7 +1151,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               onClick={() => setEntityFilter(new Set())}
               className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              <X className="h-3 w-3" /> Clear
+              <X className="h-3 w-3" /> {t("uiMyTaskBoard.clear")}
             </button>
           )}
         </div>
@@ -1193,7 +1193,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                     <TooltipTrigger asChild>
                       <span className="flex flex-col items-center gap-0.5 cursor-help">
                         <Sun className="h-3 sm:h-3.5 w-3 sm:w-3.5 text-amber-500" />
-                        <span className="text-[9px] text-amber-500 font-medium leading-none">Today</span>
+                        <span className="text-[9px] text-amber-500 font-medium leading-none">{t("uiMyTaskBoard.today")}</span>
                       </span>
                     </TooltipTrigger>
                     <TooltipContent side="top" className="text-xs">
@@ -1203,7 +1203,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                 </th>
                 <th className="w-7 sm:w-8 px-1 py-1.5 sm:py-2"></th>
                 <th className="text-left px-1.5 sm:px-3 py-1.5 sm:py-2 font-medium">{t("uiMyTaskBoard.task")}</th>
-                <th className="text-left px-2 sm:px-3 py-1.5 sm:py-2 font-medium hidden sm:table-cell">Source</th>
+                <th className="text-left px-2 sm:px-3 py-1.5 sm:py-2 font-medium hidden sm:table-cell">{t("uiMyTaskBoard.source")}</th>
                 <th className="text-left px-1.5 md:px-3 py-1.5 sm:py-2 font-medium w-[36px] md:w-[130px]"><span className="hidden md:inline">{t("uiMyTaskBoard.status")}</span></th>
                 <th className="w-7 sm:w-10 px-1 sm:px-3 py-1.5 sm:py-2"></th>
               </tr>
@@ -1214,7 +1214,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                 const STATUS_GROUP_LABELS: Record<string, { icon: string; label: string }> = {
                   IN_PROGRESS: { icon: "●", label: t("uiMyTaskBoard.inProgress") },
                   TODO: { icon: "○", label: t("uiMyTaskBoard.toDo") },
-                  BACKLOG: { icon: "·", label: "Backlog" },
+                  BACKLOG: { icon: "·", label: t("uiMyTaskBoard.backlog") },
                   DONE: { icon: "✓", label: t("uiMyTaskBoard.done") },
                 };
                 return paginated.flatMap((task) => {
@@ -1313,7 +1313,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                   <td className="px-3 py-2.5 hidden sm:table-cell max-w-[160px]">
                     <div className="flex flex-col gap-0.5">
                       {task.source === "personal" && (
-                        <Badge variant="secondary" className="text-[10px] truncate max-w-full inline-block">Personal</Badge>
+                        <Badge variant="secondary" className="text-[10px] truncate max-w-full inline-block">{t("uiMyTaskBoard.personal")}</Badge>
                       )}
                       {task.source === "quest" && (
                         <>
@@ -1372,7 +1372,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                         </span>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="BACKLOG"><span className="flex items-center gap-1.5"><Circle className="h-3 w-3" /> Backlog</span></SelectItem>
+                        <SelectItem value="BACKLOG"><span className="flex items-center gap-1.5"><Circle className="h-3 w-3" /> {t("uiMyTaskBoard.backlog")}</span></SelectItem>
                         <SelectItem value="TODO"><span className="flex items-center gap-1.5"><CircleDot className="h-3 w-3" /> {t("uiMyTaskBoard.toDoNext")}</span></SelectItem>
                         <SelectItem value="IN_PROGRESS"><span className="flex items-center gap-1.5"><Timer className="h-3 w-3" /> {t("uiMyTaskBoard.inProgress2")}</span></SelectItem>
                         <SelectItem value="DONE"><span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3" /> {t("uiMyTaskBoard.done")}</span></SelectItem>
@@ -1570,7 +1570,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{unit.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {unit.type === "GUILD" ? t("uiMyTaskBoard.guild") : "Organisation"}
+                          {unit.type === "GUILD" ? t("uiMyTaskBoard.guild") : t("uiMyTaskBoard.organisation")}
                         </p>
                       </div>
                     </button>
@@ -1589,7 +1589,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                   </label>
                   <div className="flex gap-1">
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics((allTopics ?? []).map((t: any) => t.id))}>{t("uiMyTaskBoard.selectAll")}</Button>
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics([])}>Clear</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics([])}>{t("uiMyTaskBoard.clear")}</Button>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
@@ -1612,7 +1612,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                   </label>
                   <div className="flex gap-1">
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories((allTerritories ?? []).map((t: any) => t.id))}>{t("uiMyTaskBoard.selectAll")}</Button>
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories([])}>Clear</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories([])}>{t("uiMyTaskBoard.clear")}</Button>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">

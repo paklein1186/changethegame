@@ -37,7 +37,7 @@ export function QuestCoHostsManager({
   const handleAdd = async (entityType: "GUILD" | "COMPANY", entityId: string) => {
     try {
       await addCoHost.mutateAsync({ questId, entityType, entityId });
-      toast({ title: "Co-host added" });
+      toast({ title: t("uiQuestCoHosts.coHostAdded") });
     } catch (err: any) {
       toast({ title: t("uiQuestCoHosts.failedToAddCoHost"), description: err.message, variant: "destructive" });
     }
@@ -78,7 +78,7 @@ export function QuestCoHostsManager({
                     <p className="text-sm font-medium">{p.name}</p>
                     <Badge variant="outline" className="text-[10px]">
                       {p.entityType === "GUILD" ? <Shield className="h-2.5 w-2.5 mr-0.5" /> : <Building2 className="h-2.5 w-2.5 mr-0.5" />}
-                      {p.entityType === "GUILD" ? t("uiQuestCoHosts.guild") : "Company"}
+                      {p.entityType === "GUILD" ? t("uiQuestCoHosts.guild") : t("uiQuestCoHosts.company")}
                     </Badge>
                   </div>
                 </div>

@@ -53,17 +53,17 @@ import { useMyQuestAccess } from "@/components/quest/questAccess";
 import { QuestAccessSettings } from "@/components/quest/QuestAccessSettings";
 
 const ALL_TABS = [
-  { key: "general", label: "General", icon: Pencil },
-  { key: "affiliations", label: "Affiliations", icon: Link2 },
+  { key: "general", get label() { return i18n.t("uiQuestSettings.general"); }, icon: Pencil },
+  { key: "affiliations", get label() { return i18n.t("uiQuestSettings.affiliations"); }, icon: Link2 },
   { key: "contributions", get label() { return i18n.t("uiQuestSettings.contributions"); }, icon: PieChart },
-  { key: "fundraising", label: "Fundraising", icon: PieChart },
-  { key: "contract", label: "Contract", icon: FileText },
-  { key: "exit", label: "Exit Protocol", icon: LogOut },
+  { key: "fundraising", get label() { return i18n.t("uiQuestSettings.fundraising"); }, icon: PieChart },
+  { key: "contract", get label() { return i18n.t("uiQuestSettings.contract"); }, icon: FileText },
+  { key: "exit", get label() { return i18n.t("uiQuestSettings.exitProtocol"); }, icon: LogOut },
   { key: "needs", get label() { return i18n.t("uiQuestSettings.needs"); }, icon: Lightbulb },
-  { key: "features", label: "Features", icon: Puzzle },
-  { key: "access", label: "Access", icon: KeyRound },
-  { key: "web", label: "Web Visibility", icon: Globe },
-  { key: "danger", label: "Danger Zone", icon: AlertTriangle },
+  { key: "features", get label() { return i18n.t("uiQuestSettings.features"); }, icon: Puzzle },
+  { key: "access", get label() { return i18n.t("uiQuestSettings.access"); }, icon: KeyRound },
+  { key: "web", get label() { return i18n.t("uiQuestSettings.webVisibility"); }, icon: Globe },
+  { key: "danger", get label() { return i18n.t("uiQuestSettings.dangerZone"); }, icon: AlertTriangle },
 ];
 
 export default function QuestSettings() {
@@ -358,7 +358,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
     if (!confirm(t("uiQuestSettings.deleteThisCampaign"))) return;
     await supabase.from("quest_campaigns" as any).delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["quest-campaigns", questId] });
-    toast({ title: "Campaign deleted" });
+    toast({ title: t("uiQuestSettings.campaignDeleted") });
   };
   const cancelCampaign = async (id: string) => {
     if (!confirm(t("uiQuestSettings.cancelThisCampaign"))) return;
@@ -374,7 +374,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
       status: "COMPLETED",
     }).eq("id", campaign.id);
     qc.invalidateQueries({ queryKey: ["quest-campaigns", questId] });
-    toast({ title: "Campaign dispatched" });
+    toast({ title: t("uiQuestSettings.campaignDispatched") });
   };
 
   const [saving, setSaving] = useState(false);
@@ -405,14 +405,14 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
     await supabase.from("quests").update({ features_config: featuresConfig } as any).eq("id", questId);
     qc.invalidateQueries({ queryKey: ["quest", questId] });
     qc.invalidateQueries({ queryKey: ["quest-settings", questId] });
-    toast({ title: "Features saved!" });
+    toast({ title: t("uiQuestSettings.featuresSaved") });
   };
 
   const toggleOCU = async (checked: boolean) => {
     await supabase.from("quests").update({ ocu_enabled: checked } as any).eq("id", questId);
     qc.invalidateQueries({ queryKey: ["quest", questId] });
     qc.invalidateQueries({ queryKey: ["quest-settings", questId] });
-    toast({ title: checked ? "OCU mode enabled" : "OCU mode disabled" });
+    toast({ title: checked ? t("uiQuestSettings.ocuModeEnabled") : t("uiQuestSettings.ocuModeDisabled") });
   };
 
   const saveOCUSettings = async () => {
@@ -574,7 +574,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                     <Input value={editWebsiteUrl} onChange={e => setEditWebsiteUrl(e.target.value)} placeholder="https://…" type="url" />
                     <p className="text-xs text-muted-foreground mt-1">{t("uiQuestSettings.optionalLinkDisplayedOnTheQuest")}</p>
                   </div>
-                  <ImageUpload label="Cover Image" currentImageUrl={editCoverImageUrl} onChange={setEditCoverImageUrl} onFocalPointChange={setEditCoverFocalY} focalPoint={editCoverFocalY} aspectRatio="16/9" />
+                  <ImageUpload label={t("uiQuestSettings.coverImage")} currentImageUrl={editCoverImageUrl} onChange={setEditCoverImageUrl} onFocalPointChange={setEditCoverFocalY} focalPoint={editCoverFocalY} aspectRatio="16/9" />
                   <div><label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.status")}</label>
                     <Select value={editStatus} onValueChange={v => setEditStatus(v as QuestStatus)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
@@ -599,7 +599,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                     </Select>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <div><label className="text-sm font-medium mb-1 block">Fiat Price (€ cents)</label><Input type="number" value={editPriceFiat} onChange={e => setEditPriceFiat(e.target.value)} min={0} /></div>
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.fiatPriceCents")}</label><Input type="number" value={editPriceFiat} onChange={e => setEditPriceFiat(e.target.value)} min={0} /></div>
                   </div>
                   <div>
                     <label className="text-sm font-medium flex items-center gap-1.5 mb-1">
@@ -618,7 +618,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                           className="h-6 text-xs"
                           onClick={() => setTopicFilter(f)}
                         >
-                          {f === "all" ? t("uiQuestSettings.all") : f === "topics" ? t("uiQuestSettings.topics") : "Houses"}
+                          {f === "all" ? t("uiQuestSettings.all") : f === "topics" ? t("uiQuestSettings.topics") : t("uiQuestSettings.houses")}
                         </Button>
                       ))}
                     </div>
@@ -661,7 +661,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                           className="h-6 text-xs"
                           onClick={() => setTerritoryFilter(f)}
                         >
-                          {f === "all" ? t("uiQuestSettings.all") : f === "location" ? "Locations" : "Bioregions"}
+                          {f === "all" ? t("uiQuestSettings.all") : f === "location" ? t("uiQuestSettings.locations") : t("uiQuestSettings.bioregions")}
                         </Button>
                       ))}
                     </div>
@@ -706,7 +706,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   {/* Section 1: Resource Pools */}
                   <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                     <h3 className="font-display font-semibold flex items-center gap-2">
-                      <PieChart className="h-4 w-4 text-primary" /> Resource Pools
+                      <PieChart className="h-4 w-4 text-primary" /> {t("uiQuestSettings.resourcePools")}
                     </h3>
 
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -729,7 +729,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                       <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">🌱</span>
-                          <span className="text-sm font-semibold">$CTG Pool</span>
+                          <span className="text-sm font-semibold">{t("uiQuestSettings.ctgPool")}</span>
                         </div>
                         <p className="text-2xl font-bold">{ctgEscrow.toLocaleString()}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -759,7 +759,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                         onCheckedChange={toggleOCU}
                       />
                       <label htmlFor="ocu-toggle-contributions" className="text-sm font-medium">
-                        Enable OCU Mode
+                        {t("uiQuestSettings.enableOcuMode")}
                       </label>
                     </div>
 
@@ -779,7 +779,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium mb-1 block">Half-day rate override (€/half-day)</label>
+                          <label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.halfDayRateOverrideHalfDay")}</label>
                           <Input
                             type="number"
                             value={fmvRate}
@@ -795,13 +795,13 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium mb-1 block">Review Quorum</label>
+                          <label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.reviewQuorum")}</label>
                           <Select value={reviewQuorum} onValueChange={setReviewQuorum}>
                             <SelectTrigger className="max-w-xs"><SelectValue /></SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="1">Single approval</SelectItem>
-                              <SelectItem value="2">2 peers</SelectItem>
-                              <SelectItem value="3">3 peers</SelectItem>
+                              <SelectItem value="1">{t("uiQuestSettings.singleApproval")}</SelectItem>
+                              <SelectItem value="2">{t("uiQuestSettings.2Peers")}</SelectItem>
+                              <SelectItem value="3">{t("uiQuestSettings.3Peers")}</SelectItem>
                             </SelectContent>
                           </Select>
                           <p className="text-xs text-muted-foreground mt-1">
@@ -810,7 +810,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium mb-1 block">Abandonment threshold (days)</label>
+                          <label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.abandonmentThresholdDays")}</label>
                           <Input
                             type="number"
                             value={abandonmentDays}
@@ -838,11 +838,11 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   {ocuEnabled && (
                     <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                       <h3 className="font-display font-semibold flex items-center gap-2">
-                        <CurrencyIcon currency="coins" className="h-4 w-4" /> OCU Envelope
+                        <CurrencyIcon currency="coins" className="h-4 w-4" /> {t("uiQuestSettings.ocuEnvelope")}
                       </h3>
 
                       <div className="rounded-lg bg-muted/50 p-3 space-y-1 text-sm">
-                        <p><strong>Distributable envelope:</strong> {envelopeTotal.toLocaleString()} {t("uiQuestSettings.coins")}</p>
+                        <p><strong>{t("uiQuestSettings.distributableEnvelope")}</strong> {envelopeTotal.toLocaleString()} {t("uiQuestSettings.coins")}</p>
                         <p className="text-xs text-muted-foreground">
                           {t("uiQuestSettings.totalCoinsPoolMinusExternalSpending")}
                         </p>
@@ -868,10 +868,10 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                                 pie_frozen_at: new Date().toISOString(),
                               } as any).eq("id", questId);
                               qc.invalidateQueries({ queryKey: ["quest-settings", questId] });
-                              toast({ title: "Pie frozen" });
+                              toast({ title: t("uiQuestSettings.pieFrozen") });
                             }}
                           >
-                            Freeze Pie
+                            {t("uiQuestSettings.freezePie")}
                           </Button>
                         </div>
                       )}
@@ -916,7 +916,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   {/* Quick top-up */}
                   <div className="rounded-xl border border-border bg-card p-5 space-y-3">
                     <h3 className="font-display font-semibold flex items-center gap-2">
-                      <CurrencyIcon currency="coins" className="h-4 w-4" /> Direct Top-Up
+                      <CurrencyIcon currency="coins" className="h-4 w-4" /> {t("uiQuestSettings.directTopUp")}
                     </h3>
                     <p className="text-sm text-muted-foreground">{t("uiQuestSettings.addFundsDirectlyToTheQuest")}</p>
                     <div className="flex flex-wrap gap-2">
@@ -968,7 +968,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   <div className="rounded-xl border border-border bg-card p-5 space-y-3">
                     <div className="flex items-center gap-3">
                       <Switch id="settingsFundraising" checked={allowFundraising} onCheckedChange={setAllowFundraising} />
-                      <label htmlFor="settingsFundraising" className="text-sm font-medium">Allow community fundraising</label>
+                      <label htmlFor="settingsFundraising" className="text-sm font-medium">{t("uiQuestSettings.allowCommunityFundraising")}</label>
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {t("uiQuestSettings.whenEnabledAnyLoggedInUser")}
@@ -1007,9 +1007,9 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                     <p className="text-sm text-muted-foreground">{t("uiQuestSettings.enableOrDisableToolsForThis")}</p>
                     <div className="space-y-3">
                       {[
-                        { key: "rituals", label: "Rituals", desc: t("uiQuestSettings.recurringSessionsWithVideoCallsAnd"), icon: Calendar },
+                        { key: "rituals", label: t("uiQuestSettings.rituals"), desc: t("uiQuestSettings.recurringSessionsWithVideoCallsAnd"), icon: Calendar },
                         { key: "subtasks", label: t("uiQuestSettings.subtasks"), desc: t("uiQuestSettings.breakTheQuestIntoSmallerAssignable"), icon: ListChecks },
-                        { key: "discussion", label: "Discussion", desc: t("uiQuestSettings.feedAndCommentThreadForThe"), icon: MessageCircle },
+                        { key: "discussion", label: t("uiQuestSettings.discussion"), desc: t("uiQuestSettings.feedAndCommentThreadForThe"), icon: MessageCircle },
                       ].map(({ key, label, desc, icon: Icon }) => (
                         <div key={key} className="flex items-center justify-between rounded-lg border border-border bg-card p-3">
                           <div className="flex items-center gap-3">
@@ -1052,7 +1052,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   {!isCancelled ? (
                     <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 space-y-4">
                       <h3 className="font-display font-semibold flex items-center gap-2 text-destructive">
-                        <AlertTriangle className="h-4 w-4" /> Danger Zone
+                        <AlertTriangle className="h-4 w-4" /> {t("uiQuestSettings.dangerZone")}
                       </h3>
                       <p className="text-sm text-muted-foreground">{t("uiQuestSettings.theseActionsAreIrreversibleProceedWith")}</p>
                       <div className="flex flex-wrap gap-3">
@@ -1165,7 +1165,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
               placeholder={t("uiQuestSettings.amount")}
             />
             {Number(addCtgAmount) > ((userProfile as any)?.ctg_balance ?? 0) && (
-              <p className="text-xs text-destructive">Insufficient $CTG balance.</p>
+              <p className="text-xs text-destructive">{t("uiQuestSettings.insufficientCtgBalance")}</p>
             )}
             <p className="text-xs text-muted-foreground">
               {t("uiQuestSettings.ctgIsNotFiatBackedIt")}
@@ -1204,7 +1204,7 @@ function CampaignSection({
     <div className="rounded-xl border border-border bg-card p-5 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-          <span className="text-lg">{emoji}</span> {label} Campaigns
+          <span className="text-lg">{emoji}</span> {label} {t("uiQuestSettings.campaigns")}
         </h3>
         <Button size="sm" variant="outline" onClick={onNew}>
           <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSettings.new")}
@@ -1271,11 +1271,11 @@ function CampaignSection({
                 {isThresholdReached && !isDispatched && (
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-emerald-600 dark:text-emerald-400">
-                      ✅ Threshold reached {c.threshold_reached_at ? new Date(c.threshold_reached_at).toLocaleDateString() : ""}
+                      {t("uiQuestSettings.thresholdReached")} {c.threshold_reached_at ? new Date(c.threshold_reached_at).toLocaleDateString() : ""}
                     </span>
                     {c.dispatch_mode === "manual" && (
                       <Button size="sm" variant="default" className="h-6 text-xs" onClick={() => onDispatch(c)}>
-                        Dispatch
+                        {t("uiQuestSettings.dispatch")}
                       </Button>
                     )}
                   </div>
@@ -1283,7 +1283,7 @@ function CampaignSection({
 
                 {isDispatched && (
                   <p className="text-xs text-muted-foreground">
-                    📦 Dispatched {c.dispatched_at ? new Date(c.dispatched_at).toLocaleDateString() : ""}
+                    {t("uiQuestSettings.dispatched")} {c.dispatched_at ? new Date(c.dispatched_at).toLocaleDateString() : ""}
                   </p>
                 )}
               </div>

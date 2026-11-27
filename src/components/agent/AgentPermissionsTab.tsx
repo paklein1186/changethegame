@@ -42,15 +42,15 @@ const PERMISSION_GROUPS = [
       { key: "propose_quests", get label() { return i18n.t("uiAgentPermissionsTab.proposeQuestsLimited5Day"); }, threshold: 20 },
       { key: "create_posts", get label() { return i18n.t("uiAgentPermissionsTab.createPosts"); }, threshold: 40 },
       { key: "create_entities", get label() { return i18n.t("uiAgentPermissionsTab.createEntitiesNaturalSystemsItems"); }, threshold: 60 },
-      { key: "modify_data", label: "Modify Data", threshold: 80 },
+      { key: "modify_data", get label() { return i18n.t("uiAgentPermissionsTab.modifyData"); }, threshold: 80 },
     ],
   },
   {
-    label: "DATA INGESTION",
+    get label() { return i18n.t("uiAgentPermissionsTab.dataIngestion"); },
     icon: Database,
     items: [
       { key: "crawl_public", get label() { return i18n.t("uiAgentPermissionsTab.crawlPublicPages2CreditsPage"); }, threshold: 0 },
-      { key: "crawl_restricted", label: "Crawl Restricted Pages", threshold: 70, note: "Needs trust ≥70" },
+      { key: "crawl_restricted", get label() { return i18n.t("uiAgentPermissionsTab.crawlRestrictedPages"); }, threshold: 70, note: "Needs trust ≥70" },
       { key: "chat_ingestion", get label() { return i18n.t("uiAgentPermissionsTab.connectToSlackDiscordForChat"); }, threshold: 60 },
     ],
   },
@@ -64,11 +64,11 @@ const PERMISSION_GROUPS = [
 ];
 
 const TRUST_RATE_MULTIPLIERS = [
-  { range: "0–20", multiplier: "×1.5", label: "Untrusted" },
-  { range: "20–40", multiplier: "×1.2", label: "Guest Agent" },
+  { range: "0–20", multiplier: "×1.5", get label() { return i18n.t("uiAgentPermissionsTab.untrusted"); } },
+  { range: "20–40", multiplier: "×1.2", get label() { return i18n.t("uiAgentPermissionsTab.guestAgent"); } },
   { range: "40–60", multiplier: "×1.0", get label() { return i18n.t("uiAgentPermissionsTab.memberAgent"); } },
-  { range: "60–80", multiplier: "×0.8", label: "Trusted Agent" },
-  { range: "80–100", multiplier: "×0.5", label: "Autonomous" },
+  { range: "60–80", multiplier: "×0.8", get label() { return i18n.t("uiAgentPermissionsTab.trustedAgent"); } },
+  { range: "80–100", multiplier: "×0.5", get label() { return i18n.t("uiAgentPermissionsTab.autonomous"); } },
 ];
 
 export default function AgentPermissionsTab({ agent }: Props) {
@@ -128,7 +128,7 @@ export default function AgentPermissionsTab({ agent }: Props) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Info className="h-4 w-4" /> Current Trust
+              <Info className="h-4 w-4" /> {t("uiAgentPermissionsTab.currentTrust")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -141,7 +141,7 @@ export default function AgentPermissionsTab({ agent }: Props) {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Trust → Rate Multipliers</CardTitle>
+            <CardTitle className="text-sm">{t("uiAgentPermissionsTab.trustRateMultipliers")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1.5">
@@ -163,15 +163,15 @@ export default function AgentPermissionsTab({ agent }: Props) {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Permission Levels</CardTitle>
+            <CardTitle className="text-sm">{t("uiAgentPermissionsTab.permissionLevels")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1.5 text-xs">
               <div className="flex justify-between"><span className="text-destructive">0–20</span><span>{t("uiAgentPermissionsTab.onlyPublicCrawlNoWrite")}</span></div>
               <div className="flex justify-between"><span className="text-orange-500">20–40</span><span>{t("uiAgentPermissionsTab.draftQuestsLimitedCrawl")}</span></div>
-              <div className="flex justify-between"><span className="text-yellow-600">40–60</span><span>Restricted content, suggest</span></div>
+              <div className="flex justify-between"><span className="text-yellow-600">40–60</span><span>{t("uiAgentPermissionsTab.restrictedContentSuggest")}</span></div>
               <div className="flex justify-between"><span className="text-primary">60–80</span><span>{t("uiAgentPermissionsTab.privateDataCreateUnderReview")}</span></div>
-              <div className="flex justify-between"><span className="text-emerald-500">80–100</span><span>Semi-autonomous, modify data</span></div>
+              <div className="flex justify-between"><span className="text-emerald-500">80–100</span><span>{t("uiAgentPermissionsTab.semiAutonomousModifyData")}</span></div>
             </div>
           </CardContent>
         </Card>

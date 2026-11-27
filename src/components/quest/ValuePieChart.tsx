@@ -42,7 +42,7 @@ export function ValuePieChart({ questId }: Props) {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-2">
           <PieIcon className="h-4 w-4 text-amber-500" />
-          🟡 Value Pie — $CTG Token Distribution
+          {t("uiValuePieChart.valuePieCtgTokenDistribution")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -77,8 +77,8 @@ export function ValuePieChart({ questId }: Props) {
           {/* Table */}
           <div className="space-y-1.5">
             <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[10px] text-muted-foreground font-medium border-b border-border pb-1">
-              <span>Contributor</span>
-              <span className="text-right">Units</span>
+              <span>{t("uiValuePieChart.contributor")}</span>
+              <span className="text-right">{t("uiValuePieChart.units")}</span>
               <span className="text-right">{t("uiValuePieChart.share")}</span>
               <span className="text-right">🟡 $CTG</span>
             </div>
@@ -98,7 +98,7 @@ export function ValuePieChart({ questId }: Props) {
               </div>
             ))}
             <div className="border-t border-border pt-1 flex justify-between text-xs font-medium">
-              <span>Total</span>
+              <span>{t("uiValuePieChart.total")}</span>
               <span className="text-amber-600">{totalTokens} 🟡 $CTG</span>
             </div>
           </div>

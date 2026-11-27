@@ -85,7 +85,7 @@ export function CreateCampaignDialog({
     if (isEditing) {
       const { error } = await supabase.from("quest_campaigns" as any).update(payload).eq("id", editingCampaign.id);
       if (error) { toast({ title: t("uiCreateCampaignDialog.failedToUpdateCampaign"), description: error.message, variant: "destructive" }); setSaving(false); return; }
-      toast({ title: "Campaign updated" });
+      toast({ title: t("uiCreateCampaignDialog.campaignUpdated") });
     } else {
       payload.quest_id = questId;
       payload.created_by_user_id = currentUser.id;
@@ -93,7 +93,7 @@ export function CreateCampaignDialog({
       payload.raised_amount = 0;
       const { error } = await supabase.from("quest_campaigns" as any).insert(payload);
       if (error) { toast({ title: t("uiCreateCampaignDialog.failedToCreateCampaign"), description: error.message, variant: "destructive" }); setSaving(false); return; }
-      toast({ title: "Campaign created" });
+      toast({ title: t("uiCreateCampaignDialog.campaignCreated") });
     }
 
     qc.invalidateQueries({ queryKey: ["quest-campaigns", questId] });
@@ -109,7 +109,7 @@ export function CreateCampaignDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? t("uiCreateCampaignDialog.edit") : t("uiCreateCampaignDialog.new")} {currencyEmoji} {currencyLabel} Campaign
+            {isEditing ? t("uiCreateCampaignDialog.edit") : t("uiCreateCampaignDialog.new")} {currencyEmoji} {currencyLabel} {t("uiCreateCampaignDialog.campaign")}
           </DialogTitle>
           <DialogDescription>
             {currency === "coins"
@@ -124,7 +124,7 @@ export function CreateCampaignDialog({
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Seed round, Community sprint…"
+              placeholder={t("uiCreateCampaignDialog.eGSeedRoundCommunitySprint")}
             />
           </div>
 
@@ -165,7 +165,7 @@ export function CreateCampaignDialog({
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1 block">Dispatch Mode</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiCreateCampaignDialog.dispatchMode")}</label>
             <Select value={dispatchMode} onValueChange={setDispatchMode}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -216,7 +216,7 @@ export function CreateCampaignDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiCreateCampaignDialog.cancel")}</Button>
           <Button onClick={handleSave} disabled={saving || !title.trim() || !threshold}>
             {saving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-            {isEditing ? t("uiCreateCampaignDialog.update") : t("uiCreateCampaignDialog.create")} Campaign
+            {isEditing ? t("uiCreateCampaignDialog.update") : t("uiCreateCampaignDialog.create")} {t("uiCreateCampaignDialog.campaign")}
           </Button>
         </DialogFooter>
       </DialogContent>

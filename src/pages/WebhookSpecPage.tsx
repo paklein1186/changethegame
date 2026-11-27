@@ -199,7 +199,7 @@ export default function WebhookSpecPage() {
 
         <div className="mb-8">
           <h1 className="font-display text-3xl font-bold flex items-center gap-2 mb-2">
-            <Globe className="h-7 w-7 text-primary" /> Webhook Agent Specification
+            <Globe className="h-7 w-7 text-primary" /> {t("uiWebhookSpecPage.webhookAgentSpecification")}
           </h1>
           <p className="text-muted-foreground">
             {t("uiWebhookSpecPage.buildYourOwnAgentBackendYour")}
@@ -210,8 +210,8 @@ export default function WebhookSpecPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
           <Card className="p-4 text-center">
             <Code className="h-5 w-5 mx-auto mb-2 text-primary" />
-            <p className="text-sm font-medium">Any Language</p>
-            <p className="text-xs text-muted-foreground">Python, Node, Go, n8n…</p>
+            <p className="text-sm font-medium">{t("uiWebhookSpecPage.anyLanguage")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiWebhookSpecPage.pythonNodeGoN8n")}</p>
           </Card>
           <Card className="p-4 text-center">
             <Zap className="h-5 w-5 mx-auto mb-2 text-primary" />
@@ -220,8 +220,8 @@ export default function WebhookSpecPage() {
           </Card>
           <Card className="p-4 text-center">
             <Shield className="h-5 w-5 mx-auto mb-2 text-primary" />
-            <p className="text-sm font-medium">Secret Verification</p>
-            <p className="text-xs text-muted-foreground">Optional X-Webhook-Secret</p>
+            <p className="text-sm font-medium">{t("uiWebhookSpecPage.secretVerification")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiWebhookSpecPage.optionalXWebhookSecret")}</p>
           </Card>
         </div>
 
@@ -236,7 +236,7 @@ export default function WebhookSpecPage() {
           <div className="mt-4 rounded-lg border border-border bg-muted/30 p-4 text-sm space-y-2">
             <p className="font-semibold text-foreground">{t("uiWebhookSpecPage.headersSentWithEveryRequest")}</p>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li><code className="bg-muted px-1 py-0.5 rounded text-foreground">Content-Type: application/json</code></li>
+              <li><code className="bg-muted px-1 py-0.5 rounded text-foreground">{t("uiWebhookSpecPage.contentTypeApplicationJson")}</code></li>
               <li><code className="bg-muted px-1 py-0.5 rounded text-foreground">{t("uiWebhookSpecPage.xWebhookSecretYourSecret")}</code> {t("uiWebhookSpecPage.onlyIfYouConfiguredAWebhook")}</li>
             </ul>
           </div>
@@ -244,13 +244,13 @@ export default function WebhookSpecPage() {
 
         {/* Context Fields */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold mb-3">Context Fields</h2>
+          <h2 className="text-lg font-bold mb-3">{t("uiWebhookSpecPage.contextFields")}</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border border-border rounded-lg overflow-hidden">
               <thead>
                 <tr className="bg-muted/50 text-muted-foreground">
-                  <th className="text-left p-3 font-medium">Field</th>
-                  <th className="text-left p-3 font-medium">Type</th>
+                  <th className="text-left p-3 font-medium">{t("uiWebhookSpecPage.field")}</th>
+                  <th className="text-left p-3 font-medium">{t("uiWebhookSpecPage.type")}</th>
                   <th className="text-left p-3 font-medium">{t("uiWebhookSpecPage.description")}</th>
                 </tr>
               </thead>
@@ -275,22 +275,22 @@ export default function WebhookSpecPage() {
 
         {/* Response Format */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold mb-1">Response Format</h2>
+          <h2 className="text-lg font-bold mb-1">{t("uiWebhookSpecPage.responseFormat")}</h2>
           <p className="text-sm text-muted-foreground mb-3">{t("uiWebhookSpecPage.chooseOneOfTwoResponseFormats")}</p>
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                <Badge variant="secondary" className="text-[10px]">{t("uiWebhookSpecPage.optionA")}</Badge> JSON Response
+                <Badge variant="secondary" className="text-[10px]">{t("uiWebhookSpecPage.optionA")}</Badge> {t("uiWebhookSpecPage.jsonResponse")}
               </h3>
               <CodeBlock code={RESPONSE_JSON} language="JSON" />
             </div>
             <div>
               <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                <Badge variant="secondary" className="text-[10px]">Option B</Badge> {t("uiWebhookSpecPage.serverSentEventsSse")}
+                <Badge variant="secondary" className="text-[10px]">{t("uiWebhookSpecPage.optionB")}</Badge> {t("uiWebhookSpecPage.serverSentEventsSse")}
               </h3>
               <CodeBlock code={RESPONSE_SSE} language="SSE" />
               <p className="text-xs text-muted-foreground mt-2">
-                Set <code className="bg-muted px-1 py-0.5 rounded text-foreground">{t("uiWebhookSpecPage.contentTypeTextEventStream")}</code> {t("uiWebhookSpecPage.toEnableStreamingTheFormatFollows")}
+                {t("uiWebhookSpecPage.set")} <code className="bg-muted px-1 py-0.5 rounded text-foreground">{t("uiWebhookSpecPage.contentTypeTextEventStream")}</code> {t("uiWebhookSpecPage.toEnableStreamingTheFormatFollows")}
               </p>
             </div>
           </div>
@@ -298,11 +298,11 @@ export default function WebhookSpecPage() {
 
         {/* Code Examples */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold mb-3">Code Examples</h2>
+          <h2 className="text-lg font-bold mb-3">{t("uiWebhookSpecPage.codeExamples")}</h2>
           <Tabs defaultValue="python">
             <TabsList className="mb-3">
-              <TabsTrigger value="python">🐍 Python (Flask)</TabsTrigger>
-              <TabsTrigger value="node">📦 Node.js (Express)</TabsTrigger>
+              <TabsTrigger value="python">{t("uiWebhookSpecPage.pythonFlask")}</TabsTrigger>
+              <TabsTrigger value="node">{t("uiWebhookSpecPage.nodeJsExpress")}</TabsTrigger>
               <TabsTrigger value="n8n">⚡ n8n</TabsTrigger>
             </TabsList>
             <TabsContent value="python">
@@ -324,7 +324,7 @@ export default function WebhookSpecPage() {
           </h2>
           <Card className="p-5 space-y-4">
             <div>
-              <label className="text-xs text-muted-foreground block mb-1">Webhook URL</label>
+              <label className="text-xs text-muted-foreground block mb-1">{t("uiWebhookSpecPage.webhookUrl")}</label>
               <Input
                 value={testUrl}
                 onChange={e => setTestUrl(e.target.value)}
@@ -332,7 +332,7 @@ export default function WebhookSpecPage() {
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground block mb-1">Webhook Secret (optional)</label>
+              <label className="text-xs text-muted-foreground block mb-1">{t("uiWebhookSpecPage.webhookSecretOptional")}</label>
               <Input
                 value={testSecret}
                 onChange={e => setTestSecret(e.target.value)}
@@ -340,7 +340,7 @@ export default function WebhookSpecPage() {
               />
             </div>
             <Button onClick={runTest} disabled={testing} size="sm">
-              {testing ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Testing…</> : <><Play className="h-4 w-4 mr-1" /> {t("uiWebhookSpecPage.sendTestMessage")}</>}
+              {testing ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> {t("uiWebhookSpecPage.testing")}</> : <><Play className="h-4 w-4 mr-1" /> {t("uiWebhookSpecPage.sendTestMessage")}</>}
             </Button>
             {testResult && (
               <pre className="rounded-lg border border-border bg-muted/50 p-4 text-xs whitespace-pre-wrap font-mono max-h-64 overflow-y-auto">
@@ -358,9 +358,9 @@ export default function WebhookSpecPage() {
             <CodeBlock code={`{ "error": "Something went wrong" }`} language="JSON" />
             <ul className="text-xs text-muted-foreground space-y-1 mt-3">
               <li><strong>401/403</strong> {t("uiWebhookSpecPage.authenticationFailedBadSecret")}</li>
-              <li><strong>429</strong> — Rate limited</li>
+              <li><strong>429</strong> {t("uiWebhookSpecPage.rateLimited")}</li>
               <li><strong>500</strong> {t("uiWebhookSpecPage.internalError")}</li>
-              <li><strong>Timeout</strong> {t("uiWebhookSpecPage.requestsTimeOutAfter30Seconds")}</li>
+              <li><strong>{t("uiWebhookSpecPage.timeout")}</strong> {t("uiWebhookSpecPage.requestsTimeOutAfter30Seconds")}</li>
             </ul>
           </div>
         </section>

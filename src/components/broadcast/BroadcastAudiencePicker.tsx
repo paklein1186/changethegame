@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/config";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -19,12 +20,12 @@ interface SegmentOption {
 }
 
 const SEGMENTS: SegmentOption[] = [
-  { value: "all", get label() { return i18n.t("uiBroadcastAudiencePicker.allUsers"); }, icon: <Users className="h-4 w-4" />, description: "Every registered user" },
+  { value: "all", get label() { return i18n.t("uiBroadcastAudiencePicker.allUsers"); }, icon: <Users className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.everyRegisteredUser"); } },
   { value: "guild_admins", get label() { return i18n.t("uiBroadcastAudiencePicker.guildAdmins"); }, icon: <Shield className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.usersWithAdminRoleInAny"); } },
-  { value: "company_admins", label: "Company admins", icon: <Building2 className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.usersWithAdminRoleInAny2"); } },
-  { value: "org_reps", label: "Organization reps", icon: <Landmark className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.contactPersonsOfTraditionalOrganizations"); } },
+  { value: "company_admins", get label() { return i18n.t("uiBroadcastAudiencePicker.companyAdmins"); }, icon: <Building2 className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.usersWithAdminRoleInAny2"); } },
+  { value: "org_reps", get label() { return i18n.t("uiBroadcastAudiencePicker.organizationReps"); }, icon: <Landmark className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.contactPersonsOfTraditionalOrganizations"); } },
   { value: "shareholders_a", get label() { return i18n.t("uiBroadcastAudiencePicker.shareholdersClassA"); }, icon: <Crown className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.cooperativeMembersWithClassAShares"); } },
-  { value: "shareholders_b", label: "Shareholders — Class B", icon: <Crown className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.cooperativeMembersWithClassBShares"); } },
+  { value: "shareholders_b", get label() { return i18n.t("uiBroadcastAudiencePicker.shareholdersClassB"); }, icon: <Crown className="h-4 w-4" />, get description() { return i18n.t("uiBroadcastAudiencePicker.cooperativeMembersWithClassBShares"); } },
 ];
 
 interface Props {
@@ -34,6 +35,7 @@ interface Props {
 }
 
 export function BroadcastAudiencePicker({ selected, onChange, disabled }: Props) {
+  const { t } = useTranslation();
   const toggle = (seg: AudienceSegment) => {
     if (seg === "all") {
       // Toggle "all" — deselect others
@@ -52,7 +54,7 @@ export function BroadcastAudiencePicker({ selected, onChange, disabled }: Props)
 
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-medium">Audience</Label>
+      <Label className="text-sm font-medium">{t("uiBroadcastAudiencePicker.audience")}</Label>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {SEGMENTS.map((seg) => (
           <label

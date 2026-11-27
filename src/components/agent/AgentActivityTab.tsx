@@ -52,17 +52,17 @@ export default function AgentActivityTab({ agentId }: Props) {
                     </span>
                     <span className="text-xs">—</span>
                     <Badge variant="outline" className="text-[10px]">
-                      {record.monetized_action_types?.label || record.monetized_action_types?.code || "Action"}
+                      {record.monetized_action_types?.label || record.monetized_action_types?.code || t("uiAgentActivityTab.action")}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-3 mt-1 text-xs">
                     {record.resource_type && (
                       <span className="text-muted-foreground">
-                        Resource: <span className="text-foreground">{record.resource_type}</span>
+                        {t("uiAgentActivityTab.resource")} <span className="text-foreground">{record.resource_type}</span>
                       </span>
                     )}
                     <span className="text-muted-foreground">
-                      Sensitivity: <Badge variant="secondary" className="text-[9px]">{record.sensitivity}</Badge>
+                      {t("uiAgentActivityTab.sensitivity")} <Badge variant="secondary" className="text-[9px]">{record.sensitivity}</Badge>
                     </span>
                   </div>
                 </div>

@@ -55,8 +55,8 @@ function getActivityLevel(t: TerritoryLeaderboardItem) {
   const score = t.quests * 3 + t.entities * 2 + t.memoryContributions;
   if (score >= 15) return { get label() { return i18n.t("uiTerritoryTopicLeaderboard.veryActive"); }, color: "bg-emerald-500" };
   if (score >= 6) return { get label() { return i18n.t("uiTerritoryTopicLeaderboard.active"); }, color: "bg-blue-500" };
-  if (score >= 1) return { label: "Growing", color: "bg-amber-500" };
-  return { label: "Emerging", color: "bg-muted-foreground" };
+  if (score >= 1) return { get label() { return i18n.t("uiTerritoryTopicLeaderboard.growing"); }, color: "bg-amber-500" };
+  return { get label() { return i18n.t("uiTerritoryTopicLeaderboard.emerging"); }, color: "bg-muted-foreground" };
 }
 
 // ─── Redesigned Territory Tile ─────────────────────────────

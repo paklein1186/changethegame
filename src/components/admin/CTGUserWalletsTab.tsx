@@ -206,7 +206,7 @@ export function CTGUserWalletsTab() {
               <SelectItem value="all">{t("uiCTGUserWalletsTab.allWallets")}</SelectItem>
               <SelectItem value="positive">Balance &gt; 0</SelectItem>
               <SelectItem value="active_month">{t("uiCTGUserWalletsTab.activeThisMonth")}</SelectItem>
-              <SelectItem value="negative">Negative balance ⚠️</SelectItem>
+              <SelectItem value="negative">{t("uiCTGUserWalletsTab.negativeBalance")}</SelectItem>
             </SelectContent>
           </Select>
           <Button
@@ -221,7 +221,7 @@ export function CTGUserWalletsTab() {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">{filtered.length} wallet(s)</p>
+      <p className="text-xs text-muted-foreground">{filtered.length} {t("uiCTGUserWalletsTab.walletS")}</p>
 
       {/* Main table */}
       <Card>
@@ -229,13 +229,13 @@ export function CTGUserWalletsTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead className="hidden md:table-cell">Email</TableHead>
-                <TableHead className="text-right">Balance</TableHead>
-                <TableHead className="text-right hidden lg:table-cell">Earned</TableHead>
-                <TableHead className="text-right hidden lg:table-cell">Spent</TableHead>
-                <TableHead className="hidden sm:table-cell">Last tx</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t("uiCTGUserWalletsTab.user")}</TableHead>
+                <TableHead className="hidden md:table-cell">{t("uiCTGUserWalletsTab.email")}</TableHead>
+                <TableHead className="text-right">{t("uiCTGUserWalletsTab.balance")}</TableHead>
+                <TableHead className="text-right hidden lg:table-cell">{t("uiCTGUserWalletsTab.earned")}</TableHead>
+                <TableHead className="text-right hidden lg:table-cell">{t("uiCTGUserWalletsTab.spent")}</TableHead>
+                <TableHead className="hidden sm:table-cell">{t("uiCTGUserWalletsTab.lastTx")}</TableHead>
+                <TableHead className="text-right">{t("uiCTGUserWalletsTab.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -274,7 +274,7 @@ export function CTGUserWalletsTab() {
                       </Avatar>
                       <span className="text-sm font-medium truncate max-w-[140px]">{w.name}</span>
                       {w.balance < 0 && (
-                        <Badge variant="destructive" className="text-[10px] px-1.5 py-0">Negative</Badge>
+                        <Badge variant="destructive" className="text-[10px] px-1.5 py-0">{t("uiCTGUserWalletsTab.negative")}</Badge>
                       )}
                       {w.zeroSince30 && (
                         <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-destructive border-destructive/40">
@@ -320,7 +320,7 @@ export function CTGUserWalletsTab() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">Page {page + 1} / {totalPages}</p>
+          <p className="text-xs text-muted-foreground">{t("uiCTGUserWalletsTab.page")} {page + 1} / {totalPages}</p>
           <div className="flex gap-1">
             <Button variant="outline" size="icon" className="h-8 w-8" disabled={page === 0} onClick={() => setPage(page - 1)}>
               <ChevronLeft className="h-4 w-4" />
@@ -414,9 +414,9 @@ function WalletDetailDialog({
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mt-2">
           {[
-            { label: "Balance", value: wallet.balance },
-            { label: "Lifetime earned", value: wallet.lifetime_earned },
-            { label: "Lifetime spent", value: wallet.lifetime_spent },
+            { label: t("uiCTGUserWalletsTab.balance"), value: wallet.balance },
+            { label: t("uiCTGUserWalletsTab.lifetimeEarned"), value: wallet.lifetime_earned },
+            { label: t("uiCTGUserWalletsTab.lifetimeSpent"), value: wallet.lifetime_spent },
           ].map((s) => (
             <div key={s.label} className="rounded-lg bg-muted/50 p-3 text-center">
               <p className="text-xs text-muted-foreground">{s.label}</p>
@@ -429,15 +429,15 @@ function WalletDetailDialog({
 
         {/* Transaction history */}
         <div className="mt-4">
-          <h4 className="text-sm font-semibold mb-2">Transaction History</h4>
+          <h4 className="text-sm font-semibold mb-2">{t("uiCTGUserWalletsTab.transactionHistory")}</h4>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t("uiCTGUserWalletsTab.date")}</TableHead>
-                <TableHead>Type</TableHead>
+                <TableHead>{t("uiCTGUserWalletsTab.type")}</TableHead>
                 <TableHead className="text-right">{t("uiCTGUserWalletsTab.amount")}</TableHead>
-                <TableHead className="hidden sm:table-cell">Note</TableHead>
-                <TableHead className="text-right">Balance after</TableHead>
+                <TableHead className="hidden sm:table-cell">{t("uiCTGUserWalletsTab.note")}</TableHead>
+                <TableHead className="text-right">{t("uiCTGUserWalletsTab.balanceAfter")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -471,7 +471,7 @@ function WalletDetailDialog({
           </Table>
           {txTotalPages > 1 && (
             <div className="flex items-center justify-between pt-3">
-              <p className="text-xs text-muted-foreground">Page {txPage + 1} / {txTotalPages}</p>
+              <p className="text-xs text-muted-foreground">{t("uiCTGUserWalletsTab.page")} {txPage + 1} / {txTotalPages}</p>
               <div className="flex gap-1">
                 <Button variant="outline" size="icon" className="h-7 w-7" disabled={txPage === 0} onClick={() => setTxPage(txPage - 1)}>
                   <ChevronLeft className="h-3.5 w-3.5" />
@@ -568,7 +568,7 @@ function WalletAdjustDialog({
             {t("uiCTGUserWalletsTab.adjustBalanceOf")} {wallet.name}
           </DialogTitle>
           <DialogDescription>
-            Current balance: <strong>{wallet.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })} $CTG</strong>
+            {t("uiCTGUserWalletsTab.currentBalance")} <strong>{wallet.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })} $CTG</strong>
           </DialogDescription>
         </DialogHeader>
 
@@ -577,11 +577,11 @@ function WalletAdjustDialog({
           <RadioGroup value={action} onValueChange={(v) => setAction(v as "grant" | "deduct")} className="flex gap-4">
             <div className="flex items-center gap-2">
               <RadioGroupItem value="grant" id="grant" />
-              <Label htmlFor="grant" className="cursor-pointer">Grant $CTG</Label>
+              <Label htmlFor="grant" className="cursor-pointer">{t("uiCTGUserWalletsTab.grantCtg")}</Label>
             </div>
             <div className="flex items-center gap-2">
               <RadioGroupItem value="deduct" id="deduct" />
-              <Label htmlFor="deduct" className="cursor-pointer">Deduct $CTG</Label>
+              <Label htmlFor="deduct" className="cursor-pointer">{t("uiCTGUserWalletsTab.deductCtg")}</Label>
             </div>
           </RadioGroup>
 
@@ -600,7 +600,7 @@ function WalletAdjustDialog({
 
           {/* Reason */}
           <div className="space-y-1.5">
-            <Label>Reason (10–500 characters) *</Label>
+            <Label>{t("uiCTGUserWalletsTab.reason10500Characters")}</Label>
             <Textarea
               maxLength={500}
               placeholder={t("uiCTGUserWalletsTab.justifyTheAdjustment")}
@@ -636,7 +636,7 @@ function WalletAdjustDialog({
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button className="w-full" disabled={!canSubmit || submitting}>
-                {submitting ? "Processing..." : t("uiCTGUserWalletsTab.confirmAdjustment")}
+                {submitting ? t("uiCTGUserWalletsTab.processing") : t("uiCTGUserWalletsTab.confirmAdjustment")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>

@@ -125,7 +125,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
       await syncLegacyIds();
       qc.invalidateQueries({ queryKey: ["quest-affiliations", questId] });
       qc.invalidateQueries({ queryKey: ["quest", questId] });
-      toast({ title: "Affiliation removed" });
+      toast({ title: t("uiQuestAffiliationsTab.affiliationRemoved") });
     }
     setSaving(false);
   };
@@ -150,9 +150,9 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
       case "PENDING":
         return <Badge variant="outline" className="text-[10px] gap-1 text-amber-600 border-amber-300"><Clock className="h-2.5 w-2.5" /> {t("uiQuestAffiliationsTab.pending")}</Badge>;
       case "APPROVED":
-        return <Badge variant="outline" className="text-[10px] gap-1 text-emerald-600 border-emerald-300"><CheckCircle2 className="h-2.5 w-2.5" /> Approved</Badge>;
+        return <Badge variant="outline" className="text-[10px] gap-1 text-emerald-600 border-emerald-300"><CheckCircle2 className="h-2.5 w-2.5" /> {t("uiQuestAffiliationsTab.approved")}</Badge>;
       case "REJECTED":
-        return <Badge variant="outline" className="text-[10px] gap-1 text-destructive border-destructive/30"><XCircle className="h-2.5 w-2.5" /> Declined</Badge>;
+        return <Badge variant="outline" className="text-[10px] gap-1 text-destructive border-destructive/30"><XCircle className="h-2.5 w-2.5" /> {t("uiQuestAffiliationsTab.declined")}</Badge>;
       default:
         return null;
     }
@@ -163,7 +163,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
       <div className="rounded-xl border border-border bg-card p-5 space-y-5">
         <div>
           <h3 className="font-display font-semibold flex items-center gap-2">
-            <Link2 className="h-4 w-4 text-primary" /> Entity Affiliations
+            <Link2 className="h-4 w-4 text-primary" /> {t("uiQuestAffiliationsTab.entityAffiliations")}
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
             {t("uiQuestAffiliationsTab.requestToAttachThisQuestTo")}
@@ -192,7 +192,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
                     <p className="text-sm font-medium">{aff.name}</p>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Badge variant="outline" className="text-[10px]">
-                        {aff.entity_type === "GUILD" ? t("uiQuestAffiliationsTab.guild") : "Organization"}
+                        {aff.entity_type === "GUILD" ? t("uiQuestAffiliationsTab.guild") : t("uiQuestAffiliationsTab.organization")}
                       </Badge>
                       {statusBadge(aff.status)}
                     </div>
@@ -222,7 +222,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="GUILD">{t("uiQuestAffiliationsTab.guild")}</SelectItem>
-                <SelectItem value="COMPANY">Organization</SelectItem>
+                <SelectItem value="COMPANY">{t("uiQuestAffiliationsTab.organization")}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={addEntityId} onValueChange={setAddEntityId}>

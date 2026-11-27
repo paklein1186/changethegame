@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,6 +27,7 @@ const MAX_SIZE_MB = 10;
 const ACCEPT = "image/*,application/pdf";
 
 export function MilestoneEvidenceUploader({ milestoneId, evidence, compact }: Props) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -132,7 +134,7 @@ export function MilestoneEvidenceUploader({ milestoneId, evidence, compact }: Pr
               <button
                 onClick={() => handleRemove(f)}
                 className="text-muted-foreground hover:text-destructive"
-                title="Supprimer"
+                title={t("uiMilestoneEvidenceUploader.supprimer")}
               >
                 <X className="h-3 w-3" />
               </button>
@@ -155,7 +157,7 @@ export function MilestoneEvidenceUploader({ milestoneId, evidence, compact }: Pr
           <Paperclip className="h-3 w-3" />
         )}
         {uploading
-          ? "Envoi…"
+          ? t("uiMilestoneEvidenceUploader.envoi")
           : evidence.length === 0
           ? "Ajouter un justificatif (image / PDF)"
           : "Ajouter un autre fichier"}

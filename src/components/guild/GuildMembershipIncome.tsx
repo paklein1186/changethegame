@@ -53,7 +53,7 @@ export function GuildMembershipIncome({ guildId }: Props) {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-2">
-          <Wallet className="h-4 w-4" /> Membership income
+          <Wallet className="h-4 w-4" /> {t("uiGuildMembershipIncome.membershipIncome")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

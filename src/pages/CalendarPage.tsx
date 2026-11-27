@@ -130,7 +130,7 @@ export default function CalendarPage() {
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
           {event.is_paid && <Badge className="bg-primary/10 text-primary border-0 text-[10px]"><Euro className="h-2.5 w-2.5 mr-0.5" />{event.price_per_ticket}</Badge>}
-          {event._source === "registered" || event._source === "both" ? <Badge variant="secondary" className="text-[10px]">Registered</Badge> : null}
+          {event._source === "registered" || event._source === "both" ? <Badge variant="secondary" className="text-[10px]">{t("uiCalendarPage.registered")}</Badge> : null}
         </div>
       </div>
     </Link>
@@ -140,7 +140,7 @@ export default function CalendarPage() {
     <PageShell>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-          <CalendarDays className="h-7 w-7 text-primary" /> Calendar
+          <CalendarDays className="h-7 w-7 text-primary" /> {t("uiCalendarPage.calendar")}
         </h1>
         <p className="text-muted-foreground mt-1">{t("uiCalendarPage.eventsFromYour")} {label("guild.label_plural").toLowerCase()} {t("uiCalendarPage.andRegistrations")}</p>
       </div>
@@ -167,13 +167,13 @@ export default function CalendarPage() {
         <div className="space-y-6">
           {upcomingEvents.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">Upcoming</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">{t("uiCalendarPage.upcoming")}</h3>
               <div className="space-y-2">{upcomingEvents.map(renderEventCard)}</div>
             </div>
           )}
           {pastEvents.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">Past</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">{t("uiCalendarPage.past")}</h3>
               <div className="space-y-2">{pastEvents.map(renderEventCard)}</div>
             </div>
           )}

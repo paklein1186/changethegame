@@ -118,7 +118,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
           <CardContent className="p-4 text-center">
             <Shield className="h-5 w-5 mx-auto mb-1 text-primary" />
             <p className="text-2xl font-bold">{guild?.value_factor || 1.0}×</p>
-            <p className="text-[10px] text-muted-foreground">Value Factor</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildMonetizationTab.valueFactor")}</p>
           </CardContent>
         </Card>
       </div>
@@ -128,7 +128,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" /> Top Consuming Agents
+              <TrendingUp className="h-4 w-4" /> {t("uiGuildMonetizationTab.topConsumingAgents")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -153,7 +153,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Settings className="h-4 w-4" /> Agent Access Rules
+              <Settings className="h-4 w-4" /> {t("uiGuildMonetizationTab.agentAccessRules")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -176,7 +176,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
             </div>
 
             <div>
-              <Label className="text-sm">Value Factor</Label>
+              <Label className="text-sm">{t("uiGuildMonetizationTab.valueFactor")}</Label>
               <p className="text-[10px] text-muted-foreground mb-1">{t("uiGuildMonetizationTab.higherAgentActionsOnYourContent")}</p>
               <Select
                 value={String(guild?.value_factor || 1.0)}
@@ -186,17 +186,17 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="0.5">0.5× (Low)</SelectItem>
-                  <SelectItem value="1">1.0× (Default)</SelectItem>
-                  <SelectItem value="2">2.0× (High)</SelectItem>
-                  <SelectItem value="3">3.0× (Premium)</SelectItem>
+                  <SelectItem value="0.5">{t("uiGuildMonetizationTab.05Low")}</SelectItem>
+                  <SelectItem value="1">{t("uiGuildMonetizationTab.10Default")}</SelectItem>
+                  <SelectItem value="2">{t("uiGuildMonetizationTab.20High")}</SelectItem>
+                  <SelectItem value="3">{t("uiGuildMonetizationTab.30Premium")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="text-xs text-muted-foreground border-t border-border pt-3 space-y-1">
-              <p>• Max 100 pages/day/agent</p>
-              <p>• Restricted content trust threshold: ≥60</p>
+              <p>{t("uiGuildMonetizationTab.max100PagesDayAgent")}</p>
+              <p>{t("uiGuildMonetizationTab.restrictedContentTrustThreshold60")}</p>
               <p>{t("uiGuildMonetizationTab.revenueSplit70Guild20Platform")}</p>
             </div>
           </CardContent>

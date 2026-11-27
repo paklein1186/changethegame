@@ -28,11 +28,11 @@ interface FundraisingAIPanelProps {
 }
 
 const actions: { key: FundraisingAction; label: string; icon: typeof FileText; desc: string }[] = [
-  { key: "pitch", label: "Generate Pitch", icon: FileText, get desc() { return i18n.t("uiFundraisingAIPanel.compellingFundraisingPitchFromQuestDescription"); } },
+  { key: "pitch", get label() { return i18n.t("uiFundraisingAIPanel.generatePitch"); }, icon: FileText, get desc() { return i18n.t("uiFundraisingAIPanel.compellingFundraisingPitchFromQuestDescription"); } },
   { key: "funder_message", get label() { return i18n.t("uiFundraisingAIPanel.writeToFunders"); }, icon: MessageSquare, get desc() { return i18n.t("uiFundraisingAIPanel.personalizedOutreachMessageForPotentialSupporters"); } },
   { key: "suggest_goal", get label() { return i18n.t("uiFundraisingAIPanel.suggestCreditGoal"); }, icon: Target, get desc() { return i18n.t("uiFundraisingAIPanel.aiRecommendedRealisticFundingTarget"); } },
   { key: "convert", get label() { return i18n.t("uiFundraisingAIPanel.creditsFiat"); }, icon: ArrowLeftRight, get desc() { return i18n.t("uiFundraisingAIPanel.convertBetweenCreditsAndEur"); } },
-  { key: "social_summary", label: "Social Summary", icon: Share2, get desc() { return i18n.t("uiFundraisingAIPanel.readyToSharePostsForSocial"); } },
+  { key: "social_summary", get label() { return i18n.t("uiFundraisingAIPanel.socialSummary"); }, icon: Share2, get desc() { return i18n.t("uiFundraisingAIPanel.readyToSharePostsForSocial"); } },
 ];
 
 export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
@@ -50,7 +50,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
       });
       if (error) throw error;
       if (data?.error) {
-        toast({ title: "AI unavailable", description: data.error, variant: "destructive" });
+        toast({ title: t("uiFundraisingAIPanel.aiUnavailable"), description: data.error, variant: "destructive" });
         return;
       }
       setResults(prev => ({ ...prev, [action]: data.result }));
@@ -78,7 +78,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <Sparkles className="h-5 w-5 text-primary" />
-        <h3 className="font-display font-semibold">Fundraising AI</h3>
+        <h3 className="font-display font-semibold">{t("uiFundraisingAIPanel.fundraisingAi")}</h3>
       </div>
       <p className="text-sm text-muted-foreground">{t("uiFundraisingAIPanel.aiPoweredToolsToHelpYou")}</p>
 
@@ -120,7 +120,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
             <h4 className="text-sm font-semibold">{t("uiFundraisingAIPanel.messageToFunders")}</h4>
             <CopyBtn text={`Subject: ${results.funder_message.subject}\n\n${results.funder_message.message}\n\n${results.funder_message.closing}`} label="funder" />
           </div>
-          <p className="text-xs font-medium text-primary">Subject: {results.funder_message.subject}</p>
+          <p className="text-xs font-medium text-primary">{t("uiFundraisingAIPanel.subject")} {results.funder_message.subject}</p>
           <p className="text-sm text-muted-foreground whitespace-pre-wrap">{results.funder_message.message}</p>
           <p className="text-sm italic text-muted-foreground">{results.funder_message.closing}</p>
         </Card>
@@ -132,18 +132,18 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
           <h4 className="text-sm font-semibold">{t("uiFundraisingAIPanel.suggestedCreditGoal")}</h4>
           <div className="grid grid-cols-2 gap-3">
             <div className="text-center p-3 rounded-md bg-primary/10">
-              <p className="text-xs text-muted-foreground">Recommended</p>
+              <p className="text-xs text-muted-foreground">{t("uiFundraisingAIPanel.recommended")}</p>
               <p className="text-xl font-bold text-primary">{results.suggest_goal.suggested_credits} {t("uiFundraisingAIPanel.credits")}</p>
             </div>
             <div className="text-center p-3 rounded-md bg-muted/50">
-              <p className="text-xs text-muted-foreground">Stretch Goal</p>
+              <p className="text-xs text-muted-foreground">{t("uiFundraisingAIPanel.stretchGoal")}</p>
               <p className="text-xl font-bold">{results.suggest_goal.stretch_goal_credits} {t("uiFundraisingAIPanel.credits")}</p>
             </div>
           </div>
           <p className="text-sm text-muted-foreground">{results.suggest_goal.reasoning}</p>
           {results.suggest_goal.breakdown?.length > 0 && (
             <div className="space-y-1">
-              <p className="text-xs font-medium">Breakdown:</p>
+              <p className="text-xs font-medium">{t("uiFundraisingAIPanel.breakdown")}</p>
               {results.suggest_goal.breakdown.map((b: any, i: number) => (
                 <div key={i} className="flex justify-between text-xs text-muted-foreground">
                   <span>{b.item}</span>
@@ -181,11 +181,11 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
       {/* Social Summary Result */}
       {results.social_summary && (
         <Card className="p-4 space-y-3">
-          <h4 className="text-sm font-semibold">Social Media Content</h4>
+          <h4 className="text-sm font-semibold">{t("uiFundraisingAIPanel.socialMediaContent")}</h4>
           <div className="space-y-3">
             <div className="rounded-md border border-border p-3">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-medium">Twitter / X</p>
+                <p className="text-xs font-medium">{t("uiFundraisingAIPanel.twitterX")}</p>
                 <CopyBtn text={results.social_summary.twitter} label="twitter" />
               </div>
               <p className="text-sm text-muted-foreground">{results.social_summary.twitter}</p>
@@ -199,7 +199,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
             </div>
             <div className="rounded-md border border-border p-3">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-medium">Short Pitch</p>
+                <p className="text-xs font-medium">{t("uiFundraisingAIPanel.shortPitch")}</p>
                 <CopyBtn text={results.social_summary.short_pitch} label="short" />
               </div>
               <p className="text-sm text-muted-foreground">{results.social_summary.short_pitch}</p>

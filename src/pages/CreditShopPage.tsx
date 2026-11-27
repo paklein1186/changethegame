@@ -45,7 +45,7 @@ const SHOP_ITEMS: ShopItem[] = [
     category: "visibility",
   },
   {
-    label: "Boost service visibility",
+    get label() { return i18n.t("uiCreditShopPage.boostServiceVisibility"); },
     cost: CREDIT_COSTS.BOOST_SERVICE_VISIBILITY,
     get description() { return i18n.t("uiCreditShopPage.increaseYourServiceSRankingIn"); },
     icon: <Megaphone className="h-5 w-5" />,
@@ -66,14 +66,14 @@ const SHOP_ITEMS: ShopItem[] = [
     category: "visibility",
   },
   {
-    label: "Boost course visibility",
+    get label() { return i18n.t("uiCreditShopPage.boostCourseVisibility"); },
     cost: CREDIT_COSTS.BOOST_COURSE,
     get description() { return i18n.t("uiCreditShopPage.promoteYourCourseInTheLearning"); },
     icon: <GraduationCap className="h-5 w-5" />,
     category: "visibility",
   },
   {
-    label: "AI Pro session",
+    get label() { return i18n.t("uiCreditShopPage.aiProSession"); },
     cost: CREDIT_COSTS.ENABLE_AI_PRO_SESSION,
     get description() { return i18n.t("uiCreditShopPage.unlockAnAdvancedAiAssistantSession"); },
     icon: <Bot className="h-5 w-5" />,
@@ -89,9 +89,9 @@ const SHOP_ITEMS: ShopItem[] = [
 ];
 
 const CATEGORIES = [
-  { key: "capacity" as const, label: "⚡ Extra Capacity", get description() { return i18n.t("uiCreditShopPage.goBeyondYourPlanLimits"); } },
-  { key: "visibility" as const, label: "📣 Visibility Boosts", get description() { return i18n.t("uiCreditShopPage.getNoticedInExploreSearch"); } },
-  { key: "utility" as const, label: "🛠 Utility & Tools", description: "Unlock special features" },
+  { key: "capacity" as const, get label() { return i18n.t("uiCreditShopPage.extraCapacity"); }, get description() { return i18n.t("uiCreditShopPage.goBeyondYourPlanLimits"); } },
+  { key: "visibility" as const, get label() { return i18n.t("uiCreditShopPage.visibilityBoosts"); }, get description() { return i18n.t("uiCreditShopPage.getNoticedInExploreSearch"); } },
+  { key: "utility" as const, get label() { return i18n.t("uiCreditShopPage.utilityTools"); }, get description() { return i18n.t("uiCreditShopPage.unlockSpecialFeatures"); } },
 ];
 
 export default function CreditShopPage() {
@@ -130,7 +130,7 @@ export default function CreditShopPage() {
             </Badge>
             <Link to="/me/credits">
               <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-                <Zap className="h-3.5 w-3.5" /> Top Up
+                <Zap className="h-3.5 w-3.5" /> {t("uiCreditShopPage.topUp")}
               </Button>
             </Link>
           </div>
@@ -203,7 +203,7 @@ export default function CreditShopPage() {
               <span>
                 <strong className="text-foreground">{t("uiCreditShopPage.buyWith")}</strong> {t("uiCreditShopPage.instantStripePurchaseFromThe")}{" "}
                 <Link to="/me/credits" className="text-primary hover:underline">
-                  Top Up page
+                  {t("uiCreditShopPage.topUpPage")}
                 </Link>
                 .
               </span>
@@ -211,7 +211,7 @@ export default function CreditShopPage() {
             <div className="flex items-start gap-2">
               <ArrowRight className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
               <span>
-                <strong className="text-foreground">Exchange $CTG</strong> {t("uiCreditShopPage.convertContributionTokensEarnedThroughQuests")}
+                <strong className="text-foreground">{t("uiCreditShopPage.exchangeCtg")}</strong> {t("uiCreditShopPage.convertContributionTokensEarnedThroughQuests")}
               </span>
             </div>
             <div className="flex items-start gap-2">

@@ -24,17 +24,17 @@ const CONTRACT_OPTIONS = [
   { value: "all", get label() { return i18n.t("uiJobsExplore.allTypes"); } },
   { value: "full-time", get label() { return i18n.t("uiJobsExplore.fullTime"); } },
   { value: "part-time", get label() { return i18n.t("uiJobsExplore.partTime"); } },
-  { value: "contract", label: "Contract" },
-  { value: "freelance", label: "Freelance" },
-  { value: "internship", label: "Internship" },
-  { value: "volunteer", label: "Volunteer" },
+  { value: "contract", get label() { return i18n.t("uiJobsExplore.contract"); } },
+  { value: "freelance", get label() { return i18n.t("uiJobsExplore.freelance"); } },
+  { value: "internship", get label() { return i18n.t("uiJobsExplore.internship"); } },
+  { value: "volunteer", get label() { return i18n.t("uiJobsExplore.volunteer"); } },
 ];
 
 const REMOTE_OPTIONS = [
   { value: "all", get label() { return i18n.t("uiJobsExplore.allPolicies"); } },
   { value: "on-site", get label() { return i18n.t("uiJobsExplore.onSite"); } },
-  { value: "remote", label: "Remote" },
-  { value: "hybrid", label: "Hybrid" },
+  { value: "remote", get label() { return i18n.t("uiJobsExplore.remote"); } },
+  { value: "hybrid", get label() { return i18n.t("uiJobsExplore.hybrid"); } },
 ];
 
 interface Props {
@@ -90,7 +90,7 @@ export default function JobsExplore({ bare }: Props) {
     if (!window.confirm(t("uiJobsExplore.deleteThisJobPosition"))) return;
     try {
       await deleteJob.mutateAsync({ id: jobId, companyId: companyId || "" });
-      toast({ title: "Job deleted" });
+      toast({ title: t("uiJobsExplore.jobDeleted") });
     } catch (err: any) {
       console.error("Delete job error:", err);
       toast({ title: t("uiJobsExplore.errorDeletingJob"), description: err?.message, variant: "destructive" });
@@ -257,11 +257,11 @@ export default function JobsExplore({ bare }: Props) {
                       <Avatar className="h-5 w-5 rounded">
                         <AvatarFallback className="rounded text-[8px]"><User className="h-2.5 w-2.5" /></AvatarFallback>
                       </Avatar>
-                      Individual
+                      {t("uiJobsExplore.individual")}
                     </span>
                   )}
                   <span className="text-muted-foreground/60">·</span>
-                  <span>Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</span>
+                  <span>{t("uiJobsExplore.posted")} {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</span>
                 </div>
                 <div>
               {job.document_url && !isGuest && (

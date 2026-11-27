@@ -135,7 +135,7 @@ export function EntityQuestsFilters({ quests, children }: EntityQuestsFiltersPro
             onClick={() => setStatusFilter(new Set())}
             className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            <X className="h-3 w-3" /> Clear
+            <X className="h-3 w-3" /> {t("uiEntityQuestsFilters.clear")}
           </button>
         )}
 
@@ -163,7 +163,7 @@ export function EntityQuestsFilters({ quests, children }: EntityQuestsFiltersPro
             }
           >
             <ArrowDownUp className="h-3.5 w-3.5" />
-            {sortBy === "recent" ? "Recent" : sortBy === "status" ? t("uiEntityQuestsFilters.status") : t("uiEntityQuestsFilters.budget")}
+            {sortBy === "recent" ? t("uiEntityQuestsFilters.recent") : sortBy === "status" ? t("uiEntityQuestsFilters.status") : t("uiEntityQuestsFilters.budget")}
           </Button>
 
           {/* View mode toggle */}

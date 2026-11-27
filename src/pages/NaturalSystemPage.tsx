@@ -210,7 +210,7 @@ export default function NaturalSystemPage() {
           )}
           {ns.source_url && (
             <a href={ns.source_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-primary transition-colors">
-              <ExternalLink className="h-3.5 w-3.5" /> Source
+              <ExternalLink className="h-3.5 w-3.5" /> {t("uiNaturalSystemPage.source")}
             </a>
           )}
         </div>
@@ -224,7 +224,7 @@ export default function NaturalSystemPage() {
             <Link2 className="h-4 w-4 mr-1" /> {t("uiNaturalSystemPage.linkToUnit")}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setConfigOpen(true)}>
-            <Settings className="h-4 w-4 mr-1" /> Configure live data
+            <Settings className="h-4 w-4 mr-1" /> {t("uiNaturalSystemPage.configureLiveData")}
           </Button>
           {ns.territory_id && (
             <Link to={`/territories/${ns.territory_id}?tab=living`}>
@@ -242,14 +242,14 @@ export default function NaturalSystemPage() {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList>
           <TabsTrigger value="overview">{t("uiNaturalSystemPage.overview")}</TabsTrigger>
-          <TabsTrigger value="ecosystem">Ecosystem</TabsTrigger>
+          <TabsTrigger value="ecosystem">{t("uiNaturalSystemPage.ecosystem")}</TabsTrigger>
         </TabsList>
 
         {/* ─── Overview Tab ─── */}
         <TabsContent value="overview" className="space-y-10 mt-6">
           {/* SECTION B – LIVE DATA & HEALTH DASHBOARD */}
           <section className="space-y-5">
-            <SectionHeading icon={Activity} title="Live Data & Health" sub="Real-time metrics and computed indicators" />
+            <SectionHeading icon={Activity} title={t("uiNaturalSystemPage.liveDataHealth")} sub="Real-time metrics and computed indicators" />
 
             <div className="grid gap-5 md:grid-cols-2">
               <Card className="overflow-hidden">
@@ -274,13 +274,13 @@ export default function NaturalSystemPage() {
                     </span>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-display font-semibold text-sm">Health Index</h3>
+                    <h3 className="font-display font-semibold text-sm">{t("uiNaturalSystemPage.healthIndex")}</h3>
                     <Badge variant="outline" className={cn("text-xs", healthColor(healthVal))}>
                       {healthLabel(healthVal)}
                     </Badge>
                     {stressIndicator && (
                       <p className="text-xs text-muted-foreground">
-                        Stress index: <span className="font-medium text-foreground">{Math.round(stressIndicator.value)}</span>
+                        {t("uiNaturalSystemPage.stressIndex")} <span className="font-medium text-foreground">{Math.round(stressIndicator.value)}</span>
                       </p>
                     )}
                     {indicators && indicators.filter(i => i.indicator !== "health_index" && i.indicator !== "stress_index").map(ind => (
@@ -295,7 +295,7 @@ export default function NaturalSystemPage() {
               <Card>
                 <CardContent className="p-5 space-y-3">
                   <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-                    <BarChart3 className="h-4 w-4 text-primary" /> Data Sources
+                    <BarChart3 className="h-4 w-4 text-primary" /> {t("uiNaturalSystemPage.dataSources")}
                   </h3>
                   {(metrics ?? []).length === 0 ? (
                     <p className="text-xs text-muted-foreground">{t("uiNaturalSystemPage.noDataPointsRecordedYet")}</p>
@@ -312,7 +312,7 @@ export default function NaturalSystemPage() {
                   )}
                   {(ns as any).live_config && (
                     <div className="mt-2 p-2 rounded-lg bg-muted/50 text-[11px] text-muted-foreground">
-                      <span className="font-medium">Live source:</span> {(ns as any).live_config.type ?? "configured"} — {(ns as any).live_config.endpoint?.slice(0, 60) ?? "—"}
+                      <span className="font-medium">{t("uiNaturalSystemPage.liveSource")}</span> {(ns as any).live_config.type ?? "configured"} — {(ns as any).live_config.endpoint?.slice(0, 60) ?? "—"}
                     </div>
                   )}
                 </CardContent>
@@ -330,7 +330,7 @@ export default function NaturalSystemPage() {
 
           {/* SECTION C – STEWARDSHIP & GOVERNANCE */}
           <section className="space-y-5">
-            <SectionHeading icon={Shield} title="Stewardship & Governance" sub="Eco-quests, stewards, and governance relationships" />
+            <SectionHeading icon={Shield} title={t("uiNaturalSystemPage.stewardshipGovernance")} sub="Eco-quests, stewards, and governance relationships" />
 
             <div className="grid gap-5 md:grid-cols-2">
               <Card>
@@ -366,11 +366,11 @@ export default function NaturalSystemPage() {
               <Card>
                 <CardContent className="p-5 space-y-4">
                   <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-                    <Users className="h-4 w-4 text-primary" /> Stewards
+                    <Users className="h-4 w-4 text-primary" /> {t("uiNaturalSystemPage.stewards")}
                   </h3>
                   {(stewardEdges ?? []).length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-[11px] font-medium text-muted-foreground">Trust-weighted stewards</p>
+                      <p className="text-[11px] font-medium text-muted-foreground">{t("uiNaturalSystemPage.trustWeightedStewards")}</p>
                       {(stewardEdges ?? []).slice(0, 5).map((e, i) => {
                         const profile = profiles?.find(p => p.user_id === e.from_id);
                         const guild = guilds?.find(g => g.id === e.from_id);
@@ -392,7 +392,7 @@ export default function NaturalSystemPage() {
                   )}
                   {((profiles ?? []).length > 0 || (guilds ?? []).length > 0) && (
                     <div className="space-y-2">
-                      <p className="text-[11px] font-medium text-muted-foreground">Linked stewards</p>
+                      <p className="text-[11px] font-medium text-muted-foreground">{t("uiNaturalSystemPage.linkedStewards")}</p>
                       {(profiles ?? []).map(p => (
                         <Link key={p.user_id} to={`/users/${p.user_id}`} className="flex items-center gap-2 rounded-lg p-2 hover:bg-muted/50 transition-colors">
                           <Users className="h-3.5 w-3.5 text-muted-foreground" />
@@ -418,7 +418,7 @@ export default function NaturalSystemPage() {
             <Card>
               <CardContent className="p-5 space-y-3">
                 <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-primary" /> Governance Relationships
+                  <Shield className="h-4 w-4 text-primary" /> {t("uiNaturalSystemPage.governanceRelationships")}
                 </h3>
                 <div className="flex flex-wrap gap-3">
                   {ns.territory_id && territoryName && (
@@ -443,7 +443,7 @@ export default function NaturalSystemPage() {
                 </div>
                 {(stewardEdges ?? []).length > 0 && (
                   <div className="rounded-xl border border-border bg-muted/30 p-4 mt-3">
-                    <p className="text-[11px] font-medium text-muted-foreground text-center mb-3">Trust Network</p>
+                    <p className="text-[11px] font-medium text-muted-foreground text-center mb-3">{t("uiNaturalSystemPage.trustNetwork")}</p>
                     <div className="flex flex-wrap items-center justify-center gap-3">
                       <div className="flex flex-col items-center gap-0.5">
                         <div className="h-10 w-10 rounded-full bg-success/20 ring-2 ring-success/30 flex items-center justify-center text-sm">🌿</div>
@@ -463,7 +463,7 @@ export default function NaturalSystemPage() {
                       })}
                     </div>
                     <p className="text-[10px] text-muted-foreground text-center mt-2">
-                      {(stewardEdges ?? []).length} trust connections
+                      {(stewardEdges ?? []).length} {t("uiNaturalSystemPage.trustConnections")}
                     </p>
                   </div>
                 )}

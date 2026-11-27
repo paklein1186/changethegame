@@ -102,7 +102,7 @@ export function MilestoneJourney() {
         </h2>
         <Button variant="ghost" size="sm" className="text-xs h-7" asChild>
           <Link to="/me/milestones">
-            Full page <ArrowRight className="h-3 w-3 ml-1" />
+            {t("uiMilestoneJourney.fullPage")} <ArrowRight className="h-3 w-3 ml-1" />
           </Link>
         </Button>
       </div>
@@ -152,7 +152,7 @@ export function MilestoneJourney() {
             onClick={() => setShowCompleted(!showCompleted)}
           >
             {showCompleted ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-            {showCompleted ? "Hide" : "Show"} {t("uiMilestoneJourney.completed")}{completed.length})
+            {showCompleted ? t("uiMilestoneJourney.hide") : t("uiMilestoneJourney.show")} {t("uiMilestoneJourney.completed")}{completed.length})
           </Button>
           {showCompleted && completed.map((m, i) => (
             <MiniMilestone key={m.id} m={m} index={i} onComplete={completeMilestone} />

@@ -57,7 +57,7 @@ export default function BookingDetail() {
       <PageShell>
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
-          <h1 className="font-display text-2xl font-bold mb-2">Access denied</h1>
+          <h1 className="font-display text-2xl font-bold mb-2">{t("uiBookingDetail.accessDenied")}</h1>
           <p className="text-muted-foreground mb-6">{t("uiBookingDetail.youDonTHavePermissionTo")}</p>
           <Button variant="outline" asChild>
             <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiBookingDetail.backToWork")}</Link>
@@ -90,13 +90,13 @@ export default function BookingDetail() {
         </div>
 
         <section className="rounded-xl border border-border bg-card p-5 mb-4">
-          <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Service</h2>
+          <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">{t("uiBookingDetail.service")}</h2>
           {service ? (
             <Link to={`/services/${service.id}`} className="font-display text-lg font-semibold hover:text-primary transition-colors">
               {service.title}
             </Link>
           ) : (
-            <span className="text-muted-foreground">Unknown service</span>
+            <span className="text-muted-foreground">{t("uiBookingDetail.unknownService")}</span>
           )}
           {service?.description && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{service.description}</p>}
         </section>
@@ -109,7 +109,7 @@ export default function BookingDetail() {
               {booking.end_date_time && <> — {new Date(booking.end_date_time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</>}
             </p>
           ) : booking.requested_date_time ? (
-            <p className="text-sm text-muted-foreground">Preferred: {new Date(booking.requested_date_time).toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground">{t("uiBookingDetail.preferred")} {new Date(booking.requested_date_time).toLocaleString()}</p>
           ) : (
             <p className="text-sm text-muted-foreground">{t("uiBookingDetail.noDateSet")}</p>
           )}
@@ -117,7 +117,7 @@ export default function BookingDetail() {
 
         {booking.amount != null && booking.amount > 0 && (
           <section className="rounded-xl border border-border bg-card p-5 mb-4">
-            <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Payment</h2>
+            <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">{t("uiBookingDetail.payment")}</h2>
             <p className="text-sm">
               🟩 {Math.round(booking.amount / 0.04).toLocaleString()} {t("uiBookingDetail.coins")}{booking.amount}) — <span className="capitalize">{booking.payment_status?.toLowerCase().replace(/_/g, " ") || "N/A"}</span>
             </p>
@@ -126,13 +126,13 @@ export default function BookingDetail() {
 
         {booking.notes && (
           <section className="rounded-xl border border-border bg-card p-5 mb-4">
-            <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Notes</h2>
+            <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-2">{t("uiBookingDetail.notes")}</h2>
             <p className="text-sm text-muted-foreground">{booking.notes}</p>
           </section>
         )}
 
         <section className="rounded-xl border border-border bg-card p-5 mb-4">
-          <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-3">Session</h2>
+          <h2 className="text-xs font-semibold uppercase text-muted-foreground mb-3">{t("uiBookingDetail.session")}</h2>
           <div className="flex flex-wrap gap-3">
             {isConfirmed ? (
               <>

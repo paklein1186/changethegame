@@ -158,9 +158,9 @@ export function TerritorySynthesis({ territoryId, territoryName, isMember }: Pro
                 disabled={generateMutation.isPending}
               >
                 {generateMutation.isPending ? (
-                  <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating…</>
+                  <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {t("uiTerritorySynthesis.generating")}</>
                 ) : (
-                  <><RefreshCw className="h-3.5 w-3.5" /> {summary ? "Regenerate" : "Generate"}</>
+                  <><RefreshCw className="h-3.5 w-3.5" /> {summary ? t("uiTerritorySynthesis.regenerate") : t("uiTerritorySynthesis.generate")}</>
                 )}
               </Button>
             )}
@@ -233,7 +233,7 @@ export function TerritorySynthesis({ territoryId, territoryName, isMember }: Pro
                     <span>{c.entry_count} {c.entry_count === 1 ? "entry" : "entries"}</span>
                     {c.total_ai_score > 0 && (
                       <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                        Score {Math.round(c.total_ai_score)}
+                        {t("uiTerritorySynthesis.score")} {Math.round(c.total_ai_score)}
                       </Badge>
                     )}
                   </div>

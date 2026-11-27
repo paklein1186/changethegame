@@ -68,7 +68,7 @@ export function HarvestWindowBanner() {
       <div className="flex items-center justify-center gap-2 flex-wrap">
         <Sprout className="h-4 w-4 text-emerald-600 dark:text-emerald-400 animate-pulse" />
         <span>
-          🌾 <strong>Harvest Window:</strong> {window.label} {t("uiHarvestWindowBanner.allCtgContributionsEarn")}{" "}
+          🌾 <strong>{t("uiHarvestWindowBanner.harvestWindow")}</strong> {window.label} {t("uiHarvestWindowBanner.allCtgContributionsEarn")}{" "}
           <strong className="text-emerald-700 dark:text-emerald-300">{window.multiplier}×</strong>
         </span>
         <span className="inline-flex items-center gap-1 bg-amber-200/60 dark:bg-amber-800/40 rounded-full px-2 py-0.5 text-xs font-mono">
@@ -78,7 +78,7 @@ export function HarvestWindowBanner() {
       <button
         onClick={handleDismiss}
         className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-amber-200/50 dark:hover:bg-amber-800/30 transition-colors"
-        aria-label="Dismiss"
+        aria-label={t("uiHarvestWindowBanner.dismiss")}
       >
         <X className="h-3.5 w-3.5" />
       </button>

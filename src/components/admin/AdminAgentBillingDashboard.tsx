@@ -61,20 +61,20 @@ export default function AdminAgentBillingDashboard() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-bold">Agent Billing Dashboard</h2>
+      <h2 className="text-lg font-bold">{t("uiAdminAgentBillingDashboard.agentBillingDashboard")}</h2>
 
       {/* Global Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="p-4">
-          <div className="text-sm text-muted-foreground mb-1 flex items-center gap-1"><TrendingUp className="h-4 w-4" /> Total Spend (Month)</div>
+          <div className="text-sm text-muted-foreground mb-1 flex items-center gap-1"><TrendingUp className="h-4 w-4" /> {t("uiAdminAgentBillingDashboard.totalSpendMonth")}</div>
           <p className="text-2xl font-bold">{aggLoading ? "…" : (agg?.totalSpent?.toFixed(1) ?? 0)} credits</p>
         </Card>
         <Card className="p-4">
-          <div className="text-sm text-muted-foreground mb-1">Paid Actions</div>
+          <div className="text-sm text-muted-foreground mb-1">{t("uiAdminAgentBillingDashboard.paidActions")}</div>
           <p className="text-2xl font-bold">{agg?.totalPaid?.toFixed(1) ?? 0} credits</p>
         </Card>
         <Card className="p-4">
-          <div className="text-sm text-muted-foreground mb-1">Total Actions</div>
+          <div className="text-sm text-muted-foreground mb-1">{t("uiAdminAgentBillingDashboard.totalActions")}</div>
           <p className="text-2xl font-bold">{agg?.totalActions ?? 0}</p>
         </Card>
         <Card className="p-4">
@@ -85,9 +85,9 @@ export default function AdminAgentBillingDashboard() {
 
       <Tabs defaultValue="agents">
         <TabsList>
-          <TabsTrigger value="agents">Agents</TabsTrigger>
-          <TabsTrigger value="actions">Action Types</TabsTrigger>
-          <TabsTrigger value="plans">Plans</TabsTrigger>
+          <TabsTrigger value="agents">{t("uiAdminAgentBillingDashboard.agents")}</TabsTrigger>
+          <TabsTrigger value="actions">{t("uiAdminAgentBillingDashboard.actionTypes")}</TabsTrigger>
+          <TabsTrigger value="plans">{t("uiAdminAgentBillingDashboard.plans")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="agents" className="mt-4">
@@ -96,10 +96,10 @@ export default function AdminAgentBillingDashboard() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border text-muted-foreground">
-                    <th className="text-left py-2">Agent</th>
-                    <th className="text-left py-2">Plan</th>
-                    <th className="text-right py-2">Limit</th>
-                    <th className="text-right py-2">Month Spend</th>
+                    <th className="text-left py-2">{t("uiAdminAgentBillingDashboard.agent")}</th>
+                    <th className="text-left py-2">{t("uiAdminAgentBillingDashboard.plan")}</th>
+                    <th className="text-right py-2">{t("uiAdminAgentBillingDashboard.limit")}</th>
+                    <th className="text-right py-2">{t("uiAdminAgentBillingDashboard.monthSpend")}</th>
                     <th className="text-center py-2">{t("uiAdminAgentBillingDashboard.status")}</th>
                   </tr>
                 </thead>
@@ -114,7 +114,7 @@ export default function AdminAgentBillingDashboard() {
                       </td>
                       <td className="text-center py-1.5">
                         <Badge variant={b.is_active ? "default" : "destructive"} className="text-[10px]">
-                          {b.is_active ? t("uiAdminAgentBillingDashboard.active") : "Paused"}
+                          {b.is_active ? t("uiAdminAgentBillingDashboard.active") : t("uiAdminAgentBillingDashboard.paused")}
                         </Badge>
                       </td>
                     </tr>
@@ -130,10 +130,10 @@ export default function AdminAgentBillingDashboard() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
-                  <th className="text-left py-2">Code</th>
-                  <th className="text-left py-2">Label</th>
-                  <th className="text-right py-2">Base Price</th>
-                  <th className="text-left py-2">Sensitivity</th>
+                  <th className="text-left py-2">{t("uiAdminAgentBillingDashboard.code")}</th>
+                  <th className="text-left py-2">{t("uiAdminAgentBillingDashboard.label")}</th>
+                  <th className="text-right py-2">{t("uiAdminAgentBillingDashboard.basePrice")}</th>
+                  <th className="text-left py-2">{t("uiAdminAgentBillingDashboard.sensitivity")}</th>
                 </tr>
               </thead>
               <tbody>

@@ -118,7 +118,7 @@ export default function EventDetail() {
     } as any);
     if (error) { toast({ title: t("uiEventDetail.failedToRegister"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["event-registrations", id] });
-    toast({ title: isFull ? t("uiEventDetail.addedToWaitlist") : autoAccept ? "Registered!" : "Registration submitted, awaiting approval" });
+    toast({ title: isFull ? t("uiEventDetail.addedToWaitlist") : autoAccept ? t("uiEventDetail.registered") : t("uiEventDetail.registrationSubmittedAwaitingApproval") });
   };
 
   const registerPaid = async () => {
@@ -148,7 +148,7 @@ export default function EventDetail() {
     qc.invalidateQueries({ queryKey: ["event-registrations", id] });
     setActionRegId(null);
     setActionType("");
-    toast({ title: actionType === "accept" ? "Participant accepted" : "Participant refused" });
+    toast({ title: actionType === "accept" ? t("uiEventDetail.participantAccepted") : t("uiEventDetail.participantRefused") });
   };
 
   const cancelEvent = async () => {
@@ -193,9 +193,9 @@ export default function EventDetail() {
           <div className="flex flex-col gap-2 shrink-0">
             {!isCancelled && !eventPast && !myReg && session && (
               event.is_paid ? (
-                <Button onClick={registerPaid}><Euro className="h-4 w-4 mr-1" /> Buy Ticket</Button>
+                <Button onClick={registerPaid}><Euro className="h-4 w-4 mr-1" /> {t("uiEventDetail.buyTicket")}</Button>
               ) : (
-                <Button onClick={registerFree}>Register</Button>
+                <Button onClick={registerFree}>{t("uiEventDetail.register")}</Button>
               )
             )}
             {!isCancelled && !eventPast && !session && (
@@ -234,8 +234,8 @@ export default function EventDetail() {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="overview"><Shield className="h-4 w-4 mr-1" />{t("uiEventDetail.overview")}</TabsTrigger>
-          <TabsTrigger value="participants"><Users className="h-4 w-4 mr-1" />Participants ({acceptedCount})</TabsTrigger>
-          <TabsTrigger value="wall"><MessageSquare className="h-4 w-4 mr-1" />Wall</TabsTrigger>
+          <TabsTrigger value="participants"><Users className="h-4 w-4 mr-1" />{t("uiEventDetail.participants")}{acceptedCount})</TabsTrigger>
+          <TabsTrigger value="wall"><MessageSquare className="h-4 w-4 mr-1" />{t("uiEventDetail.wall")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-4">
@@ -245,15 +245,15 @@ export default function EventDetail() {
           <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-lg border border-border bg-card p-4 text-center">
               <p className="text-2xl font-bold text-primary">{acceptedCount}</p>
-              <p className="text-sm text-muted-foreground">Participants</p>
+              <p className="text-sm text-muted-foreground">{t("uiEventDetail.participants2")}</p>
             </div>
             <div className="rounded-lg border border-border bg-card p-4 text-center">
               <p className="text-2xl font-bold text-primary capitalize">{event.acceptance_mode?.toLowerCase()}</p>
-              <p className="text-sm text-muted-foreground">Acceptance</p>
+              <p className="text-sm text-muted-foreground">{t("uiEventDetail.acceptance")}</p>
             </div>
             <div className="rounded-lg border border-border bg-card p-4 text-center">
-              <p className="text-2xl font-bold text-primary">{event.is_paid ? `${event.price_per_ticket} ${event.currency}` : "Free"}</p>
-              <p className="text-sm text-muted-foreground">Ticket Price</p>
+              <p className="text-2xl font-bold text-primary">{event.is_paid ? `${event.price_per_ticket} ${event.currency}` : t("uiEventDetail.free")}</p>
+              <p className="text-sm text-muted-foreground">{t("uiEventDetail.ticketPrice")}</p>
             </div>
           </div>
         </TabsContent>
@@ -267,7 +267,7 @@ export default function EventDetail() {
                 <AvatarFallback>{reg.profile?.name?.[0] || "?"}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{reg.profile?.name || reg.name || "Unknown"}</p>
+                <p className="text-sm font-medium truncate">{reg.profile?.name || reg.name || t("uiEventDetail.unknown")}</p>
                 <div className="flex gap-1.5 mt-0.5">
                   <Badge variant="outline" className="text-[10px] capitalize">{reg.status.toLowerCase()}</Badge>
                   {reg.payment_status !== "NONE" && <Badge variant="secondary" className="text-[10px] capitalize">{reg.payment_status.toLowerCase()}</Badge>}

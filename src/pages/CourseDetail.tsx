@@ -52,7 +52,7 @@ export default function CourseDetail() {
     if (error) { toast({ title: t("uiCourseDetail.failedToEnroll"), variant: "destructive" }); return; }
     autoFollowEntity(currentUser.id, "COURSE", course.id);
     qc.invalidateQueries({ queryKey: ["course-enrollment", id] });
-    toast({ title: "Enrolled!" });
+    toast({ title: t("uiCourseDetail.enrolled") });
     if (lessonsList.length > 0) navigate(`/courses/${course.id}/lessons/${lessonsList[0].id}`);
   };
 
@@ -91,7 +91,7 @@ export default function CourseDetail() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               {course.is_free ? (
-                <Badge className="bg-green-500/10 text-green-600 border-0">Free</Badge>
+                <Badge className="bg-green-500/10 text-green-600 border-0">{t("uiCourseDetail.free")}</Badge>
               ) : (
                 <Badge className="bg-primary/10 text-primary border-0">€{course.price_amount}</Badge>
               )}
@@ -118,7 +118,7 @@ export default function CourseDetail() {
               <Button onClick={handleEnroll}><GraduationCap className="h-4 w-4 mr-1" /> {t("uiCourseDetail.enrollForFree")}</Button>
             )}
             {!isCreator && !isEnrolled && !course.is_free && (
-              <Button onClick={handleBuy}><GraduationCap className="h-4 w-4 mr-1" /> Buy course — €{course.price_amount}</Button>
+              <Button onClick={handleBuy}><GraduationCap className="h-4 w-4 mr-1" /> {t("uiCourseDetail.buyCourse")}{course.price_amount}</Button>
             )}
             {isEnrolled && continueLesson && (
               <Button asChild><Link to={continueLesson}><Play className="h-4 w-4 mr-1" /> {t("uiCourseDetail.continueLearning")}</Link></Button>
@@ -126,7 +126,7 @@ export default function CourseDetail() {
             {isEnrolled && enrollment && (
               <div className="w-48">
                 <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                  <span>Progress</span>
+                  <span>{t("uiCourseDetail.progress")}</span>
                   <span>{Math.round(Number(enrollment.progress_percent))}%</span>
                 </div>
                 <Progress value={Number(enrollment.progress_percent)} className="h-2" />
@@ -148,7 +148,7 @@ export default function CourseDetail() {
         </div>
 
         <div>
-          <h2 className="font-display text-lg font-semibold mb-3">Lessons ({lessonsList.length})</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">{t("uiCourseDetail.lessons")}{lessonsList.length})</h2>
           <div className="space-y-2">
             {lessonsList.map((lesson, i) => {
               const canView = canAccess || lesson.is_preview;
@@ -160,7 +160,7 @@ export default function CourseDetail() {
                         <span className="text-xs text-muted-foreground w-5 shrink-0">{i + 1}.</span>
                         {lesson.is_preview ? <Eye className="h-4 w-4 text-muted-foreground shrink-0" /> : <Play className="h-4 w-4 text-primary shrink-0" />}
                         <span className="text-sm font-medium flex-1">{lesson.title}</span>
-                        {lesson.is_preview && !isEnrolled && <Badge variant="outline" className="text-[10px]">Preview</Badge>}
+                        {lesson.is_preview && !isEnrolled && <Badge variant="outline" className="text-[10px]">{t("uiCourseDetail.preview")}</Badge>}
                       </div>
                     </Link>
                   ) : (

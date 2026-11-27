@@ -231,7 +231,7 @@ export function QuestProposals({
     });
     qc.invalidateQueries({ queryKey: ["quest-proposals", questId] });
     if (error) {
-      toast({ title: "Action impossible", description: error.message, variant: "destructive" });
+      toast({ title: t("uiQuestProposals.actionImpossible"), description: error.message, variant: "destructive" });
       return;
     }
     qc.invalidateQueries({ queryKey: ["quest", questId] });
@@ -347,7 +347,7 @@ export function QuestProposals({
               <div key={campaign.id} className={`rounded-xl border bg-card p-5 ${campaign.status === "CANCELLED" ? "border-destructive/30 opacity-70" : "border-border"}`}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm">{campaign.title || "Untitled campaign"}</span>
+                    <span className="font-semibold text-sm">{campaign.title || t("uiQuestProposals.untitledCampaign")}</span>
                     <Badge variant="outline" className={`text-xs ${campaign.status === "ACTIVE" ? "bg-green-500/10 text-green-700 border-green-500/30" : campaign.status === "COMPLETED" ? "bg-blue-500/10 text-blue-700 border-blue-500/30" : "bg-orange-500/10 text-orange-700 border-orange-500/30"}`}>
                       {campaign.status}
                     </Badge>
@@ -360,14 +360,14 @@ export function QuestProposals({
                 {campaign.goal_amount > 0 && (
                   <div className="space-y-1 mb-3">
                     <Progress value={pct} className="h-2.5" />
-                    <p className="text-xs text-muted-foreground text-right">{pct}% funded</p>
+                    <p className="text-xs text-muted-foreground text-right">{pct}{t("uiQuestProposals.funded")}</p>
                   </div>
                 )}
                 {/* Contribute button (only for active credit campaigns) */}
                 {isActive && currentUser.id && campaign.type === "CREDITS" && (
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button size="sm" variant="outline"><Plus className="h-3.5 w-3.5 mr-1" /> Contribute</Button>
+                      <Button size="sm" variant="outline"><Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestProposals.contribute")}</Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader><DialogTitle>{t("uiQuestProposals.contributeCtgTo")}{campaign.title}"</DialogTitle></DialogHeader>
@@ -379,7 +379,7 @@ export function QuestProposals({
                         </div>
                         <Input type="number" placeholder={t("uiQuestProposals.customAmount")} value={fundAmount} onChange={e => setFundAmount(e.target.value)} min={1} />
                         <Button onClick={() => fundQuest(Number(fundAmount) || 0, campaign)} disabled={!fundAmount || Number(fundAmount) <= 0} className="w-full">
-                          <CurrencyIcon currency="ctg" className="h-4 w-4 mr-1" /> Contribute {fundAmount || 0} $CTG
+                          <CurrencyIcon currency="ctg" className="h-4 w-4 mr-1" /> {t("uiQuestProposals.contribute")} {fundAmount || 0} $CTG
                         </Button>
                       </div>
                     </DialogContent>
@@ -431,13 +431,13 @@ export function QuestProposals({
                   </div>
                 )}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Payment Currency</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiQuestProposals.paymentCurrency")}</label>
                   <Select value={propCurrency} onValueChange={(v) => setPropCurrency(v as "CREDITS" | "FIAT" | "BOTH")}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="CREDITS">🟩 $CTG only</SelectItem>
-                      <SelectItem value="FIAT">Fiat (€) only</SelectItem>
-                      <SelectItem value="BOTH">$CTG + Fiat (€)</SelectItem>
+                      <SelectItem value="CREDITS">{t("uiQuestProposals.ctgOnly")}</SelectItem>
+                      <SelectItem value="FIAT">{t("uiQuestProposals.fiatOnly")}</SelectItem>
+                      <SelectItem value="BOTH">{t("uiQuestProposals.ctgFiat")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -492,7 +492,7 @@ export function QuestProposals({
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium text-sm">{profile?.name || "User"}</span>
+                    <span className="font-medium text-sm">{profile?.name || t("uiQuestProposals.user")}</span>
                     <Badge variant={isPending ? "outline" : "secondary"} className={statusColor}>
                       {proposal.status}
                     </Badge>
@@ -549,7 +549,7 @@ export function QuestProposals({
                       className="h-7 text-xs text-muted-foreground hover:text-primary"
                       onClick={() => setExpandedComments(expandedComments === proposal.id ? null : proposal.id)}
                     >
-                      <MessageSquare className="h-3.5 w-3.5 mr-0.5" /> Discuss
+                      <MessageSquare className="h-3.5 w-3.5 mr-0.5" /> {t("uiQuestProposals.discuss")}
                     </Button>
                   </div>
                 </div>

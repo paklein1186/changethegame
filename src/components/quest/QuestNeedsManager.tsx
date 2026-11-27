@@ -18,20 +18,20 @@ import {
 import { Plus, Pencil, Trash2, Loader2, Lightbulb } from "lucide-react";
 
 export const NEED_CATEGORIES = [
-  { value: "GENERAL", label: "General" },
-  { value: "SKILLS", label: "Skills / Expertise" },
+  { value: "GENERAL", get label() { return i18n.t("uiQuestNeedsManager.general"); } },
+  { value: "SKILLS", get label() { return i18n.t("uiQuestNeedsManager.skillsExpertise"); } },
   { value: "FUNDING", get label() { return i18n.t("uiQuestNeedsManager.funding"); } },
-  { value: "TOOLS", label: "Tools / Equipment" },
-  { value: "MENTORSHIP", label: "Mentorship" },
-  { value: "VISIBILITY", label: "Visibility / Promotion" },
-  { value: "PARTNERSHIPS", label: "Partnerships" },
-  { value: "VOLUNTEER", label: "Volunteers" },
+  { value: "TOOLS", get label() { return i18n.t("uiQuestNeedsManager.toolsEquipment"); } },
+  { value: "MENTORSHIP", get label() { return i18n.t("uiQuestNeedsManager.mentorship"); } },
+  { value: "VISIBILITY", get label() { return i18n.t("uiQuestNeedsManager.visibilityPromotion"); } },
+  { value: "PARTNERSHIPS", get label() { return i18n.t("uiQuestNeedsManager.partnerships"); } },
+  { value: "VOLUNTEER", get label() { return i18n.t("uiQuestNeedsManager.volunteers"); } },
 ];
 
 export const NEED_STATUSES = [
   { value: "OPEN", get label() { return i18n.t("uiQuestNeedsManager.open"); } },
   { value: "ACTIVE", get label() { return i18n.t("uiQuestNeedsManager.active"); } },
-  { value: "MET", label: "Met" },
+  { value: "MET", get label() { return i18n.t("uiQuestNeedsManager.met"); } },
 ];
 
 const statusColors: Record<string, string> = {
@@ -246,7 +246,7 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-medium mb-1 block">Category</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiQuestNeedsManager.category")}</label>
                 <Select value={form.category} onValueChange={v => setForm(f => ({ ...f, category: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>

@@ -54,7 +54,7 @@ export default function AdminExcerptReports() {
         await supabase.from("starred_excerpt_reports").update({ status: action, reviewed_at: new Date().toISOString(), reviewed_by_user_id: user!.id }).eq("id", reportId);
       }
       qc.invalidateQueries({ queryKey: ["admin-excerpt-reports"] });
-      toast({ title: action === "DELETE" ? "Excerpt deleted" : `Report ${action.toLowerCase()}` });
+      toast({ title: action === "DELETE" ? t("uiAdminExcerptReports.excerptDeleted") : `Report ${action.toLowerCase()}` });
     } catch (e: any) {
       toast({ title: t("uiAdminExcerptReports.error"), description: e.message, variant: "destructive" });
     }
@@ -63,7 +63,7 @@ export default function AdminExcerptReports() {
   return (
     <div className="space-y-4">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-        <Flag className="h-6 w-6 text-primary" /> Excerpt Reports
+        <Flag className="h-6 w-6 text-primary" /> {t("uiAdminExcerptReports.excerptReports")}
       </h2>
 
       <div className="flex items-center gap-2">
@@ -71,15 +71,15 @@ export default function AdminExcerptReports() {
           <SelectTrigger className="w-36 h-8 text-xs"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="PENDING">{t("uiAdminExcerptReports.pending")}</SelectItem>
-            <SelectItem value="REVIEWED">Reviewed</SelectItem>
-            <SelectItem value="DISMISSED">Dismissed</SelectItem>
+            <SelectItem value="REVIEWED">{t("uiAdminExcerptReports.reviewed")}</SelectItem>
+            <SelectItem value="DISMISSED">{t("uiAdminExcerptReports.dismissed")}</SelectItem>
             <SelectItem value="all">{t("uiAdminExcerptReports.all")}</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-xs text-muted-foreground">{reports.length} report(s)</span>
+        <span className="text-xs text-muted-foreground">{reports.length} {t("uiAdminExcerptReports.reportS")}</span>
       </div>
 
-      {isLoading && <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading...</div>}
+      {isLoading && <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> {t("uiAdminExcerptReports.loading")}</div>}
 
       {!isLoading && reports.length === 0 && (
         <p className="text-sm text-muted-foreground py-8 text-center">{t("uiAdminExcerptReports.noReportsFound")}</p>
@@ -120,7 +120,7 @@ function ReportCard({ report, onAction }: { report: any; onAction: (action: "REV
           <AvatarFallback className="text-[8px]">{report.reporterProfile?.name?.charAt(0) || "?"}</AvatarFallback>
         </Avatar>
         <span className="text-[10px] text-muted-foreground">
-          {report.reporterProfile?.name || "User"} · {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
+          {report.reporterProfile?.name || t("uiAdminExcerptReports.user")} · {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
         </span>
       </div>
 
@@ -129,17 +129,17 @@ function ReportCard({ report, onAction }: { report: any; onAction: (action: "REV
       {expanded && excerpt && (
         <div className="pl-5 pt-1 prose prose-sm max-w-none dark:prose-invert text-sm bg-muted/30 rounded-lg p-2">
           {excerpt.excerpt_text?.slice(0, 300)}
-          {excerpt.is_deleted && <Badge variant="destructive" className="text-[9px] ml-2">Deleted</Badge>}
+          {excerpt.is_deleted && <Badge variant="destructive" className="text-[9px] ml-2">{t("uiAdminExcerptReports.deleted")}</Badge>}
         </div>
       )}
 
       {report.status === "PENDING" && (
         <div className="flex items-center gap-2 pl-5">
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => onAction("REVIEWED")}>
-            <CheckCircle className="h-3 w-3 mr-1" /> Mark reviewed
+            <CheckCircle className="h-3 w-3 mr-1" /> {t("uiAdminExcerptReports.markReviewed")}
           </Button>
           <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => onAction("DISMISSED")}>
-            <XCircle className="h-3 w-3 mr-1" /> Dismiss
+            <XCircle className="h-3 w-3 mr-1" /> {t("uiAdminExcerptReports.dismiss")}
           </Button>
           {!excerpt?.is_deleted && (
             <Button size="sm" variant="destructive" className="h-7 text-xs" onClick={() => onAction("DELETE")}>

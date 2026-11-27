@@ -142,7 +142,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
       toast({ title: t("uiCreateRitualDialog.failedToCreateRitual"), description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: "Ritual created" });
+    toast({ title: t("uiCreateRitualDialog.ritualCreated") });
     // Notify members (fire-and-forget)
     (async () => {
       try {
@@ -171,8 +171,8 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
           <DialogTitle className="font-display">
             {step === 0 ? t("uiCreateRitualDialog.chooseSessionType") :
              step === 1 ? t("uiCreateRitualDialog.ritualDetails") :
-             step === 2 ? "Program Structure" :
-             step === 3 ? "Access & Rewards" :
+             step === 2 ? t("uiCreateRitualDialog.programStructure") :
+             step === 3 ? t("uiCreateRitualDialog.accessRewards") :
              t("uiCreateRitualDialog.reviewCreate")}
           </DialogTitle>
         </DialogHeader>
@@ -232,7 +232,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Frequency</Label>
+                  <Label>{t("uiCreateRitualDialog.frequency")}</Label>
                   <Select value={frequency} onValueChange={setFrequency}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -243,13 +243,13 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                   </Select>
                 </div>
                 <div>
-                  <Label>Duration (min)</Label>
+                  <Label>{t("uiCreateRitualDialog.durationMin")}</Label>
                   <Input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value) || 60)} min={15} max={300} />
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Switch checked={recordingEnabled} onCheckedChange={setRecordingEnabled} />
-                <Label>Enable recording</Label>
+                <Label>{t("uiCreateRitualDialog.enableRecording")}</Label>
               </div>
             </div>
           )}
@@ -259,7 +259,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  Total: <span className="font-medium text-foreground">{totalProgramMinutes}′</span> / {durationMinutes}′ target
+                  {t("uiCreateRitualDialog.total")} <span className="font-medium text-foreground">{totalProgramMinutes}′</span> / {durationMinutes}{t("uiCreateRitualDialog.target")}
                 </p>
                 <Button size="sm" variant="outline" onClick={addSegment}>
                   <Plus className="h-3 w-3 mr-1" /> {t("uiCreateRitualDialog.addSegment")}
@@ -290,11 +290,11 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                         <Select value={seg.role || "none"} onValueChange={(v) => updateSegment(i, "role", v === "none" ? null : v)}>
                           <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="none">Everyone</SelectItem>
+                            <SelectItem value="none">{t("uiCreateRitualDialog.everyone")}</SelectItem>
                             <SelectItem value="admin">{t("uiCreateRitualDialog.admin")}</SelectItem>
-                            <SelectItem value="facilitator">Facilitator</SelectItem>
-                            <SelectItem value="presenter">Presenter</SelectItem>
-                            <SelectItem value="teacher">Teacher</SelectItem>
+                            <SelectItem value="facilitator">{t("uiCreateRitualDialog.facilitator")}</SelectItem>
+                            <SelectItem value="presenter">{t("uiCreateRitualDialog.presenter")}</SelectItem>
+                            <SelectItem value="teacher">{t("uiCreateRitualDialog.teacher")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -386,10 +386,10 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                   </div>
                   {description && <p className="text-sm text-muted-foreground">{description}</p>}
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div><span className="text-muted-foreground">Frequency:</span> {RITUAL_FREQUENCIES[frequency as keyof typeof RITUAL_FREQUENCIES]?.label}</div>
-                    <div><span className="text-muted-foreground">Duration:</span> {durationMinutes} min</div>
-                    <div><span className="text-muted-foreground">Access:</span> {RITUAL_ACCESS_TYPES[accessType as keyof typeof RITUAL_ACCESS_TYPES]?.label}</div>
-                    <div><span className="text-muted-foreground">Recording:</span> {recordingEnabled ? "Yes" : t("uiCreateRitualDialog.no")}</div>
+                    <div><span className="text-muted-foreground">{t("uiCreateRitualDialog.frequency2")}</span> {RITUAL_FREQUENCIES[frequency as keyof typeof RITUAL_FREQUENCIES]?.label}</div>
+                    <div><span className="text-muted-foreground">{t("uiCreateRitualDialog.duration")}</span> {durationMinutes} min</div>
+                    <div><span className="text-muted-foreground">{t("uiCreateRitualDialog.access")}</span> {RITUAL_ACCESS_TYPES[accessType as keyof typeof RITUAL_ACCESS_TYPES]?.label}</div>
+                    <div><span className="text-muted-foreground">{t("uiCreateRitualDialog.recording")}</span> {recordingEnabled ? t("uiCreateRitualDialog.yes") : t("uiCreateRitualDialog.no")}</div>
                   </div>
                   {accessType === "ROLES" && accessRoles.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
@@ -412,7 +412,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                   </div>
                   {segments.length > 0 && (
                     <div className="border-t border-border pt-3">
-                      <p className="text-xs font-medium mb-2">Program ({segments.length} segments · {totalProgramMinutes}′)</p>
+                      <p className="text-xs font-medium mb-2">{t("uiCreateRitualDialog.program")}{segments.length} {t("uiCreateRitualDialog.segments")} {totalProgramMinutes}′)</p>
                       {segments.map((seg, i) => (
                         <div key={i} className="flex justify-between text-xs py-0.5">
                           <span>{seg.title}</span>
@@ -439,7 +439,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
               </Button>
             ) : (
               <Button onClick={handleCreate} disabled={saving}>
-                <Check className="h-4 w-4 mr-1" /> {saving ? "Creating…" : t("uiCreateRitualDialog.createRitual")}
+                <Check className="h-4 w-4 mr-1" /> {saving ? t("uiCreateRitualDialog.creating") : t("uiCreateRitualDialog.createRitual")}
               </Button>
             )}
           </div>

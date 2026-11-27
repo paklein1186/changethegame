@@ -43,7 +43,7 @@ const ACTION_LABELS: Record<string, { label: string; icon: React.ReactNode }> = 
   pod_joined: { label: "joined", icon: <UserPlus className="h-3 w-3 text-green-500" /> },
   quest_joined: { get label() { return i18n.t("uiFollowingActivity.joinedQuest"); }, icon: <Zap className="h-3 w-3 text-amber-500" /> },
   quest_highlighted: { get label() { return i18n.t("uiFollowingActivity.highlightedQuest"); }, icon: <Star className="h-3 w-3 text-yellow-500" /> },
-  followed: { label: "started following", icon: <UserPlus className="h-3 w-3 text-primary" /> },
+  followed: { get label() { return i18n.t("uiFollowingActivity.startedFollowing"); }, icon: <UserPlus className="h-3 w-3 text-primary" /> },
   course_enrolled: { get label() { return i18n.t("uiFollowingActivity.enrolledInCourse"); }, icon: <BookOpen className="h-3 w-3 text-blue-500" /> },
   event_registered: { get label() { return i18n.t("uiFollowingActivity.registeredForEvent"); }, icon: <CalendarCheck className="h-3 w-3 text-purple-500" /> },
   comment_created: { get label() { return i18n.t("uiFollowingActivity.commentedOn"); }, icon: <MessageSquare className="h-3 w-3 text-muted-foreground" /> },
@@ -308,7 +308,7 @@ export function FollowingActivity() {
                 <>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-sm font-medium truncate">
-                      {item.author?.name || "Someone"}
+                      {item.author?.name || t("uiFollowingActivity.someone")}
                     </span>
                     {item.contextName && (
                       <>
@@ -336,7 +336,7 @@ export function FollowingActivity() {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {ACTION_LABELS[item.action_type || ""]?.icon}
                   <span className="text-sm font-medium truncate">
-                    {item.author?.name || "Someone"}
+                    {item.author?.name || t("uiFollowingActivity.someone")}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {ACTION_LABELS[item.action_type || ""]?.label || item.action_type}

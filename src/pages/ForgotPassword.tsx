@@ -53,7 +53,7 @@ export default function ForgotPassword() {
         ) : (
           <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-8 space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="email">{t("uiForgotPassword.emailAddress")}</Label>
               <Input
                 id="email"
                 type="email"

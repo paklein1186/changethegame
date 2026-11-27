@@ -139,13 +139,13 @@ const ADMIN_TYPES = [
 // Category grouping for type filter
 const typeCategories: { label: string; types: NotificationType[] }[] = [
   { get label() { return i18n.t("uiNotificationsCenter.quests"); }, types: [NotificationType.QUEST_CREATED, NotificationType.QUEST_UPDATED, NotificationType.QUEST_UPDATE, NotificationType.QUEST_COMPLETED, NotificationType.QUEST_COMMENT, NotificationType.QUEST_UPVOTE] },
-  { label: "Comments", types: [NotificationType.COMMENT, NotificationType.UPVOTE] },
+  { get label() { return i18n.t("uiNotificationsCenter.comments"); }, types: [NotificationType.COMMENT, NotificationType.UPVOTE] },
   { get label() { return i18n.t("uiNotificationsCenter.guilds"); }, types: [NotificationType.GUILD_MEMBER_ADDED, NotificationType.GUILD_ROLE_CHANGED, NotificationType.GUILD_QUEST_CREATED, NotificationType.INVITE] },
-  { label: "Pods", types: [NotificationType.POD_CREATED, NotificationType.POD_MESSAGE] },
-  { label: "Bookings", types: [NotificationType.BOOKING, NotificationType.BOOKING_REQUESTED, NotificationType.BOOKING_CONFIRMED, NotificationType.BOOKING_CANCELLED, NotificationType.BOOKING_UPDATED, NotificationType.BOOKING_REQUIRES_PAYMENT] },
-  { label: "Social", types: [NotificationType.FOLLOWER_NEW, NotificationType.FOLLOWER_ACTIVITY] },
+  { get label() { return i18n.t("uiNotificationsCenter.pods"); }, types: [NotificationType.POD_CREATED, NotificationType.POD_MESSAGE] },
+  { get label() { return i18n.t("uiNotificationsCenter.bookings"); }, types: [NotificationType.BOOKING, NotificationType.BOOKING_REQUESTED, NotificationType.BOOKING_CONFIRMED, NotificationType.BOOKING_CANCELLED, NotificationType.BOOKING_UPDATED, NotificationType.BOOKING_REQUIRES_PAYMENT] },
+  { get label() { return i18n.t("uiNotificationsCenter.social"); }, types: [NotificationType.FOLLOWER_NEW, NotificationType.FOLLOWER_ACTIVITY] },
   { get label() { return i18n.t("uiNotificationsCenter.xpAchievements"); }, types: [NotificationType.XP_GAINED, NotificationType.ACHIEVEMENT_UNLOCKED] },
-  { label: "System", types: SYSTEM_TYPES },
+  { get label() { return i18n.t("uiNotificationsCenter.system"); }, types: SYSTEM_TYPES },
   { get label() { return i18n.t("uiNotificationsCenter.adminUnit"); }, types: ADMIN_TYPES.filter(t => !SYSTEM_TYPES.includes(t)) },
 ];
 
@@ -382,7 +382,7 @@ export default function NotificationsCenter() {
                         e.stopPropagation();
                         if (!notification.isRead) markAsRead(notification.id);
                       }}
-                      title={notification.isRead ? "Read" : "Mark as read"}
+                      title={notification.isRead ? t("uiNotificationsCenter.read") : t("uiNotificationsCenter.markAsRead")}
                     >
                       <Check className="h-4 w-4" />
                     </Button>
@@ -459,7 +459,7 @@ function BulkXpCard({
             size="sm"
             className="shrink-0 h-8 w-8 p-0 text-muted-foreground hover:text-primary"
             onClick={() => unread.forEach((n) => markAsRead(n.id))}
-            title="Mark as read"
+            title={t("uiNotificationsCenter.markAsRead")}
           >
             <CheckCheck className="h-4 w-4" />
           </Button>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CalendarDays, CalendarCheck, Loader2, Map as MapIcon, Send, Sparkles, UserRound } from "lucide-react";
@@ -9,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from "@/components/ui/textarea";
 
 export function DemoFeveDigest() {
+  const { t } = useTranslation();
   const { data, isLoading } = useDemoFeveSnapshot();
   const { isMaurice } = useDemoFeveAccess();
   const [selected, setSelected] = useState<any | null>(null);
@@ -51,20 +53,20 @@ export function DemoFeveDigest() {
   return <section className="rounded-2xl border border-primary/20 bg-primary/[0.03] p-4 sm:p-5 space-y-4">
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><h2 className="flex items-center gap-2 font-display text-lg font-semibold"><Sparkles className="h-5 w-5 text-primary" /> {isMaurice ? "Ton digest du jour" : "Digest du jour — démo FEVE"}</h2><p className="text-sm text-muted-foreground">{isMaurice ? "Des rapprochements concrets pour ton installation en Bresse." : "Exemple fictif de rapprochements autour de l’installation de Maurice en Bresse. Consultation libre, actions réservées au compte démo."}</p></div>
-      <div className="flex gap-2"><Button variant="outline" size="sm" asChild><Link to="/demo/carte"><MapIcon className="mr-1.5 h-4 w-4" /> Carte démo</Link></Button><Button variant="outline" size="sm" asChild><Link to="/demo/matchmaker">27 demandes</Link></Button></div>
+      <div className="flex gap-2"><Button variant="outline" size="sm" asChild><Link to="/demo/carte"><MapIcon className="mr-1.5 h-4 w-4" /> Carte démo</Link></Button><Button variant="outline" size="sm" asChild><Link to="/demo/matchmaker">{t("uiDemoFeveDigest.27Demandes")}</Link></Button></div>
     </div>
     <div className="grid gap-3 md:grid-cols-3">
       {wanted.map((card) => <article key={card.id} className="rounded-xl border border-border bg-card p-4 flex flex-col">
         <h3 className="font-semibold text-sm">{card.helperName}</h3><p className="mt-1 text-xs font-medium text-primary">{card.cap?.label}</p>
         <p className="mt-2 flex-1 text-xs leading-relaxed text-muted-foreground">{card.reason_fr}</p>
-        {isMaurice && <div className="mt-3 flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => ask(card)}><Send className="mr-1 h-3.5 w-3.5" /> Demander</Button>{card.serviceUrl && <Button size="sm" asChild><Link to={card.serviceUrl}><CalendarCheck className="mr-1 h-3.5 w-3.5" /> Réserver</Link></Button>}</div>}
+        {isMaurice && <div className="mt-3 flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => ask(card)}><Send className="mr-1 h-3.5 w-3.5" /> {t("uiDemoFeveDigest.demander")}</Button>{card.serviceUrl && <Button size="sm" asChild><Link to={card.serviceUrl}><CalendarCheck className="mr-1 h-3.5 w-3.5" /> Réserver</Link></Button>}</div>}
       </article>)}
     </div>
     <div className="grid gap-3 md:grid-cols-2">
-      {vet && <article className="rounded-xl border border-border bg-card p-4"><div className="flex items-center gap-2 text-sm font-semibold"><UserRound className="h-4 w-4 text-primary" /> Nouvelle personne proche</div><p className="mt-2 text-sm">{vet.helperName}</p><p className="mt-1 text-xs text-muted-foreground">{vet.reason_fr}</p>{isMaurice && <Button className="mt-3" size="sm" variant="outline" onClick={() => ask(vet)}><Send className="mr-1 h-3.5 w-3.5" /> Demander</Button>}</article>}
-      {event && <article className="rounded-xl border border-border bg-card p-4"><div className="flex items-center gap-2 text-sm font-semibold"><CalendarDays className="h-4 w-4 text-primary" /> Samedi</div><p className="mt-2 text-sm">{event.title}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(event.start_at).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })} · {event.location_text}</p>{isMaurice && <Button className="mt-3" size="sm" variant="outline" asChild><Link to={`/events/${event.id}`}>Voir l’événement</Link></Button>}</article>}
+      {vet && <article className="rounded-xl border border-border bg-card p-4"><div className="flex items-center gap-2 text-sm font-semibold"><UserRound className="h-4 w-4 text-primary" /> {t("uiDemoFeveDigest.nouvellePersonneProche")}</div><p className="mt-2 text-sm">{vet.helperName}</p><p className="mt-1 text-xs text-muted-foreground">{vet.reason_fr}</p>{isMaurice && <Button className="mt-3" size="sm" variant="outline" onClick={() => ask(vet)}><Send className="mr-1 h-3.5 w-3.5" /> {t("uiDemoFeveDigest.demander")}</Button>}</article>}
+      {event && <article className="rounded-xl border border-border bg-card p-4"><div className="flex items-center gap-2 text-sm font-semibold"><CalendarDays className="h-4 w-4 text-primary" /> {t("uiDemoFeveDigest.samedi")}</div><p className="mt-2 text-sm">{event.title}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(event.start_at).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })} · {event.location_text}</p>{isMaurice && <Button className="mt-3" size="sm" variant="outline" asChild><Link to={`/events/${event.id}`}>Voir l’événement</Link></Button>}</article>}
     </div>
-    <aside className="rounded-xl border border-border bg-muted/40 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notre vision</p><p className="mt-1 text-sm">Relier les projets porteurs de respect et d’harmonie entre humains et avec le vivant, territoire par territoire.</p></aside>
-    <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}><DialogContent><DialogHeader><DialogTitle>Demander à {selected?.helperName}</DialogTitle><DialogDescription>Message pré-rempli, modifiable avant envoi.</DialogDescription></DialogHeader><Textarea rows={8} value={message} onChange={(e) => setMessage(e.target.value)} /><DialogFooter><Button variant="ghost" onClick={() => setSelected(null)}>Annuler</Button><Button disabled={sending || message.trim().length < 10} onClick={send}>{sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />} Envoyer</Button></DialogFooter></DialogContent></Dialog>
+    <aside className="rounded-xl border border-border bg-muted/40 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("uiDemoFeveDigest.notreVision")}</p><p className="mt-1 text-sm">Relier les projets porteurs de respect et d’harmonie entre humains et avec le vivant, territoire par territoire.</p></aside>
+    <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}><DialogContent><DialogHeader><DialogTitle>Demander à {selected?.helperName}</DialogTitle><DialogDescription>Message pré-rempli, modifiable avant envoi.</DialogDescription></DialogHeader><Textarea rows={8} value={message} onChange={(e) => setMessage(e.target.value)} /><DialogFooter><Button variant="ghost" onClick={() => setSelected(null)}>{t("uiDemoFeveDigest.annuler")}</Button><Button disabled={sending || message.trim().length < 10} onClick={send}>{sending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />} {t("uiDemoFeveDigest.envoyer")}</Button></DialogFooter></DialogContent></Dialog>
   </section>;
 }

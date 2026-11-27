@@ -80,11 +80,11 @@ const AGENT_NAMES: Record<string, string> = {
 };
 
 const REPORT_REASONS = [
-  { value: "INAPPROPRIATE", label: "Inappropriate content" },
-  { value: "HARASSMENT", label: "Harassment" },
-  { value: "SPAM", label: "Spam" },
-  { value: "IRRELEVANT", label: "Irrelevant" },
-  { value: "OTHER", label: "Other" },
+  { value: "INAPPROPRIATE", get label() { return i18n.t("uiUnitChat.inappropriateContent"); } },
+  { value: "HARASSMENT", get label() { return i18n.t("uiUnitChat.harassment"); } },
+  { value: "SPAM", get label() { return i18n.t("uiUnitChat.spam"); } },
+  { value: "IRRELEVANT", get label() { return i18n.t("uiUnitChat.irrelevant"); } },
+  { value: "OTHER", get label() { return i18n.t("uiUnitChat.other"); } },
 ];
 
 function useUnitChatThread(entityType: string, entityId: string) {
@@ -302,7 +302,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
         try {
           const { data, error } = await supabase.functions.invoke("unit-agent", { body: { entityType, entityId, message: msg, language: i18n.language } });
           if (error) throw error;
-          if (data?.error) toast({ title: "Agent unavailable", description: data.error, variant: "destructive" });
+          if (data?.error) toast({ title: t("uiUnitChat.agentUnavailable"), description: data.error, variant: "destructive" });
           qc.invalidateQueries({ queryKey: ["unit-chat-messages", threadId] });
         } catch (e: any) { toast({ title: t("uiUnitChat.agentError"), description: e.message, variant: "destructive" }); }
         finally { setAiLoading(false); }
@@ -320,7 +320,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
       qc.invalidateQueries({ queryKey: ["unit-chat-messages", threadId] });
       const { data, error } = await supabase.functions.invoke("unit-agent", { body: { entityType, entityId, message: prompt, language: i18n.language } });
       if (error) throw error;
-      if (data?.error) toast({ title: "Agent unavailable", description: data.error, variant: "destructive" });
+      if (data?.error) toast({ title: t("uiUnitChat.agentUnavailable"), description: data.error, variant: "destructive" });
       qc.invalidateQueries({ queryKey: ["unit-chat-messages", threadId] });
     } catch (e: any) { toast({ title: t("uiUnitChat.agentError"), description: e.message, variant: "destructive" }); }
     finally { setAiLoading(false); }
@@ -330,7 +330,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
     try {
       const threadId = await ensureThread();
       await supabase.from("decision_polls").insert({ entity_type: entityType, entity_id: entityId, thread_id: threadId, question, options: JSON.stringify(options), created_by: currentUser.id });
-      toast({ title: "Poll created!" });
+      toast({ title: t("uiUnitChat.pollCreated") });
     } catch (e: any) { toast({ title: t("uiUnitChat.error"), description: e.message, variant: "destructive" }); }
   };
 
@@ -351,7 +351,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
       });
       qc.invalidateQueries({ queryKey: ["starred-excerpts", thread.id] });
       setStarDialog(null);
-      toast({ title: "Excerpt starred!" });
+      toast({ title: t("uiUnitChat.excerptStarred") });
     } catch (e: any) { toast({ title: t("uiUnitChat.error"), description: e.message, variant: "destructive" }); }
   };
 
@@ -378,7 +378,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
       setReportCustom("");
       toast({ title: t("uiUnitChat.reportSubmittedThankYou") });
     } catch (e: any) {
-      if (e.message?.includes("duplicate")) toast({ title: "Already reported", variant: "destructive" });
+      if (e.message?.includes("duplicate")) toast({ title: t("uiUnitChat.alreadyReported"), variant: "destructive" });
       else toast({ title: t("uiUnitChat.error"), description: e.message, variant: "destructive" });
     }
   };
@@ -386,7 +386,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
   const handleDeleteExcerpt = async (id: string) => {
     await supabase.from("starred_excerpts").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["starred-excerpts", thread?.id] });
-    toast({ title: "Excerpt removed" });
+    toast({ title: t("uiUnitChat.excerptRemoved") });
   };
 
   const handleModerateReport = async (excerptId: string, action: "REVIEWED" | "DISMISSED" | "DELETE") => {
@@ -398,7 +398,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
       await supabase.from("starred_excerpt_reports").update({ status: action, reviewed_at: new Date().toISOString(), reviewed_by_user_id: currentUser.id }).eq("excerpt_id", excerptId).eq("status", "PENDING");
     }
     qc.invalidateQueries({ queryKey: ["starred-excerpts", thread?.id] });
-    toast({ title: action === "DELETE" ? "Excerpt deleted" : `Report ${action.toLowerCase()}` });
+    toast({ title: action === "DELETE" ? t("uiUnitChat.excerptDeleted") : `Report ${action.toLowerCase()}` });
   };
 
   // Sort excerpts
@@ -415,15 +415,15 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-muted/30">
         <Bot className="h-4 w-4 text-primary" />
         <span className="text-sm font-medium">{agentLabel}</span>
-        <Badge variant="secondary" className="text-[10px] ml-auto">AI-assisted</Badge>
+        <Badge variant="secondary" className="text-[10px] ml-auto">{t("uiUnitChat.aiAssisted")}</Badge>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
         <TabsList className="mx-3 mt-2 justify-start">
-          <TabsTrigger value="conversation" className="text-xs gap-1"><MessageCircle className="h-3 w-3" /> Conversation</TabsTrigger>
-          <TabsTrigger value="insights" className="text-xs gap-1"><Sparkles className="h-3 w-3" /> AI Insights</TabsTrigger>
+          <TabsTrigger value="conversation" className="text-xs gap-1"><MessageCircle className="h-3 w-3" /> {t("uiUnitChat.conversation")}</TabsTrigger>
+          <TabsTrigger value="insights" className="text-xs gap-1"><Sparkles className="h-3 w-3" /> {t("uiUnitChat.aiInsights")}</TabsTrigger>
           <TabsTrigger value="starred" className="text-xs gap-1">
-            <Star className="h-3 w-3" /> Starred
+            <Star className="h-3 w-3" /> {t("uiUnitChat.starred")}
             {starredExcerpts.length > 0 && <Badge variant="secondary" className="text-[9px] h-4 px-1 ml-0.5">{starredExcerpts.length}</Badge>}
           </TabsTrigger>
         </TabsList>
@@ -443,7 +443,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
             ))}
             {aiLoading && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-xs text-muted-foreground pl-10">
-                <Loader2 className="h-3 w-3 animate-spin" /> {AGENT_NAMES[entityType] || "Agent"} {t("uiUnitChat.isThinking")}
+                <Loader2 className="h-3 w-3 animate-spin" /> {AGENT_NAMES[entityType] || t("uiUnitChat.agent")} {t("uiUnitChat.isThinking")}
               </motion.div>
             )}
           </div>
@@ -500,10 +500,10 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
               <Select value={excerptSort} onValueChange={setExcerptSort}>
                 <SelectTrigger className="h-7 w-32 text-[11px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="oldest">Oldest</SelectItem>
-                  <SelectItem value="upvoted">Most upvoted</SelectItem>
-                  <SelectItem value="mine">Mine only</SelectItem>
+                  <SelectItem value="newest">{t("uiUnitChat.newest")}</SelectItem>
+                  <SelectItem value="oldest">{t("uiUnitChat.oldest")}</SelectItem>
+                  <SelectItem value="upvoted">{t("uiUnitChat.mostUpvoted")}</SelectItem>
+                  <SelectItem value="mine">{t("uiUnitChat.mineOnly")}</SelectItem>
                   <SelectItem value="agent">{t("uiUnitChat.fromAgent")}</SelectItem>
                 </SelectContent>
               </Select>
@@ -544,12 +544,12 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
         <Dialog open={starDialog.open} onOpenChange={(open) => !open && setStarDialog(null)}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2"><Star className="h-4 w-4 text-accent" /> Star Excerpt</DialogTitle>
+              <DialogTitle className="flex items-center gap-2"><Star className="h-4 w-4 text-accent" /> {t("uiUnitChat.starExcerpt")}</DialogTitle>
               <DialogDescription>{t("uiUnitChat.saveThisHighlightToTheUnit")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Excerpt</label>
+                <label className="text-xs font-medium text-muted-foreground">{t("uiUnitChat.excerpt")}</label>
                 <Textarea value={starExcerpt} onChange={(e) => setStarExcerpt(e.target.value)} rows={4} className="mt-1 text-sm" />
               </div>
               <div>
@@ -557,7 +557,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
                 <Input value={starTitle} onChange={(e) => setStarTitle(e.target.value)} placeholder={t("uiUnitChat.shortDescriptiveTitle")} className="mt-1 text-sm" />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">Tags (comma-separated, optional)</label>
+                <label className="text-xs font-medium text-muted-foreground">{t("uiUnitChat.tagsCommaSeparatedOptional")}</label>
                 <Input value={starTags} onChange={(e) => setStarTags(e.target.value)} placeholder={t("uiUnitChat.strategyNextStepsDecision")} className="mt-1 text-sm" />
               </div>
             </div>
@@ -574,7 +574,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
         <Dialog open={reportDialog.open} onOpenChange={(open) => !open && setReportDialog(null)}>
           <DialogContent className="sm:max-w-sm">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2"><Flag className="h-4 w-4 text-destructive" /> Report Excerpt</DialogTitle>
+              <DialogTitle className="flex items-center gap-2"><Flag className="h-4 w-4 text-destructive" /> {t("uiUnitChat.reportExcerpt")}</DialogTitle>
               <DialogDescription>{t("uiUnitChat.whyAreYouReportingThisExcerpt")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
@@ -585,7 +585,7 @@ export function UnitChat({ entityType, entityId, entityName }: UnitChatProps) {
                 </SelectContent>
               </Select>
               {reportReason === "OTHER" && (
-                <Textarea value={reportCustom} onChange={(e) => setReportCustom(e.target.value)} placeholder="Please describe..." rows={3} className="text-sm" />
+                <Textarea value={reportCustom} onChange={(e) => setReportCustom(e.target.value)} placeholder={t("uiUnitChat.pleaseDescribe")} rows={3} className="text-sm" />
               )}
             </div>
             <DialogFooter>
@@ -660,6 +660,7 @@ function MessageBubble({ msg, agentLabel, isOwn, onCreatePoll, onStarMessage }: 
 
 /* ─── AI Insight Card ─── */
 function AIInsightCard({ msg, onStar }: { msg: ChatMessage; onStar: (text: string) => void }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const firstLine = msg.message_text.split("\n")[0].slice(0, 100);
   return (
@@ -667,11 +668,11 @@ function AIInsightCard({ msg, onStar }: { msg: ChatMessage; onStar: (text: strin
       <div className="flex items-start justify-between gap-2">
         <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1.5 text-left flex-1 min-w-0">
           {expanded ? <ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground" /> : <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground" />}
-          <span className="text-sm font-medium truncate">{firstLine || "AI Response"}</span>
+          <span className="text-sm font-medium truncate">{firstLine || t("uiUnitChat.aiResponse")}</span>
         </button>
         <div className="flex items-center gap-1 shrink-0">
           <span className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(msg.created_at), { addSuffix: true })}</span>
-          <button onClick={() => onStar(msg.message_text)} className="text-muted-foreground hover:text-accent transition-colors" title="Star excerpt"><Star className="h-3 w-3" /></button>
+          <button onClick={() => onStar(msg.message_text)} className="text-muted-foreground hover:text-accent transition-colors" title={t("uiUnitChat.starExcerpt2")}><Star className="h-3 w-3" /></button>
         </div>
       </div>
       {expanded && <AgentMarkdown className="pl-5 pt-1">{msg.message_text}</AgentMarkdown>}
@@ -699,22 +700,22 @@ function StarredExcerptCard({ excerpt, currentUserId, onUpvote, onReport, onDele
         </button>
         <div className="flex items-center gap-1.5 shrink-0">
           {/* Upvote button */}
-          <button onClick={onUpvote} className={`flex items-center gap-0.5 text-xs transition-colors ${excerpt.userUpvoted ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}`} title="Upvote">
+          <button onClick={onUpvote} className={`flex items-center gap-0.5 text-xs transition-colors ${excerpt.userUpvoted ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"}`} title={t("uiUnitChat.upvote")}>
             <ThumbsUp className="h-3 w-3" />
             {excerpt.upvotes_count > 0 && <span>{excerpt.upvotes_count}</span>}
           </button>
-          <Badge variant="outline" className="text-[9px]">{excerpt.is_from_agent ? "Agent" : `${excerpt.profiles?.name || "user"}`}</Badge>
+          <Badge variant="outline" className="text-[9px]">{excerpt.is_from_agent ? t("uiUnitChat.agent") : `${excerpt.profiles?.name || "user"}`}</Badge>
           {/* Actions menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-muted-foreground hover:text-foreground"><MoreHorizontal className="h-3.5 w-3.5" /></button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="text-xs">
-              <DropdownMenuItem onClick={onReport} className="text-xs gap-2"><Flag className="h-3 w-3" /> Report</DropdownMenuItem>
+              <DropdownMenuItem onClick={onReport} className="text-xs gap-2"><Flag className="h-3 w-3" /> {t("uiUnitChat.report")}</DropdownMenuItem>
               {isOwner && <DropdownMenuItem onClick={onDelete} className="text-xs text-destructive gap-2"><Trash2 className="h-3 w-3" /> {t("uiUnitChat.delete")}</DropdownMenuItem>}
               {excerpt.pendingReports && excerpt.pendingReports > 0 && (
                 <>
-                  <DropdownMenuItem onClick={() => onModerate("DISMISSED")} className="text-xs gap-2">Dismiss reports</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onModerate("DISMISSED")} className="text-xs gap-2">{t("uiUnitChat.dismissReports")}</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onModerate("DELETE")} className="text-xs text-destructive gap-2">{t("uiUnitChat.modDeleteExcerpt")}</DropdownMenuItem>
                 </>
               )}
@@ -744,7 +745,7 @@ function StarredExcerptCard({ excerpt, currentUserId, onUpvote, onReport, onDele
 
       <div className="flex items-center gap-2 pl-5">
         <Avatar className="h-4 w-4"><AvatarImage src={excerpt.profiles?.avatar_url || undefined} /><AvatarFallback className="text-[8px]">{excerpt.profiles?.name?.charAt(0) || "?"}</AvatarFallback></Avatar>
-        <span className="text-[10px] text-muted-foreground">{excerpt.profiles?.name || "User"} · {formatDistanceToNow(new Date(excerpt.created_at), { addSuffix: true })}</span>
+        <span className="text-[10px] text-muted-foreground">{excerpt.profiles?.name || t("uiUnitChat.user")} · {formatDistanceToNow(new Date(excerpt.created_at), { addSuffix: true })}</span>
       </div>
     </div>
   );
@@ -758,7 +759,7 @@ function SuggestionCard({ suggestion, onCreatePoll }: { suggestion: any; onCreat
   const labels: Record<string, string> = { DECISION_POLL: "Decision Poll Suggestion", NEXT_STEPS: "Suggested Next Steps", MISSING_SKILLS: "Missing Skills Detected" };
   return (
     <div className="rounded-lg border border-accent/20 bg-accent/5 p-3 space-y-2">
-      <div className="flex items-center gap-2 text-xs font-medium text-accent"><Icon className="h-3.5 w-3.5" />{labels[suggestion.type] || "Suggestion"}</div>
+      <div className="flex items-center gap-2 text-xs font-medium text-accent"><Icon className="h-3.5 w-3.5" />{labels[suggestion.type] || t("uiUnitChat.suggestion")}</div>
       {suggestion.type === "DECISION_POLL" && (<>
         <p className="text-sm font-medium">{suggestion.question}</p>
         <div className="flex flex-wrap gap-1">{(suggestion.options || []).map((opt: string, i: number) => <Badge key={i} variant="outline" className="text-xs">{opt}</Badge>)}</div>

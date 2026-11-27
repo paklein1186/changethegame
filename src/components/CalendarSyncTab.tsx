@@ -235,7 +235,7 @@ export function CalendarSyncTab() {
       qc.invalidateQueries({ queryKey: ["calendar-connections"] });
       qc.invalidateQueries({ queryKey: ["calendar-busy-count"] });
       qc.invalidateQueries({ queryKey: ["my-external-calendar-events"] });
-      toast({ title: "Calendar synced", description: `${data.synced || 0} events imported (only from enabled subcalendars)` });
+      toast({ title: t("uiCalendarSyncTab.calendarSynced"), description: `${data.synced || 0} events imported (only from enabled subcalendars)` });
     } catch (err: any) {
       toast({ title: t("uiCalendarSyncTab.syncFailed"), description: err.message, variant: "destructive" });
     } finally {
@@ -260,7 +260,7 @@ export function CalendarSyncTab() {
         <div>
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            Calendar Sync
+            {t("uiCalendarSyncTab.calendarSync")}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             {t("uiCalendarSyncTab.connectYourExternalCalendarsToAutomatically")}
@@ -283,7 +283,7 @@ export function CalendarSyncTab() {
           </div>
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span>{busyCount} {t("uiCalendarSyncTab.upcomingEvent")}{busyCount !== 1 ? "s" : ""} blocking slots</span>
+            <span>{busyCount} {t("uiCalendarSyncTab.upcomingEvent")}{busyCount !== 1 ? "s" : ""} {t("uiCalendarSyncTab.blockingSlots")}</span>
           </div>
         </div>
       )}
@@ -309,7 +309,7 @@ export function CalendarSyncTab() {
                       <h3 className="font-medium text-sm">{provider.name}</h3>
                       {isConnected && (
                         <Badge variant="secondary" className="text-[10px] bg-green-500/10 text-green-700 dark:text-green-400 border-0">
-                          Connected
+                          {t("uiCalendarSyncTab.connected")}
                         </Badge>
                       )}
                     </div>
@@ -320,7 +320,7 @@ export function CalendarSyncTab() {
                 {isConnected ? (
                   <Button variant="ghost" size="sm" onClick={() => handleDisconnect(provider.id)} className="text-destructive hover:text-destructive shrink-0">
                     <Unplug className="h-4 w-4 mr-1" />
-                    Disconnect
+                    {t("uiCalendarSyncTab.disconnect")}
                   </Button>
                 ) : (
                   <Button size="sm" onClick={() => handleConnect(provider.id)} disabled={connecting === provider.id} className="shrink-0">
@@ -329,7 +329,7 @@ export function CalendarSyncTab() {
                     ) : (
                       <ExternalLink className="h-4 w-4 mr-1.5" />
                     )}
-                    Connect
+                    {t("uiCalendarSyncTab.connect")}
                   </Button>
                 )}
               </div>
@@ -338,7 +338,7 @@ export function CalendarSyncTab() {
               {conn && (
                 <div className="pl-10 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Two-way sync</span>
+                    <span className="text-xs text-muted-foreground">{t("uiCalendarSyncTab.twoWaySync")}</span>
                     <Switch
                       checked={conn.sync_enabled}
                       onCheckedChange={(v) => handleToggleSync(conn.id, v)}
@@ -347,7 +347,7 @@ export function CalendarSyncTab() {
 
                   {conn.last_synced_at && (
                     <p className="text-xs text-muted-foreground">
-                      Last synced: {format(new Date(conn.last_synced_at), "MMM d, yyyy 'at' HH:mm")}
+                      {t("uiCalendarSyncTab.lastSynced")} {format(new Date(conn.last_synced_at), "MMM d, yyyy 'at' HH:mm")}
                     </p>
                   )}
 
@@ -416,10 +416,10 @@ export function CalendarSyncTab() {
 
       {/* How it works */}
       <div className="rounded-xl bg-muted/50 p-4 space-y-2">
-        <h4 className="text-sm font-medium">How Calendar Sync works</h4>
+        <h4 className="text-sm font-medium">{t("uiCalendarSyncTab.howCalendarSyncWorks")}</h4>
         <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
-          <li><strong>Read:</strong> {t("uiCalendarSyncTab.externalBusyEventsFromEnabledSubcalendars")}</li>
-          <li><strong>Write:</strong> {t("uiCalendarSyncTab.whenABookingIsConfirmedFor")}</li>
+          <li><strong>{t("uiCalendarSyncTab.read")}</strong> {t("uiCalendarSyncTab.externalBusyEventsFromEnabledSubcalendars")}</li>
+          <li><strong>{t("uiCalendarSyncTab.write")}</strong> {t("uiCalendarSyncTab.whenABookingIsConfirmedFor")}</li>
           <li>{t("uiCalendarSyncTab.youCanChooseWhichSubcalendarsTo")}</li>
           <li>{t("uiCalendarSyncTab.eventsAreSyncedForTheNext")}</li>
           <li>{t("uiCalendarSyncTab.yourCalendarDataIsSecurelyStored")}</li>

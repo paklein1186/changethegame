@@ -55,7 +55,7 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
           } as any).then((res) => {
             const earned = (res.data as any)?.amount ?? 20;
             toast({
-              title: "🌱 $CTG earned!",
+              title: t("uiMyBookings.ctgEarned"),
               description: `You earned ${earned} 🌱 $CTG for delivering this session. This reflects your contribution to the commons.`,
             });
           });
@@ -114,7 +114,7 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
             >
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <Link to={`/bookings/${b.id}`} className="font-display font-semibold hover:text-primary transition-colors">{svc?.title ?? "Booking"}</Link>
+                  <Link to={`/bookings/${b.id}`} className="font-display font-semibold hover:text-primary transition-colors">{svc?.title ?? t("uiMyBookings.booking")}</Link>
                 </div>
                 <Badge className={`${statusColors[b.status] || ""} border-0 capitalize`}>{b.status.toLowerCase().replace(/_/g, " ")}</Badge>
               </div>
@@ -151,10 +151,10 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
               {(b.status === "REQUESTED" || b.status === "PENDING") && (
                 <div className="flex gap-2">
                   <Button size="sm" onClick={() => handleUpdateStatus(b.id, "ACCEPTED")}>
-                    <Check className="h-3.5 w-3.5 mr-1" /> Accept
+                    <Check className="h-3.5 w-3.5 mr-1" /> {t("uiMyBookings.accept")}
                   </Button>
                   <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(b.id, "CANCELLED")}>
-                    <X className="h-3.5 w-3.5 mr-1" /> Decline
+                    <X className="h-3.5 w-3.5 mr-1" /> {t("uiMyBookings.decline")}
                   </Button>
                 </div>
               )}

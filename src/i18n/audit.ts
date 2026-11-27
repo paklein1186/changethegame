@@ -12,8 +12,26 @@ const ATTRS = new Set(["message", "placeholder", "title", "aria-label", "alt", "
 const PROPS = new Set(["title", "description", "label", "placeholder", "message", "text", "buttonLabel", "confirmLabel", "cancelLabel", "emptyText", "subtitle", "tooltip", "hint", "desc"]);
 const NOTIFY = /^(toast(\.(success|error|info|warning|message))?|alert|confirm|window\.confirm)$/;
 
+// Noms propres, sigles et marques de la plateforme : jamais traduits.
+const BRANDS = /^(XP|\$?CTG|OCU|AI|IA|API|MCP|Stripe|Jitsi|Google|Outlook|ICS|JSON|SSE|PDF|URL|FMV|WU|UP|OVN|NUTS[0-9]?|changethegame|Changethegame|Pi|Pulse|LinkedIn|GitHub|Instagram|Space2|Libra|Erasmus|Lovable|Kanban|Markdown|RAG|DAO|Lv\s?\d+|v\d.*|OK|Ok|ok|FAQ|CSV|SVG|PNG|ID)$/;
+
+/** Texte court en lettres latines, sans accent ni mot français courant (libellés comme « Undo », « Country »). */
+function looksLatinLabel(raw: string): boolean {
+  const t = raw.replace(/\s+/g, " ").trim();
+  if (!/[A-Za-z]{3}/.test(t) || BRANDS.test(t.replace(/^[^A-Za-z$]+|[^A-Za-z0-9]+$/g, ""))) return false;
+  if (/^(https?:|\/|#|[a-z]+:\/\/)/.test(t) || /^[a-z0-9_.-]+$/.test(t) || /^[A-Z0-9_]+$/.test(t)) return false;
+  if (/^[A-Za-z][\w-]*(\.[\w-]+)+$/.test(t)) return false; // clé de traduction
+  if (/[{};]/.test(t)) return false; // CSS ou code
+  if (/[àâçéèêëîïôûùüÿœæ«»]/i.test(t)) return false;
+  return !/\b(le|la|les|des|du|de|une|un|et|pour|avec|sur|dans|vos|votre|aucun|ajouter|est|pas|plus|nous|vous|par|aux|au|ou|qui|que|ce|cette|ces|mes|mon|ma|ton|ta|son|sa|leur|leurs)\b/i.test(t);
+}
+
 /** Ce texte ressemble-t-il à une phrase d'interface en anglais ? */
 export function looksEnglish(raw: string): boolean {
+  return looksEnglishSentence(raw) || looksLatinLabel(raw);
+}
+
+function looksEnglishSentence(raw: string): boolean {
   const t = raw.replace(/\s+/g, " ").trim();
   if (t.length < 2 || !/[A-Za-z]{2}/.test(t)) return false;
   if (/^[\w.-]+\.[\w.-]+$/.test(t) && !t.includes(" ")) return false;

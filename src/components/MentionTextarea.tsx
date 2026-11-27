@@ -292,7 +292,7 @@ export function MentionTextarea({
           style={{ top: dropdownPos.top, left: dropdownPos.left, width: dropdownPos.width }}
         >
           {loading && suggestions.length === 0 && (
-            <div className="px-3 py-2 text-xs text-muted-foreground">Searching…</div>
+            <div className="px-3 py-2 text-xs text-muted-foreground">{t("uiMentionTextarea.searching")}</div>
           )}
           {!loading && suggestions.length === 0 && query.length >= 1 && (
             <div className="px-3 py-2 text-xs text-muted-foreground">{t("uiMentionTextarea.noResultsFound")}</div>

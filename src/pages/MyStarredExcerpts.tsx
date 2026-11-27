@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,11 +30,11 @@ import ReactMarkdown from "react-markdown";
 const ENTITY_LABELS: Record<string, string> = { GUILD: "Guild", QUEST: "Quest", POD: "Pod", COMPANY: "Company", TERRITORY: "Territory", COURSE: "Course", EVENT: "Event" };
 const ENTITY_ROUTES: Record<string, string> = { GUILD: "/guilds", QUEST: "/quests", POD: "/pods", COMPANY: "/companies", COURSE: "/courses" };
 const REPORT_REASONS = [
-  { value: "INAPPROPRIATE", label: "Inappropriate" },
-  { value: "HARASSMENT", label: "Harassment" },
-  { value: "SPAM", label: "Spam" },
-  { value: "IRRELEVANT", label: "Irrelevant" },
-  { value: "OTHER", label: "Other" },
+  { value: "INAPPROPRIATE", get label() { return i18n.t("uiMyStarredExcerpts.inappropriate"); } },
+  { value: "HARASSMENT", get label() { return i18n.t("uiMyStarredExcerpts.harassment"); } },
+  { value: "SPAM", get label() { return i18n.t("uiMyStarredExcerpts.spam"); } },
+  { value: "IRRELEVANT", get label() { return i18n.t("uiMyStarredExcerpts.irrelevant"); } },
+  { value: "OTHER", get label() { return i18n.t("uiMyStarredExcerpts.other"); } },
 ];
 
 export default function MyStarredExcerpts() {
@@ -122,7 +123,7 @@ export default function MyStarredExcerpts() {
   const handleDelete = async (id: string) => {
     await supabase.from("starred_excerpts").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["my-starred-excerpts"] });
-    toast({ title: "Excerpt removed" });
+    toast({ title: t("uiMyStarredExcerpts.excerptRemoved") });
   };
 
   const handleToggleUpvote = async (excerptId: string, currentlyUpvoted: boolean) => {
@@ -145,7 +146,7 @@ export default function MyStarredExcerpts() {
       setReportDialog(null);
       toast({ title: t("uiMyStarredExcerpts.reportSubmittedThankYou") });
     } catch (e: any) {
-      if (e.message?.includes("duplicate")) toast({ title: "Already reported", variant: "destructive" });
+      if (e.message?.includes("duplicate")) toast({ title: t("uiMyStarredExcerpts.alreadyReported"), variant: "destructive" });
       else toast({ title: t("uiMyStarredExcerpts.error"), description: e.message, variant: "destructive" });
     }
   };
@@ -161,15 +162,15 @@ export default function MyStarredExcerpts() {
         {/* Filters */}
         <div className="flex flex-wrap gap-2 mb-4">
           <Select value={filterSource} onValueChange={setFilterSource}>
-            <SelectTrigger className="w-32 text-xs h-8"><SelectValue placeholder="Source" /></SelectTrigger>
+            <SelectTrigger className="w-32 text-xs h-8"><SelectValue placeholder={t("uiMyStarredExcerpts.source")} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("uiMyStarredExcerpts.allSources")}</SelectItem>
-              <SelectItem value="agent">AI only</SelectItem>
-              <SelectItem value="human">Human only</SelectItem>
+              <SelectItem value="agent">{t("uiMyStarredExcerpts.aiOnly")}</SelectItem>
+              <SelectItem value="human">{t("uiMyStarredExcerpts.humanOnly")}</SelectItem>
             </SelectContent>
           </Select>
           <Select value={filterEntity} onValueChange={setFilterEntity}>
-            <SelectTrigger className="w-32 text-xs h-8"><SelectValue placeholder="Entity" /></SelectTrigger>
+            <SelectTrigger className="w-32 text-xs h-8"><SelectValue placeholder={t("uiMyStarredExcerpts.entity")} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("uiMyStarredExcerpts.allUnits")}</SelectItem>
               {Object.entries(ENTITY_LABELS).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
@@ -178,9 +179,9 @@ export default function MyStarredExcerpts() {
           <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-32 text-xs h-8"><ArrowUpDown className="h-3 w-3 mr-1" /><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="newest">Newest</SelectItem>
-              <SelectItem value="oldest">Oldest</SelectItem>
-              <SelectItem value="upvoted">Most upvoted</SelectItem>
+              <SelectItem value="newest">{t("uiMyStarredExcerpts.newest")}</SelectItem>
+              <SelectItem value="oldest">{t("uiMyStarredExcerpts.oldest")}</SelectItem>
+              <SelectItem value="upvoted">{t("uiMyStarredExcerpts.mostUpvoted")}</SelectItem>
             </SelectContent>
           </Select>
           <Input placeholder={t("uiMyStarredExcerpts.filterByTag")} value={searchTag} onChange={(e) => setSearchTag(e.target.value)} className="w-36 text-xs h-8" />
@@ -230,7 +231,7 @@ export default function MyStarredExcerpts() {
         <Dialog open={reportDialog.open} onOpenChange={(open) => !open && setReportDialog(null)}>
           <DialogContent className="sm:max-w-sm">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2"><Flag className="h-4 w-4 text-destructive" /> Report Excerpt</DialogTitle>
+              <DialogTitle className="flex items-center gap-2"><Flag className="h-4 w-4 text-destructive" /> {t("uiMyStarredExcerpts.reportExcerpt")}</DialogTitle>
               <DialogDescription>{t("uiMyStarredExcerpts.whyAreYouReportingThisExcerpt")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
@@ -238,7 +239,7 @@ export default function MyStarredExcerpts() {
                 <SelectTrigger className="text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>{REPORT_REASONS.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
               </Select>
-              {reportReason === "OTHER" && <Textarea value={reportCustom} onChange={(e) => setReportCustom(e.target.value)} placeholder="Please describe..." rows={3} className="text-sm" />}
+              {reportReason === "OTHER" && <Textarea value={reportCustom} onChange={(e) => setReportCustom(e.target.value)} placeholder={t("uiMyStarredExcerpts.pleaseDescribe")} rows={3} className="text-sm" />}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setReportDialog(null)}>{t("uiMyStarredExcerpts.cancel")}</Button>
@@ -268,12 +269,12 @@ function PersonalExcerptItem({ excerpt, onDelete, onUpvote, onReport }: { excerp
             <ThumbsUp className="h-3 w-3" />
             {(excerpt.upvotes_count || 0) > 0 && <span>{excerpt.upvotes_count}</span>}
           </button>
-          <Badge variant="outline" className="text-[9px]">{excerpt.is_from_agent ? "Agent" : "Human"}</Badge>
+          <Badge variant="outline" className="text-[9px]">{excerpt.is_from_agent ? t("uiMyStarredExcerpts.agent") : t("uiMyStarredExcerpts.human")}</Badge>
           <span className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(excerpt.created_at), { addSuffix: true })}</span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild><button className="text-muted-foreground hover:text-foreground"><MoreHorizontal className="h-3.5 w-3.5" /></button></DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="text-xs">
-              <DropdownMenuItem onClick={onReport} className="text-xs gap-2"><Flag className="h-3 w-3" /> Report</DropdownMenuItem>
+              <DropdownMenuItem onClick={onReport} className="text-xs gap-2"><Flag className="h-3 w-3" /> {t("uiMyStarredExcerpts.report")}</DropdownMenuItem>
               <DropdownMenuItem onClick={onDelete} className="text-xs text-destructive gap-2"><Trash2 className="h-3 w-3" /> {t("uiMyStarredExcerpts.delete")}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

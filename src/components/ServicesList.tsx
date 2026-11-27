@@ -72,7 +72,7 @@ export function ServicesList({ services, isAdmin, onToggleActive, onDelete }: Se
                     {svc.duration_minutes && <span className="text-xs text-muted-foreground">{svc.duration_minutes} min</span>}
                     {svc.price_amount != null && (
                       <Badge className="bg-primary/10 text-primary border-0">
-                        {svc.price_amount === 0 ? "Free" : `€${svc.price_amount}`}
+                        {svc.price_amount === 0 ? t("uiServicesList.free") : `€${svc.price_amount}`}
                       </Badge>
                     )}
                   </div>
@@ -84,8 +84,8 @@ export function ServicesList({ services, isAdmin, onToggleActive, onDelete }: Se
                   <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{svc.description}</p>
                 )}
                 <div className="flex items-center gap-2 mt-1">
-                  {svc.service_type === "online_call" && <Badge variant="outline" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />Call</Badge>}
-                  {svc.service_type === "service_mission" && <Badge variant="outline" className="text-[10px]"><Briefcase className="h-2.5 w-2.5 mr-0.5" />Mission</Badge>}
+                  {svc.service_type === "online_call" && <Badge variant="outline" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesList.call")}</Badge>}
+                  {svc.service_type === "service_mission" && <Badge variant="outline" className="text-[10px]"><Briefcase className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesList.mission")}</Badge>}
                   {svc.service_type === "event_attendance" && <Badge variant="outline" className="text-[10px]"><Users className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesList.event")}</Badge>}
                   {(svc as any)._provider_name && (
                     <span className="text-xs text-muted-foreground">by {(svc as any)._provider_name}</span>
@@ -97,7 +97,7 @@ export function ServicesList({ services, isAdmin, onToggleActive, onDelete }: Se
             {isAdmin && onToggleActive && onDelete && (
               <div className="px-4 pb-3 flex items-center gap-2">
                 <Button size="sm" variant="outline" onClick={() => onToggleActive(svc)}>
-                  {svc.is_active ? "Pause" : "Resume"}
+                  {svc.is_active ? t("uiServicesList.pause") : t("uiServicesList.resume")}
                 </Button>
                 <Button size="sm" variant="ghost" className="text-destructive" onClick={() => onDelete(svc)}>
                   <Trash2 className="h-3.5 w-3.5" />

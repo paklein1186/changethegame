@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState } from "react";
 import { CTGBalanceBadge } from "@/components/CTGBalanceBadge";
 import { ValueIndicators } from "@/components/ValueIndicators";
@@ -30,7 +31,7 @@ import {
 import { useTheme } from "next-themes";
 
 const LANGUAGES = [
-  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "en", get label() { return i18n.t("uiAppNav.english"); }, flag: "🇬🇧" },
   { code: "fr", label: "Français", flag: "🇫🇷" },
 ];
 

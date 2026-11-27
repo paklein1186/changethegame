@@ -37,14 +37,14 @@ export function CookieConsentBanner() {
                 <Cookie className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-display font-semibold text-sm mb-1">We use cookies</h3>
+                <h3 className="font-display font-semibold text-sm mb-1">{t("uiCookieConsentBanner.weUseCookies")}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {t("uiCookieConsentBanner.weUseCookiesToImproveYour")}{" "}
                   <Link to="/cookies" className="text-primary hover:underline">{t("uiCookieConsentBanner.learnMore")}</Link>
                 </p>
                 <div className="flex flex-wrap gap-2 mt-3">
                   <Button size="sm" onClick={() => accept("all")}>{t("uiCookieConsentBanner.acceptAll")}</Button>
-                  <Button size="sm" variant="outline" onClick={() => accept("essential")}>Essential only</Button>
+                  <Button size="sm" variant="outline" onClick={() => accept("essential")}>{t("uiCookieConsentBanner.essentialOnly")}</Button>
                   <Button size="sm" variant="ghost" asChild>
                     <Link to="/cookies"><Settings className="h-3.5 w-3.5 mr-1" /> {t("uiCookieConsentBanner.settings")}</Link>
                   </Button>

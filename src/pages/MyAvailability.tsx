@@ -105,7 +105,7 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
           <BufferedTimeInput value={rule.end_time} onSave={(v) => updateRule.mutate({ id: rule.id, end_time: v })} className="w-[120px]" />
           <div className="flex items-center gap-2">
             <Switch checked={rule.is_active} onCheckedChange={(v) => updateRule.mutate({ id: rule.id, is_active: v })} />
-            <span className="text-xs text-muted-foreground">{rule.is_active ? t("uiMyAvailability.active") : "Off"}</span>
+            <span className="text-xs text-muted-foreground">{rule.is_active ? t("uiMyAvailability.active") : t("uiMyAvailability.off")}</span>
           </div>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteRule.mutate(rule.id)}>
             <Trash2 className="h-4 w-4" />
@@ -126,13 +126,13 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-6">
-          <TabsTrigger value="global">Global</TabsTrigger>
+          <TabsTrigger value="global">{t("uiMyAvailability.global")}</TabsTrigger>
           {myServices.map((svc) => <TabsTrigger key={svc.id} value={svc.id}>{svc.title}</TabsTrigger>)}
-          <TabsTrigger value="exceptions">Exceptions</TabsTrigger>
+          <TabsTrigger value="exceptions">{t("uiMyAvailability.exceptions")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="global">
-          <h2 className="font-display text-lg font-semibold mb-3">Global weekly availability</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">{t("uiMyAvailability.globalWeeklyAvailability")}</h2>
           <RuleEditor rules={globalRules} />
         </TabsContent>
 
@@ -158,7 +158,7 @@ export default function MyAvailability({ bare }: { bare?: boolean }) {
                 <BufferedDateInput value={exc.date} onSave={(v) => updateException.mutate({ id: exc.id, date: v })} className="w-[160px]" />
                 <Badge variant={exc.is_available ? "default" : "destructive"} className="cursor-pointer"
                   onClick={() => updateException.mutate({ id: exc.id, is_available: !exc.is_available })}>
-                  {exc.is_available ? <><CalendarCheck className="h-3 w-3 mr-1" /> {t("uiMyAvailability.available")}</> : <><CalendarOff className="h-3 w-3 mr-1" /> Blocked</>}
+                  {exc.is_available ? <><CalendarCheck className="h-3 w-3 mr-1" /> {t("uiMyAvailability.available")}</> : <><CalendarOff className="h-3 w-3 mr-1" /> {t("uiMyAvailability.blocked")}</>}
                 </Badge>
                 {exc.is_available && (
                   <>

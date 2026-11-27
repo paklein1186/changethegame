@@ -296,7 +296,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
       }
 
       if (parentId) { setReplyText(""); setReplyingTo(null); setReplyMentions([]); clearImage(true); } else { setNewComment(""); setPendingMentions([]); clearImage(false); }
-      toast({ title: "Comment added" });
+      toast({ title: t("uiCommentThread.commentAdded") });
       qc.invalidateQueries({ queryKey });
     } catch (err: any) {
       toast({ title: err.message || t("uiCommentThread.failedToPostComment"), variant: "destructive" });
@@ -310,7 +310,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
     await supabase.from("comments").update({ content: editText.trim() }).eq("id", commentId);
     setEditingId(null);
     setEditText("");
-    toast({ title: "Comment edited" });
+    toast({ title: t("uiCommentThread.commentEdited") });
     qc.invalidateQueries({ queryKey });
   };
 
@@ -329,7 +329,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
       } else if (!data || data.length === 0) {
         toast({ title: t("uiCommentThread.youDonTHavePermissionTo"), variant: "destructive" });
       } else {
-        toast({ title: "Comment deleted" });
+        toast({ title: t("uiCommentThread.commentDeleted") });
         qc.invalidateQueries({ queryKey });
       }
     } catch {
@@ -371,7 +371,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 text-sm">
-                <span className="font-medium text-foreground">{author?.name ?? "Unknown"}</span>
+                <span className="font-medium text-foreground">{author?.name ?? t("uiCommentThread.unknown")}</span>
                 <AdminBadge userId={comment.author_id} />
                 <span className="text-muted-foreground text-xs">{formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}</span>
               </div>
@@ -388,7 +388,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
                   <div className="text-sm mt-1 text-foreground/90">{renderPostContent(comment.content)}</div>
                   {(comment as any).image_url && (
                     <div className="block mt-2 cursor-pointer" onClick={() => setLightboxSrc((comment as any).image_url)}>
-                      <img src={(comment as any).image_url} alt="Comment attachment" className="rounded-md max-h-64 max-w-full object-cover border border-border hover:opacity-90 transition-opacity" />
+                      <img src={(comment as any).image_url} alt={t("uiCommentThread.commentAttachment")} className="rounded-md max-h-64 max-w-full object-cover border border-border hover:opacity-90 transition-opacity" />
                     </div>
                   )}
                 </>
@@ -399,7 +399,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
                 </Button>
                 {!isReply && (
                   <Button variant="ghost" size="sm" className="h-7 px-2 text-muted-foreground hover:text-primary" onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}>
-                    <MessageSquare className="h-3.5 w-3.5 mr-1" />Reply
+                    <MessageSquare className="h-3.5 w-3.5 mr-1" />{t("uiCommentThread.reply")}
                   </Button>
                 )}
                 {isOwn && !isEditing && (
@@ -440,7 +440,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
                   </div>
                   {replyImagePreview && (
                     <div className="relative inline-block">
-                      <img src={replyImagePreview} alt="Preview" className="rounded-md max-h-24 max-w-[160px] object-cover border border-border" />
+                      <img src={replyImagePreview} alt={t("uiCommentThread.preview")} className="rounded-md max-h-24 max-w-[160px] object-cover border border-border" />
                       <Button variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full" onClick={() => clearImage(true)}>
                         <X className="h-3 w-3" />
                       </Button>
@@ -491,7 +491,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
             />
             {newCommentImagePreview && (
               <div className="relative inline-block mt-2">
-                <img src={newCommentImagePreview} alt="Preview" className="rounded-md max-h-32 max-w-[200px] object-cover border border-border" />
+                <img src={newCommentImagePreview} alt={t("uiCommentThread.preview")} className="rounded-md max-h-32 max-w-[200px] object-cover border border-border" />
                 <Button variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full" onClick={() => clearImage(false)}>
                   <X className="h-3 w-3" />
                 </Button>
@@ -501,12 +501,12 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
               <div>
                 <input ref={mainImageRef} type="file" accept="image/*" className="hidden" onChange={e => { handleImageSelect(e.target.files?.[0] || null, false); }} />
                 <Button type="button" variant="ghost" size="sm" className="h-7 px-2 text-muted-foreground hover:text-primary" onClick={() => mainImageRef.current?.click()}>
-                  <ImagePlus className="h-4 w-4 mr-1" /> Photo
+                  <ImagePlus className="h-4 w-4 mr-1" /> {t("uiCommentThread.photo")}
                 </Button>
               </div>
               <Button size="sm" disabled={(!newComment.trim() && !newCommentImage) || isSubmitting} onClick={() => addComment()}>
                 {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
-                Comment
+                {t("uiCommentThread.comment")}
               </Button>
             </div>
           </div>
@@ -525,7 +525,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>{t("uiCommentThread.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} disabled={isDeleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {isDeleting ? "Deleting…" : t("uiCommentThread.delete")}
+              {isDeleting ? t("uiCommentThread.deleting") : t("uiCommentThread.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

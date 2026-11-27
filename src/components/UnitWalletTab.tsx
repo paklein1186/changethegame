@@ -127,7 +127,7 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
               <p className="text-xs text-muted-foreground mb-2">€{(b.priceEur / b.credits).toFixed(3)}/credit</p>
               <Button size="sm" className="w-full" onClick={() => handleBuyCredits(b.code)} disabled={!!buyLoading}>
                 {buyLoading === b.code ? <Loader2 className="h-4 w-4 animate-spin" /> : <CurrencyIcon currency="credits" className="h-4 w-4 mr-1" />}
-                {buyLoading === b.code ? "Processing…" : "Buy"}
+                {buyLoading === b.code ? t("uiUnitWalletTab.processing") : t("uiUnitWalletTab.buy")}
               </Button>
             </div>
           ))}
@@ -137,15 +137,15 @@ export function UnitWalletTab({ unitType, unitId, unitName, creditsBalance }: Un
       <Separator />
 
       {/* Transaction history */}
-      <Section title="Transaction History" icon={<History className="h-5 w-5" />}>
+      <Section title={t("uiUnitWalletTab.transactionHistory")} icon={<History className="h-5 w-5" />}>
         <div className="flex items-center gap-2 mb-3">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={txFilter} onValueChange={setTxFilter}>
             <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("uiUnitWalletTab.all")}</SelectItem>
-              <SelectItem value="earned">Earned</SelectItem>
-              <SelectItem value="spent">Spent</SelectItem>
+              <SelectItem value="earned">{t("uiUnitWalletTab.earned")}</SelectItem>
+              <SelectItem value="spent">{t("uiUnitWalletTab.spent")}</SelectItem>
             </SelectContent>
           </Select>
         </div>

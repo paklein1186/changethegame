@@ -33,7 +33,7 @@ type UnifiedTask = {
 };
 
 const COLUMNS: { key: string; label: string; color: string }[] = [
-  { key: "BACKLOG", label: "Backlog", color: "border-muted-foreground/30 bg-muted/20" },
+  { key: "BACKLOG", get label() { return i18n.t("uiWorkTasksKanban.backlog"); }, color: "border-muted-foreground/30 bg-muted/20" },
   { key: "TODO", get label() { return i18n.t("uiWorkTasksKanban.toDoNext"); }, color: "border-blue-400/50 bg-blue-50/30 dark:bg-blue-950/20" },
   { key: "IN_PROGRESS", get label() { return i18n.t("uiWorkTasksKanban.inProgress"); }, color: "border-amber-400/50 bg-amber-50/30 dark:bg-amber-950/20" },
   { key: "DONE", get label() { return i18n.t("uiWorkTasksKanban.done"); }, color: "border-emerald-400/50 bg-emerald-50/30 dark:bg-emerald-950/20" },
@@ -117,7 +117,7 @@ export function WorkTasksKanban({ tasks, onStatusChange, pendingDone, undoDone }
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-sm text-muted-foreground line-through truncate">{task.title}</span>
                         <Button variant="outline" size="sm" className="h-6 gap-1 text-[10px] shrink-0" onClick={() => undoDone(task)}>
-                          <Undo2 className="h-3 w-3" /> Undo
+                          <Undo2 className="h-3 w-3" /> {t("uiWorkTasksKanban.undo")}
                         </Button>
                       </div>
                     </motion.div>

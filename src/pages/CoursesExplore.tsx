@@ -42,7 +42,7 @@ export default function CoursesExplore({ bare }: { bare?: boolean }) {
       {!bare && (
         <div className="mb-6">
           <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-            <GraduationCap className="h-7 w-7 text-primary" /> Courses
+            <GraduationCap className="h-7 w-7 text-primary" /> {t("uiCoursesExplore.courses")}
           </h1>
           <p className="text-muted-foreground mt-1">{t("uiCoursesExplore.learnFromTheCommunitySBest")}</p>
         </div>
@@ -87,7 +87,7 @@ export default function CoursesExplore({ bare }: { bare?: boolean }) {
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     {course.is_free ? (
-                      <Badge className="bg-primary/10 text-primary border-0 text-xs">Free</Badge>
+                      <Badge className="bg-primary/10 text-primary border-0 text-xs">{t("uiCoursesExplore.free")}</Badge>
                     ) : (
                       <Badge className="bg-primary/10 text-primary border-0 text-xs">€{course.price_amount}</Badge>
                     )}

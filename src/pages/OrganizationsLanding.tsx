@@ -23,25 +23,25 @@ const fadeUp = {
 
 const ORG_TYPES = [
   { icon: Landmark, get label() { return i18n.t("uiOrganizationsLanding.publicSector"); }, get desc() { return i18n.t("uiOrganizationsLanding.governmentAgenciesMunicipalitiesPublicInstitutions"); } },
-  { icon: Building2, label: "Corporations", get desc() { return i18n.t("uiOrganizationsLanding.companiesBringingInnovationAndResourcesTo"); } },
-  { icon: GraduationCap, label: "Academics & Research", get desc() { return i18n.t("uiOrganizationsLanding.universitiesLabsAndResearchInstitutions"); } },
-  { icon: Heart, label: "Foundations", desc: "Philanthropic organizations driving systemic change" },
-  { icon: Leaf, label: "NGOs", get desc() { return i18n.t("uiOrganizationsLanding.nonProfitsWorkingOnSocialAnd"); } },
+  { icon: Building2, get label() { return i18n.t("uiOrganizationsLanding.corporations"); }, get desc() { return i18n.t("uiOrganizationsLanding.companiesBringingInnovationAndResourcesTo"); } },
+  { icon: GraduationCap, get label() { return i18n.t("uiOrganizationsLanding.academicsResearch"); }, get desc() { return i18n.t("uiOrganizationsLanding.universitiesLabsAndResearchInstitutions"); } },
+  { icon: Heart, get label() { return i18n.t("uiOrganizationsLanding.foundations"); }, get desc() { return i18n.t("uiOrganizationsLanding.philanthropicOrganizationsDrivingSystemicChange"); } },
+  { icon: Leaf, get label() { return i18n.t("uiOrganizationsLanding.ngos"); }, get desc() { return i18n.t("uiOrganizationsLanding.nonProfitsWorkingOnSocialAnd"); } },
 ];
 
 const STEPS = [
   { step: "01", get title() { return i18n.t("uiOrganizationsLanding.createYourProfile"); }, get desc() { return i18n.t("uiOrganizationsLanding.addYourOrganizationDetailsOrLet"); } },
   { step: "02", get title() { return i18n.t("uiOrganizationsLanding.aiMapsYourMission"); }, get desc() { return i18n.t("uiOrganizationsLanding.weMatchYourTopicsTerritoriesAnd"); } },
-  { step: "03", title: "Launch opportunities", get desc() { return i18n.t("uiOrganizationsLanding.postQuestsJobsOrCallsFor"); } },
+  { step: "03", get title() { return i18n.t("uiOrganizationsLanding.launchOpportunities"); }, get desc() { return i18n.t("uiOrganizationsLanding.postQuestsJobsOrCallsFor"); } },
   { step: "04", get title() { return i18n.t("uiOrganizationsLanding.matchWithBuilders"); }, get desc() { return i18n.t("uiOrganizationsLanding.discoverGuildsUsersAndPodsAligned"); } },
 ];
 
 const WHY_JOIN = [
-  { icon: Users, title: "Access talent", get desc() { return i18n.t("uiOrganizationsLanding.findSkilledIndividualsAndGuildsAligned"); } },
+  { icon: Users, get title() { return i18n.t("uiOrganizationsLanding.accessTalent"); }, get desc() { return i18n.t("uiOrganizationsLanding.findSkilledIndividualsAndGuildsAligned"); } },
   { icon: Target, get title() { return i18n.t("uiOrganizationsLanding.launchCallsForProposals"); }, get desc() { return i18n.t("uiOrganizationsLanding.createMonetizedQuestsOpenToThe"); } },
   { icon: Handshake, get title() { return i18n.t("uiOrganizationsLanding.coCreateWithGuilds"); }, get desc() { return i18n.t("uiOrganizationsLanding.partnerWithMissionDrivenCommunities"); } },
-  { icon: MapPin, title: "Territorial impact", get desc() { return i18n.t("uiOrganizationsLanding.strengthenYourPresenceInSpecificTerritories"); } },
-  { icon: Compass, title: "Discover innovations", get desc() { return i18n.t("uiOrganizationsLanding.exploreRegenerativePracticesAndNewApproaches"); } },
+  { icon: MapPin, get title() { return i18n.t("uiOrganizationsLanding.territorialImpact"); }, get desc() { return i18n.t("uiOrganizationsLanding.strengthenYourPresenceInSpecificTerritories"); } },
+  { icon: Compass, get title() { return i18n.t("uiOrganizationsLanding.discoverInnovations"); }, get desc() { return i18n.t("uiOrganizationsLanding.exploreRegenerativePracticesAndNewApproaches"); } },
 ];
 
 export default function OrganizationsLanding() {
@@ -84,9 +84,9 @@ export default function OrganizationsLanding() {
             <img src={logoImg} alt="changethegame" className="h-6 w-6" /> changethegame
           </Link>
           <nav className="flex items-center gap-2">
-            <Button size="sm" variant="ghost" asChild><Link to="/explore"><Compass className="h-4 w-4 mr-1" /> Explore</Link></Button>
+            <Button size="sm" variant="ghost" asChild><Link to="/explore"><Compass className="h-4 w-4 mr-1" /> {t("uiOrganizationsLanding.explore")}</Link></Button>
             {user ? (
-              <Button size="sm" asChild><Link to="/">Enter</Link></Button>
+              <Button size="sm" asChild><Link to="/">{t("uiOrganizationsLanding.enter")}</Link></Button>
             ) : (
               <>
                 <Button size="sm" variant="ghost" asChild><Link to="/login">{t("uiOrganizationsLanding.logIn")}</Link></Button>
@@ -113,7 +113,7 @@ export default function OrganizationsLanding() {
             className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-4xl mx-auto leading-[1.1] px-2"
           >
             {t("uiOrganizationsLanding.institutionsShapingTheFutureWith")}{" "}
-            <span className="text-primary">regenerative collaboration.</span>
+            <span className="text-primary">{t("uiOrganizationsLanding.regenerativeCollaboration")}</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25, duration: 0.6 }}
@@ -129,7 +129,7 @@ export default function OrganizationsLanding() {
               <Building2 className="h-4 w-4" /> {t("uiOrganizationsLanding.createOrganizationProfile")}
             </Button>
             <Button size="lg" variant="outline" className="gap-2" asChild>
-              <Link to="/explore"><Compass className="h-4 w-4" /> Explore Ecosystem</Link>
+              <Link to="/explore"><Compass className="h-4 w-4" /> {t("uiOrganizationsLanding.exploreEcosystem")}</Link>
             </Button>
           </motion.div>
         </div>
@@ -158,7 +158,7 @@ export default function OrganizationsLanding() {
       {/* How It Works */}
       <section className="border-t border-border">
         <div className="container py-16 md:py-24">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">How it works</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">{t("uiOrganizationsLanding.howItWorks")}</h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map((s, i) => (
               <motion.div key={s.step} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
@@ -205,7 +205,7 @@ export default function OrganizationsLanding() {
         <div className="container py-16 md:py-24 max-w-3xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <Shield className="h-8 w-8 text-primary mx-auto mb-6" />
-            <h2 className="font-display text-2xl md:text-3xl font-bold mb-6">Governance & Transparency</h2>
+            <h2 className="font-display text-2xl md:text-3xl font-bold mb-6">{t("uiOrganizationsLanding.governanceTransparency")}</h2>
             <div className="grid gap-4 sm:grid-cols-2 text-left">
               <div className="rounded-xl border border-border bg-card p-4">
                 <Zap className="h-5 w-5 text-amber-500 mb-2" />
@@ -219,7 +219,7 @@ export default function OrganizationsLanding() {
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
                 <Globe className="h-5 w-5 text-emerald-500 mb-2" />
-                <h3 className="font-semibold text-sm mb-1">Money — Real Transactions</h3>
+                <h3 className="font-semibold text-sm mb-1">{t("uiOrganizationsLanding.moneyRealTransactions")}</h3>
                 <p className="text-xs text-muted-foreground">{t("uiOrganizationsLanding.stripePoweredPaymentsForQuestsServices")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">

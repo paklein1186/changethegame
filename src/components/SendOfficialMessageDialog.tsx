@@ -116,7 +116,7 @@ export function SendOfficialMessageDialog({
       }
 
       toast({
-        title: "Message sent",
+        title: t("uiSendOfficialMessageDialog.messageSent"),
         description: `Official message sent to ${recipientName} as ${senderLabel}`,
       });
       setContent("");
@@ -163,7 +163,7 @@ export function SendOfficialMessageDialog({
           </Button>
           <Button onClick={handleSend} disabled={!content.trim() || sending}>
             <Mail className="h-4 w-4 mr-1" />
-            {sending ? "Sending…" : t("uiSendOfficialMessageDialog.sendOfficialMessage")}
+            {sending ? t("uiSendOfficialMessageDialog.sending") : t("uiSendOfficialMessageDialog.sendOfficialMessage")}
           </Button>
         </div>
       </DialogContent>

@@ -52,7 +52,7 @@ const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof
   return (
   <PaginationLink aria-label={t("uiPagination.goToPreviousPage")} size="default" className={cn("gap-1 pl-2.5", className)} {...props}>
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <span>{t("uiPagination.previous")}</span>
   </PaginationLink>
 );
 };

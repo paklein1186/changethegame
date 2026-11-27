@@ -82,20 +82,20 @@ export default function PodDetail() {
     if (error) { toast({ title: t("uiPodDetail.failedToJoin"), variant: "destructive" }); return; }
     autoFollowEntity(currentUser.id, "POD", pod.id);
     qc.invalidateQueries({ queryKey: ["pod", id] });
-    toast({ title: "Joined pod!" });
+    toast({ title: t("uiPodDetail.joinedPod") });
   };
 
   const leavePod = async () => {
     await supabase.from("pod_members").delete().eq("pod_id", pod.id).eq("user_id", currentUser.id);
     qc.invalidateQueries({ queryKey: ["pod", id] });
-    toast({ title: "Left pod" });
+    toast({ title: t("uiPodDetail.leftPod") });
   };
 
   const markPodComplete = async () => {
     const { error } = await supabase.from("pods").update({ status: "COMPLETED" } as any).eq("id", pod.id);
     if (error) { toast({ title: t("uiPodDetail.failedToCompletePod"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["pod", id] });
-    toast({ title: "Pod marked as complete!" });
+    toast({ title: t("uiPodDetail.podMarkedAsComplete") });
     // Emit $CTG + XP for pod host
     try {
       await supabase.rpc("emit_ctg_for_contribution", {
@@ -165,11 +165,11 @@ export default function PodDetail() {
         {/* Unit details */}
         <div className="rounded-xl border border-border bg-card/50 p-5 w-full max-w-5xl mt-3 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Followers</span>
+            <span className="text-sm text-muted-foreground">{t("uiPodDetail.followers")}</span>
             <EntityFollowersCount entityId={pod.id} entityType="POD" variant="inline" />
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Membership policy</span>
+            <span className="text-sm text-muted-foreground">{t("uiPodDetail.membershipPolicy")}</span>
             <Badge variant={pod.join_policy === "OPEN" ? "default" : pod.join_policy === "INVITE_ONLY" ? "destructive" : "secondary"} className="capitalize text-xs">
               {(pod.join_policy || "OPEN").replace(/_/g, " ").toLowerCase()}
             </Badge>
@@ -183,7 +183,7 @@ export default function PodDetail() {
             if (hosts.length === 0) return null;
             return (
               <div>
-                <span className="text-sm text-muted-foreground block mb-1.5">Hosts</span>
+                <span className="text-sm text-muted-foreground block mb-1.5">{t("uiPodDetail.hosts")}</span>
                 <div className="flex flex-wrap gap-2">
                   {hosts.map((m: any) => (
                     <Link key={m.id} to={`/users/${m.user_id}`} className="flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-xs font-medium hover:border-primary/30 transition-colors">
@@ -240,7 +240,7 @@ export default function PodDetail() {
           {isHost && <InviteLinkButton entityType="pod" entityId={pod.id} entityName={pod.name} />}
           {isHost && (pod as any).status !== "COMPLETED" && (
             <Button variant="outline" size="sm" onClick={markPodComplete}>
-              <ShieldCheck className="h-4 w-4 mr-1" /> Mark Complete
+              <ShieldCheck className="h-4 w-4 mr-1" /> {t("uiPodDetail.markComplete")}
             </Button>
           )}
           {isHost && (
@@ -257,9 +257,9 @@ export default function PodDetail() {
         <div className="flex items-center gap-1">
           <TabsList>
             <TabsTrigger value="members"><Users className="h-4 w-4 mr-1" /> {t("uiPodDetail.members2")}{members.length})</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="discussion">Discussion</TabsTrigger>
-            {isMember && <TabsTrigger value="agents"><Bot className="h-4 w-4 mr-1" /> Agents</TabsTrigger>}
+            <TabsTrigger value="documents">{t("uiPodDetail.documents")}</TabsTrigger>
+            <TabsTrigger value="discussion">{t("uiPodDetail.discussion")}</TabsTrigger>
+            {isMember && <TabsTrigger value="agents"><Bot className="h-4 w-4 mr-1" /> {t("uiPodDetail.agents")}</TabsTrigger>}
           </TabsList>
           {isMember && (
             <DropdownMenu>
@@ -271,13 +271,13 @@ export default function PodDetail() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => document.querySelector<HTMLButtonElement>('[data-state][value="facilitator"]')?.click()}>
-                  <Sparkles className="h-4 w-4 mr-2" /> Facilitator
+                  <Sparkles className="h-4 w-4 mr-2" /> {t("uiPodDetail.facilitator")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => document.querySelector<HTMLButtonElement>('[data-state][value="memory"]')?.click()}>
-                  <Brain className="h-4 w-4 mr-2" /> Memory
+                  <Brain className="h-4 w-4 mr-2" /> {t("uiPodDetail.memory")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => document.querySelector<HTMLButtonElement>('[data-state][value="ai-chat"]')?.click()}>
-                  <Bot className="h-4 w-4 mr-2" /> Chat & AI
+                  <Bot className="h-4 w-4 mr-2" /> {t("uiPodDetail.chatAi")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

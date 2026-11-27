@@ -47,7 +47,7 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
 
   const handleUserSelect = async (selectedUser: { user_id: string; display_name: string | null }) => {
     if (invitedUsers.includes(selectedUser.user_id)) {
-      toast({ title: "Already invited", variant: "default" });
+      toast({ title: t("uiInviteLinkButton.alreadyInvited"), variant: "default" });
       return;
     }
 
@@ -62,7 +62,7 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
 
     setInvitedUsers((prev) => [...prev, selectedUser.user_id]);
     toast({
-      title: "Invitation sent!",
+      title: t("uiInviteLinkButton.invitationSent"),
       description: `${selectedUser.display_name || "User"} has been notified.`,
     });
   };
@@ -92,11 +92,11 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
 
       setEmailSent(true);
       setEmail("");
-      toast({ title: "Email sent!", description: `Invitation sent to ${trimmed}` });
+      toast({ title: t("uiInviteLinkButton.emailSent"), description: `Invitation sent to ${trimmed}` });
       setTimeout(() => setEmailSent(false), 3000);
     } catch (err) {
       console.error("[InviteEmail] Failed:", err);
-      toast({ title: t("uiInviteLinkButton.failedToSendEmail"), description: "Please try again later.", variant: "destructive" });
+      toast({ title: t("uiInviteLinkButton.failedToSendEmail"), description: t("uiInviteLinkButton.pleaseTryAgainLater"), variant: "destructive" });
     } finally {
       setSendingEmail(false);
     }
@@ -164,7 +164,7 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@example.com"
+                placeholder={t("uiInviteLinkButton.emailExampleCom")}
                 className="text-xs h-8"
                 onKeyDown={(e) => e.key === "Enter" && handleSendEmail()}
               />

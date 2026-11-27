@@ -205,8 +205,8 @@ function CreateDecisionForm({ guildId, entityType, entityId, userId, onCreated }
       const optionsPayload = needsOptions
         ? options.filter(o => o.label.trim()).map((o, i) => ({ id: i, label: o.label.trim(), description: o.description }))
         : decisionType === "VOTE_SIMPLE"
-          ? [{ id: 0, label: "Yes" }, { id: 1, label: t("uiGuildDecisions.no") }, { id: 2, label: "Abstain" }]
-          : [{ id: 0, label: "I consent" }, { id: 1, label: "I object" }];
+          ? [{ id: 0, label: t("uiGuildDecisions.yes") }, { id: 1, label: t("uiGuildDecisions.no") }, { id: 2, label: t("uiGuildDecisions.abstain") }]
+          : [{ id: 0, label: t("uiGuildDecisions.iConsent") }, { id: 1, label: t("uiGuildDecisions.iObject") }];
 
       const { error } = await supabase.from("decision_polls").insert({
         entity_type: entityType,

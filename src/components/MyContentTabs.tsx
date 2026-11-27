@@ -138,7 +138,7 @@ export function MyPodsTab({ userId }: { userId: string }) {
     <div>
       <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><Users className="h-5 w-5" /> {t("uiMyContentTabs.myPods")}</h3>
       {isLoading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
-      {!isLoading && pods.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youReNotInAnyPods")} <Link to="/explore" className="text-primary hover:underline">Explore pods</Link></p>}
+      {!isLoading && pods.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youReNotInAnyPods")} <Link to="/explore" className="text-primary hover:underline">{t("uiMyContentTabs.explorePods")}</Link></p>}
       <div className="space-y-2">
         {pods.map((p: any) => (
           <Link key={p.id} to={`/pods/${p.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
@@ -188,7 +188,7 @@ export function MyCoursesTab({ userId }: { userId: string }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2"><GraduationCap className="h-5 w-5" /> Courses I Teach</h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2"><GraduationCap className="h-5 w-5" /> {t("uiMyContentTabs.coursesITeach")}</h3>
         <Button size="sm" asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> {t("uiMyContentTabs.newCourse")}</Link></Button>
       </div>
       {loading && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
@@ -201,22 +201,22 @@ export function MyCoursesTab({ userId }: { userId: string }) {
               <p className="text-xs text-muted-foreground capitalize">{c.level?.toLowerCase()}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={c.is_published ? "default" : "secondary"} className="text-[10px]">{c.is_published ? "Published" : t("uiMyContentTabs.draft")}</Badge>
-              <Badge variant="outline" className="text-[10px]">{c.is_free ? "Free" : "Paid"}</Badge>
+              <Badge variant={c.is_published ? "default" : "secondary"} className="text-[10px]">{c.is_published ? t("uiMyContentTabs.published") : t("uiMyContentTabs.draft")}</Badge>
+              <Badge variant="outline" className="text-[10px]">{c.is_free ? t("uiMyContentTabs.free") : t("uiMyContentTabs.paid")}</Badge>
             </div>
           </Link>
         ))}
       </div>
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><GraduationCap className="h-5 w-5" /> Courses I'm Taking</h3>
-        {!loading && enrolled.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youHavenTEnrolledInAny")} <Link to="/explore" className="text-primary hover:underline">Browse courses</Link></p>}
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><GraduationCap className="h-5 w-5" /> {t("uiMyContentTabs.coursesIMTaking")}</h3>
+        {!loading && enrolled.length === 0 && <p className="text-sm text-muted-foreground">{t("uiMyContentTabs.youHavenTEnrolledInAny")} <Link to="/explore" className="text-primary hover:underline">{t("uiMyContentTabs.browseCourses")}</Link></p>}
         <div className="space-y-2">
           {enrolled.map((c: any) => (
             <Link key={c.id} to={`/courses/${c.id}`} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:bg-muted/50 transition-colors">
               <div>
                 <p className="text-sm font-medium">{c.title}</p>
-                <p className="text-xs text-muted-foreground">{c.progress}% complete</p>
+                <p className="text-xs text-muted-foreground">{c.progress}{t("uiMyContentTabs.complete")}</p>
               </div>
               <Badge variant={c.completed ? "default" : "secondary"} className="text-[10px]">{c.completed ? t("uiMyContentTabs.completed") : t("uiMyContentTabs.inProgress")}</Badge>
             </Link>

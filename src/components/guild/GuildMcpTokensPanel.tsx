@@ -114,8 +114,8 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          {t("guildMcp.keyHeader")} <code>Authorization: Bearer ctg_…</code>. {t("guildMcp.keyAddress")}{" "}
-          <code>{mcpUrl}?key=ctg_…</code> {t("guildMcp.keyAddressReadOnly")}
+          {t("guildMcp.keyHeader")} <code>{t("uiGuildMcpTokensPanel.authorizationBearerCtg")}</code>. {t("guildMcp.keyAddress")}{" "}
+          <code>{mcpUrl}{t("uiGuildMcpTokensPanel.keyCtg")}</code> {t("guildMcp.keyAddressReadOnly")}
         </p>
         <p className="text-xs text-muted-foreground">
           {t("guildMcp.activityHint")} <code>get_guild_activity</code> {t("guildMcp.activityHintSince")} <code>next_since</code>.

@@ -186,15 +186,15 @@ export function AnalyticsTab() {
           <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard icon={UsersIcon} label="Total Users" value={realStats?.totalUsers ?? 0} sub={`+${realStats?.recentUsers7d ?? 0} (7d) · +${realStats?.recentUsers30d ?? 0} (30d)`} />
+            <StatCard icon={UsersIcon} label={t("uiAnalyticsTab.totalUsers")} value={realStats?.totalUsers ?? 0} sub={`+${realStats?.recentUsers7d ?? 0} (7d) · +${realStats?.recentUsers30d ?? 0} (30d)`} />
             <StatCard icon={Compass} label={t("uiAnalyticsTab.quests")} value={counts?.quests ?? 0} />
             <StatCard icon={Shield} label={t("uiAnalyticsTab.guilds")} value={counts?.guilds ?? 0} />
-            <StatCard icon={Hash} label="Pods" value={counts?.pods ?? 0} />
-            <StatCard icon={ShoppingBag} label="Services" value={counts?.services ?? 0} />
-            <StatCard icon={CreditCard} label="Bookings" value={counts?.bookings ?? 0} />
-            <StatCard icon={MessageSquare} label="Comments" value={counts?.comments ?? 0} />
-            <StatCard icon={Building2} label="Organizations" value={counts?.companies ?? 0} />
-            <StatCard icon={ScrollText} label="Courses" value={counts?.courses ?? 0} />
+            <StatCard icon={Hash} label={t("uiAnalyticsTab.pods")} value={counts?.pods ?? 0} />
+            <StatCard icon={ShoppingBag} label={t("uiAnalyticsTab.services")} value={counts?.services ?? 0} />
+            <StatCard icon={CreditCard} label={t("uiAnalyticsTab.bookings")} value={counts?.bookings ?? 0} />
+            <StatCard icon={MessageSquare} label={t("uiAnalyticsTab.comments")} value={counts?.comments ?? 0} />
+            <StatCard icon={Building2} label={t("uiAnalyticsTab.organizations")} value={counts?.companies ?? 0} />
+            <StatCard icon={ScrollText} label={t("uiAnalyticsTab.courses")} value={counts?.courses ?? 0} />
             <StatCard icon={MapPin} label={t("uiAnalyticsTab.territories")} value={counts?.territories ?? 0} />
           </div>
         )}
@@ -222,7 +222,7 @@ export function AnalyticsTab() {
       <Separator />
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><CreditCard className="h-5 w-5" /> Subscriptions <LiveLabel /></h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><CreditCard className="h-5 w-5" /> {t("uiAnalyticsTab.subscriptions")} <LiveLabel /></h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-xl border border-border bg-card p-4">
             <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.activeSubscriptions")}</p>
@@ -238,13 +238,13 @@ export function AnalyticsTab() {
       <Separator />
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><ScrollText className="h-5 w-5" /> Course Engagement <LiveLabel /></h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><ScrollText className="h-5 w-5" /> {t("uiAnalyticsTab.courseEngagement")} <LiveLabel /></h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: "Total Enrollments", value: loadingCourses ? "…" : courseStats?.enrollments ?? 0 },
-            { label: "Course Completions", value: loadingCourses ? "…" : courseStats?.completions ?? 0 },
-            { label: "Paid Courses", value: loadingCourses ? "…" : courseStats?.paidCourses ?? 0 },
-            { label: "Course Revenue", value: loadingCourses ? "…" : `€${courseStats?.revenue ?? 0}` },
+            { label: t("uiAnalyticsTab.totalEnrollments"), value: loadingCourses ? "…" : courseStats?.enrollments ?? 0 },
+            { label: t("uiAnalyticsTab.courseCompletions"), value: loadingCourses ? "…" : courseStats?.completions ?? 0 },
+            { label: t("uiAnalyticsTab.paidCourses"), value: loadingCourses ? "…" : courseStats?.paidCourses ?? 0 },
+            { label: t("uiAnalyticsTab.courseRevenue"), value: loadingCourses ? "…" : `€${courseStats?.revenue ?? 0}` },
           ].map((s, i) => (
             <div key={i} className="rounded-xl border border-border bg-card p-4">
               <p className="text-xs text-muted-foreground">{s.label}</p>
@@ -257,14 +257,14 @@ export function AnalyticsTab() {
       <Separator />
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><TrendingUp className="h-5 w-5" /> Marketplace & Revenue <LiveLabel /></h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><TrendingUp className="h-5 w-5" /> {t("uiAnalyticsTab.marketplaceRevenue")} <LiveLabel /></h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Booking Revenue</p>
+            <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.bookingRevenue")}</p>
             <p className="text-2xl font-bold text-primary">{loadingMkt ? "…" : `€${mktStats?.totalBookingRevenue ?? 0}`}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Paid Bookings</p>
+            <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.paidBookings")}</p>
             <p className="text-2xl font-bold text-primary">{loadingMkt ? "…" : mktStats?.paidBookings ?? 0}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">

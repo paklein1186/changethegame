@@ -58,7 +58,7 @@ export function GiveBackHistory() {
                 )}
                 <div>
                   <p className="text-sm font-medium">
-                    {d.to_target_type === "GUILD" ? d.guilds?.name || t("uiGiveBackHistory.guild") : "Platform"}
+                    {d.to_target_type === "GUILD" ? d.guilds?.name || t("uiGiveBackHistory.guild") : t("uiGiveBackHistory.platform")}
                   </p>
                   {d.metadata?.service_name && (
                     <p className="text-xs text-muted-foreground">{t("uiGiveBackHistory.from")} {d.metadata.service_name}</p>
@@ -172,7 +172,7 @@ export function PlatformGiveBackAdmin() {
           {donations.map((d: any) => (
             <div key={d.id} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/50 transition-colors">
               <div>
-                <p className="text-sm font-medium">{(d.profiles as any)?.name || "User"}</p>
+                <p className="text-sm font-medium">{(d.profiles as any)?.name || t("uiGiveBackHistory.user")}</p>
                 {d.metadata?.service_name && (
                   <p className="text-xs text-muted-foreground">{d.metadata.service_name}</p>
                 )}

@@ -301,7 +301,7 @@ export function GuidedPathways({ persona, userName, userId, isOrgRep, onActionSe
       if (error) throw error;
       setAiResult(data);
     } catch (e: any) {
-      toast.error(e?.message || "Something went wrong");
+      toast.error(e?.message || t("uiGuidedPathways.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -504,7 +504,7 @@ export function GuidedPathways({ persona, userName, userId, isOrgRep, onActionSe
 
                   <div className="flex justify-center">
                     <Button variant="ghost" size="sm" onClick={() => { setAiResult(null); setInput(""); }}>
-                      Ask something else
+                      {t("uiGuidedPathways.askSomethingElse")}
                     </Button>
                   </div>
                 </motion.div>
@@ -519,7 +519,7 @@ export function GuidedPathways({ persona, userName, userId, isOrgRep, onActionSe
                   className="flex items-center justify-center gap-2 py-8 text-muted-foreground"
                 >
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm">Thinking…</span>
+                  <span className="text-sm">{t("uiGuidedPathways.thinking")}</span>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation, Trans } from "react-i18next";
@@ -24,33 +25,33 @@ export interface AgentOwner { type: Exclude<OwnerType, "user">; id: string; name
 
 const LLM_PROVIDERS: { value: string; label: string; models: { value: string; label: string }[] }[] = [
   {
-    value: "openai", label: "OpenAI",
+    value: "openai", get label() { return i18n.t("uiCreateAgentDialog.openai"); },
     models: [
-      { value: "gpt-4o", label: "GPT-4o" },
-      { value: "gpt-4o-mini", label: "GPT-4o Mini" },
-      { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
+      { value: "gpt-4o", get label() { return i18n.t("uiCreateAgentDialog.gpt4o"); } },
+      { value: "gpt-4o-mini", get label() { return i18n.t("uiCreateAgentDialog.gpt4oMini"); } },
+      { value: "gpt-4-turbo", get label() { return i18n.t("uiCreateAgentDialog.gpt4Turbo"); } },
       { value: "o1-mini", label: "o1-mini" },
     ],
   },
   {
-    value: "anthropic", label: "Anthropic",
+    value: "anthropic", get label() { return i18n.t("uiCreateAgentDialog.anthropic"); },
     models: [
-      { value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
-      { value: "claude-haiku-4-20250414", label: "Claude Haiku 4" },
+      { value: "claude-sonnet-4-20250514", get label() { return i18n.t("uiCreateAgentDialog.claudeSonnet4"); } },
+      { value: "claude-haiku-4-20250414", get label() { return i18n.t("uiCreateAgentDialog.claudeHaiku4"); } },
     ],
   },
   {
-    value: "mistral", label: "Mistral",
+    value: "mistral", get label() { return i18n.t("uiCreateAgentDialog.mistral"); },
     models: [
-      { value: "mistral-large-latest", label: "Mistral Large" },
-      { value: "mistral-small-latest", label: "Mistral Small" },
+      { value: "mistral-large-latest", get label() { return i18n.t("uiCreateAgentDialog.mistralLarge"); } },
+      { value: "mistral-small-latest", get label() { return i18n.t("uiCreateAgentDialog.mistralSmall"); } },
     ],
   },
   {
-    value: "groq", label: "Groq",
+    value: "groq", get label() { return i18n.t("uiCreateAgentDialog.groq"); },
     models: [
-      { value: "llama-3.3-70b-versatile", label: "LLaMA 3.3 70B" },
-      { value: "mixtral-8x7b-32768", label: "Mixtral 8x7B" },
+      { value: "llama-3.3-70b-versatile", get label() { return i18n.t("uiCreateAgentDialog.llama3370b"); } },
+      { value: "mixtral-8x7b-32768", get label() { return i18n.t("uiCreateAgentDialog.mixtral8x7b"); } },
     ],
   },
 ];

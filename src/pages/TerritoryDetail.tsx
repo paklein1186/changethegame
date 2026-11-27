@@ -88,7 +88,7 @@ export default function TerritoryDetail() {
                     <span className="flex items-center gap-1"><Compass className="h-3 w-3" /> {stats.quests} quests</span>
                     <span className="flex items-center gap-1"><Shield className="h-3 w-3" /> {stats.guilds} guilds</span>
                     <span className="flex items-center gap-1"><CircleDot className="h-3 w-3" /> {stats.pods} pods</span>
-                    <span className="flex items-center gap-1"><Brain className="h-3 w-3" /> {stats.memoryEntries} memory entries</span>
+                    <span className="flex items-center gap-1"><Brain className="h-3 w-3" /> {stats.memoryEntries} {t("uiTerritoryDetail.memoryEntries")}</span>
                   </>
                 )}
               </div>
@@ -102,7 +102,7 @@ export default function TerritoryDetail() {
                 className="gap-1.5"
               >
                 <Heart className={cn("h-3.5 w-3.5", isFollowing && "fill-current")} />
-                {isFollowing ? "Following" : t("uiTerritoryDetail.follow")}
+                {isFollowing ? t("uiTerritoryDetail.following") : t("uiTerritoryDetail.follow")}
               </Button>
               <ShareLinkButton entityType="territory" entityId={territory.id} entityName={territory.name} />
             </div>
@@ -114,12 +114,12 @@ export default function TerritoryDetail() {
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="w-full justify-start">
             <TabsTrigger value="overview">{t("uiTerritoryDetail.overview")}</TabsTrigger>
-            <TabsTrigger value="posts">Posts</TabsTrigger>
-            <TabsTrigger value="ecosystem">Ecosystem <HintTooltip {...HINTS.tooltips.territoryEcosystem} /></TabsTrigger>
-            <TabsTrigger value="living"><Leaf className="h-3.5 w-3.5 mr-1" /> Living <HintTooltip {...HINTS.tooltips.territoryLiving} /></TabsTrigger>
-            <TabsTrigger value="library">Library</TabsTrigger>
-            <TabsTrigger value="contribute">Contribute</TabsTrigger>
-            <TabsTrigger value="graph"><Compass className="h-3.5 w-3.5 mr-1" /> Graph</TabsTrigger>
+            <TabsTrigger value="posts">{t("uiTerritoryDetail.posts")}</TabsTrigger>
+            <TabsTrigger value="ecosystem">{t("uiTerritoryDetail.ecosystem")} <HintTooltip {...HINTS.tooltips.territoryEcosystem} /></TabsTrigger>
+            <TabsTrigger value="living"><Leaf className="h-3.5 w-3.5 mr-1" /> {t("uiTerritoryDetail.living")} <HintTooltip {...HINTS.tooltips.territoryLiving} /></TabsTrigger>
+            <TabsTrigger value="library">{t("uiTerritoryDetail.library")}</TabsTrigger>
+            <TabsTrigger value="contribute">{t("uiTerritoryDetail.contribute")}</TabsTrigger>
+            <TabsTrigger value="graph"><Compass className="h-3.5 w-3.5 mr-1" /> {t("uiTerritoryDetail.graph")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">

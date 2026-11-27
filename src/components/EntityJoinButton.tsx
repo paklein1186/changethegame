@@ -115,7 +115,7 @@ export function EntityJoinButton({
     } else {
       setPendingApp(true);
       setApplyOpen(false);
-      toast({ title: "Application submitted!", description: membershipHint ? `Admins will review it. ${membershipHint}` : "Admins will review it." });
+      toast({ title: t("uiEntityJoinButton.applicationSubmitted"), description: membershipHint ? `Admins will review it. ${membershipHint}` : t("uiEntityJoinButton.adminsWillReviewIt") });
       // Notify admins about the join request
       notifyJoinRequest({ entityType, entityId, entityName: entityName || label, applicantName: currentUserName || "Someone" });
     }

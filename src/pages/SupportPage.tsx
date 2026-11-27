@@ -40,7 +40,7 @@ export default function SupportPage() {
         <p>{t("uiSupportPage.stuckContactTheTeamForDirect")}</p>
       </ContentSection>
 
-      <ContentCTA links={[{ label: "Contact us", href: "/contact" }]} />
+      <ContentCTA links={[{ label: t("uiSupportPage.contactUs"), href: "/contact" }]} />
     </ContentPageShell>
   );
 }

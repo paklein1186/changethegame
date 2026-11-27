@@ -43,7 +43,7 @@ export default function ContactPage({ embedded }: { embedded?: boolean }) {
       </form>
 
       <ContentSection title={t("contactPage.otherChannels")}>
-        <p>Email: <a href="mailto:hello@changethegame.xyz" className="text-primary hover:underline">hello@changethegame.xyz</a></p>
+        <p>{t("uiContactPage.email")} <a href="mailto:hello@changethegame.xyz" className="text-primary hover:underline">{t("uiContactPage.helloChangethegameXyz")}</a></p>
       </ContentSection>
     </ContentPageShell>
   );

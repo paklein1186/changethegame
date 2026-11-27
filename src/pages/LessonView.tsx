@@ -81,13 +81,13 @@ export default function LessonView() {
         <Button variant="ghost" size="sm" asChild>
           <Link to={`/courses/${course.id}`}><ArrowLeft className="h-4 w-4 mr-1" /> {course.title}</Link>
         </Button>
-        <span className="text-sm text-muted-foreground">Lesson {currentIndex + 1} of {lessons.length}</span>
+        <span className="text-sm text-muted-foreground">{t("uiLessonView.lesson")} {currentIndex + 1} of {lessons.length}</span>
       </div>
 
       {enrollment && (
         <div className="mb-6">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-            <span>Course progress</span>
+            <span>{t("uiLessonView.courseProgress")}</span>
             <span>{Math.round(enrollment.progressPercentage)}%</span>
           </div>
           <Progress value={enrollment.progressPercentage} className="h-2" />
@@ -112,7 +112,7 @@ export default function LessonView() {
               }
               return (
                 <a href={lesson.videoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline">
-                  <Video className="h-4 w-4" /> Watch video
+                  <Video className="h-4 w-4" /> {t("uiLessonView.watchVideo")}
                 </a>
               );
             })()}

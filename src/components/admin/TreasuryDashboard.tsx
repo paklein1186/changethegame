@@ -93,15 +93,15 @@ export function TreasuryDashboard() {
       {/* GMV & Revenue */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3">
-          <BarChart3 className="h-5 w-5 text-primary" /> Marketplace & Revenue (30d)
+          <BarChart3 className="h-5 w-5 text-primary" /> {t("uiTreasuryDashboard.marketplaceRevenue30d")}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {isLoading ? (
             Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-lg" />)
           ) : (
             <>
-              <StatCard icon={getCurrencyConfig("coins").icon} label="GMV (30d)" value={`€${(econStats?.gmv ?? 0).toLocaleString()}`} color="text-primary" />
-              <StatCard icon={TrendingUp} label="Commission Rev." value={`€${(econStats?.commissionRevenue ?? 0).toLocaleString()}`} color="text-emerald-500" />
+              <StatCard icon={getCurrencyConfig("coins").icon} label={t("uiTreasuryDashboard.gmv30d")} value={`€${(econStats?.gmv ?? 0).toLocaleString()}`} color="text-primary" />
+              <StatCard icon={TrendingUp} label={t("uiTreasuryDashboard.commissionRev")} value={`€${(econStats?.commissionRevenue ?? 0).toLocaleString()}`} color="text-emerald-500" />
               <StatCard icon={Users} label={t("uiTreasuryDashboard.activeHolders")} value={String(econStats?.activeHolders ?? 0)} color="text-blue-500" />
               <StatCard icon={Zap} label={t("uiTreasuryDashboard.platformCreditVelocity")} value={`${econStats?.velocity ?? 0}%`} color="text-amber-500" />
             </>
@@ -130,11 +130,11 @@ export function TreasuryDashboard() {
       {/* Treasury & Allocation */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3">
-          <Building2 className="h-5 w-5 text-primary" /> Ecosystem Treasury
+          <Building2 className="h-5 w-5 text-primary" /> {t("uiTreasuryDashboard.ecosystemTreasury")}
         </h3>
         <Card className="border-primary/20 bg-primary/5 mb-4">
           <CardContent className="p-6 text-center">
-            <p className="text-xs text-muted-foreground mb-1">Total Treasury Balance</p>
+            <p className="text-xs text-muted-foreground mb-1">{t("uiTreasuryDashboard.totalTreasuryBalance")}</p>
             <p className="text-3xl font-bold">{loadingSettings ? "…" : treasuryBalance.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">{t("uiTreasuryDashboard.platformCreditsFromDemurrageRedistribution")}</p>
           </CardContent>
@@ -157,17 +157,17 @@ export function TreasuryDashboard() {
       {/* Allocation History */}
       {allocations.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold mb-2">Allocation History</h4>
+          <h4 className="text-sm font-semibold mb-2">{t("uiTreasuryDashboard.allocationHistory")}</h4>
           <div className="rounded-xl border border-border overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50">
-                  <th className="text-left p-3 font-medium">Period</th>
-                  <th className="text-right p-3 font-medium">Surplus</th>
-                  <th className="text-right p-3 font-medium">Reinvest</th>
-                  <th className="text-right p-3 font-medium">Shareholders</th>
-                  <th className="text-right p-3 font-medium">Treasury</th>
-                  <th className="text-right p-3 font-medium">Solidarity</th>
+                  <th className="text-left p-3 font-medium">{t("uiTreasuryDashboard.period")}</th>
+                  <th className="text-right p-3 font-medium">{t("uiTreasuryDashboard.surplus")}</th>
+                  <th className="text-right p-3 font-medium">{t("uiTreasuryDashboard.reinvest")}</th>
+                  <th className="text-right p-3 font-medium">{t("uiTreasuryDashboard.shareholders")}</th>
+                  <th className="text-right p-3 font-medium">{t("uiTreasuryDashboard.treasury")}</th>
+                  <th className="text-right p-3 font-medium">{t("uiTreasuryDashboard.solidarity")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -257,11 +257,11 @@ function CommonsWalletAdmin({ userId, pulsing, setPulsing, qc }: { userId?: stri
   return (
     <div>
       <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3">
-        <Globe className="h-5 w-5 text-emerald-500" /> 🌍 Commons Wallet & Pulse
+        <Globe className="h-5 w-5 text-emerald-500" /> {t("uiTreasuryDashboard.commonsWalletPulse")}
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-        <StatCard icon={Globe} label="Commons Balance" value={`${Math.round(commons?.balance ?? 0)} $CTG`} color="text-emerald-500" />
-        <StatCard icon={getCurrencyConfig("ctg").icon} label="Lifetime Received" value={`${Math.round(commons?.lifetime_received ?? 0)} $CTG`} color="text-emerald-600" />
+        <StatCard icon={Globe} label={t("uiTreasuryDashboard.commonsBalance")} value={`${Math.round(commons?.balance ?? 0)} $CTG`} color="text-emerald-500" />
+        <StatCard icon={getCurrencyConfig("ctg").icon} label={t("uiTreasuryDashboard.lifetimeReceived")} value={`${Math.round(commons?.lifetime_received ?? 0)} $CTG`} color="text-emerald-600" />
         <Card className="border-border/50 bg-muted/30">
           <CardContent className="p-4 flex flex-col items-center text-center gap-2">
             <Button
@@ -271,7 +271,7 @@ function CommonsWalletAdmin({ userId, pulsing, setPulsing, qc }: { userId?: stri
               variant="default"
             >
               {pulsing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
-              Trigger Commons Pulse
+              {t("uiTreasuryDashboard.triggerCommonsPulse")}
             </Button>
             <p className="text-[10px] text-muted-foreground">{t("uiTreasuryDashboard.distributePoolToRecentContributors")}</p>
           </CardContent>
@@ -284,8 +284,8 @@ function CommonsWalletAdmin({ userId, pulsing, setPulsing, qc }: { userId?: stri
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="text-left p-3 font-medium">{t("uiTreasuryDashboard.date")}</th>
-                <th className="text-right p-3 font-medium">Distributed</th>
-                <th className="text-right p-3 font-medium">Recipients</th>
+                <th className="text-right p-3 font-medium">{t("uiTreasuryDashboard.distributed")}</th>
+                <th className="text-right p-3 font-medium">{t("uiTreasuryDashboard.recipients")}</th>
               </tr>
             </thead>
             <tbody>

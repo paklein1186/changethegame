@@ -28,9 +28,9 @@ import {
 import { useEffect, useState } from "react";
 
 const sections = [
-  { id: "quickstart", label: "Quickstart", icon: Rocket },
+  { id: "quickstart", get label() { return i18n.t("uiGuidesPage.quickstart"); }, icon: Rocket },
   { id: "indepth", get label() { return i18n.t("uiGuidesPage.inDepthGuides"); }, icon: BookOpen },
-  { id: "troubleshooting", label: "Troubleshooting", icon: AlertCircle },
+  { id: "troubleshooting", get label() { return i18n.t("uiGuidesPage.troubleshooting"); }, icon: AlertCircle },
   { id: "help", get label() { return i18n.t("uiGuidesPage.askForHelp"); }, icon: LifeBuoy },
 ] as const;
 
@@ -84,7 +84,7 @@ const indepthItems = [
     get text() { return i18n.t("uiGuidesPage.territoriesSurfaceEventsNearYouJoin"); },
   },
   {
-    title: "Courses & learning modules",
+    get title() { return i18n.t("uiGuidesPage.coursesLearningModules"); },
     icon: GraduationCap,
     get text() { return i18n.t("uiGuidesPage.coursesIncludeLessonsFilesOrVideos"); },
   },
@@ -117,7 +117,7 @@ const troubleshootingItems = [
     get text() { return i18n.t("uiGuidesPage.ensureSlotsExistTrySwitchingDevice"); },
   },
   {
-    title: "Notifications don't appear",
+    get title() { return i18n.t("uiGuidesPage.notificationsDonTAppear"); },
     icon: Wrench,
     get text() { return i18n.t("uiGuidesPage.enableNotificationsInSettingsNotificationsAnd"); },
   },
@@ -186,7 +186,7 @@ export default function GuidesPage() {
             <section id="quickstart">
               <div className="flex items-center gap-2 mb-4">
                 <Rocket className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold text-foreground">Quickstart Guides</h2>
+                <h2 className="text-xl font-semibold text-foreground">{t("uiGuidesPage.quickstartGuides")}</h2>
               </div>
               <Accordion type="multiple" className="space-y-2">
                 {quickstartItems.map((item, i) => {
@@ -246,7 +246,7 @@ export default function GuidesPage() {
             <section id="troubleshooting">
               <div className="flex items-center gap-2 mb-4">
                 <AlertCircle className="h-5 w-5 text-destructive" />
-                <h2 className="text-xl font-semibold text-foreground">Troubleshooting</h2>
+                <h2 className="text-xl font-semibold text-foreground">{t("uiGuidesPage.troubleshooting")}</h2>
               </div>
               <Accordion type="multiple" className="space-y-2">
                 {troubleshootingItems.map((item, i) => (
@@ -280,7 +280,7 @@ export default function GuidesPage() {
                   {t("uiGuidesPage.stuckTheTeamWillSupportYou")}
                 </p>
                 <Button asChild>
-                  <Link to="/contact">Contact Support</Link>
+                  <Link to="/contact">{t("uiGuidesPage.contactSupport")}</Link>
                 </Button>
               </div>
             </section>

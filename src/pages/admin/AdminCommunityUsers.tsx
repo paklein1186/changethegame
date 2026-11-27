@@ -65,7 +65,7 @@ export default function AdminCommunityUsers() {
   return (
     <div className="space-y-4">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-        <Users className="h-6 w-6 text-primary" /> Users
+        <Users className="h-6 w-6 text-primary" /> {t("uiAdminCommunityUsers.users")}
       </h2>
       <Input
         placeholder={t("uiAdminCommunityUsers.searchByNameOrEmail")}
@@ -78,10 +78,10 @@ export default function AdminCommunityUsers() {
           <TableHeader>
             <TableRow>
               <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityUsers.name")}</SortableTableHead>
-              <SortableTableHead sortKey="email" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Email</SortableTableHead>
+              <SortableTableHead sortKey="email" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityUsers.email")}</SortableTableHead>
               <SortableTableHead sortKey="role" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityUsers.role")}</SortableTableHead>
               <SortableTableHead sortKey="xp" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">XP</SortableTableHead>
-              <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Joined</SortableTableHead>
+              <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityUsers.joined")}</SortableTableHead>
               <th className="h-12 px-4 w-20"></th>
             </TableRow>
           </TableHeader>

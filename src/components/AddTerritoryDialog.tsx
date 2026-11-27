@@ -123,10 +123,10 @@ export function AddTerritoryDialog({ onCreated }: Props) {
         <div className="space-y-4 mt-2">
           <div>
             <label className="text-sm font-medium mb-1 block">{t("uiAddTerritoryDialog.name")}</label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Marseille" maxLength={80} />
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiAddTerritoryDialog.eGMarseille")} maxLength={80} />
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Postal code</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiAddTerritoryDialog.postalCode")}</label>
             <div className="flex gap-2">
               <Input
                 value={postalCode}
@@ -156,24 +156,24 @@ export function AddTerritoryDialog({ onCreated }: Props) {
             <Select value={level} onValueChange={(v) => setLevel(v as TerritoryLevel)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={TerritoryLevel.TOWN}>Town</SelectItem>
-                <SelectItem value={TerritoryLevel.REGION}>Region</SelectItem>
-                <SelectItem value={TerritoryLevel.NATIONAL}>National</SelectItem>
-                <SelectItem value={TerritoryLevel.OTHER}>Other</SelectItem>
+                <SelectItem value={TerritoryLevel.TOWN}>{t("uiAddTerritoryDialog.town")}</SelectItem>
+                <SelectItem value={TerritoryLevel.REGION}>{t("uiAddTerritoryDialog.region")}</SelectItem>
+                <SelectItem value={TerritoryLevel.NATIONAL}>{t("uiAddTerritoryDialog.national")}</SelectItem>
+                <SelectItem value={TerritoryLevel.OTHER}>{t("uiAddTerritoryDialog.other")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Granularity</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiAddTerritoryDialog.granularity")}</label>
             <Select value={granularity} onValueChange={setGranularity}>
-              <SelectTrigger><SelectValue placeholder="Auto-detect" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("uiAddTerritoryDialog.autoDetect")} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={TerritorialGranularity.DISTRICT_OR_COMMUNE}>District / Commune</SelectItem>
+                <SelectItem value={TerritorialGranularity.DISTRICT_OR_COMMUNE}>{t("uiAddTerritoryDialog.districtCommune")}</SelectItem>
                 <SelectItem value={TerritorialGranularity.NUTS3}>{t("uiAddTerritoryDialog.nuts3CountyLevel")}</SelectItem>
                 <SelectItem value={TerritorialGranularity.NUTS2}>{t("uiAddTerritoryDialog.nuts2ProvinceLevel")}</SelectItem>
-                <SelectItem value={TerritorialGranularity.NUTS1}>NUTS1 (Major region)</SelectItem>
-                <SelectItem value={TerritorialGranularity.COUNTRY}>Country</SelectItem>
-                <SelectItem value={TerritorialGranularity.CUSTOM_PERIMETER}>Custom Perimeter</SelectItem>
+                <SelectItem value={TerritorialGranularity.NUTS1}>{t("uiAddTerritoryDialog.nuts1MajorRegion")}</SelectItem>
+                <SelectItem value={TerritorialGranularity.COUNTRY}>{t("uiAddTerritoryDialog.country")}</SelectItem>
+                <SelectItem value={TerritorialGranularity.CUSTOM_PERIMETER}>{t("uiAddTerritoryDialog.customPerimeter")}</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -11,7 +11,7 @@ export default function CompaniesInfoPage() {
       </ContentSection>
 
       <ContentCTA links={[
-        { label: "Browse Traditional Organizations", href: "/explore?tab=companies" },
+        { label: t("uiCompaniesInfoPage.browseTraditionalOrganizations"), href: "/explore?tab=companies" },
         { label: t("uiCompaniesInfoPage.createATraditionalOrganization"), href: "/me/companies" },
       ]} />
     </ContentPageShell>

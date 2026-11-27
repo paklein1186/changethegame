@@ -400,28 +400,28 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
           <CardContent className="p-4 text-center">
             <CurrencyIcon currency="ctg" className="h-5 w-5 mx-auto mb-1" />
             <p className="text-2xl font-bold text-emerald-600">{totalCoins.toFixed(0)}</p>
-            <p className="text-[10px] text-muted-foreground">🌱 $CTG Distributed</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildOVNTab.ctgDistributed")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Users className="h-5 w-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-primary">{totalContributors}</p>
-            <p className="text-[10px] text-muted-foreground">Contributors</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildOVNTab.contributors")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <CurrencyIcon currency="weight" className="h-5 w-5 mx-auto mb-1" />
             <p className="text-2xl font-bold text-primary">{totalWeightedUnits.toFixed(0)}</p>
-            <p className="text-[10px] text-muted-foreground">Total Weighted Units</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildOVNTab.totalWeightedUnits")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <TrendingUp className="h-5 w-5 text-primary mx-auto mb-1" />
             <p className="text-2xl font-bold text-primary">{avgSharePerContributor.toFixed(1)}</p>
-            <p className="text-[10px] text-muted-foreground">Avg 🌱 $CTG / Contributor</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildOVNTab.avgCtgContributor")}</p>
           </CardContent>
         </Card>
         <Card className="border-violet-500/20">
@@ -436,9 +436,9 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
       {/* Velocity indicator */}
       <div className="flex items-center gap-2 text-xs">
         <CurrencyIcon currency="credits" className="h-4 w-4" colorClassName="text-muted-foreground" />
-        <span className="text-muted-foreground">Velocity:</span>
+        <span className="text-muted-foreground">{t("uiGuildOVNTab.velocity")}</span>
         <span className={`font-semibold ${velocityTrend === "up" ? "text-emerald-600" : velocityTrend === "down" ? "text-red-500" : "text-muted-foreground"}`}>
-          {currentVelocity.toFixed(1)} wu/week
+          {currentVelocity.toFixed(1)} {t("uiGuildOVNTab.wuWeek")}
         </span>
         {velocityTrend === "up" && <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />}
         {velocityTrend === "down" && <TrendingDown className="h-3.5 w-3.5 text-red-500" />}
@@ -451,7 +451,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
           <Card className="border-emerald-500/20">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
-                <PieIcon className="h-4 w-4 text-emerald-500" /> Contributor Shares
+                <PieIcon className="h-4 w-4 text-emerald-500" /> {t("uiGuildOVNTab.contributorShares")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -494,13 +494,13 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Users className="h-4 w-4" /> Contributor Ranking
+              <Users className="h-4 w-4" /> {t("uiGuildOVNTab.contributorRanking")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
               <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[10px] text-muted-foreground font-medium border-b border-border pb-1 sticky top-0 bg-card">
-                <span>Contributor</span>
+                <span>{t("uiGuildOVNTab.contributor")}</span>
                 <span className="text-right">Wu</span>
                 <span className="text-right">🌱 $CTG</span>
                 <span className="text-right">XP</span>
@@ -561,8 +561,8 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
               <span>{t("uiGuildOVNTab.quest")}</span>
               <span className="text-right">{t("uiGuildOVNTab.budget")}</span>
               <span className="text-right">{t("uiGuildOVNTab.guildShare")}</span>
-              <span className="text-right">Verif.</span>
-              <span className="text-right">Contributors</span>
+              <span className="text-right">{t("uiGuildOVNTab.verif")}</span>
+              <span className="text-right">{t("uiGuildOVNTab.contributors")}</span>
               <span className="text-right">{t("uiGuildOVNTab.territory")}</span>
               <span className="text-right">{t("uiGuildOVNTab.status")}</span>
             </div>
@@ -584,7 +584,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
                   <span className="text-right">{q.contributor_count}</span>
                   <span className="text-right text-muted-foreground">{q.territory_name || "—"}</span>
                   <Badge variant={q.value_pie_calculated ? "default" : "secondary"} className="text-[9px] justify-self-end">
-                    {q.value_pie_calculated ? "Distributed" : t("uiGuildOVNTab.pending")}
+                    {q.value_pie_calculated ? t("uiGuildOVNTab.distributed") : t("uiGuildOVNTab.pending")}
                   </Badge>
                 </Link>
               );
@@ -691,9 +691,9 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
                   <thead>
                     <tr className="border-b border-border text-muted-foreground">
                        <th className="text-left py-1.5 font-medium">{t("uiGuildOVNTab.taskType")}</th>
-                      <th className="text-center py-1.5 font-medium w-10">Icon</th>
-                      <th className="text-right py-1.5 font-medium">Multiplier</th>
-                      <th className="text-right py-1.5 font-medium">Example</th>
+                      <th className="text-center py-1.5 font-medium w-10">{t("uiGuildOVNTab.icon")}</th>
+                      <th className="text-right py-1.5 font-medium">{t("uiGuildOVNTab.multiplier")}</th>
+                      <th className="text-right py-1.5 font-medium">{t("uiGuildOVNTab.example")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -722,7 +722,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
 
               {lastUpdated && lastUpdated !== "" && (
                 <p className="text-[10px] text-muted-foreground mt-2">
-                  Last modified: {formatDistanceToNow(new Date(lastUpdated), { addSuffix: true, locale: enUS })}
+                  {t("uiGuildOVNTab.lastModified")} {formatDistanceToNow(new Date(lastUpdated), { addSuffix: true, locale: enUS })}
                 </p>
               )}
             </CardContent>
@@ -767,7 +767,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
               />
             </div>
             <div>
-              <Label className="text-xs mb-1 block">Justification (min 20 characters)</Label>
+              <Label className="text-xs mb-1 block">{t("uiGuildOVNTab.justificationMin20Characters")}</Label>
               <Textarea
                 value={proposalJustification}
                 onChange={(e) => setProposalJustification(e.target.value)}

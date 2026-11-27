@@ -159,7 +159,7 @@ export function BroadcastMessageDialog({
     }
 
     toast({
-      title: "Broadcast sent",
+      title: t("uiBroadcastMessageDialog.broadcastSent"),
       description: `Message delivered to ${sent} member${sent !== 1 ? "s" : ""}${failed > 0 ? ` (${failed} failed)` : ""} as ${senderLabel}.`,
     });
 
@@ -202,7 +202,7 @@ export function BroadcastMessageDialog({
           <div className="space-y-1.5">
             <Progress value={progress} className="h-2" />
             <p className="text-xs text-muted-foreground text-center">
-              Sending… {progress}%
+              {t("uiBroadcastMessageDialog.sending")} {progress}%
             </p>
           </div>
         )}
@@ -212,7 +212,7 @@ export function BroadcastMessageDialog({
           </Button>
           <Button onClick={handleSend} disabled={!content.trim() || sending}>
             {sending ? (
-              <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Sending…</>
+              <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> {t("uiBroadcastMessageDialog.sending")}</>
             ) : (
               <><Megaphone className="h-4 w-4 mr-1" /> {t("uiBroadcastMessageDialog.sendTo")} {recipientCount} member{recipientCount !== 1 ? "s" : ""}</>
             )}

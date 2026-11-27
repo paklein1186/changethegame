@@ -86,7 +86,7 @@ export default function PlansPage() {
     fetchPlans();
     if (success) {
       refresh();
-      toast({ title: "Plan updated!", description: t("uiPlansPage.yourSubscriptionHasBeenActivated") });
+      toast({ title: t("uiPlansPage.planUpdated"), description: t("uiPlansPage.yourSubscriptionHasBeenActivated") });
     }
   }, [success]);
 
@@ -197,7 +197,7 @@ export default function PlansPage() {
                   )}
                   {isHighlighted && !isCurrentPlan && (
                     <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground">
-                      Popular
+                      {t("uiPlansPage.popular")}
                     </Badge>
                   )}
 
@@ -214,7 +214,7 @@ export default function PlansPage() {
                         <span className="text-xs text-muted-foreground">/mo</span>
                       </>
                     ) : (
-                      <span className="text-2xl font-bold">Free</span>
+                      <span className="text-2xl font-bold">{t("uiPlansPage.free")}</span>
                     )}
                   </div>
 
@@ -222,9 +222,9 @@ export default function PlansPage() {
                     <PlanFeature icon={<CurrencyIcon currency="credits" className="h-3 w-3" />} label={`${plan.monthly_included_credits} credits/mo`} />
                     <PlanFeature label={`${plan.free_quests_per_week >= 30 ? "∞" : plan.free_quests_per_week} quests/week`} />
                     <PlanFeature label={plan.max_guild_memberships === null ? t("uiPlansPage.guilds") : `${plan.max_guild_memberships} guilds`} />
-                    <PlanFeature label={plan.max_pods === null ? "∞ pods" : `${plan.max_pods} pods`} />
-                    <PlanFeature label={plan.max_services_active === null ? "∞ services" : `${plan.max_services_active} services`} />
-                    <PlanFeature label={plan.max_courses === null ? "∞ courses" : `${plan.max_courses} courses`} />
+                    <PlanFeature label={plan.max_pods === null ? t("uiPlansPage.pods") : `${plan.max_pods} pods`} />
+                    <PlanFeature label={plan.max_services_active === null ? t("uiPlansPage.services") : `${plan.max_services_active} services`} />
+                    <PlanFeature label={plan.max_courses === null ? t("uiPlansPage.courses") : `${plan.max_courses} courses`} />
                     <PlanFeature label={plan.max_territories === null ? t("uiPlansPage.territories") : `${plan.max_territories} territories`} />
                     <PlanFeature icon={<Eye className="h-3 w-3" />} label={`${plan.visibility_ranking} visibility`} highlight={plan.visibility_ranking !== "standard"} />
                     <PlanFeature icon={<Sparkles className="h-3 w-3" />} label={`AI: ${plan.ai_muse_mode}`} highlight={plan.ai_muse_mode !== "basic"} />
@@ -233,7 +233,7 @@ export default function PlansPage() {
                     {plan.can_create_territory && <PlanFeature label={t("uiPlansPage.createTerritories")} highlight />}
                     {plan.can_create_company && <PlanFeature icon={<Building2 className="h-3 w-3" />} label={t("uiPlansPage.createCompanies")} highlight />}
                     {plan.partnership_proposals_enabled && <PlanFeature label={t("uiPlansPage.partnershipProposals")} highlight />}
-                    {plan.ai_agents_enabled && <PlanFeature label="AI Agents" highlight />}
+                    {plan.ai_agents_enabled && <PlanFeature label={t("uiPlansPage.aiAgents")} highlight />}
                     {plan.monthly_agent_interactions > 0 && (
                       <PlanFeature
                         icon={<Bot className="h-3 w-3" />}
@@ -242,8 +242,8 @@ export default function PlansPage() {
                       />
                     )}
                     {plan.territory_intelligence_enabled && <PlanFeature label={t("uiPlansPage.territoryIntelligence")} highlight />}
-                    {plan.fundraising_tools_enabled && <PlanFeature label="Fundraising tools" highlight />}
-                    {plan.memory_engine_enabled && <PlanFeature label="Memory engine" highlight />}
+                    {plan.fundraising_tools_enabled && <PlanFeature label={t("uiPlansPage.fundraisingTools")} highlight />}
+                    {plan.memory_engine_enabled && <PlanFeature label={t("uiPlansPage.memoryEngine")} highlight />}
                     {plan.custom_guild_tools && <PlanFeature label={t("uiPlansPage.customGuildTools")} highlight />}
                     <PlanFeature label={`${plan.xp_multiplier}x XP multiplier`} />
                   </ul>
@@ -252,22 +252,22 @@ export default function PlansPage() {
                     currentPlan.planCode !== "FREE" ? (
                       <Button variant="outline" className="w-full" size="sm" onClick={handleManage} disabled={portalLoading}>
                         {portalLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <ExternalLink className="h-4 w-4 mr-1" />}
-                        Manage
+                        {t("uiPlansPage.manage")}
                       </Button>
                     ) : (
-                      <Button variant="outline" className="w-full" size="sm" disabled>Current plan</Button>
+                      <Button variant="outline" className="w-full" size="sm" disabled>{t("uiPlansPage.currentPlan")}</Button>
                     )
                   ) : isUpgrade && plan.stripe_price_id ? (
                     <Button className="w-full" size="sm" onClick={() => handleUpgrade(plan)} disabled={!!checkoutLoading}>
                       {checkoutLoading === plan.code ? (
                         <><Loader2 className="h-4 w-4 animate-spin mr-1" /> …</>
                       ) : (
-                        <><Zap className="h-4 w-4 mr-1" /> Upgrade</>
+                        <><Zap className="h-4 w-4 mr-1" /> {t("uiPlansPage.upgrade")}</>
                       )}
                     </Button>
                   ) : (
                     <Button variant="outline" className="w-full" size="sm" disabled>
-                      {planIdx < currentIdx ? "Downgrade via portal" : "N/A"}
+                      {planIdx < currentIdx ? t("uiPlansPage.downgradeViaPortal") : "N/A"}
                     </Button>
                   )}
                 </motion.div>
@@ -283,7 +283,7 @@ export default function PlansPage() {
           </h3>
           <div className="grid md:grid-cols-5 gap-3 text-sm">
             <div className="p-3 rounded-lg bg-card border border-border">
-              <p className="font-semibold text-primary mb-1">💶 Fiat (€)</p>
+              <p className="font-semibold text-primary mb-1">{t("uiPlansPage.fiat")}</p>
               <p className="text-muted-foreground text-xs">Mission payments &amp; services. Real-world income via Stripe.</p>
             </div>
             <div className="p-3 rounded-lg bg-card border border-teal-200 dark:border-teal-800">
@@ -291,7 +291,7 @@ export default function PlansPage() {
               <p className="text-muted-foreground text-xs">{t("uiPlansPage.fiatBackedInternalUnitsForQuest")}</p>
             </div>
             <div className="p-3 rounded-lg bg-card border border-emerald-200 dark:border-emerald-800">
-              <p className="font-semibold text-emerald-700 dark:text-emerald-300 mb-1">🌱 $CTG Token</p>
+              <p className="font-semibold text-emerald-700 dark:text-emerald-300 mb-1">{t("uiPlansPage.ctgToken")}</p>
               <p className="text-muted-foreground text-xs">{t("uiPlansPage.contributionTokenEarnedByDoingVerified")}</p>
             </div>
             <div className="p-3 rounded-lg bg-card border border-border">
@@ -300,7 +300,7 @@ export default function PlansPage() {
             </div>
             <div className="p-3 rounded-lg bg-card border border-border">
               <p className="font-semibold text-primary mb-1">{t("uiPlansPage.xp")}</p>
-              <p className="text-muted-foreground text-xs">Reputation. Permanent, never purchased, never decays.</p>
+              <p className="text-muted-foreground text-xs">{t("uiPlansPage.reputationPermanentNeverPurchasedNeverDecays")}</p>
             </div>
           </div>
         </div>

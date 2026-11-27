@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button";
 export type Priority = "HIGH" | "MEDIUM" | "LOW" | "NONE";
 
 export const PRIORITY_CONFIG: Record<Priority, { label: string; color: string; iconColor: string }> = {
-  HIGH: { label: "High", color: "text-red-500", iconColor: "text-red-500" },
-  MEDIUM: { label: "Medium", color: "text-amber-500", iconColor: "text-amber-500" },
-  LOW: { label: "Low", color: "text-blue-400", iconColor: "text-blue-400" },
+  HIGH: { get label() { return i18n.t("uiPriorityPicker.high"); }, color: "text-red-500", iconColor: "text-red-500" },
+  MEDIUM: { get label() { return i18n.t("uiPriorityPicker.medium"); }, color: "text-amber-500", iconColor: "text-amber-500" },
+  LOW: { get label() { return i18n.t("uiPriorityPicker.low"); }, color: "text-blue-400", iconColor: "text-blue-400" },
   NONE: { get label() { return i18n.t("uiPriorityPicker.none"); }, color: "text-muted-foreground/40", iconColor: "text-muted-foreground/40" },
 };
 

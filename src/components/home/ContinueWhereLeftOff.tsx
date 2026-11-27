@@ -53,7 +53,7 @@ export function ContinueWhereLeftOff({ userId }: Props) {
         if (p.pods) items.push({ id: p.pod_id, title: p.pods.name, type: "Pod", icon: "pod", route: `/pods/${p.pod_id}`, imageUrl: p.pods.avatar_url });
       });
       (pendingApps.data ?? []).forEach((a: any) => {
-        items.push({ id: a.id, title: a.guilds?.name || "Application", type: "Pending Application", icon: "pending", route: `/guilds/${a.guild_id}`, imageUrl: a.guilds?.logo_url });
+        items.push({ id: a.id, title: a.guilds?.name || t("uiContinueWhereLeftOff.application"), type: "Pending Application", icon: "pending", route: `/guilds/${a.guild_id}`, imageUrl: a.guilds?.logo_url });
       });
       (ownedQuests.data ?? []).forEach((q: any) => {
         if (!items.some(it => it.id === `update-${q.id}`)) {

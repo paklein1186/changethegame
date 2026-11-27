@@ -20,12 +20,12 @@ import { useTranslation } from "react-i18next";
 import { translateTopicName } from "@/lib/entityLabels";
 
 const TYPE_META: Record<SearchResultType, { label: string; icon: typeof Users; color: string }> = {
-  USER: { label: "Users", icon: Users, color: "text-blue-600" },
+  USER: { get label() { return i18n.t("uiSearchPage.users"); }, icon: Users, color: "text-blue-600" },
   GUILD: { get label() { return i18n.t("uiSearchPage.guilds"); }, icon: Shield, color: "text-emerald-600" },
   QUEST: { get label() { return i18n.t("uiSearchPage.quests"); }, icon: Compass, color: "text-amber-600" },
-  POD: { label: "Pods", icon: Boxes, color: "text-violet-600" },
-  SERVICE: { label: "Services", icon: Briefcase, color: "text-rose-600" },
-  COMPANY: { label: "Companies", icon: Building2, color: "text-cyan-600" },
+  POD: { get label() { return i18n.t("uiSearchPage.pods"); }, icon: Boxes, color: "text-violet-600" },
+  SERVICE: { get label() { return i18n.t("uiSearchPage.services"); }, icon: Briefcase, color: "text-rose-600" },
+  COMPANY: { get label() { return i18n.t("uiSearchPage.companies"); }, icon: Building2, color: "text-cyan-600" },
   TERRITORY: { get label() { return i18n.t("uiSearchPage.territories"); }, icon: MapPin, color: "text-orange-600" },
 };
 
@@ -109,10 +109,10 @@ export default function SearchPage() {
 
         <div className="flex flex-wrap gap-3 mb-6 p-4 rounded-lg border border-border bg-muted/30">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <Filter className="h-4 w-4" /> Filters:
+            <Filter className="h-4 w-4" /> {t("uiSearchPage.filters")}
           </div>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-[140px] h-9"><SelectValue placeholder="Type" /></SelectTrigger>
+            <SelectTrigger className="w-[140px] h-9"><SelectValue placeholder={t("uiSearchPage.type")} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">{t("uiSearchPage.allTypes")}</SelectItem>
               {(Object.keys(TYPE_META) as SearchResultType[]).map((t) => (
@@ -135,9 +135,9 @@ export default function SearchPage() {
             </SelectContent>
           </Select>
           <div className="flex items-center gap-1">
-            <Input type="number" value={priceMin} onChange={(e) => setPriceMin(e.target.value)} placeholder="€ Min" className="w-[80px] h-9" />
+            <Input type="number" value={priceMin} onChange={(e) => setPriceMin(e.target.value)} placeholder={t("uiSearchPage.min")} className="w-[80px] h-9" />
             <span className="text-muted-foreground text-sm">–</span>
-            <Input type="number" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} placeholder="€ Max" className="w-[80px] h-9" />
+            <Input type="number" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} placeholder={t("uiSearchPage.max")} className="w-[80px] h-9" />
           </div>
         </div>
 
