@@ -3,7 +3,7 @@
 //   POST /functions/v1/guild-quest-sync
 //   X-Site-Key: <clé du site>                                (toujours)
 //   Authorization: Bearer <jeton CTG de la personne>         (création seulement : admin de la guilde)
-//   { "action": "create" | "update" | "withdraw" | "status" | "news" | "needs" | "needs_push" | "proposals" | "proposal_decide", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
+//   { "action": "create" | "update" | "withdraw" | "status" | "guild_quests" | "news" | "needs" | "needs_push" | "proposals" | "proposal_decide", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
 //     "visibilite"?: { "mode": "public" } | { "mode": "membres", "niveau_minimum": "N2" | "N3" } }
 //
 // Chaque réponse porte "visibilite_appliquee_par_la_base" : vrai seulement si la base empêche vraiment la lecture
@@ -14,7 +14,7 @@
 // Fermée tant que SITE_SYNC_KEY, SITE_SYNC_GUILD_ID et SITE_SYNC_ORIGINS ne sont pas posés.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-import { accessEnforced, createQuest, publishNews, questFields, sameKey, SyncError, updateQuest, visibilityFields, withdrawQuest } from "../_shared/guild-quest-sync.ts";
+import { accessEnforced, createQuest, guildQuestsForSite, publishNews, questFields, sameKey, SyncError, updateQuest, visibilityFields, withdrawQuest } from "../_shared/guild-quest-sync.ts";
 import { isGuildAdmin } from "../_shared/guild-quests.ts";
 import { decideProposal, listNeeds, listProposals, pushNeeds } from "../_shared/guild-quest-needs.ts";
 
@@ -38,6 +38,8 @@ serve(async (req) => {
     const body = await req.json().catch(() => null);
     // Lire seulement l'état de la protection, sans rien publier.
     if (body?.action === "status") return reply({ ok: true });
+    // Quêtes de la guilde pour la file « à classer » du site (B5) : clé du site seule, lecture seule.
+    if (body?.action === "guild_quests") return reply(await guildQuestsForSite(admin, guildId));
     const projetId = String(body?.projet_id ?? "");
     if (!UUID.test(projetId)) return reply({ error: "invalid projet_id" }, 400);
     if (body?.action === "withdraw") {
