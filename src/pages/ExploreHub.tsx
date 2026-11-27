@@ -2,7 +2,7 @@ import { useState, useMemo, createContext, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { Search, Sparkles, Brain, Plus, Users, BookOpen, Compass, Swords, Wrench, Tag, Map, Bot, Lightbulb, Target, HandHeart } from "lucide-react";
+import { Search, Sparkles, Brain, Plus, Users, BookOpen, Compass, Swords, Wrench, Tag, Map, Bot, Lightbulb, Target, HandHeart, HandHelping } from "lucide-react";
 import { useGridDensity, type GridDensity } from "@/hooks/useGridDensity";
 import { GridDensityToggle } from "@/components/explore/GridDensityToggle";
 import { SectionBanner, HintTooltip, HINTS } from "@/components/onboarding/ContextualHint";
@@ -31,11 +31,12 @@ import ExploreHouses from "./ExploreHouses";
 import { AddJobDialog } from "@/components/AddJobDialog";
 import AgentsMarketplace from "./AgentsMarketplace";
 import OpportunitiesExplore from "./OpportunitiesExplore";
+import { NeedsExplore } from "@/components/explore/NeedsExplore";
 
-const VALID_TABS_AUTH = ["entities", "quests", "jobs", "services", "agents", "courses", "users", "houses", "territories", "matchmaker"];
-const VALID_TABS_AUTH_CREATIVE = ["entities", "quests", "services", "agents", "courses", "users", "houses", "territories", "matchmaker"];
-const VALID_TABS_GUEST = ["entities", "quests", "houses", "courses", "agents", "jobs", "territories"];
-const VALID_TABS_GUEST_CREATIVE = ["entities", "quests", "houses", "courses", "agents", "territories"];
+const VALID_TABS_AUTH = ["entities", "quests", "needs", "jobs", "services", "agents", "courses", "users", "houses", "territories", "matchmaker"];
+const VALID_TABS_AUTH_CREATIVE = ["entities", "quests", "needs", "services", "agents", "courses", "users", "houses", "territories", "matchmaker"];
+const VALID_TABS_GUEST = ["entities", "quests", "needs", "houses", "courses", "agents", "jobs", "territories"];
+const VALID_TABS_GUEST_CREATIVE = ["entities", "quests", "needs", "houses", "courses", "agents", "territories"];
 const ENTITY_SUB = ["all", "guilds", "pods", "companies"] as const;
 type EntitySub = typeof ENTITY_SUB[number];
 
@@ -184,6 +185,9 @@ export default function ExploreHub() {
           </div>
           <ServicesMarketplace bare />
         </TabsContent>
+        <TabsContent value="needs">
+          <NeedsExplore />
+        </TabsContent>
         <TabsContent value="jobs">
           {!isGuest && (
             <div className="flex justify-end mb-4">
@@ -237,6 +241,7 @@ function ExploreTabsInner({ tab, onTabChange, isGuest, isCreative, currentUserId
   const exploreTabs: TabDefinition[] = useMemo(() => [
     { value: "entities", label: <><Compass className="h-3.5 w-3.5 mr-1" /> {t("tabs.entities")} <HintTooltip {...HINTS.tooltips.exploreEntities} /></> },
     { value: "quests", label: <><Swords className="h-3.5 w-3.5 mr-1" /> {t("explore.quests")} <HintTooltip {...HINTS.tooltips.exploreQuests} /></> },
+    { value: "needs", label: <><HandHelping className="h-3.5 w-3.5 mr-1" /> {t("tabs.needs")}</> },
     { value: "jobs", label: <><HandHeart className="h-3.5 w-3.5 mr-1" /> Opportunities</>, visible: !isCreative },
     { value: "services", label: <><Wrench className="h-3.5 w-3.5 mr-1" /> {t("explore.services")}</>, visible: !isGuest },
     { value: "agents", label: <><Bot className="h-3.5 w-3.5 mr-1" /> {t("tabs.agents")} <HintTooltip {...HINTS.tooltips.exploreAgents} /></> },

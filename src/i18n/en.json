@@ -1102,6 +1102,7 @@
     "recent": "Recent"
   },
   "tabs": {
+    "needs": "Needs",
     "entities": "Entities",
     "agents": "Agents",
     "jobs": "Jobs",
@@ -4819,5 +4820,40 @@
       "title": "Not quite you?",
       "home": "Back to home"
     }
+  },
+  "needsExplore": {
+    "intro": "What quests and their guilds need to move forward: skills, places, equipment, funding, volunteers… By default, the ones that match what you can do.",
+    "scopeLabel": "Which needs to show",
+    "scope": {
+      "me": "For me",
+      "me_and_guilds": "Me and my guilds",
+      "all": "All needs"
+    },
+    "search": "Search a need or a quest…",
+    "anyPlace": "All territories",
+    "nearMe": "Near me ({{place}})",
+    "levels": {
+      "regions": "Countries and regions",
+      "places": "Towns and places"
+    },
+    "anyCategory": "All categories",
+    "loading": "Looking for needs…",
+    "count_one": "{{count}} need",
+    "count_other": "{{count}} needs",
+    "emptyMe": "No need matches your skills yet with these filters.",
+    "emptyAll": "No open need with these filters.",
+    "widenGuilds": "Include my guilds",
+    "widenAll": "See all needs",
+    "completeSkills": "Complete my skills",
+    "clearFilters": "Clear filters",
+    "yourQuest": "Your quest",
+    "forQuest": "For the quest",
+    "matchMe": "Matches your skill “{{skill}}”",
+    "matchGuild": "Matches “{{skill}}” from {{guild}}",
+    "offerHelp": "Offer my help",
+    "loginToHelp": "Log in to help",
+    "seeQuest": "See the quest",
+    "questHolder": "Quest holder",
+    "more": "Show more"
   }
 }

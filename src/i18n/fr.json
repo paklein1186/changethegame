@@ -1088,6 +1088,7 @@
     "recent": "Récent"
   },
   "tabs": {
+    "needs": "Besoins",
     "entities": "Entités",
     "agents": "Agents",
     "jobs": "Emplois",
@@ -4805,5 +4806,40 @@
       "title": "Ce n'est pas tout à fait vous ?",
       "home": "Revenir à l'accueil"
     }
+  },
+  "needsExplore": {
+    "intro": "Ce dont les quêtes et leurs guildes ont besoin pour avancer : compétences, lieux, matériel, financement, bénévoles… Par défaut, ceux qui correspondent à ce que vous savez faire.",
+    "scopeLabel": "Quels besoins afficher",
+    "scope": {
+      "me": "Pour moi",
+      "me_and_guilds": "Moi et mes guildes",
+      "all": "Tous les besoins"
+    },
+    "search": "Rechercher un besoin, une quête…",
+    "anyPlace": "Tous les territoires",
+    "nearMe": "Près de chez moi ({{place}})",
+    "levels": {
+      "regions": "Pays et régions",
+      "places": "Villes et lieux"
+    },
+    "anyCategory": "Toutes les catégories",
+    "loading": "Recherche des besoins…",
+    "count_one": "{{count}} besoin",
+    "count_other": "{{count}} besoins",
+    "emptyMe": "Aucun besoin ne correspond encore à vos compétences avec ces filtres.",
+    "emptyAll": "Aucun besoin ouvert avec ces filtres.",
+    "widenGuilds": "Élargir à mes guildes",
+    "widenAll": "Voir tous les besoins",
+    "completeSkills": "Compléter mes compétences",
+    "clearFilters": "Effacer les filtres",
+    "yourQuest": "Votre quête",
+    "forQuest": "Pour la quête",
+    "matchMe": "Correspond à votre compétence « {{skill}} »",
+    "matchGuild": "Correspond à « {{skill}} » de {{guild}}",
+    "offerHelp": "Proposer mon aide",
+    "loginToHelp": "Se connecter pour aider",
+    "seeQuest": "Voir la quête",
+    "questHolder": "Porteur de la quête",
+    "more": "Afficher plus"
   }
 }
