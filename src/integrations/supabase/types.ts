@@ -4393,6 +4393,41 @@ export type Database = {
           },
         ]
       }
+      guild_admin_entities: {
+        Row: {
+          added_by: string | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          guild_id: string
+          id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          guild_id: string
+          id?: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          guild_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guild_admin_entities_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guild_agent_channels: {
         Row: {
           agent_id: string
@@ -5433,6 +5468,9 @@ export type Database = {
           name: string
           ocu_default_enabled: boolean
           public_visibility: string
+          quest_access_default: string
+          quest_access_plans: string[]
+          quest_access_role_ids: string[]
           redistribution_percent: number
           requires_application_before_payment: boolean
           sales_commission_default_pct: number
@@ -5505,6 +5543,9 @@ export type Database = {
           name: string
           ocu_default_enabled?: boolean
           public_visibility?: string
+          quest_access_default?: string
+          quest_access_plans?: string[]
+          quest_access_role_ids?: string[]
           redistribution_percent?: number
           requires_application_before_payment?: boolean
           sales_commission_default_pct?: number
@@ -5577,6 +5618,9 @@ export type Database = {
           name?: string
           ocu_default_enabled?: boolean
           public_visibility?: string
+          quest_access_default?: string
+          quest_access_plans?: string[]
+          quest_access_role_ids?: string[]
           redistribution_percent?: number
           requires_application_before_payment?: boolean
           sales_commission_default_pct?: number
@@ -7724,6 +7768,88 @@ export type Database = {
           },
         ]
       }
+      quest_access_grants: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          id: string
+          note: string | null
+          quest_id: string
+          revoked_at: string | null
+          revoked_by: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          note?: string | null
+          quest_id: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          note?: string | null
+          quest_id?: string
+          revoked_at?: string | null
+          revoked_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_access_grants_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quest_access_requests: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          message: string | null
+          quest_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          message?: string | null
+          quest_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          message?: string | null
+          quest_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_access_requests_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quest_affiliations: {
         Row: {
           created_at: string
@@ -8608,6 +8734,9 @@ export type Database = {
       }
       quests: {
         Row: {
+          access_mode: string
+          access_plans: string[]
+          access_role_ids: string[]
           ai_summary: string | null
           allow_fundraising: boolean
           boost_expires_at: string | null
@@ -8678,6 +8807,9 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          access_mode?: string
+          access_plans?: string[]
+          access_role_ids?: string[]
           ai_summary?: string | null
           allow_fundraising?: boolean
           boost_expires_at?: string | null
@@ -8748,6 +8880,9 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          access_mode?: string
+          access_plans?: string[]
+          access_role_ids?: string[]
           ai_summary?: string | null
           allow_fundraising?: boolean
           boost_expires_at?: string | null
@@ -11714,6 +11849,8 @@ export type Database = {
         Args: { _affiliation_id: string }
         Returns: undefined
       }
+      can_access_quest: { Args: { _quest_id: string }; Returns: boolean }
+      can_access_quest_ref: { Args: { _ref: string }; Returns: boolean }
       can_manage_agent: {
         Args: { _agent_id: string; _user_id: string }
         Returns: boolean
@@ -11725,6 +11862,11 @@ export type Database = {
       can_mark_opportunity_done: {
         Args: { _quest_id: string; _uid: string }
         Returns: boolean
+      }
+      can_view_quest: { Args: { _quest_id: string }; Returns: boolean }
+      cancel_quest_access_request: {
+        Args: { p_quest_id: string }
+        Returns: undefined
       }
       capability_has_public_evidence: {
         Args: { _evidence: Json }
@@ -11780,6 +11922,10 @@ export type Database = {
       decision_poll_allows: {
         Args: { p_action: string; p_poll_id: string; p_user_id: string }
         Returns: boolean
+      }
+      decline_quest_access_request: {
+        Args: { p_request_id: string }
+        Returns: undefined
       }
       demo_feve_row_visible: {
         Args: { p_row_id: string; p_table_name: string }
@@ -12243,6 +12389,10 @@ export type Database = {
           id: string
         }[]
       }
+      grant_quest_access: {
+        Args: { p_note?: string; p_quest_id: string; p_user_id: string }
+        Returns: string
+      }
       grant_user_credits: {
         Args: {
           _amount: number
@@ -12282,9 +12432,30 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_company_admin: {
+        Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_demo_feve_viewer: { Args: never; Returns: boolean }
+      is_direct_guild_admin: {
+        Args: { _guild_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_guild_admin: {
         Args: { _guild_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_guild_member_in_good_standing: {
+        Args: { _guild_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_platform_superadmin: { Args: { _user_id: string }; Returns: boolean }
+      is_quest_admin: {
+        Args: { _quest_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_quest_circle_member: {
+        Args: { _guild_id: string; _quest_id: string; _user_id: string }
         Returns: boolean
       }
       is_quest_holder: {
@@ -12394,6 +12565,25 @@ export type Database = {
           matched_at_granularity: string
         }[]
       }
+      my_quest_access: { Args: { p_quest_id: string }; Returns: Json }
+      my_quest_access_levels: {
+        Args: { p_quest_ids: string[] }
+        Returns: {
+          level: string
+          quest_id: string
+        }[]
+      }
+      notify_quest_access: {
+        Args: {
+          p_body: string
+          p_link: string
+          p_quest_id: string
+          p_title: string
+          p_type: string
+          p_users: string[]
+        }
+        Returns: number
+      }
       process_agent_payment: {
         Args: {
           p_agent_id: string
@@ -12428,6 +12618,14 @@ export type Database = {
         }
         Returns: Json
       }
+      quest_access_admin_view: { Args: { p_quest_id: string }; Returns: Json }
+      quest_access_level: {
+        Args: { _quest_id: string; _user_id: string }
+        Returns: string
+      }
+      quest_admin_user_ids: { Args: { _quest_id: string }; Returns: string[] }
+      quest_effective_access: { Args: { _quest_id: string }; Returns: Json }
+      quest_primary_guild: { Args: { _quest_id: string }; Returns: string }
       rebuild_territory_closure: { Args: never; Returns: undefined }
       recompute_all_indicators: { Args: never; Returns: number }
       recompute_natural_system_indicators: {
@@ -12471,6 +12669,11 @@ export type Database = {
           recipient_id: string
         }[]
       }
+      request_quest_access: {
+        Args: { p_message?: string; p_quest_id: string }
+        Returns: Json
+      }
+      revoke_quest_access: { Args: { p_grant_id: string }; Returns: undefined }
       room_allows: {
         Args: { p_action: string; p_room_id: string; p_user_id: string }
         Returns: boolean
@@ -12498,6 +12701,24 @@ export type Database = {
         Args: { p_admin_id: string; p_new_rate: number; p_reason?: string }
         Returns: Json
       }
+      set_guild_admin_entity: {
+        Args: {
+          p_add: boolean
+          p_entity_id: string
+          p_entity_type: string
+          p_guild_id: string
+        }
+        Returns: undefined
+      }
+      set_guild_quest_access_default: {
+        Args: {
+          p_guild_id: string
+          p_mode: string
+          p_plans?: string[]
+          p_role_ids?: string[]
+        }
+        Returns: undefined
+      }
       set_opportunity_feedback: {
         Args: { p_match_id: string; p_verdict: string }
         Returns: undefined
@@ -12505,6 +12726,15 @@ export type Database = {
       set_opportunity_trust_given: {
         Args: { p_outcome_id: string }
         Returns: undefined
+      }
+      set_quest_access: {
+        Args: {
+          p_mode: string
+          p_plans?: string[]
+          p_quest_id: string
+          p_role_ids?: string[]
+        }
+        Returns: Json
       }
       set_user_role:
         | {

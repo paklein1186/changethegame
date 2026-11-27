@@ -129,7 +129,7 @@ RETURNS uuid LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
     (SELECT q.guild_id FROM public.quests q WHERE q.id = _quest_id),
     (SELECT h.entity_id FROM public.quest_hosts h
       WHERE h.quest_id = _quest_id AND upper(h.entity_type) = 'GUILD' ORDER BY h.created_at LIMIT 1),
-    (SELECT q.owner_id FROM public.quests q WHERE q.id = _quest_id AND upper(coalesce(q.owner_type, '')) = 'GUILD'))
+    (SELECT q.owner_id::uuid FROM public.quests q WHERE q.id = _quest_id AND upper(coalesce(q.owner_type, '')) = 'GUILD'))
 $$;
 
 CREATE OR REPLACE FUNCTION public.is_quest_admin(_quest_id uuid, _user_id uuid)
@@ -141,8 +141,8 @@ RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
                  AND upper(coalesce(p.role::text, '')) IN ('ADMIN', 'OWNER', 'HOST', 'CO_HOST'))
     OR EXISTS (SELECT 1 FROM public.quests q WHERE q.id = _quest_id AND (
          (q.guild_id IS NOT NULL AND public.is_guild_admin(q.guild_id, _user_id))
-         OR (upper(coalesce(q.owner_type, '')) = 'GUILD' AND q.owner_id IS NOT NULL AND public.is_guild_admin(q.owner_id, _user_id))
-         OR (upper(coalesce(q.owner_type, '')) = 'COMPANY' AND q.owner_id IS NOT NULL AND public.is_company_admin(q.owner_id, _user_id))))
+         OR (upper(coalesce(q.owner_type, '')) = 'GUILD' AND q.owner_id IS NOT NULL AND public.is_guild_admin(q.owner_id::uuid, _user_id))
+         OR (upper(coalesce(q.owner_type, '')) = 'COMPANY' AND q.owner_id IS NOT NULL AND public.is_company_admin(q.owner_id::uuid, _user_id))))
     OR EXISTS (SELECT 1 FROM public.quest_hosts h WHERE h.quest_id = _quest_id AND (
          (upper(h.entity_type) = 'GUILD' AND public.is_guild_admin(h.entity_id, _user_id))
          OR (upper(h.entity_type) = 'COMPANY' AND public.is_company_admin(h.entity_id, _user_id))
@@ -162,11 +162,11 @@ RETURNS uuid[] LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS 
   WITH q AS (SELECT * FROM public.quests WHERE id = _quest_id),
   guild_ids AS (
     SELECT q.guild_id AS gid FROM q WHERE q.guild_id IS NOT NULL
-    UNION SELECT q.owner_id FROM q WHERE upper(coalesce(q.owner_type, '')) = 'GUILD' AND q.owner_id IS NOT NULL
+    UNION SELECT q.owner_id::uuid FROM q WHERE upper(coalesce(q.owner_type, '')) = 'GUILD' AND q.owner_id IS NOT NULL
     UNION SELECT h.entity_id FROM public.quest_hosts h WHERE h.quest_id = _quest_id AND upper(h.entity_type) = 'GUILD'
   ),
   company_ids AS (
-    SELECT q.owner_id AS cid FROM q WHERE upper(coalesce(q.owner_type, '')) = 'COMPANY' AND q.owner_id IS NOT NULL
+    SELECT q.owner_id::uuid AS cid FROM q WHERE upper(coalesce(q.owner_type, '')) = 'COMPANY' AND q.owner_id IS NOT NULL
     UNION SELECT h.entity_id FROM public.quest_hosts h WHERE h.quest_id = _quest_id AND upper(h.entity_type) = 'COMPANY'
   ),
   admin_guilds AS (  -- les guildes et leurs entités administratrices de type guilde
@@ -286,7 +286,7 @@ RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
   ELSE EXISTS (
     SELECT 1 FROM public.company_members cm
     WHERE cm.user_id = _user_id AND cm.company_id IN (
-      SELECT q.owner_id FROM public.quests q WHERE q.id = _quest_id AND upper(coalesce(q.owner_type, '')) = 'COMPANY'
+      SELECT q.owner_id::uuid FROM public.quests q WHERE q.id = _quest_id AND upper(coalesce(q.owner_type, '')) = 'COMPANY'
       UNION SELECT h.entity_id FROM public.quest_hosts h WHERE h.quest_id = _quest_id AND upper(h.entity_type) = 'COMPANY'))
   END
 $$;

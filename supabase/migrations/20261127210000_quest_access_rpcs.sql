@@ -1,9 +1,11 @@
 -- Besoins, opportunités et propositions d'aide respectent l'accès aux quêtes (20261127200000_quest_access.sql).
 -- Ces fonctions lisent en SECURITY DEFINER, sans les règles de la base : la condition y est donc ajoutée,
 -- au nom de la personne connectée (auth.uid()). Corps repris de 20261127160000_needs_visibility_fix.sql.
+-- Démo FEVE : explore_needs et get_opportunities restent des enveloppes qui filtrent la démo ; on remplace
+-- donc leurs corps *_before_demo_feve, pas les enveloppes.
 
-DROP FUNCTION IF EXISTS public.explore_needs(text, uuid, text, text, integer, integer);
-CREATE FUNCTION public.explore_needs(
+DROP FUNCTION IF EXISTS public.explore_needs_before_demo_feve(text, uuid, text, text, integer, integer);
+CREATE FUNCTION public.explore_needs_before_demo_feve(
   p_scope text DEFAULT 'all',
   p_territory_id uuid DEFAULT NULL,
   p_category text DEFAULT NULL,
@@ -132,10 +134,10 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
 $$;
 
 
-REVOKE ALL ON FUNCTION public.explore_needs(text, uuid, text, text, integer, integer) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.explore_needs(text, uuid, text, text, integer, integer) TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.explore_needs_before_demo_feve(text, uuid, text, text, integer, integer) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.explore_needs_before_demo_feve(text, uuid, text, text, integer, integer) TO anon, authenticated;
 
-CREATE OR REPLACE FUNCTION public.get_opportunities(
+CREATE OR REPLACE FUNCTION public.get_opportunities_before_demo_feve(
   p_scope text DEFAULT 'me',
   p_guild_id uuid DEFAULT NULL,
   p_limit integer DEFAULT 60
@@ -241,8 +243,8 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   ORDER BY (v.i_am_helper OR v.i_manage_quest) DESC, (v.capability_status = 'confirmed') DESC, v.score DESC, v.updated_at DESC
   LIMIT LEAST(GREATEST(p_limit, 1), 200);
 $$;
-REVOKE ALL ON FUNCTION public.get_opportunities(text, uuid, integer) FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.get_opportunities(text, uuid, integer) TO authenticated;
+REVOKE ALL ON FUNCTION public.get_opportunities_before_demo_feve(text, uuid, integer) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.get_opportunities_before_demo_feve(text, uuid, integer) TO authenticated;
 
 -- ── Proposer son aide sur un besoin ─────────────────────────────────────────────────────────────────
 -- Passe par les contributions de la quête (quest_proposals, liées au besoin), comme « Submit Contribution »
