@@ -4616,6 +4616,7 @@
     "allKinds": "Tous types",
     "allPlaces": "Tous lieux",
     "category": {
+      "RESOURCES": "Ressources",
       "GENERAL": "Général",
       "SKILLS": "Compétences",
       "TOOLS": "Outils & matériel",
@@ -4840,6 +4841,30 @@
     "loginToHelp": "Se connecter pour aider",
     "seeQuest": "Voir la quête",
     "questHolder": "Porteur de la quête",
-    "more": "Afficher plus"
+    "more": "Afficher plus",
+    "offerSent": "Aide proposée",
+    "offerTitle": "Proposer mon aide",
+    "offerDesc": "Pour « {{need}} », dans la quête « {{quest}} ». Votre proposition est ajoutée aux contributions de la quête.",
+    "offerDefaultTitle": "Je peux aider : {{need}}",
+    "offerWhat": "Ce que vous proposez",
+    "offerHow": "Comment, quand, avec quelle expérience",
+    "offerHowPlaceholder": "Ex. : j'ai accompagné trois ASBL sur leurs statuts, disponible deux demi-journées en janvier…",
+    "offerTerms": "Contrepartie",
+    "terms": {
+      "free": "Bénévole",
+      "CREDITS": "En $CTG",
+      "FIAT": "En euros"
+    },
+    "amountEur": "Montant en €",
+    "amountCtg": "Montant en $CTG",
+    "offerWho": "Prévenus : la personne qui a posté le besoin, le porteur de la quête et les admins de sa guilde.",
+    "cancel": "Annuler",
+    "offerSend": "Envoyer ma proposition",
+    "offerUpdate": "Mettre à jour ma proposition",
+    "offerFailed": "La proposition n'a pas pu être envoyée",
+    "offerUpdated": "Proposition mise à jour",
+    "offerRelayed": "Proposition enregistrée. Ce lieu n'a pas encore de membre sur changethegame : l'équipe est prévenue pour la relayer.",
+    "offerDone_one": "Proposition envoyée : {{count}} personne prévenue",
+    "offerDone_other": "Proposition envoyée : {{count}} personnes prévenues"
   }
 }

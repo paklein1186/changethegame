@@ -1,19 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { HandHelping, MapPin, Search, Sparkles, Users, Globe2, Loader2, MessageCircle, ArrowRight } from "lucide-react";
+import { HandHelping, MapPin, Search, Sparkles, Users, Globe2, Loader2, Send, ArrowRight, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useOpenChatBubble } from "@/hooks/useOpenChatBubble";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 /** Catégories des besoins de quête (mêmes valeurs que QuestNeedsManager). */
-const CATEGORIES = ["SKILLS", "FUNDING", "TOOLS", "PLACE", "MENTORSHIP", "VISIBILITY", "PARTNERSHIPS", "VOLUNTEER", "GENERAL"];
+const CATEGORIES = ["SKILLS", "RESOURCES", "FUNDING", "TOOLS", "PLACE", "MENTORSHIP", "VISIBILITY", "PARTNERSHIPS", "VOLUNTEER", "GENERAL"];
 type Scope = "me" | "me_and_guilds" | "all";
 const PAGE = 30;
 
@@ -36,6 +39,7 @@ interface NeedRow {
   match_owner_type: string | null;
   match_owner_name: string | null;
   is_mine: boolean;
+  my_proposal_pending: boolean;
   total_count: number;
 }
 
@@ -56,7 +60,8 @@ export function NeedsExplore() {
   const currentUser = useCurrentUser();
   const isGuest = !currentUser.id;
   const [params, setParams] = useSearchParams();
-  const { open: openChat, isPending: chatPending } = useOpenChatBubble();
+  const qc = useQueryClient();
+  const [offerFor, setOfferFor] = useState<NeedRow | null>(null);
 
   const scope = (["me", "me_and_guilds", "all"].includes(params.get("scope") ?? "")
     ? params.get("scope")
@@ -270,14 +275,15 @@ export function NeedsExplore() {
                 )}
                 <div className="mt-auto flex flex-wrap gap-2">
                   {!r.is_mine && currentUser.id && (
-                    <Button
-                      size="sm"
-                      className="gap-1.5"
-                      disabled={chatPending}
-                      onClick={() => openChat({ id: r.owner_id, name: r.owner_name ?? t("needsExplore.questHolder") })}
-                    >
-                      <MessageCircle className="h-3.5 w-3.5" /> {t("needsExplore.offerHelp")}
-                    </Button>
+                    r.my_proposal_pending ? (
+                      <Button size="sm" variant="secondary" className="gap-1.5" onClick={() => setOfferFor(r)}>
+                        <Check className="h-3.5 w-3.5" /> {t("needsExplore.offerSent")}
+                      </Button>
+                    ) : (
+                      <Button size="sm" className="gap-1.5" onClick={() => setOfferFor(r)}>
+                        <HandHelping className="h-3.5 w-3.5" /> {t("needsExplore.offerHelp")}
+                      </Button>
+                    )
                   )}
                   {!currentUser.id && (
                     <Button size="sm" asChild><Link to="/login">{t("needsExplore.loginToHelp")}</Link></Button>
@@ -289,6 +295,11 @@ export function NeedsExplore() {
               </li>
             ))}
           </ul>
+          <OfferHelpDialog
+            need={offerFor}
+            onClose={() => setOfferFor(null)}
+            onSent={() => qc.invalidateQueries({ queryKey: ["explore-needs"] })}
+          />
           {rows.length < total && (
             <div className="flex justify-center">
               <Button variant="outline" size="sm" onClick={() => setLimit((l) => Math.min(l + PAGE, 100))} disabled={isFetching || limit >= 100}>
@@ -300,5 +311,96 @@ export function NeedsExplore() {
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * « Proposer mon aide » : crée une contribution liée au besoin (comme « Submit Contribution » sur la quête)
+ * et prévient la personne qui a créé le besoin, le porteur de la quête et les admins de sa guilde.
+ */
+function OfferHelpDialog({ need, onClose, onSent }: { need: NeedRow | null; onClose: () => void; onSent: () => void }) {
+  const { t } = useTranslation();
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [terms, setTerms] = useState<"free" | "CREDITS" | "FIAT">("free");
+  const [amount, setAmount] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!need) return;
+    setTitle(t("needsExplore.offerDefaultTitle", { need: need.title }).slice(0, 160));
+    setMessage("");
+    setTerms("free");
+    setAmount("");
+  }, [need, t]);
+
+  const send = async () => {
+    if (!need || !title.trim()) return;
+    setBusy(true);
+    const value = Math.max(0, Number(amount) || 0);
+    const { data, error } = await (supabase as any).rpc("propose_need_contribution", {
+      p_need_id: need.need_id,
+      p_title: title.trim(),
+      p_description: message.trim() || null,
+      p_currency: terms === "FIAT" ? "FIAT" : "CREDITS",
+      p_requested_credits: terms === "CREDITS" ? value : 0,
+      p_requested_fiat: terms === "FIAT" ? value : 0,
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(t("needsExplore.offerFailed"), { description: error.message });
+      return;
+    }
+    if (data?.updated) toast.success(t("needsExplore.offerUpdated"));
+    else if (data?.relayed_to_platform) toast.success(t("needsExplore.offerRelayed"));
+    else toast.success(t("needsExplore.offerDone", { count: data?.notified ?? 0 }));
+    onSent();
+    onClose();
+  };
+
+  return (
+    <Dialog open={!!need} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{t("needsExplore.offerTitle")}</DialogTitle>
+          <DialogDescription>
+            {need && t("needsExplore.offerDesc", { need: need.title, quest: need.quest_title })}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="offer-title">{t("needsExplore.offerWhat")}</Label>
+            <Input id="offer-title" value={title} maxLength={160} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="offer-message">{t("needsExplore.offerHow")}</Label>
+            <Textarea id="offer-message" value={message} maxLength={2000} className="min-h-[96px] resize-none"
+              placeholder={t("needsExplore.offerHowPlaceholder")} onChange={(e) => setMessage(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{t("needsExplore.offerTerms")}</Label>
+            <div className="flex flex-wrap gap-2">
+              {(["free", "CREDITS", "FIAT"] as const).map((v) => (
+                <Button key={v} type="button" size="sm" variant={terms === v ? "default" : "outline"} onClick={() => setTerms(v)}>
+                  {t(`needsExplore.terms.${v}`)}
+                </Button>
+              ))}
+            </div>
+            {terms !== "free" && (
+              <Input type="number" min={0} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)}
+                placeholder={terms === "FIAT" ? t("needsExplore.amountEur") : t("needsExplore.amountCtg")} className="mt-2 w-48" />
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground">{t("needsExplore.offerWho")}</p>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>{t("needsExplore.cancel")}</Button>
+          <Button onClick={send} disabled={busy || !title.trim()} className="gap-1.5">
+            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+            {need?.my_proposal_pending ? t("needsExplore.offerUpdate") : t("needsExplore.offerSend")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

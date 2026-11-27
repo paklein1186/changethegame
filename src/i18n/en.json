@@ -4630,6 +4630,7 @@
     "allKinds": "All kinds",
     "allPlaces": "All places",
     "category": {
+      "RESOURCES": "Resources",
       "GENERAL": "General",
       "SKILLS": "Skills",
       "TOOLS": "Tools & equipment",
@@ -4854,6 +4855,30 @@
     "loginToHelp": "Log in to help",
     "seeQuest": "See the quest",
     "questHolder": "Quest holder",
-    "more": "Show more"
+    "more": "Show more",
+    "offerSent": "Help offered",
+    "offerTitle": "Offer my help",
+    "offerDesc": "For “{{need}}”, in the quest “{{quest}}”. Your offer is added to the quest's contributions.",
+    "offerDefaultTitle": "I can help: {{need}}",
+    "offerWhat": "What you offer",
+    "offerHow": "How, when, with what experience",
+    "offerHowPlaceholder": "E.g. I helped three non-profits with their statutes, available two half-days in January…",
+    "offerTerms": "In return",
+    "terms": {
+      "free": "Volunteer",
+      "CREDITS": "In $CTG",
+      "FIAT": "In euros"
+    },
+    "amountEur": "Amount in €",
+    "amountCtg": "Amount in $CTG",
+    "offerWho": "Notified: the person who posted the need, the quest holder and the admins of its guild.",
+    "cancel": "Cancel",
+    "offerSend": "Send my offer",
+    "offerUpdate": "Update my offer",
+    "offerFailed": "Your offer could not be sent",
+    "offerUpdated": "Offer updated",
+    "offerRelayed": "Offer saved. This place has no member on changethegame yet: the team has been told to pass it on.",
+    "offerDone_one": "Offer sent: {{count}} person notified",
+    "offerDone_other": "Offer sent: {{count}} people notified"
   }
 }

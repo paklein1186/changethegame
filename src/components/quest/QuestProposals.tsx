@@ -145,7 +145,7 @@ export function QuestProposals({
         .from("quest_needs" as any)
         .select("id, title, status")
         .eq("quest_id", questId)
-        .in("status", ["open", "in_progress"])
+        .in("status", ["open", "in_progress", "OPEN", "ACTIVE", "IN_PROGRESS"])
         .order("created_at", { ascending: false }) as any;
       return data ?? [];
     },
