@@ -6,15 +6,29 @@ Authorization: Bearer <jeton de la personne>   (facultatif)
 ```
 
 - **Sans jeton** (page publique « Projets » du site) : quêtes de la guilde, propres ou affiliées, publiées, non
-  supprimées, réglées sur **Public** dans « Web visibility » et non masquées. Champs : titre, description, nature,
-  statut, image, adresse du site (`website_url`), étiquettes, dates, lien vers la quête. Jamais de budget, de cagnotte,
-  de récompense ni de personne.
+  supprimées, réglées sur **Public** dans « Web visibility », non masquées, **et ouvertes à tous** (accès
+  « Transparence complète »). Champs : titre, description, nature, statut, image, adresse du site (`website_url`),
+  étiquettes, dates, lien vers la quête. Jamais de budget, de cagnotte, de récompense ni de personne.
+- **Avec le jeton d'une personne connectée** (membre, accompagnant…) : `mode: "member"`. Les quêtes publiées et non
+  masquées que **cette personne** peut voir selon les règles d'accès de changethegame, même si elles ne sont pas
+  exposées sur le web. Chaque quête porte `access` :
+  - `"full"` : la personne voit tout (mêmes champs que le mode public) ;
+  - `"teaser"` : elle ne voit que la fiche (titre, résumé, nature, statut, image, étiquettes) ; afficher un bouton
+    « Demander l'accès » vers `request_access_url` (page de la quête sur changethegame, demande ouverte). Les admins
+    de la quête y sont prévenus, accordent ou refusent, et peuvent retirer l'accès plus tard.
+  Une quête que la personne ne doit pas voir n'est pas renvoyée. Le site n'a aucune règle à refaire : c'est
+  changethegame qui décide, à chaque appel (réponse `private, no-store`).
 - **Avec le jeton d'un·e admin de la guilde** (liaison à la main sur le site) : toutes les quêtes non supprimées,
-  brouillons et quêtes privées compris, avec leurs réglages de visibilité.
+  brouillons et quêtes privées compris, avec leurs réglages de visibilité et d'accès (`access_mode`). Les admins des
+  entités qui administrent la guilde sont admins aussi.
+
+Qui voit une quête se règle sur changethegame : Paramètres de la guilde → « Quest Access & Co-admins » (réglage par
+défaut : transparence complète, membres en règle, formules ou rôles choisis — ex. accompagnants —, cachée), et
+Paramètres de la quête → onglet **Access** pour s'en écarter, voir les demandes et donner des accès personnels.
 
 Pour qu'une quête apparaisse sur le site : Paramètres de la quête → onglet Web → **Public**.
 
-Le filtre est fait par la fonction, côté serveur : la base laisse encore lire toute quête publiée (faille signalée).
+Le filtre est fait côté serveur ; la base applique les mêmes règles d'accès (politiques sur les quêtes et leur contenu).
 Remarque : `site-feed` ne tient compte ni de « Public » ni des brouillons ; ne pas l'utiliser pour Trois-Tiers.
 
 # Publication automatique depuis troistiers.space (fonction `guild-quest-sync`, palier 2)

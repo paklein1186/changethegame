@@ -5,7 +5,7 @@ import {
   ArrowLeft, Save, Trash2, Puzzle, Calendar,
   ListChecks, MessageCircle, AlertTriangle, Ban, Loader2,
   Plus, Pencil, X, Lightbulb, Globe, Link2, Info,
-  PieChart, FileText, LogOut, Snowflake, Hash, MapPin, Building2,
+  PieChart, FileText, LogOut, Snowflake, Hash, MapPin, Building2, KeyRound,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ImageUpload";
@@ -47,6 +47,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAdmin as checkIsGlobalAdmin } from "@/lib/admin";
+import { useMyQuestAccess } from "@/components/quest/questAccess";
+import { QuestAccessSettings } from "@/components/quest/QuestAccessSettings";
 
 const ALL_TABS = [
   { key: "general", label: "General", icon: Pencil },
@@ -57,6 +59,7 @@ const ALL_TABS = [
   { key: "exit", label: "Exit Protocol", icon: LogOut },
   { key: "needs", label: "Needs", icon: Lightbulb },
   { key: "features", label: "Features", icon: Puzzle },
+  { key: "access", label: "Access", icon: KeyRound },
   { key: "web", label: "Web Visibility", icon: Globe },
   { key: "danger", label: "Danger Zone", icon: AlertTriangle },
 ];
@@ -79,14 +82,16 @@ export default function QuestSettings() {
     },
     enabled: !!id,
   });
+  const { data: myAccess, isLoading: accessLoading } = useMyQuestAccess(id, currentUser.id);
 
-  if (isLoading) return <PageShell><Loader2 className="h-6 w-6 animate-spin mx-auto mt-16" /></PageShell>;
+  if (isLoading || accessLoading) return <PageShell><Loader2 className="h-6 w-6 animate-spin mx-auto mt-16" /></PageShell>;
   if (!quest) return <PageShell><p>Quest not found.</p></PageShell>;
 
   const isOwner = currentUser.id === quest.created_by_user_id;
   const isGlobalAdmin = checkIsGlobalAdmin(currentUser.email);
 
-  if (!isOwner && !isGlobalAdmin) {
+  // Admins de la quête : créateur, co-admins, admins de sa guilde et des entités co-hôtes (règle de la base).
+  if (!isOwner && !isGlobalAdmin && !myAccess?.is_admin) {
     return <PageShell><p>You must be the owner of this quest to access settings.</p></PageShell>;
   }
 
@@ -1019,6 +1024,9 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   </div>
                 </div>
               )}
+
+              {/* ── Access ── */}
+              {activeTab === "access" && <QuestAccessSettings questId={questId} />}
 
               {/* ── Web Visibility ── */}
               {activeTab === "web" && (

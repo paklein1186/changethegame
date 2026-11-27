@@ -8,7 +8,7 @@ import {
   Users, Briefcase, Settings, CreditCard, Pencil, Plus, Euro,
   Clock, Video, ToggleLeft, ToggleRight, Crown, Hash, MapPin, Tag,
   AlertCircle, Check, Loader2, ClipboardList, X, Handshake, Vote,
-  ChevronUp, ChevronDown, Globe, Eye, EyeOff, ShoppingBag, Search, Plug,
+  ChevronUp, ChevronDown, Globe, Eye, EyeOff, ShoppingBag, Search, Plug, KeyRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +39,7 @@ import { MembershipPolicyEditor } from "@/components/MembershipPolicyEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { SearchableTagPicker } from "@/components/SearchableTagPicker";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { GuildAccessSettings } from "@/components/guild/GuildAccessSettings";
 import { useTopics, useTerritories } from "@/hooks/useSupabaseData";
 
 import { Label } from "@/components/ui/label";
@@ -77,6 +78,7 @@ const TABS = [
   { key: "services", label: "Services", icon: Briefcase },
   { key: "services-display", label: "Services Display", icon: Briefcase },
   { key: "availability", label: "Availability", icon: CalendarDays },
+  { key: "access", label: "Quest Access & Co-admins", icon: KeyRound },
   { key: "defaults", label: "Quests & Pods Defaults", icon: Settings },
   { key: "partnerships", label: "Partnerships", icon: Handshake },
   { key: "documents", label: "Documents", icon: Briefcase },
@@ -104,13 +106,23 @@ export default function GuildSettings() {
     enabled: !!id,
   });
 
-  if (guildLoading) return <PageShell><FrenchTextOverlay><Loader2 className="h-6 w-6 animate-spin mx-auto mt-16" /></FrenchTextOverlay></PageShell>;
+  const { data: isEntityAdmin, isLoading: adminLoading } = useQuery({
+    queryKey: ["is-guild-admin", id, currentUser.id],
+    enabled: !!id && !!currentUser.id,
+    queryFn: async () => {
+      const { data } = await (supabase as any).rpc("is_guild_admin", { _guild_id: id, _user_id: currentUser.id });
+      return data === true;
+    },
+  });
+
+  if (guildLoading || adminLoading) return <PageShell><FrenchTextOverlay><Loader2 className="h-6 w-6 animate-spin mx-auto mt-16" /></FrenchTextOverlay></PageShell>;
   if (!guild) return <PageShell><FrenchTextOverlay><p>Guild not found.</p></FrenchTextOverlay></PageShell>;
 
   const currentMembership = guild.guild_members?.find(
     (gm: any) => gm.user_id === currentUser.id
   );
-  if (currentMembership?.role !== "ADMIN") {
+  // Admin direct, ou admin d'une entité qui administre la guilde (règle de la base).
+  if (currentMembership?.role !== "ADMIN" && guild.created_by_user_id !== currentUser.id && !isEntityAdmin) {
     return <PageShell><FrenchTextOverlay><p>You must be an admin of this guild to access settings.</p></FrenchTextOverlay></PageShell>;
   }
 
@@ -1157,6 +1169,8 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               )}
 
               {/* ── Website ── */}
+              {activeTab === "access" && <GuildAccessSettings guild={guild} />}
+
               {activeTab === "website" && (
                 <div className="space-y-6">
                   <FeedpointVisibilitySettings ownerType="guild" ownerId={guildId} />

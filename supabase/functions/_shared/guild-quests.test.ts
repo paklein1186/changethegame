@@ -59,3 +59,23 @@ Deno.test("admin : créateur ou rôle ADMIN seulement", async () => {
   assertEquals(await isGuildAdmin(a, G, "u-membre"), false);
   assertEquals(await isGuildAdmin(a, "inconnue", "u-admin"), false);
 });
+
+const levels = (m: Record<string, "full" | "teaser" | "none">) => async (ids: string[]) =>
+  Object.fromEntries(ids.map((id) => [id, m[id] ?? "none"])) as Record<string, "full" | "teaser" | "none">;
+
+Deno.test("public : une quête publique sur le web mais réservée (accès non public) n'apparaît pas", async () => {
+  const r = await guildQuests(base(), G, false, { mode: "public", levelsFor: levels({ publique: "none", affiliee: "full" }) });
+  assertEquals(r.map((x) => x.id), ["affiliee"]);
+});
+
+Deno.test("membre : les quêtes qu'il peut voir, même non exposées sur le web, avec leur niveau", async () => {
+  const r = await guildQuests(base(), G, false, {
+    mode: "member",
+    levelsFor: levels({ publique: "full", privee: "teaser", "non-listee": "none", brouillon: "full", masquee: "full", affiliee: "full" }),
+  });
+  assertEquals(r.map((x) => x.id), ["publique", "affiliee", "privee"]);
+  const t = r.find((x) => x.id === "privee")!;
+  assertEquals([t.access, t.request_access_url], ["teaser", "https://changethegame.xyz/quests/privee?access=request"]);
+  assert(!("website_url" in t) && !("coin_budget" in t));
+  assertEquals(r.find((x) => x.id === "publique")!.access, "full");
+});

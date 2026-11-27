@@ -488,6 +488,37 @@ async function allowedSearchKeys(sb: any, userId: string): Promise<string[]> {
 
 const normAgentName = (v: string) => v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
 
+// ── Accès aux quêtes ──
+// Pi lit la base en service (sans règles d'accès) : chaque quête passe par le niveau d'accès de la personne,
+// calculé par la base avec son jeton : full (tout), teaser (la fiche seulement), none (invisible pour elle).
+async function questAccessLevels(authHeader: string | undefined, ids: string[]): Promise<Record<string, string>> {
+  const unique = [...new Set(ids.filter((x) => typeof x === "string" && /^[0-9a-f-]{36}$/i.test(x)))];
+  if (!unique.length) return {};
+  const asUser = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader ?? "" } } });
+  const { data, error } = await asUser.rpc("my_quest_access_levels", { p_quest_ids: unique });
+  if (error) {
+    console.error("my_quest_access_levels error", error);
+    return Object.fromEntries(unique.map((id) => [id, "none"]));
+  }
+  const out: Record<string, string> = Object.fromEntries(unique.map((id) => [id, "none"]));
+  for (const r of data ?? []) out[r.quest_id] = r.level;
+  return out;
+}
+
+/** Garde les quêtes visibles ; pour celles dont on ne voit que la fiche, le résumé seulement. */
+async function filterQuestRows(authHeader: string | undefined, rows: any[]): Promise<any[]> {
+  const levels = await questAccessLevels(authHeader, rows.map((r) => r.id));
+  return rows
+    .filter((r) => levels[r.id] && levels[r.id] !== "none")
+    .map((r) => levels[r.id] === "full" ? r : {
+      id: r.id, title: r.title, description: String(r.description ?? "").slice(0, 400), status: r.status,
+      access: "summary only: the user can request access on the quest page",
+    });
+}
+
+// Outils qui lisent ou modifient le contenu d'une quête : accès complet exigé.
+const QUEST_CONTENT_TOOLS = new Set(["accept_quest", "create_subtasks", "list_quest_members", "list_quest_discussions", "list_quest_files", "summarize_quest_progress"]);
+
 async function executeToolCall(
   toolName: string,
   params: any,
@@ -496,6 +527,14 @@ async function executeToolCall(
   authHeader?: string,
   pageCtx?: { type?: string; id?: string; language?: string }
 ): Promise<any> {
+  if (QUEST_CONTENT_TOOLS.has(toolName) && params?.quest_id) {
+    const level = (await questAccessLevels(authHeader, [String(params.quest_id)]))[String(params.quest_id)];
+    if (level !== "full") {
+      return level === "teaser"
+        ? { error: `Restricted quest: the user only sees its summary. They can request access on [the quest page](/quests/${params.quest_id}); its admins will be notified.` }
+        : { error: "Quest not found." };
+    }
+  }
   switch (toolName) {
     case "get_user_profile": {
       const { data } = await sb
@@ -553,7 +592,7 @@ async function executeToolCall(
         query = query.or(orClauses.join(","));
       }
       const { data } = await query;
-      return data || [];
+      return await filterQuestRows(authHeader, data || []);
     }
 
     case "accept_quest": {
@@ -663,7 +702,7 @@ async function executeToolCall(
       }
 
       const { data } = await query;
-      return data || [];
+      return await filterQuestRows(authHeader, data || []);
     }
 
     case "capture_vision": {
@@ -990,6 +1029,14 @@ async function executeToolCall(
         const prev = merged.get(key);
         // An item found both ways ranks higher.
         merged.set(key, prev ? { ...prev, score: Math.min(1, Math.max(prev.score, r.similarity) + 0.08) } : { ...r, score: r.similarity });
+      }
+      // Quêtes : seulement celles que la personne peut voir ; fiche seule = sans le détail indexé (besoins…).
+      const questLevels = await questAccessLevels(authHeader, [...merged.values()].filter((r) => r.entity_type === "quest").map((r) => r.entity_id));
+      for (const [key, r] of merged) {
+        if (r.entity_type !== "quest") continue;
+        const level = questLevels[r.entity_id] ?? "none";
+        if (level === "none") merged.delete(key);
+        else if (level === "teaser") merged.set(key, { ...r, body: `${String(r.body ?? "").split("\n")[0].slice(0, 200)} (summary only: access on request)` });
       }
       const results = [...merged.values()]
         .filter((r) => r.score >= 0.25)
@@ -1838,6 +1885,12 @@ serve(async (req) => {
         const { data: row, error: rowErr } = await sb.from(cfg.table).select(cols).eq("id", ctxId).maybeSingle();
         console.log("[buildPageContext] ctxType=", ctxType, "ctxId=", ctxId, "row?", !!row, "err=", rowErr?.message);
         if (!row) return "";
+        let questTeaser = false;
+        if (ctxType === "quest") {
+          const level = (await questAccessLevels(authHeader, [ctxId]))[ctxId];
+          if (level === "none") return "";
+          questTeaser = level === "teaser";
+        }
         let authorName = "";
         if (cfg.authorCol && (row as any)[cfg.authorCol]) {
           const { data: prof } = await sb.from("profiles").select("name").eq("user_id", (row as any)[cfg.authorCol]).maybeSingle();
@@ -1849,7 +1902,9 @@ serve(async (req) => {
         // ===== Enriched context: members, subtasks, recent posts, files =====
         let enriched = "";
         try {
-          if (ctxType === "quest") {
+          if (ctxType === "quest" && questTeaser) {
+            enriched = "\n(The user only sees this quest's summary: its content is reserved to some members. They can request access on the page; do not describe members, tasks, discussions or files.)";
+          } else if (ctxType === "quest") {
             const [partsR, hostsR, subsR, postsR] = await Promise.all([
               sb.from("quest_participants")
                 .select("user_id, role, status")

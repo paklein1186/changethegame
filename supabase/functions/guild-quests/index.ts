@@ -3,12 +3,13 @@
 //   GET /functions/v1/guild-quests?guild_id=<uuid>
 //   Authorization: Bearer <jeton de la personne>   (facultatif)
 //
-// Sans jeton : quêtes publiques de la guilde, champs de présentation seulement.
+// Sans jeton : quêtes publiques et ouvertes à tous de la guilde, champs de présentation seulement.
+// Avec le jeton d'une personne : les quêtes qu'elle peut voir selon les règles d'accès (fiche seule ou tout).
 // Avec le jeton d'un·e admin de la guilde : toutes les quêtes non supprimées (brouillons compris) et leurs
-// réglages de visibilité. Règles et champs : _shared/guild-quests.ts.
+// réglages. Règles et champs : _shared/guild-quests.ts.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-import { guildQuests, isGuildAdmin } from "../_shared/guild-quests.ts";
+import { guildQuests, isGuildAdmin, levelsFrom, type Mode } from "../_shared/guild-quests.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -34,18 +35,25 @@ serve(async (req) => {
     if (!guild) return json({ error: "Guild not found" }, 404);
 
     // Un jeton invalide ne donne pas d'erreur : on répond en mode public.
-    let asAdmin = false;
+    let mode: Mode = "public";
+    let viewer: any = admin; // client de service : niveaux d'un visiteur anonyme
     const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
     if (token) {
       const { data } = await anon.auth.getUser(token);
-      if (data?.user) asAdmin = await isGuildAdmin(admin, guildId, data.user.id);
+      if (data?.user) {
+        mode = (await isGuildAdmin(admin, guildId, data.user.id)) ? "admin" : "member";
+        viewer = createClient(url, Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+          auth: { persistSession: false },
+          global: { headers: { Authorization: `Bearer ${token}` } },
+        });
+      }
     }
 
-    const quests = await guildQuests(admin, guildId, asAdmin);
+    const quests = await guildQuests(admin, guildId, mode === "admin", { mode, levelsFor: levelsFrom(viewer) });
     return json(
-      { guild_id: guildId, mode: asAdmin ? "admin" : "public", quests, generated_at: new Date().toISOString() },
+      { guild_id: guildId, mode, quests, generated_at: new Date().toISOString() },
       200,
-      { "Cache-Control": asAdmin ? "private, no-store" : "public, max-age=300" },
+      { "Cache-Control": mode === "public" ? "public, max-age=300" : "private, no-store" },
     );
   } catch (error) {
     console.log(`[GUILD-QUESTS] ERROR - ${error instanceof Error ? error.message : String(error)}`);

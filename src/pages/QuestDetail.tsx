@@ -5,6 +5,8 @@ import { useContentTranslations } from "@/hooks/useContentTranslation";
 import { useAutoTranslateEntity } from "@/hooks/useAutoTranslateEntity";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useMyQuestAccess } from "@/components/quest/questAccess";
+import { QuestTeaser } from "@/components/quest/QuestTeaser";
 import { autoFollowEntity } from "@/hooks/useFollow";
 import { motion } from "framer-motion";
 import { ArrowLeft, Zap, Users, Sparkles, Megaphone, BookOpen, MessageCircle, Trophy, Plus, Heart, CircleDot, Building2, UserPlus, Pencil, Send, CreditCard, Lock, ListChecks, FileText, Bot, Brain, MoreHorizontal, TrendingDown, Handshake, Trash2, Hash, MapPin, Star, Mail, Loader2, Ban, Clock, AlertTriangle, Calendar, Puzzle, Save, Settings, Globe, Lightbulb, Shield, PieChart } from "lucide-react";
@@ -215,6 +217,8 @@ export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: quest, isLoading } = useQuestById(id);
+  const currentUserForAccess = useCurrentUser();
+  const { data: myAccess, isLoading: accessLoading } = useMyQuestAccess(id, currentUserForAccess.id);
   const { data: participants } = useQuestParticipants(id);
   const { data: updates } = useQuestUpdates(id);
   const { data: questPods } = usePodsForQuest(id);
@@ -422,8 +426,17 @@ export default function QuestDetail() {
     },
   });
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!quest) return <PageShell><p>Quest not found.</p></PageShell>;
+  if (isLoading || accessLoading) return <PageShell><p>Loading…</p></PageShell>;
+  if (!quest) return (
+    <PageShell>
+      <div className="max-w-md mx-auto mt-16 text-center space-y-3">
+        <p>{t("questAccess.notFound")}</p>
+        {!currentUser.id && <Button asChild size="sm"><Link to="/login">{t("questAccess.login")}</Link></Button>}
+      </div>
+    </PageShell>
+  );
+  // Quête réservée à d'autres membranes : la fiche et la demande d'accès seulement.
+  if (myAccess?.level === "teaser") return <PageShell><QuestTeaser quest={quest} access={myAccess} /></PageShell>;
   if (quest.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>This quest has been removed.</p></PageShell>;
 
   const isCancelled = quest.status === "CANCELLED";

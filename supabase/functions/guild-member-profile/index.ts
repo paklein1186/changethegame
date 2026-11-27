@@ -64,7 +64,9 @@ serve(async (req) => {
       ["active", "grace"].includes(membership?.status ?? "active") &&
       (!end || new Date(end).getTime() > now);
 
-    const isAdmin = guild.created_by_user_id === user.id || roster?.role === "ADMIN";
+    // Admin direct, ou admin d'une entité (organisation, autre guilde) qui administre la guilde.
+    const isAdmin = guild.created_by_user_id === user.id || roster?.role === "ADMIN" ||
+      (await admin.rpc("is_guild_admin", { _guild_id: guildId, _user_id: user.id })).data === true;
 
     const badges = ((roles as any[]) ?? [])
       .filter((r) => r.entity_roles?.code)
