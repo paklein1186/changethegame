@@ -127,3 +127,33 @@ Deno.test("quêtes de la guilde pour la file à classer (B5) : toutes, brouillon
   const r = await guildQuestsForSite(a, G);
   assertEquals(r.quests.map((q: any) => [q.id, q.projet_id, q.is_draft]), [["q1", null, true], ["q2", P, false]]);
 });
+
+Deno.test("salle d'attente : brouillon en attente, admins notifiés, jamais republié par une mise à jour du site", async () => {
+  const { guildQuestsForSite } = await import("./guild-quest-sync.ts");
+  const a = fakeAdmin({
+    quests: [], quest_affiliations: [], quest_external_links: [], notifications: [],
+    guild_members: [{ guild_id: G, user_id: "u-admin", role: "ADMIN" }, { guild_id: G, user_id: "u-membre", role: "MEMBER" }],
+  }, { quest_external_links: ["source", "external_id"] });
+  const fields = { ...questFields(face({ audience: "guilde" }), ORIG), ...visibilityFields({ mode: "membres", niveau_minimum: "N2" })! };
+  const r = await createQuest(a, G, "u-createur", P, fields, true);
+  assertEquals([r.created, (r as any).pending], [true, true]);
+  const q = a.tables.quests[0];
+  q.is_deleted = false;
+  assertEquals([q.is_draft, q.access_mode, q.access_min_level], [true, "members", "N2"]);
+  assertEquals(a.tables.quest_external_links[0].pending_validation, true);
+  assertEquals(a.tables.notifications.map((n: any) => n.user_id), ["u-admin"]);
+  await updateQuest(a, G, P, r.quest_id, fields);
+  assertEquals(a.tables.quests[0].is_draft, true);
+  const liste = await guildQuestsForSite(a, G);
+  assertEquals([liste.quests[0].projet_id, liste.quests[0].en_attente, liste.quests[0].decision], [P, true, null]);
+  // Validée sur le site : la mise à jour la publie et la sort de l'attente côté CTG.
+  await updateQuest(a, G, P, r.quest_id, fields, true);
+  assertEquals([a.tables.quests[0].is_draft, a.tables.quest_external_links[0].pending_validation, a.tables.quest_external_links[0].decision],
+    [false, false, "validated"]);
+  // Une autre mission, gardée privée sur le site : retirée et sortie de l'attente.
+  const r2 = await createQuest(a, G, "u-createur", "11111111-2222-3333-4444-555555555555", fields, true);
+  a.tables.quests.find((x: any) => x.id === r2.quest_id)!.is_deleted = false;
+  await withdrawQuest(a, G, "11111111-2222-3333-4444-555555555555", r2.quest_id, true);
+  const l2 = a.tables.quest_external_links.find((x: any) => x.quest_id === r2.quest_id)!;
+  assertEquals([l2.pending_validation, l2.decision], [false, "private"]);
+});

@@ -13778,5 +13778,16 @@
     "sentTo": "Request sent to {{name}}",
     "receivedFrom": "Request from {{name}}",
     "open": "Open"
+  },
+  "uiPendingSiteQuests": {
+    "title": "Missions awaiting validation",
+    "intro": "These missions come from Trois-Tiers as drafts, visible to admins only. Validate them to publish them to members (according to their level), or keep them private. The decision also applies on troistiers.space.",
+    "level": "Members only, from {{level}}",
+    "openOnSite": "view on the site",
+    "validate": "Validate",
+    "keepPrivate": "Keep private",
+    "validated": "Mission validated: the quest is published to members.",
+    "keptPrivate": "Mission kept private: it stays a draft.",
+    "error": "Could not decide"
   }
 }

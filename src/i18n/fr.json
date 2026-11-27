@@ -13778,5 +13778,16 @@
     "sentTo": "Demande envoyée à {{name}}",
     "receivedFrom": "Demande reçue de {{name}}",
     "open": "Ouvrir"
+  },
+  "uiPendingSiteQuests": {
+    "title": "Missions en attente de validation",
+    "intro": "Ces missions arrivent de Trois-Tiers en brouillon, visibles des seuls admins. Validez-les pour les publier aux membres (selon leur niveau), ou gardez-les privées. La décision vaut aussi sur troistiers.space.",
+    "level": "Réservée aux membres à partir de {{level}}",
+    "openOnSite": "voir sur le site",
+    "validate": "Valider",
+    "keepPrivate": "Garder privée",
+    "validated": "Mission validée : la quête est publiée pour les membres.",
+    "keptPrivate": "Mission gardée privée : elle reste en brouillon.",
+    "error": "Décision impossible"
   }
 }

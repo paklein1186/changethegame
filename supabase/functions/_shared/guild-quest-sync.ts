@@ -85,15 +85,15 @@ export async function linkedQuest(admin: any, projetId: string): Promise<string 
 }
 
 /** Crée la quête (ou renvoie celle déjà reliée à ce projet : jamais de doublon). */
-export async function createQuest(admin: any, guildId: string, userId: string, projetId: string, fields: Row) {
+export async function createQuest(admin: any, guildId: string, userId: string, projetId: string, fields: Row, pending = false) {
   const existing = await linkedQuest(admin, projetId);
   if (existing) return { quest_id: existing, created: false };
   const { data: quest, error } = await admin.from("quests").insert({
-    ...fields, guild_id: guildId, owner_type: "GUILD", owner_id: guildId, created_by_user_id: userId, is_draft: false,
+    ...fields, guild_id: guildId, owner_type: "GUILD", owner_id: guildId, created_by_user_id: userId, is_draft: pending,
   }).select("id").single();
   if (error || !quest) throw new SyncError("db", error?.message ?? "insert failed", 500);
   const { error: e2 } = await admin.from("quest_external_links").insert({
-    quest_id: quest.id, source: SOURCE, external_id: projetId, created_by_user_id: userId,
+    quest_id: quest.id, source: SOURCE, external_id: projetId, created_by_user_id: userId, pending_validation: pending,
   });
   if (e2) {
     // Une autre publication du même projet a gagné la course : on retire la nôtre.
@@ -102,18 +102,39 @@ export async function createQuest(admin: any, guildId: string, userId: string, p
     if (winner) return { quest_id: winner, created: false };
     throw new SyncError("db", e2.message ?? "link failed", 500);
   }
-  return { quest_id: quest.id, created: true };
+  if (pending) await notifyAdmins(admin, guildId, quest.id, String(fields.title ?? ""));
+  return { quest_id: quest.id, created: true, pending };
+}
+
+/** Prévient les admins de la guilde qu'une mission du site attend leur validation (salle d'attente). */
+export async function notifyAdmins(admin: any, guildId: string, questId: string, title: string) {
+  const { data: admins } = await admin.from("guild_members").select("user_id, role").eq("guild_id", guildId);
+  const ids = [...new Set(((admins ?? []) as Row[]).filter((m) => String(m.role).toUpperCase() === "ADMIN").map((m) => m.user_id))];
+  if (!ids.length) return;
+  await admin.from("notifications").insert(ids.map((id) => ({
+    user_id: id, type: "GUILD_SITE_QUEST_PENDING", title: "Mission à valider",
+    body: `« ${title} » arrive de Trois-Tiers en brouillon : validez-la (publiée pour les membres) ou gardez-la privée, dans l'onglet Travail de la guilde.`,
+    related_entity_type: "GUILD", related_entity_id: guildId, deep_link_url: `/guilds/${guildId}?tab=work`,
+  })));
 }
 
 /** Met à jour une quête que cette fonction a reliée à ce projet, dans la guilde, champs de présentation seulement. */
-export async function updateQuest(admin: any, guildId: string, projetId: string, questId: string, fields: Row) {
+export async function updateQuest(admin: any, guildId: string, projetId: string, questId: string, fields: Row, validee = false) {
   const linked = await linkedQuest(admin, projetId);
   if (linked !== questId) throw new SyncError("not_linked", "quête non reliée à ce projet", 409);
   const { data: quest } = await admin.from("quests").select("id, guild_id, is_deleted").eq("id", questId).maybeSingle();
   if (!quest || quest.is_deleted) throw new SyncError("gone", "quête supprimée", 410);
   if (quest.guild_id !== guildId) throw new SyncError("forbidden", "quête hors de la guilde", 403);
   // Une face publique, ou réservée aux membres, remet la quête en ligne si elle avait été retirée.
-  const republish = fields.public_visibility === "public" || fields.access_mode === "members" ? { is_draft: false } : {};
+  const { data: lien } = await admin.from("quest_external_links").select("pending_validation").eq("quest_id", questId).eq("source", SOURCE).maybeSingle();
+  // Validée sur le site (salle d'attente) : la quête sort de l'attente côté CTG aussi.
+  if (lien?.pending_validation && validee) {
+    await admin.from("quest_external_links").update({ pending_validation: false, decision: "validated", decided_at: new Date().toISOString() })
+      .eq("quest_id", questId).eq("source", SOURCE);
+  }
+  const enAttente = Boolean(lien?.pending_validation) && !validee;
+  const republish = !enAttente && (fields.public_visibility === "public" || fields.access_mode === "members")
+    ? { is_draft: false } : {};
   const { error } = await admin.from("quests").update({ ...fields, ...republish, updated_at: new Date().toISOString() }).eq("id", questId);
   if (error) throw new SyncError("db", error.message ?? "update failed", 500);
   await admin.from("quest_external_links").update({ updated_at: new Date().toISOString() })
@@ -123,7 +144,7 @@ export async function updateQuest(admin: any, guildId: string, projetId: string,
 
 /** Retire la quête des vues publiques (brouillon, privée) sans rien y écrire d'autre : utilisé quand la face du
  *  projet n'est plus publique (projet devenu sensible, résumé retiré…). Rien du projet n'est envoyé. */
-export async function withdrawQuest(admin: any, guildId: string, projetId: string, questId: string) {
+export async function withdrawQuest(admin: any, guildId: string, projetId: string, questId: string, prive = false) {
   const linked = await linkedQuest(admin, projetId);
   if (linked !== questId) throw new SyncError("not_linked", "quête non reliée à ce projet", 409);
   const { data: quest } = await admin.from("quests").select("id, guild_id, is_deleted").eq("id", questId).maybeSingle();
@@ -132,6 +153,11 @@ export async function withdrawQuest(admin: any, guildId: string, projetId: strin
   const { error } = await admin.from("quests")
     .update({ is_draft: true, public_visibility: "private", updated_at: new Date().toISOString() }).eq("id", questId);
   if (error) throw new SyncError("db", error.message ?? "update failed", 500);
+  // Gardée privée sur le site (salle d'attente) : la quête sort de l'attente côté CTG aussi.
+  if (prive) {
+    await admin.from("quest_external_links").update({ pending_validation: false, decision: "private", decided_at: new Date().toISOString() })
+      .eq("quest_id", questId).eq("source", SOURCE).eq("pending_validation", true);
+  }
   return { quest_id: questId, withdrawn: true };
 }
 
@@ -184,10 +210,13 @@ export async function guildQuestsForSite(admin: any, guildId: string) {
   const quests = await guildQuests(admin, guildId, true);
   const ids = quests.map((q: Row) => q.id);
   const { data: links } = ids.length
-    ? await admin.from("quest_external_links").select("quest_id, external_id").eq("source", SOURCE).in("quest_id", ids)
+    ? await admin.from("quest_external_links").select("quest_id, external_id, pending_validation, decision").eq("source", SOURCE).in("quest_id", ids)
     : { data: [] };
-  const projet = new Map((links ?? []).map((l: Row) => [l.quest_id, l.external_id]));
-  return { guild_id: guildId, quests: quests.map((q: Row) => ({ ...q, projet_id: projet.get(q.id) ?? null })) };
+  const lien = new Map((links ?? []).map((l: Row) => [l.quest_id, l]));
+  return { guild_id: guildId, quests: quests.map((q: Row) => {
+    const l = lien.get(q.id) as Row | undefined;
+    return { ...q, projet_id: l?.external_id ?? null, en_attente: Boolean(l?.pending_validation), decision: l?.decision ?? null };
+  }) };
 }
 
 /** Comparaison en temps constant de la clé du site. */

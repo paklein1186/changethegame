@@ -45,7 +45,7 @@ serve(async (req) => {
     if (body?.action === "withdraw") {
       const questId = String(body?.quest_id ?? "");
       if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
-      return reply(await withdrawQuest(admin, guildId, projetId, questId));
+      return reply(await withdrawQuest(admin, guildId, projetId, questId, body?.prive === true));
     }
     // Nouvelle de quête (B3) : clé du site seule, sur une quête reliée au projet.
     if (body?.action === "news") {
@@ -83,24 +83,27 @@ serve(async (req) => {
       }
       return reply(await createQuest(admin, guildId, user.id, projetId, fields));
     }
-    // Création automatique (décision de PA du 28/11, option C) : seulement une face PUBLIQUE (projet transparent, résumé
-    // validé), avec la clé du site seule. Auteur : la personne indiquée si elle administre la guilde, sinon la personne
-    // qui a créé la guilde. Une face réservée aux membres passe toujours par « create » (jeton d'un·e admin).
+    // Création automatique (décisions de PA du 28/11) : clé du site seule. Publique (projet transparent) : créée et
+    // publiée. Réservée aux membres (semi-sensible) : seulement si la base applique la visibilité ; publiée si la
+    // coordination l'a validée sur le site, sinon brouillon « en attente » notifié aux admins (salle d'attente).
+    // Auteur : `auteur` s'il administre la guilde, sinon la personne qui a créé la guilde.
     if (body?.action === "create_auto") {
-      if (body?.visibilite?.mode !== "public" || fields.public_visibility !== "public" || fields.access_mode !== "public") {
-        return reply({ error: "public_only", detail: "seule une face publique peut être créée automatiquement" }, 422);
-      }
+      const publique = body?.visibilite?.mode === "public" && fields.public_visibility === "public" && fields.access_mode === "public";
+      const membres = body?.visibilite?.mode === "membres" && fields.access_mode === "members";
+      if (!publique && !membres) return reply({ error: "invalid_visibility", detail: "face publique ou réservée aux membres attendue" }, 422);
+      if (membres && !enforced) return reply({ error: "visibility_not_enforced", detail: "la base ne protège pas encore les quêtes réservées" }, 422);
+      const enAttente = membres && body?.en_attente === true;
       const auteur = typeof body?.auteur === "string" && UUID.test(body.auteur) && (await isGuildAdmin(admin, guildId, body.auteur))
         ? body.auteur : null;
       const { data: g } = await admin.from("guilds").select("created_by_user_id").eq("id", guildId).maybeSingle();
       const author = auteur ?? g?.created_by_user_id;
       if (!author) return reply({ error: "no_author", detail: "guilde sans créateur" }, 409);
-      return reply(await createQuest(admin, guildId, author, projetId, fields));
+      return reply(await createQuest(admin, guildId, author, projetId, fields, enAttente));
     }
     if (body?.action === "update") {
       const questId = String(body?.quest_id ?? "");
       if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
-      return reply(await updateQuest(admin, guildId, projetId, questId, fields));
+      return reply(await updateQuest(admin, guildId, projetId, questId, fields, body?.validee === true));
     }
     return reply({ error: "unknown action" }, 400);
   } catch (e) {
