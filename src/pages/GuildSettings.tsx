@@ -902,7 +902,7 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
               {/* ── Membership & Roles ── */}
               {activeTab === "members" && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <Section title={`Members (${members.length})`} icon={<Users className="h-5 w-5" />}><span /></Section>
                     <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
                       <DialogTrigger asChild><Button size="sm"><UserPlus className="h-4 w-4 mr-1" /> Add member</Button></DialogTrigger>
@@ -923,56 +923,56 @@ function GuildSettingsInner({ guildId, guild }: { guildId: string; guild: any })
                   </div>
 
                   <div className="rounded-lg border border-border overflow-hidden">
-                    <table className="w-full text-sm">
-                      <thead className="bg-muted/50">
+                    <table className="block w-full text-sm xl:table xl:table-fixed">
+                      <thead className="hidden bg-muted/50 xl:table-header-group">
                         <tr>
-                          <th className="text-left px-4 py-2 font-medium">User</th>
+                          <th className="w-[42%] text-left px-4 py-2 font-medium">User</th>
                           <th className="text-left px-4 py-2 font-medium">Role</th>
-                          <th className="text-left px-4 py-2 font-medium">Joined</th>
-                          <th className="text-right px-4 py-2 font-medium">Actions</th>
+                          <th className="w-24 text-right px-4 py-2 font-medium">Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="block xl:table-row-group">
                         {members.map((m: any) => (
-                          <tr key={m.id} className="border-t border-border">
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-2">
-                                <Avatar className="h-8 w-8"><AvatarImage src={m.user?.avatar_url} /><AvatarFallback>{m.user?.name?.[0]}</AvatarFallback></Avatar>
-                                <div>
-                                  <p className="font-medium">{m.user?.name}</p>
-                                  <p className="text-xs text-muted-foreground">{m.user?.email}</p>
+                          <tr key={m.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 gap-y-2 border-t border-border p-3 first:border-t-0 xl:table-row xl:p-0 xl:first:border-t">
+                            <td className="block min-w-0 xl:table-cell xl:px-4 xl:py-3 xl:align-top">
+                              <div className="flex items-start gap-2">
+                                <Avatar className="h-8 w-8 shrink-0"><AvatarImage src={m.user?.avatar_url} /><AvatarFallback>{m.user?.name?.[0]}</AvatarFallback></Avatar>
+                                <div className="min-w-0">
+                                  <p className="break-words font-medium">{m.user?.name}</p>
+                                  <p className="break-all text-xs text-muted-foreground">{m.user?.email}</p>
+                                  <p className="mt-1 text-xs text-muted-foreground">
+                                    {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}
+                                  </p>
                                 </div>
                               </div>
                             </td>
-                            <td className="px-4 py-3">
-                              <div className="flex flex-wrap items-center gap-1">
-                                <Badge variant={m.role === "ADMIN" ? "default" : "outline"} className="capitalize text-xs">
+                            <td className="order-3 col-span-2 block min-w-0 xl:table-cell xl:px-4 xl:py-3 xl:align-top">
+                              <div className="flex flex-wrap items-start gap-1.5">
+                                <Badge variant={m.role === "ADMIN" ? "default" : "outline"} className="max-w-full whitespace-normal capitalize text-xs">
                                   {m.role === "ADMIN" && <Crown className="h-3 w-3 mr-1" />}
                                   {m.role.toLowerCase()}
                                 </Badge>
                                 {getRolesForUser(m.user_id).map((r: any) => (
-                                  <Badge key={r.id} className="text-[10px] h-5 text-white border-0" style={{ backgroundColor: r.color }}>
-                                    {r.name}
+                                  <Badge key={r.id} variant="secondary" className="max-w-full gap-1.5 whitespace-normal text-xs">
+                                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: r.color }} aria-hidden="true" />
+                                    <span className="break-words">{r.name}</span>
                                   </Badge>
                                 ))}
                               </div>
                             </td>
-                            <td className="px-4 py-3 text-muted-foreground text-xs">
-                              {formatDistanceToNow(new Date(m.joined_at), { addSuffix: true })}
-                            </td>
-                            <td className="px-4 py-3 text-right">
-                              <div className="flex justify-end gap-1">
+                            <td className="order-2 block xl:table-cell xl:px-3 xl:py-3 xl:align-top">
+                              <div className="flex shrink-0 justify-end gap-1">
                                 {m.role === "ADMIN" ? (
-                                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => toggleMemberRole(m.id)} title="Demote to member">
-                                    <ChevronDown className="h-3.5 w-3.5" /> Demote
+                                  <Button size="icon" variant="outline" className="h-8 w-8 shrink-0" onClick={() => toggleMemberRole(m.id)} title="Demote to member" aria-label={`Demote to member: ${m.user?.name}`}>
+                                    <ChevronDown className="h-4 w-4" />
                                   </Button>
                                 ) : (
-                                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10" onClick={() => toggleMemberRole(m.id)} title="Promote to admin">
-                                    <ChevronUp className="h-3.5 w-3.5" /> Promote
+                                  <Button size="icon" variant="outline" className="h-8 w-8 shrink-0 border-primary/30 text-primary hover:bg-primary/10" onClick={() => toggleMemberRole(m.id)} title="Promote to admin" aria-label={`Promote to admin: ${m.user?.name}`}>
+                                    <ChevronUp className="h-4 w-4" />
                                   </Button>
                                 )}
                                 {m.user_id !== currentUser.id && (
-                                  <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => removeMember(m.id)} title="Remove member">
+                                  <Button size="icon" variant="ghost" className="h-8 w-8 shrink-0 text-destructive hover:text-destructive" onClick={() => removeMember(m.id)} title="Remove member" aria-label={`Remove member: ${m.user?.name}`}>
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </Button>
                                 )}
