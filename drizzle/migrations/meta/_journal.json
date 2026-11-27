@@ -253,6 +253,27 @@
       "when": 1795807222310,
       "tag": "0035_decide_quest_proposal",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1795808154895,
+      "tag": "0036_quest_external_links",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1795808220014,
+      "tag": "0037_quest_access_levels",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1795808275764,
+      "tag": "0038_guild_activity",
+      "breakpoints": true
     }
   ]
 }

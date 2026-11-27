@@ -5469,6 +5469,8 @@ export type Database = {
           ocu_default_enabled: boolean
           public_visibility: string
           quest_access_default: string
+          quest_access_levels: Json
+          quest_access_min_level: string
           quest_access_plans: string[]
           quest_access_role_ids: string[]
           redistribution_percent: number
@@ -5544,6 +5546,8 @@ export type Database = {
           ocu_default_enabled?: boolean
           public_visibility?: string
           quest_access_default?: string
+          quest_access_levels?: Json
+          quest_access_min_level?: string
           quest_access_plans?: string[]
           quest_access_role_ids?: string[]
           redistribution_percent?: number
@@ -5619,6 +5623,8 @@ export type Database = {
           ocu_default_enabled?: boolean
           public_visibility?: string
           quest_access_default?: string
+          quest_access_levels?: Json
+          quest_access_min_level?: string
           quest_access_plans?: string[]
           quest_access_role_ids?: string[]
           redistribution_percent?: number
@@ -7771,6 +7777,7 @@ export type Database = {
       quest_access_grants: {
         Row: {
           created_at: string
+          expires_at: string | null
           granted_by: string | null
           id: string
           note: string | null
@@ -7781,6 +7788,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          expires_at?: string | null
           granted_by?: string | null
           id?: string
           note?: string | null
@@ -7791,6 +7799,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          expires_at?: string | null
           granted_by?: string | null
           id?: string
           note?: string | null
@@ -8095,6 +8104,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "quest_email_invites_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quest_external_links: {
+        Row: {
+          created_at: string
+          created_by_user_id: string | null
+          external_id: string
+          quest_id: string
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id?: string | null
+          external_id: string
+          quest_id: string
+          source: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string | null
+          external_id?: string
+          quest_id?: string
+          source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_external_links_quest_id_fkey"
             columns: ["quest_id"]
             isOneToOne: false
             referencedRelation: "quests"
@@ -8734,6 +8778,7 @@ export type Database = {
       }
       quests: {
         Row: {
+          access_min_level: string
           access_mode: string
           access_plans: string[]
           access_role_ids: string[]
@@ -8807,6 +8852,7 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          access_min_level?: string
           access_mode?: string
           access_plans?: string[]
           access_role_ids?: string[]
@@ -8880,6 +8926,7 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          access_min_level?: string
           access_mode?: string
           access_plans?: string[]
           access_role_ids?: string[]
@@ -12070,6 +12117,16 @@ export type Database = {
           territory_id: string
         }[]
       }
+      external_quest_access: {
+        Args: { p_guild_id: string; p_source: string; p_user_id: string }
+        Returns: {
+          accorde_le: string
+          accorde_par: string
+          expire_le: string
+          niveau: string
+          quest_id: string
+        }[]
+      }
       feed_post_allows: {
         Args: { p_action?: string; p_post_id: string; p_user_id: string }
         Returns: boolean
@@ -12394,7 +12451,12 @@ export type Database = {
         }[]
       }
       grant_quest_access: {
-        Args: { p_note?: string; p_quest_id: string; p_user_id: string }
+        Args: {
+          p_expires_at?: string
+          p_note?: string
+          p_quest_id: string
+          p_user_id: string
+        }
         Returns: string
       }
       grant_user_credits: {
@@ -12419,6 +12481,15 @@ export type Database = {
           _type: string
         }
         Returns: undefined
+      }
+      guild_activity: {
+        Args: {
+          p_cap?: number
+          p_guild_id: string
+          p_since: string
+          p_until?: string
+        }
+        Returns: Json
       }
       guild_audience_allows: {
         Args: {
@@ -12446,6 +12517,10 @@ export type Database = {
         Returns: boolean
       }
       is_guild_admin: {
+        Args: { _guild_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_guild_level_n3: {
         Args: { _guild_id: string; _user_id: string }
         Returns: boolean
       }
@@ -12623,6 +12698,7 @@ export type Database = {
         Returns: Json
       }
       quest_access_admin_view: { Args: { p_quest_id: string }; Returns: Json }
+      quest_access_enforced: { Args: never; Returns: boolean }
       quest_access_level: {
         Args: { _quest_id: string; _user_id: string }
         Returns: string
@@ -12715,13 +12791,16 @@ export type Database = {
         Returns: undefined
       }
       set_guild_quest_access_default: {
+        Args: { p_guild_id: string; p_min_level?: string; p_mode: string }
+        Returns: undefined
+      }
+      set_guild_quest_access_levels: {
         Args: {
           p_guild_id: string
-          p_mode: string
-          p_plans?: string[]
-          p_role_ids?: string[]
+          p_plan_codes: string[]
+          p_role_codes: string[]
         }
-        Returns: undefined
+        Returns: Json
       }
       set_opportunity_feedback: {
         Args: { p_match_id: string; p_verdict: string }
@@ -12732,12 +12811,7 @@ export type Database = {
         Returns: undefined
       }
       set_quest_access: {
-        Args: {
-          p_mode: string
-          p_plans?: string[]
-          p_quest_id: string
-          p_role_ids?: string[]
-        }
+        Args: { p_min_level?: string; p_mode: string; p_quest_id: string }
         Returns: Json
       }
       set_user_role:
