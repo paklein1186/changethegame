@@ -173,7 +173,7 @@ export default function OpportunityMap() {
       {!isLoading && !error && visibleNodes.length > 0 && <div className="pointer-events-none absolute bottom-3 left-3 z-[500] space-y-1 rounded-lg border border-border bg-background/90 px-3 py-2 text-xs shadow">
         <p className="font-semibold">Légende</p>
         <p className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full" style={{ background: colors.projects }} /> Projet avec un besoin</p>
-        <p className="flex items-center gap-2"><span className="inline-block h-2.5 w-2.5 rounded-full border-2" style={{ borderColor: colors.resources, background: colors.resources }} /> Personne, guilde ou ressource</p>
+        <p className="flex items-center gap-2"><span className="inline-block h-2.5 w-2.5 rounded-full border-2 border-muted-foreground bg-background" /> Personne, guilde ou ressource</p>
         <p className="flex items-center gap-2"><span className="inline-block h-0.5 w-4" style={{ background: colors.projects }} /> Rapprochement (plus foncé = plusieurs)</p>
         <p className="flex items-center gap-2"><span className="rounded border border-border px-1 text-[10px] font-bold">3</span> Points empilés au même endroit</p>
       </div>}
