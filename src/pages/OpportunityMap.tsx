@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CircleMarker, MapContainer, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
+import { CircleMarker, MapContainer, Polyline, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
 import { LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { ArrowLeft, Loader2, MapPinned, Sparkles } from "lucide-react";
@@ -10,6 +10,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 
 type Scope = "me" | "guilds" | "all";
 type Layer = "projects" | "resources";
@@ -41,7 +42,9 @@ type MapNode = {
   territory: string;
   url: string;
 };
-type MapLink = { id: string; from: MapNode; to: MapNode; need: string; reason: string | null };
+type MapLink = { id: string; from: MapNode; to: MapNode; need: string; reason: string | null; score: number; helperType: string; direction: string };
+const helperTypeLabel: Record<string, string> = { profile: "Personne", guild: "Guilde", company: "Organisation" };
+const directionLabel: Record<string, string> = { you_can_help: "Vous pouvez aider", help_for_you: "Aide pour vous", platform: "Réseau" };
 
 const colors: Record<Layer, string> = {
   projects: "hsl(var(--primary))",
@@ -108,7 +111,7 @@ export default function OpportunityMap() {
         };
         nodes.set(to.key, to);
       }
-      if (from && to) links.push({ id: row.match_id, from, to, need: row.need_label, reason: row.reason_fr ?? row.reason_en });
+      if (from && to) links.push({ id: row.match_id, from, to, need: row.need_label, reason: row.reason_fr ?? row.reason_en, score: Number(row.score) || 0, helperType: row.helper_type, direction: row.direction });
     }
     return { nodes: [...nodes.values()], links, unlocated: Math.max(0, data.length - links.length) };
   }, [data]);
@@ -116,6 +119,18 @@ export default function OpportunityMap() {
   const visibleNodes = nodes.filter((node) => layers[node.kind]);
   const visibleKeys = new Set(visibleNodes.map((node) => node.key));
   const visibleLinks = links.filter((link) => visibleKeys.has(link.from.key) && visibleKeys.has(link.to.key));
+  const [selectedLink, setSelectedLink] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const stackCount = useMemo(() => {
+    const m = new Map<string, number>();
+    visibleNodes.forEach((n) => { const k = `${n.lat.toFixed(4)},${n.lng.toFixed(4)}`; m.set(k, (m.get(k) ?? 0) + 1); });
+    return m;
+  }, [visibleNodes]);
+  const stackSeen = new Set<string>();
+  const listedLinks = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return [...visibleLinks].filter((l) => !q || [l.from.name, l.to.name, l.need, l.reason, l.from.territory, l.to.territory].some((v) => v?.toLowerCase().includes(q))).sort((a, b) => b.score - a.score);
+  }, [visibleLinks, search]);
   const labels: [Layer, string][] = [["projects", "Projets"], ["resources", "Personnes et ressources"]];
 
   return <PageShell><div className="space-y-4">
@@ -138,19 +153,51 @@ export default function OpportunityMap() {
 
     {unlocated > 0 && <p className="rounded-lg border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">{unlocated} rapprochement{unlocated > 1 ? "s" : ""} sans territoire renseigné ne peuvent pas être tracés. Ajoutez un territoire aux quêtes et aux profils concernés pour compléter la carte.</p>}
 
-    <div className="h-[65vh] min-h-[480px] overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="relative h-[65vh] min-h-[480px] overflow-hidden rounded-2xl border border-border bg-card">
       {isLoading ? <div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
         : error ? <div className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">La carte n’a pas pu être chargée. Réessayez dans un instant.</div>
         : visibleNodes.length === 0 ? <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center"><MapPinned className="h-8 w-8 text-muted-foreground" /><p className="max-w-md text-sm text-muted-foreground">Aucun rapprochement localisé dans cette vue. Complétez votre profil et les territoires de vos quêtes, ou consultez la vue « Partout ».</p><Button size="sm" variant="outline" onClick={() => setScope("all")}>Voir tous les rapprochements</Button></div>
         : <MapContainer center={[46.6, 2.4]} zoom={5} style={{ height: "100%", width: "100%" }}>
           <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <FitOpportunityBounds nodes={visibleNodes} />
-          {visibleLinks.map((link) => <Polyline key={link.id} positions={[[link.from.lat, link.from.lng], [link.to.lat, link.to.lng]]} pathOptions={{ color: colors.projects, weight: 1.5, opacity: 0.4 }} />)}
+          {visibleLinks.map((link) => <Polyline key={link.id} positions={[[link.from.lat, link.from.lng], [link.to.lat, link.to.lng]]} pathOptions={{ color: colors.projects, weight: selectedLink === link.id ? 5 : 1.5, opacity: selectedLink ? (selectedLink === link.id ? 1 : 0.15) : 0.4 }} eventHandlers={{ click: () => setSelectedLink(link.id) }} />)}
           {visibleNodes.map((node) => {
             const related = links.filter((link) => link.from.key === node.key || link.to.key === node.key);
-            return <CircleMarker key={node.key} center={[node.lat, node.lng]} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}><Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong><p className="text-xs">{node.territory}</p>{related.slice(0, 2).map((link) => <p key={link.id} className="text-xs"><b>{link.need}</b>{link.reason ? ` — ${link.reason}` : ""}</p>)}<Button size="sm" asChild><Link to={node.url} className="!text-primary-foreground hover:!text-primary-foreground">Voir la fiche</Link></Button></div></Popup></CircleMarker>;
+            const sk = `${node.lat.toFixed(4)},${node.lng.toFixed(4)}`;
+            const stacked = stackCount.get(sk) ?? 1;
+            const showCount = stacked > 1 && !stackSeen.has(sk);
+            stackSeen.add(sk);
+            return <CircleMarker key={node.key} center={[node.lat, node.lng]} radius={node.kind === "projects" ? 9 : 7} pathOptions={{ color: colors[node.kind], fillColor: colors[node.kind], fillOpacity: 0.75, weight: 2 }}>{showCount && <Tooltip permanent direction="center" className="!bg-background !text-foreground !border-border !px-1.5 !py-0 !text-[11px] !font-bold !shadow-none">{stacked}</Tooltip>}<Popup><div className="max-w-xs space-y-2"><strong>{node.name}</strong><p className="text-xs">{node.territory}</p>{related.slice(0, 2).map((link) => <p key={link.id} className="text-xs"><b>{link.need}</b>{link.reason ? ` — ${link.reason}` : ""}</p>)}<Button size="sm" asChild><Link to={node.url} className="!text-primary-foreground hover:!text-primary-foreground">Voir la fiche</Link></Button></div></Popup></CircleMarker>;
           })}
         </MapContainer>}
+      {!isLoading && !error && visibleNodes.length > 0 && <div className="pointer-events-none absolute bottom-3 left-3 z-[500] space-y-1 rounded-lg border border-border bg-background/90 px-3 py-2 text-xs shadow">
+        <p className="font-semibold">Légende</p>
+        <p className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full" style={{ background: colors.projects }} /> Projet avec un besoin</p>
+        <p className="flex items-center gap-2"><span className="inline-block h-2.5 w-2.5 rounded-full border-2" style={{ borderColor: colors.resources, background: colors.resources }} /> Personne, guilde ou ressource</p>
+        <p className="flex items-center gap-2"><span className="inline-block h-0.5 w-4" style={{ background: colors.projects }} /> Rapprochement (plus foncé = plusieurs)</p>
+        <p className="flex items-center gap-2"><span className="rounded border border-border px-1 text-[10px] font-bold">3</span> Points empilés au même endroit</p>
+      </div>}
     </div>
+
+    {listedLinks.length > 0 || search ? <section aria-label="Liste des connexions" className="rounded-xl border border-border bg-card">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border p-3">
+        <h2 className="text-sm font-semibold">Connexions ({listedLinks.length})</h2>
+        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Filtrer par projet, personne, besoin, territoire…" className="h-8 max-w-xs text-xs" />
+      </div>
+      <div className="max-h-[480px] overflow-auto">
+        <table className="w-full text-xs">
+          <thead className="sticky top-0 bg-card text-left text-muted-foreground"><tr><th className="p-2">Projet</th><th className="p-2">Besoin</th><th className="p-2">Qui peut aider</th><th className="p-2">Pourquoi</th><th className="p-2 text-right">Pertinence</th></tr></thead>
+          <tbody>
+            {listedLinks.map((l) => <tr key={l.id} onMouseEnter={() => setSelectedLink(l.id)} onMouseLeave={() => setSelectedLink(null)} className={`border-t border-border align-top ${selectedLink === l.id ? "bg-primary/10" : "hover:bg-muted/40"}`}>
+              <td className="p-2"><Link to={l.from.url} className="font-medium hover:text-primary">{l.from.name}</Link><p className="text-muted-foreground">{l.from.territory}</p></td>
+              <td className="p-2 font-medium">{l.need}</td>
+              <td className="p-2"><Link to={l.to.url} className="font-medium hover:text-primary">{l.to.name}</Link><p className="text-muted-foreground">{helperTypeLabel[l.helperType] ?? "Ressource"} · {l.to.territory}{l.from.territory === l.to.territory ? " (même territoire)" : ""}</p></td>
+              <td className="p-2 text-muted-foreground"><span className="mr-1 rounded bg-muted px-1 py-0.5 text-[10px]">{directionLabel[l.direction] ?? l.direction}</span>{l.reason}</td>
+              <td className="p-2 text-right font-semibold">{Math.round(l.score <= 1 ? l.score * 100 : l.score)}%</td>
+            </tr>)}
+          </tbody>
+        </table>
+      </div>
+    </section> : null}
   </div></PageShell>;
 }
