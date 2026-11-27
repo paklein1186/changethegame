@@ -101,3 +101,13 @@ Toujours par `guild-quest-sync`, clé du site seule, sur une quête reliée au p
 quête, un·e admin de la guilde hôte, un·e admin de la plateforme, ou le serveur (clé service_role).
 
 Un besoin peut naître des deux côtés ; c'est le site qui fusionne (la dernière modification l'emporte).
+
+## Discussion de la quête depuis le site (palier 2 : un seul fil de commentaires)
+
+`quest-comments` (POST) : `{ action: "list" | "post", guild_id, quest_id, contenu?, parent_id? }`, avec le jeton de la
+personne (facultatif pour lire, obligatoire pour écrire). Le fil est celui de la quête (`comments`, cible `QUEST`) :
+le site le lit en direct et poste au nom de la personne ; il ne garde rien. Les règles d'accès de la base s'appliquent.
+
+Migration `20261128170000_quest_comments_access.sql` : les commentaires d'une quête, de ses actualités et de ses
+propositions demandent désormais l'accès complet à la quête, en lecture comme en écriture (ils étaient lisibles par
+tout le monde, même pour une quête réservée).
