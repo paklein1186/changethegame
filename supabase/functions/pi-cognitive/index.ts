@@ -327,6 +327,72 @@ const TOOLS = [
   {
     type: "function",
     function: {
+      name: "find_needs",
+      description: "List the open needs of quests and their guilds (skills, resources, places, funding, volunteers…), matched against the user's skills. Use it when someone asks how they could help, what projects need their skills, what is needed around a place, or browses needs. scope: 'me' = needs matching the user's own skills (default), 'me_and_guilds' = also their guilds' skills, 'all' = every open need. Each item has a markdown link to its quest and, when matched, the skill it matches. Also returns explore_link, the Needs tab with the same filters.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "Optional words to look for in the need or quest title" },
+          scope: { type: "string", enum: ["me", "me_and_guilds", "all"] },
+          territory: { type: "string", description: "Optional place name (town, province, region, country); includes everything inside it" },
+          category: { type: "string", enum: ["SKILLS", "RESOURCES", "FUNDING", "TOOLS", "PLACE", "MENTORSHIP", "VISIBILITY", "PARTNERSHIPS", "VOLUNTEER", "GENERAL"] },
+          limit: { type: "number", description: "Max results (default 8, up to 20)" },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "offer_help_on_need",
+      description: "Offer the user's help on a quest need (from find_needs: need_id). It adds a contribution to the quest, linked to the need, and notifies the person who posted the need, the quest holder and the guild admins. It sends something to other people on the user's behalf: ONLY call it after the user has explicitly agreed to the exact title, message and terms you propose, and set confirmed=true. Never call it on your own initiative.",
+      parameters: {
+        type: "object",
+        properties: {
+          need_id: { type: "string" },
+          title: { type: "string", description: "Short offer, e.g. 'I can help: legal advice for a non-profit'" },
+          message: { type: "string", description: "How, when, with what experience (the user's own words)" },
+          terms: { type: "string", enum: ["free", "CREDITS", "FIAT"], description: "free = volunteer; CREDITS = paid in $CTG; FIAT = paid in euros" },
+          amount: { type: "number", description: "Amount requested when terms is CREDITS or FIAT" },
+          confirmed: { type: "boolean", description: "true only once the user explicitly agreed to send this exact offer" },
+        },
+        required: ["need_id", "title", "terms", "confirmed"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_my_opportunities",
+      description: "Opportunities the platform detected for the user: needs they (or their guilds) could help with, and people or guilds who could help their own quests, with the reason and whether a service can be booked. scope: 'me' (default), 'guilds', 'all'.",
+      parameters: {
+        type: "object",
+        properties: {
+          scope: { type: "string", enum: ["me", "guilds", "all"] },
+          limit: { type: "number", description: "Max results (default 8, up to 20)" },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_my_skills",
+      description: "The skills and resources the platform knows the user can offer: confirmed ones, and ones suggested from their activity (tasks, quests led, services, CV) that they have not confirmed yet. Use it to explain what they are matched on, or to encourage them to confirm skills or turn them into bookable services.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_my_memberships",
+      description: "The user's paid guild memberships: guild, formula, paid in euros (card, Stripe) or in Coins, monthly or yearly, next renewal date, whether renewal is stopped, and their Coins balance. Use it for questions about memberships, renewals, payments or reminders.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "list_my_active_agents",
       description: "List the AI agents currently active (attached) in the user's guilds, quests and pods. Use this to know what specialized help is already available to the user before answering yourself, or to point them to the right agent.",
       parameters: { type: "object", properties: {}, required: [] },
@@ -948,6 +1014,177 @@ async function executeToolCall(
       };
     }
 
+    // ── Besoins, opportunités, compétences, cotisations ──
+    // Les fonctions de base qui lisent auth.uid() sont appelées au nom de la personne (son jeton), pas en service.
+    case "find_needs": {
+      const asUser = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader ?? "" } } });
+      const scope = ["me", "me_and_guilds", "all"].includes(params.scope) ? params.scope : "me";
+      const limit = Math.min(Math.max(parseInt(params.limit) || 8, 1), 20);
+      let territoryId: string | null = null;
+      let territoryName: string | null = null;
+      if (params.territory) {
+        const name = String(params.territory).trim();
+        const { data: places } = await sb.from("territories").select("id, name, level").eq("is_deleted", false).ilike("name", `%${name}%`).limit(10);
+        const best = (places ?? []).sort((a: any, b: any) =>
+          Number(b.name.toLowerCase() === name.toLowerCase()) - Number(a.name.toLowerCase() === name.toLowerCase()) || a.name.length - b.name.length)[0];
+        if (!best) return { results: [], note: `No territory named "${name}" on the platform. Say so and offer to search without a place.` };
+        territoryId = best.id;
+        territoryName = best.name;
+      }
+      const category = params.category ? String(params.category) : null;
+      const query = params.query ? String(params.query).trim() : null;
+      const { data, error } = await asUser.rpc("explore_needs", {
+        p_scope: scope, p_territory_id: territoryId, p_category: category, p_query: query, p_limit: limit, p_offset: 0,
+      });
+      if (error) return { error: error.message };
+      const qs = new URLSearchParams({ tab: "needs" });
+      if (scope !== "me") qs.set("scope", scope);
+      if (territoryId) qs.set("territory", territoryId);
+      if (category) qs.set("category", category);
+      if (query) qs.set("q", query);
+      const results = (data ?? []).map((r: any) => ({
+        need_id: r.need_id,
+        need: r.title,
+        description: r.description ? String(r.description).slice(0, 200) : null,
+        category: r.category,
+        quest: `[${String(r.quest_title).replace(/[\[\]]/g, "")}](/quests/${r.quest_id})`,
+        guild: r.guild_id && r.guild_name ? `[${String(r.guild_name).replace(/[\[\]]/g, "")}](/guilds/${r.guild_id})` : null,
+        places: r.territory_names ?? [],
+        matches_skill: !r.is_mine && r.match_label && Number(r.match_score) >= 0.36
+          ? (r.match_owner_type === "guild" ? `${r.match_label} (${r.match_owner_name})` : r.match_label) : null,
+        is_own_quest: r.is_mine,
+        already_offered: r.my_proposal_pending,
+      }));
+      return {
+        total: data?.[0]?.total_count ?? 0,
+        territory: territoryName,
+        results,
+        explore_link: `[${territoryName ? `Besoins · ${territoryName}` : "Onglet Besoins"}](/explore?${qs.toString()})`,
+        note: results.length === 0
+          ? (scope === "me"
+            ? "Nothing matches the user's skills with these filters. Offer to widen (scope me_and_guilds or all) or to complete their skills (get_my_skills)."
+            : "No open need with these filters. Say so plainly; do not invent needs.")
+          : "Link each quest. To help on a need, propose an offer and wait for the user's explicit yes before offer_help_on_need. Needs without matches_skill have not been analysed yet or do not match.",
+      };
+    }
+
+    case "offer_help_on_need": {
+      if (params.confirmed !== true) {
+        return { error: "Not sent: the user has not confirmed. Show them the exact offer (title, message, terms) and ask for an explicit yes." };
+      }
+      const asUser = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader ?? "" } } });
+      const terms = ["free", "CREDITS", "FIAT"].includes(params.terms) ? params.terms : "free";
+      const amount = Math.max(0, Number(params.amount) || 0);
+      const { data, error } = await asUser.rpc("propose_need_contribution", {
+        p_need_id: String(params.need_id ?? ""),
+        p_title: String(params.title ?? "").slice(0, 160),
+        p_description: params.message ? String(params.message).slice(0, 2000) : null,
+        p_currency: terms === "FIAT" ? "FIAT" : "CREDITS",
+        p_requested_credits: terms === "CREDITS" ? amount : 0,
+        p_requested_fiat: terms === "FIAT" ? amount : 0,
+      });
+      if (error) return { error: error.message };
+      return {
+        ok: true,
+        updated_previous_offer: !!data?.updated,
+        people_notified: data?.notified ?? 0,
+        relayed_to_platform_team: !!data?.relayed_to_platform,
+        note: data?.relayed_to_platform
+          ? "Nobody on this quest can be reached on the platform (imported place): the platform team was notified to pass the offer on. Tell the user."
+          : "Tell the user how many people were notified and that the holder can accept the contribution on the quest page.",
+      };
+    }
+
+    case "get_my_opportunities": {
+      const asUser = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader ?? "" } } });
+      const scope = ["me", "guilds", "all"].includes(params.scope) ? params.scope : "me";
+      const limit = Math.min(Math.max(parseInt(params.limit) || 8, 1), 20);
+      const { data, error } = await asUser.rpc("get_opportunities", { p_scope: scope, p_guild_id: null, p_limit: limit });
+      if (error) return { error: error.message };
+      const fr = String(pageCtx?.language ?? "").startsWith("fr");
+      const helperPath = (r: any) => r.helper_type === "profile" ? `/users/${r.helper_id}` : r.helper_type === "guild" ? `/guilds/${r.helper_id}` : `/companies/${r.helper_id}`;
+      const results = (data ?? []).filter((r: any) => r.my_verdict !== "not_relevant").map((r: any) => ({
+        direction: r.direction === "you_can_help" ? "you can help" : r.direction === "help_for_you" ? "help for your quest" : "platform",
+        quest: `[${String(r.quest_title).replace(/[\[\]]/g, "")}](/quests/${r.quest_id})`,
+        need: r.need_label,
+        helper: `[${String(r.helper_name ?? "?").replace(/[\[\]]/g, "")}](${helperPath(r)})`,
+        skill: r.capability_label,
+        skill_confirmed: r.capability_status === "confirmed",
+        reason: (fr ? r.reason_fr : r.reason_en) ?? r.reason_fr ?? r.reason_en,
+        bookable_service: r.capability_service_url ? `[${String(r.capability_service_title ?? "Service").replace(/[\[\]]/g, "")}](${r.capability_service_url})` : null,
+        done: r.done,
+      }));
+      return {
+        results,
+        note: results.length === 0
+          ? "No opportunity detected yet for this scope. Suggest find_needs, or completing skills (get_my_skills)."
+          : "The full list with actions (I can help, ask, book, mark as done) is on the home page above the task board: link [Accueil](/).",
+      };
+    }
+
+    case "get_my_skills": {
+      const { data, error } = await sb.from("capabilities")
+        .select("label, category, status, confidence, evidence")
+        .eq("owner_type", "profile").eq("owner_id", userId).neq("status", "dismissed")
+        .order("status", { ascending: true }).order("confidence", { ascending: false }).limit(40);
+      if (error) return { error: error.message };
+      const skills = (data ?? []).map((c: any) => {
+        const ev = Array.isArray(c.evidence) ? c.evidence : [];
+        return {
+          skill: c.label,
+          category: c.category,
+          status: c.status === "confirmed" ? "confirmed" : "suggested, to confirm",
+          based_on: [...new Set(ev.map((e: any) => e?.kind).filter(Boolean))].slice(0, 5),
+          bookable_service: ev.some((e: any) => e?.kind === "service"),
+        };
+      });
+      return {
+        skills,
+        manage_link: `[Mes compétences](/users/${userId})`,
+        note: skills.length === 0
+          ? "No skill known yet. Suggest 'Analyser mon activité' or adding skills on their profile (manage_link), or pasting their CV/LinkedIn there."
+          : "Suggested skills are already used for matching but shown as 'to confirm'. Encourage confirming them, and turning confirmed ones into a bookable service (/services/new).",
+      };
+    }
+
+    case "get_my_memberships": {
+      const [{ data: rows, error }, { data: profile }] = await Promise.all([
+        sb.from("user_guild_memberships")
+          .select("guild_id, status, plan_code, current_period_end, cancel_at_period_end, stripe_subscription_id, stripe_customer_id, chosen_fee_credits, guilds(name, billing_model, monthly_fee_credits, monthly_fee_max_credits, entry_fee_credits, euro_membership_enabled)")
+          .eq("user_id", userId).eq("role", "member"),
+        sb.from("profiles").select("coins_balance").eq("user_id", userId).maybeSingle(),
+      ]);
+      if (error) return { error: error.message };
+      const memberships = [];
+      for (const m of (rows ?? []) as any[]) {
+        const g = m.guilds ?? {};
+        const euro = !!m.stripe_subscription_id;
+        let plan: any = null;
+        if (euro && m.plan_code) {
+          const { data } = await sb.from("guild_membership_plans").select("label, billing_interval").eq("guild_id", m.guild_id).eq("code", m.plan_code).maybeSingle();
+          plan = data;
+        }
+        const min = Number(g.monthly_fee_credits ?? 0), max = Number(g.monthly_fee_max_credits ?? 0);
+        const coinsFee = max > min ? Math.min(Math.max(Number(m.chosen_fee_credits ?? 0) || min, min), max) : min;
+        memberships.push({
+          guild: `[${String(g.name ?? "Guilde").replace(/[\[\]]/g, "")}](/guilds/${m.guild_id})`,
+          paid_with: euro ? "euros (card via Stripe)" : g.billing_model === "monthly" || g.billing_model === "yearly" ? "Coins" : "one-off",
+          formula: plan?.label ?? m.plan_code ?? null,
+          rhythm: euro ? (plan?.billing_interval === "month" ? "monthly" : "yearly") : g.billing_model === "yearly" ? "yearly" : g.billing_model === "monthly" ? "monthly" : "one-off",
+          coins_per_period: !euro && (g.billing_model === "monthly" || g.billing_model === "yearly") ? coinsFee : null,
+          status: m.status,
+          renews_or_ends_on: m.current_period_end,
+          auto_renewal: (euro || g.billing_model === "monthly" || g.billing_model === "yearly") && !m.cancel_at_period_end,
+          paid_by_someone_else: euro && !m.stripe_customer_id,
+        });
+      }
+      return {
+        memberships,
+        coins_balance: Number(profile?.coins_balance ?? 0),
+        note: "A reminder email is sent one week before each automatic renewal. Euro memberships: card change or stopping renewal via 'Gérer ma cotisation' on the guild page. Coins memberships: renewal is taken from the Coins balance, with 7 days of grace if it is too low; top up at [Portefeuille](/settings/wallet); stop renewal on the guild page.",
+      };
+    }
+
     case "list_my_active_agents": {
       return await listActiveAgents(sb, userId);
     }
@@ -1119,7 +1356,14 @@ You are the front door to the platform's specialised AI agents, and you can chai
 - If consult_agent returns needs_top_up, tell the user they need more credits and link /me/credit-shop. If no agent matches, say which agents are available (available_agents) instead of guessing.
 - Follow-ups such as "an agent…" or "yes, that one" refer to the previous messages: resolve them from the conversation before asking the user to repeat.
 - Answer in the user's language, keep it concise, and still return the JSON format described above.
-- In "message", use markdown: links [title](/path) for every item, short lists for options.`;
+- In "message", use markdown: links [title](/path) for every item, short lists for options.
+
+## NEEDS, OPPORTUNITIES, SKILLS AND MEMBERSHIPS
+- "How can I help / where are my skills needed / what does this place need?" → find_needs (scope 'me' first; widen to 'me_and_guilds' or 'all' if empty or if asked; pass the place as territory). Link each quest, mention the matched skill, and give explore_link for the full filtered list.
+- To offer help on a need: draft the offer (title, a short message in the user's words, terms: volunteer / $CTG / euros), show it, and call offer_help_on_need with confirmed=true ONLY after an explicit yes. Never send it on your own.
+- "What did the platform spot for me?" → get_my_opportunities. The actions (I can help, ask, book, mark as done, give trust) live on the home page above the task board.
+- "What am I matched on / what can I offer?" → get_my_skills. Encourage confirming suggested skills and turning confirmed ones into bookable services (/services/new).
+- Memberships, renewals, payments, reminders → get_my_memberships. Never invent amounts or dates.`;
 
 const BASE_SYSTEM_PROMPT = `You are Pi, the AI assistant of ChangeTheGame — a regenerative ecosystem
 platform where humans collaborate to restore territories, build guilds,

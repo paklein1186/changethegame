@@ -32,7 +32,10 @@ interface Doc {
 const clean = (v: unknown, max = BODY_MAX) => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, max);
 const list = (v: unknown): string[] => (Array.isArray(v) ? v.map((x) => clean(x, 80)).filter(Boolean) : []);
 const join = (parts: (string | null | undefined | false)[]) => parts.filter(Boolean).join("\n").slice(0, BODY_MAX);
-const visibility = (v: unknown): "public" | "private" => (v === "public" ? "public" : "private");
+// public_visibility règle l'exposition sur les sites web externes (« private » par défaut = absent des sites),
+// pas la visibilité dans la plateforme, où guildes, quêtes, organisations et services se consultent par tout compte
+// connecté. Avant : « private » ici les réservait à leurs membres, et la recherche de Pi en masquait la plupart.
+const visibility = (v: unknown): "public" | "members" => (v === "public" ? "public" : "members");
 
 async function sha256(s: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
