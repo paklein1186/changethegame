@@ -5,7 +5,7 @@
 //   Authorization: Bearer <jeton d'accès de la personne>   (jeton OAuth ou de session)
 //
 // Ne renvoie que ce qui concerne la personne elle-même : identité, appartenance à la
-// guilde, adhésion payée, badges (rôles de guilde à code, avec date de fin et portée) et
+// guilde, adhésion payée (formule la plus haute), formules cumulées (plans), niveau calculé, badges (rôles de guilde à code, avec date de fin et portée) et
 // accès propres aux quêtes reliées aux projets du site (acces_quetes : lecture = accès
 // personnel, equipe = participant, admin = co-admin de la quête ; donnés et retirés sur
 // ChangeTheGame, recopiés par le site). Le site décide ensuite des accès selon sa configuration.
@@ -59,6 +59,18 @@ serve(async (req) => {
     ]);
     if (!guild) return json({ error: "Guild not found" }, 404);
 
+    // Toutes les formules de la personne (cumulables) et son niveau calculé dans la guilde.
+    const [{ data: planRows }, { data: planDefs }, { data: level }] = await Promise.all([
+      admin
+        .from("user_guild_plans")
+        .select("plan_code, status, current_period_end, membership_expires_at")
+        .eq("guild_id", guildId)
+        .eq("user_id", user.id),
+      admin.from("guild_membership_plans").select("code, level").eq("guild_id", guildId),
+      admin.rpc("guild_member_level", { _guild_id: guildId, _user_id: user.id }),
+    ]);
+    const levelOf = new Map(((planDefs as any[]) ?? []).map((p) => [p.code as string, (p.level as number | null) ?? null]));
+
     // Source des liens quête ↔ projet du site (quest_external_links) ; « trois-tiers » par défaut.
     const source = new URL(req.url).searchParams.get("source") ?? "trois-tiers";
     if (!/^[a-z0-9_-]{2,40}$/.test(source)) return json({ error: "Invalid source" }, 400);
@@ -104,6 +116,18 @@ serve(async (req) => {
           }
         : null,
       badges,
+      plans: ((planRows as any[]) ?? []).map((p) => {
+        const planEnd = (p.current_period_end ?? p.membership_expires_at ?? null) as string | null;
+        const graceMs = p.status === "grace" ? 7 * 24 * 3600 * 1000 : 0;
+        return {
+          plan_code: p.plan_code as string,
+          level: levelOf.get(p.plan_code) ?? null,
+          active: ["active", "grace"].includes(p.status ?? "active") && (!planEnd || new Date(planEnd).getTime() + graceMs > now),
+          current_period_end: planEnd,
+        };
+      }),
+      // Niveau calculé : le plus haut parmi admin (5), rôles, formules, membre (2), suiveur (1) ; 0 sinon.
+      niveau: typeof level === "number" ? level : null,
       // null : indisponible (base pas encore à jour) ; [] : aucun accès propre.
       acces_quetes: qaError ? null : ((questAccess as any[]) ?? []).map((a) => ({
         quest_id: a.quest_id as string,

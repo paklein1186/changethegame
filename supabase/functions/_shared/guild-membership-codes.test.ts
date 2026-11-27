@@ -20,6 +20,7 @@ function base() {
       entity_roles: [],
       entity_member_roles: [],
       user_guild_memberships: [],
+      user_guild_plans: [],
       guild_members: [],
       guild_membership_codes: [],
       notifications: [],
@@ -85,9 +86,30 @@ Deno.test("refus : code inconnu, expiré, révoqué, utilisé par le payeur, per
   assertEquals(await redeemCode(db, LIEU, a.code), { ok: false, reason: "expired" });
   b.revoked_at = fin(0);
   assertEquals(await redeemCode(db, LIEU, b.code), { ok: false, reason: "invalid" });
-  db.tables.user_guild_memberships.push({ guild_id: GUILD, user_id: "deja", role: "member", status: "active", stripe_subscription_id: "sub_autre", current_period_end: fin(100) });
+  db.tables.user_guild_plans.push({ guild_id: GUILD, user_id: "deja", plan_code: c.plan_code, status: "active", stripe_subscription_id: "sub_autre", current_period_end: fin(100) });
   assertEquals(await redeemCode(db, "deja", c.code), { ok: false, reason: "already_member" });
   assertEquals(c.redeemed_by_user_id ?? null, null); // le code reste disponible
+});
+
+Deno.test("une autre formule déjà payée n'empêche pas d'utiliser un code (formules cumulables)", async () => {
+  const db = base();
+  await activateFromSubscription(db, "GUILD", abonnement(fin(365)), 59000, "eur", false);
+  const code = db.tables.guild_membership_codes[0];
+  db.tables.user_guild_plans.push({ guild_id: GUILD, user_id: LIEU, plan_code: "citoyen", status: "active", stripe_subscription_id: "sub_citoyen", current_period_end: fin(100) });
+  assert((await redeemCode(db, LIEU, code.code)).ok);
+  const plans = db.tables.user_guild_plans.filter((p) => p.user_id === LIEU).map((p) => p.plan_code).sort();
+  assertEquals(plans, ["citoyen", code.plan_code].sort());
+  assertEquals(db.tables.user_guild_plans.find((p) => p.user_id === LIEU && p.plan_code === "citoyen")!.status, "active");
+});
+
+Deno.test("un deuxième achat n'annule pas la première formule", async () => {
+  const db = base();
+  await activateFromSubscription(db, "GUILD", abonnement(fin(365), { plan_code: "lieu_moins_20", small_places: "0", large_places: "0" }), 6000, "eur", false);
+  await activateFromSubscription(db, "GUILD", { ...abonnement(fin(200)), id: "sub_gal_2" }, 59000, "eur", false);
+  const plans = db.tables.user_guild_plans.filter((p) => p.user_id === GAL);
+  assertEquals(plans.map((p) => p.plan_code).sort(), ["lieu_moins_20", "partenaire_beneficiaire"]);
+  assert(plans.every((p) => p.status === "active"));
+  assertEquals(plans.find((p) => p.plan_code === "lieu_moins_20")!.stripe_subscription_id, "sub_gal");
 });
 
 Deno.test("un observateur (invité sans cotisation) peut utiliser un code", async () => {

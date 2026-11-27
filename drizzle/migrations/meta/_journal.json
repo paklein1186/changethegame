@@ -309,6 +309,13 @@
       "when": 1795809623026,
       "tag": "0043_guild_activity_more_sections",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1795812377260,
+      "tag": "0044_guild_member_levels",
+      "breakpoints": true
     }
   ]
 }

@@ -13604,5 +13604,40 @@
     "COMPLETED": "Completed",
     "CANCELLED": "Cancelled",
     "IDEA": "Idea"
+  },
+  "guildPlans": {
+    "myPlans": "Your plans",
+    "active": "Active",
+    "ended": "Ended",
+    "addPlan": "+ Add a plan",
+    "compareHint": "Plans add up: you can hold several. Your access follows the highest one. Without a membership fee, you stay an observer."
+  },
+  "guildModel": {
+    "title": "Guild model",
+    "hint": "Choose how to set up the guild. Applying a model creates what is missing and sets the levels; nothing is deleted and nobody loses a role.",
+    "models": {
+      "open": "Open (simple)",
+      "membranes": "Membranes (Trois-Tiers model)",
+      "cooperative": "Cooperative",
+      "custom": "Custom"
+    },
+    "modelHints": {
+      "open": "Founder, Source, admins and members, with no membership plan.",
+      "membranes": "Observer N1, Member N2, Active, Effective and Partner N3. Active is given for the length of a mission, with an end date.",
+      "cooperative": "Membranes plus a membership fee (the 'cooperative circle' membership preset; amounts are not changed).",
+      "custom": "You set the level of each role and each plan yourself."
+    },
+    "apply": "Apply model",
+    "applied": "Model applied",
+    "applyFailed": "The model could not be applied",
+    "levelFailed": "The level could not be saved",
+    "roles": "Roles",
+    "plans": "Plans",
+    "noPlans": "No membership plan.",
+    "noLevel": "None",
+    "symbolic": "Symbolic",
+    "levelFor": "Level given by {{name}}",
+    "whoSees": "A quest set to {{level}}: its card is visible from {{level}} up (here: {{list}}, plus admins); its content stays with the quest team and admins. Everyone gets the highest level among their roles and plans.",
+    "nobodyExtra": "no role or plan"
   }
 }

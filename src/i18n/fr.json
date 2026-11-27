@@ -13604,5 +13604,40 @@
     "COMPLETED": "Terminée",
     "CANCELLED": "Annulée",
     "IDEA": "Idée"
+  },
+  "guildPlans": {
+    "myPlans": "Vos formules",
+    "active": "Active",
+    "ended": "Terminée",
+    "addPlan": "+ Ajouter une formule",
+    "compareHint": "Les formules se cumulent : vous pouvez en prendre plusieurs. Votre accès suit la plus haute. Sans cotisation, vous restez observateur."
+  },
+  "guildModel": {
+    "title": "Modèle de la guilde",
+    "hint": "Choisissez comment configurer la guilde. Appliquer un modèle crée ce qui manque et règle les niveaux ; rien n'est supprimé et personne ne perd de rôle.",
+    "models": {
+      "open": "Ouverte (simple)",
+      "membranes": "Membranes (modèle Trois-Tiers)",
+      "cooperative": "Coopérative",
+      "custom": "Personnalisée"
+    },
+    "modelHints": {
+      "open": "Fondateur, Source, admins et membres, sans formule d'adhésion.",
+      "membranes": "Observateur N1, Adhérent N2, Actif, Effectif et Partenaire N3. Actif s'attribue le temps d'une mission, avec une date de fin.",
+      "cooperative": "Les membranes, plus une cotisation (préréglage « cercle coopératif » de l'adhésion ; les montants ne sont pas modifiés).",
+      "custom": "Vous réglez vous-même le niveau de chaque rôle et de chaque formule."
+    },
+    "apply": "Appliquer le modèle",
+    "applied": "Modèle appliqué",
+    "applyFailed": "Le modèle n'a pas pu être appliqué",
+    "levelFailed": "Le niveau n'a pas pu être enregistré",
+    "roles": "Rôles",
+    "plans": "Formules",
+    "noPlans": "Aucune formule d'adhésion.",
+    "noLevel": "Aucun",
+    "symbolic": "Symbolique",
+    "levelFor": "Niveau donné par {{name}}",
+    "whoSees": "Une quête réglée sur {{level}} : sa fiche est visible à partir de {{level}} (ici : {{list}}, plus les admins) ; son contenu reste réservé à l'équipe de la quête et aux admins. Chacun a le niveau le plus haut de ses rôles et formules.",
+    "nobodyExtra": "aucun rôle ni formule"
   }
 }

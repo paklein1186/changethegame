@@ -4,6 +4,26 @@ type Row = Record<string, any>;
 
 export function fakeAdmin(tables: Record<string, Row[]>, uniques: Record<string, string[]> = {}) {
   const t = (name: string) => (tables[name] ??= []);
+  // Imite les déclencheurs de la base : l'adhésion avec formule recopie sa ligne de formule,
+  // et une formule mise à jour se recopie sur l'adhésion qui la porte.
+  const PLAN_FIELDS = ["status", "current_period_end", "membership_expires_at", "cancel_at_period_end",
+    "stripe_customer_id", "stripe_subscription_id", "payer_user_id", "last_payment_at"];
+  function mirror(name: string, rows: Row[]) {
+    if (name === "user_guild_memberships") {
+      for (const m of rows) {
+        if (!m.plan_code) continue;
+        const plans = t("user_guild_plans");
+        let p = plans.find((x) => x.user_id === m.user_id && x.guild_id === m.guild_id && x.plan_code === m.plan_code);
+        if (!p) plans.push((p = { id: crypto.randomUUID(), user_id: m.user_id, guild_id: m.guild_id, plan_code: m.plan_code }));
+        for (const k of PLAN_FIELDS) if (k in m) p[k] = m[k];
+      }
+    } else if (name === "user_guild_plans") {
+      for (const p of rows) {
+        const m = t("user_guild_memberships").find((x) => x.user_id === p.user_id && x.guild_id === p.guild_id && x.plan_code === p.plan_code);
+        if (m) for (const k of PLAN_FIELDS) if (k in p) m[k] = p[k];
+      }
+    }
+  }
   function query(name: string) {
     const filters: ((r: Row) => boolean)[] = [];
     let op: "select" | "update" | "upsert" | "insert" = "select";
@@ -31,6 +51,7 @@ export function fakeAdmin(tables: Record<string, Row[]>, uniques: Record<string,
       if (op === "update") {
         const hit = rows.filter(match);
         hit.forEach((r) => Object.assign(r, patch));
+        mirror(name, hit);
         return { data: returning ? hit.map((r) => ({ ...r })) : null, error: null };
       }
       const list = Array.isArray(patch) ? patch : [patch];
@@ -48,6 +69,7 @@ export function fakeAdmin(tables: Record<string, Row[]>, uniques: Record<string,
           written.push(row);
         }
       }
+      mirror(name, written);
       return { data: returning ? written.map((r) => ({ ...r })) : null, error: null };
     }
     return q;

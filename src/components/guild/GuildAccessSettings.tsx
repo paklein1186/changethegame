@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AccessModePicker, type AccessValue } from "@/components/quest/AccessModePicker";
-import { Checkbox } from "@/components/ui/checkbox";
+import { GuildConfigModelPanel } from "@/components/guild/GuildConfigModelPanel";
 import { useGuildN3, type AccessMode, type MinLevel } from "@/components/quest/questAccess";
 
 interface AdminEntity { entity_type: "GUILD" | "COMPANY"; entity_id: string; name: string }
@@ -24,12 +24,6 @@ export function GuildAccessSettings({ guild }: { guild: any }) {
     minLevel: (guild.quest_access_min_level ?? "N2") as MinLevel,
   });
   const n3 = useGuildN3(guild.id);
-  const [roleCodes, setRoleCodes] = useState<string[] | null>(null);
-  const [planCodes, setPlanCodes] = useState<string[] | null>(null);
-  const [savingN3, setSavingN3] = useState(false);
-  const roles = roleCodes ?? n3.roleCodes;
-  const plans = planCodes ?? n3.planCodes;
-  const toggle = (list: string[], c: string) => (list.includes(c) ? list.filter((x) => x !== c) : [...list, c]);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -37,17 +31,6 @@ export function GuildAccessSettings({ guild }: { guild: any }) {
   useEffect(() => {
     setValue({ mode: (guild.quest_access_default ?? "public") as AccessMode, minLevel: (guild.quest_access_min_level ?? "N2") as MinLevel });
   }, [guild.quest_access_default, guild.quest_access_min_level]);
-
-  const saveN3 = async () => {
-    setSavingN3(true);
-    const { error } = await (supabase as any).rpc("set_guild_quest_access_levels", { p_guild_id: guild.id, p_role_codes: roles, p_plan_codes: plans });
-    setSavingN3(false);
-    if (error) { toast.error(t("questAccess.saveFailed"), { description: error.message }); return; }
-    toast.success(t("questAccess.saved"));
-    setRoleCodes(null);
-    setPlanCodes(null);
-    qc.invalidateQueries({ queryKey: ["guild-quest-access-levels", guild.id] });
-  };
 
   const { data: entities = [], refetch } = useQuery({
     queryKey: ["guild-admin-entities", guild.id],
@@ -119,43 +102,7 @@ export function GuildAccessSettings({ guild }: { guild: any }) {
         </Button>
       </section>
 
-      <section className="space-y-3">
-        <div>
-          <h2 className="text-base font-semibold">{t("questAccess.n3Title")}</h2>
-          <p className="text-sm text-muted-foreground">{t("questAccess.n3Hint")}</p>
-        </div>
-        {!n3.membranes?.roles.length && !n3.membranes?.plans.length ? (
-          <p className="text-sm text-muted-foreground">{t("questAccess.noMembranes")}</p>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {!!n3.membranes?.roles.length && (
-              <fieldset className="space-y-1.5">
-                <legend className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">{t("questAccess.roles")}</legend>
-                {n3.membranes.roles.map((r) => (
-                  <label key={r.code} className="flex items-center gap-2 text-sm">
-                    <Checkbox checked={roles.includes(r.code)} disabled={savingN3} onCheckedChange={() => setRoleCodes(toggle(roles, r.code))} />
-                    {r.name}
-                  </label>
-                ))}
-              </fieldset>
-            )}
-            {!!n3.membranes?.plans.length && (
-              <fieldset className="space-y-1.5">
-                <legend className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">{t("questAccess.plans")}</legend>
-                {n3.membranes.plans.map((p) => (
-                  <label key={p.code} className="flex items-center gap-2 text-sm">
-                    <Checkbox checked={plans.includes(p.code)} disabled={savingN3} onCheckedChange={() => setPlanCodes(toggle(plans, p.code))} />
-                    {p.label}
-                  </label>
-                ))}
-              </fieldset>
-            )}
-          </div>
-        )}
-        <Button size="sm" variant="secondary" onClick={saveN3} disabled={savingN3 || (roleCodes === null && planCodes === null)}>
-          {savingN3 && <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" />}{t("questAccess.saveN3")}
-        </Button>
-      </section>
+      <GuildConfigModelPanel guild={guild} />
 
       <section className="space-y-2">
         <h2 className="text-base font-semibold">{t("questAccess.adminEntities")}</h2>

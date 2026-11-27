@@ -3996,6 +3996,7 @@ export type Database = {
           entity_type: string
           id: string
           is_default: boolean
+          level: number | null
           name: string
           sort_order: number
         }
@@ -4007,6 +4008,7 @@ export type Database = {
           entity_type: string
           id?: string
           is_default?: boolean
+          level?: number | null
           name: string
           sort_order?: number
         }
@@ -4018,6 +4020,7 @@ export type Database = {
           entity_type?: string
           id?: string
           is_default?: boolean
+          level?: number | null
           name?: string
           sort_order?: number
         }
@@ -5202,6 +5205,7 @@ export type Database = {
           id: string
           label: string
           large_place_plan_code: string | null
+          level: number | null
           per_extra_person_cents: number
           per_large_place_cents: number
           per_small_place_cents: number
@@ -5223,6 +5227,7 @@ export type Database = {
           id?: string
           label: string
           large_place_plan_code?: string | null
+          level?: number | null
           per_extra_person_cents?: number
           per_large_place_cents?: number
           per_small_place_cents?: number
@@ -5244,6 +5249,7 @@ export type Database = {
           id?: string
           label?: string
           large_place_plan_code?: string | null
+          level?: number | null
           per_extra_person_cents?: number
           per_large_place_cents?: number
           per_small_place_cents?: number
@@ -5422,6 +5428,7 @@ export type Database = {
           claimed_at: string | null
           claimed_by: string | null
           coins_balance: number
+          config_model: string | null
           created_at: string
           created_by_user_id: string
           credits_balance: number
@@ -5499,6 +5506,7 @@ export type Database = {
           claimed_at?: string | null
           claimed_by?: string | null
           coins_balance?: number
+          config_model?: string | null
           created_at?: string
           created_by_user_id: string
           credits_balance?: number
@@ -5576,6 +5584,7 @@ export type Database = {
           claimed_at?: string | null
           claimed_by?: string | null
           coins_balance?: number
+          config_model?: string | null
           created_at?: string
           created_by_user_id?: string
           credits_balance?: number
@@ -11114,6 +11123,77 @@ export type Database = {
           },
         ]
       }
+      user_guild_plans: {
+        Row: {
+          amount_paid_cents: number | null
+          cancel_at_period_end: boolean
+          chosen_fee_credits: number | null
+          created_at: string
+          currency: string | null
+          current_period_end: string | null
+          guild_id: string
+          id: string
+          last_payment_at: string | null
+          membership_expires_at: string | null
+          payer_user_id: string | null
+          plan_code: string
+          renewal_reminder_sent_for: string | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_paid_cents?: number | null
+          cancel_at_period_end?: boolean
+          chosen_fee_credits?: number | null
+          created_at?: string
+          currency?: string | null
+          current_period_end?: string | null
+          guild_id: string
+          id?: string
+          last_payment_at?: string | null
+          membership_expires_at?: string | null
+          payer_user_id?: string | null
+          plan_code: string
+          renewal_reminder_sent_for?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_paid_cents?: number | null
+          cancel_at_period_end?: boolean
+          chosen_fee_credits?: number | null
+          created_at?: string
+          currency?: string | null
+          current_period_end?: string | null
+          guild_id?: string
+          id?: string
+          last_payment_at?: string | null
+          membership_expires_at?: string | null
+          payer_user_id?: string | null
+          plan_code?: string
+          renewal_reminder_sent_for?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_guild_plans_guild_id_fkey"
+            columns: ["guild_id"]
+            isOneToOne: false
+            referencedRelation: "guilds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_milestones: {
         Row: {
           acknowledged_at: string | null
@@ -11940,6 +12020,10 @@ export type Database = {
           users_faded: number
         }[]
       }
+      apply_guild_config_model: {
+        Args: { _guild_id: string; _model: string }
+        Returns: undefined
+      }
       apply_monthly_demurrage: {
         Args: { _fade_rate?: number }
         Returns: {
@@ -12097,6 +12181,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: Json
+      }
+      ensure_guild_default_roles: {
+        Args: { _guild_id: string }
+        Returns: undefined
       }
       exchange_ctg_to_credits: {
         Args: { p_ctg_amount: number; p_user_id: string }
@@ -12571,6 +12659,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      guild_member_level: {
+        Args: { _guild_id: string; _user_id: string }
+        Returns: number
+      }
+      guild_plan_is_active: {
+        Args: { _end: string; _status: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -12781,6 +12877,10 @@ export type Database = {
       recompute_all_indicators: { Args: never; Returns: number }
       recompute_natural_system_indicators: {
         Args: { p_natural_system_id: string }
+        Returns: undefined
+      }
+      refresh_guild_membership_from_plans: {
+        Args: { _guild_id: string; _user_id: string }
         Returns: undefined
       }
       refund_quest_funding: {

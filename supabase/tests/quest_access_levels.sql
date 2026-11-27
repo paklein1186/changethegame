@@ -12,6 +12,8 @@
 -- Le script s'arrête sur une erreur « ÉCHEC … » si une personne voit plus (ou moins) que son niveau.
 
 BEGIN;
+-- Les déclencheurs d'XP (adhésion à une guilde) exigent une identité : on écrit le jeu d'essai au nom de l'admin de test.
+SELECT set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-000000000001"}', true);
 
 -- Jeu d'essai (identifiants fixes, propres au test).
 INSERT INTO auth.users (id, email, aud, role) VALUES

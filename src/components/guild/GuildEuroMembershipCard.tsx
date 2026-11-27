@@ -32,6 +32,14 @@ interface Plan {
   benefits?: string[] | null;
 }
 
+interface MyPlan {
+  plan_code: string;
+  status: string;
+  current_period_end: string | null;
+  membership_expires_at: string | null;
+  cancel_at_period_end: boolean;
+}
+
 const euros = (cents: number) =>
   (cents / 100).toLocaleString("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 2 });
 
@@ -79,6 +87,28 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
     },
   });
 
+  // Formules déjà souscrites (cumulables) : une ligne par formule.
+  const { data: myPlans = [], refetch: refetchMyPlans } = useQuery({
+    queryKey: ["user-guild-plans", guild.id, session?.user?.id],
+    enabled: !!session?.user?.id,
+    queryFn: async (): Promise<MyPlan[]> => {
+      const { data } = await supabase
+        .from("user_guild_plans" as any)
+        .select("plan_code, status, current_period_end, membership_expires_at, cancel_at_period_end")
+        .eq("guild_id", guild.id)
+        .eq("user_id", session!.user.id)
+        .order("created_at");
+      return ((data as any) ?? []) as MyPlan[];
+    },
+  });
+  const planIsActive = (p: MyPlan) => {
+    const e = p.current_period_end ?? p.membership_expires_at;
+    return ["active", "grace"].includes(p.status) && (!e || new Date(e) > new Date());
+  };
+  const activeCodes = new Set(myPlans.filter(planIsActive).map((p) => p.plan_code));
+  const availablePlans = plans.filter((p) => !activeCodes.has(p.code));
+  const [addOpen, setAddOpen] = useState(false);
+
   // Retour de Stripe : on confirme le paiement une seule fois, puis on nettoie l'adresse.
   useEffect(() => {
     if (confirmed.current || !session) return;
@@ -101,13 +131,14 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
       } else {
         toast({ title: "Adhésion activée", description: "Merci ! Votre badge Adhérent est actif." });
         refresh();
+        refetchMyPlans();
       }
       params.delete("session_id");
       params.delete("adhesion");
       const rest = params.toString();
       window.history.replaceState(null, "", `${window.location.pathname}${rest ? `?${rest}` : ""}`);
     })();
-  }, [session, guild.id, toast, refresh]);
+  }, [session, guild.id, toast, refresh, refetchMyPlans]);
 
   const plan = plans.find((p) => p.code === planCode) ?? null;
   const total = plan
@@ -218,6 +249,64 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
     </div>
   );
 
+  const purchaseForm = (
+    <div className="space-y-3">
+      {!active && (
+        <p className="text-sm text-muted-foreground">
+          Sans cotisation, vous suivez la guilde comme observateur. L'adhésion ouvre l'accès complet
+          {guild.membership_benefits_text ? ` : ${guild.membership_benefits_text}` : "."}
+        </p>
+      )}
+      <div className="space-y-1">
+        <Label htmlFor="plan" className="text-xs">Votre profil</Label>
+        <select
+          id="plan"
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          value={planCode}
+          onChange={(e) => setPlanCode(e.target.value)}
+        >
+          <option value="">{t("uiGuildEuroMembershipCard.choisir")}</option>
+          {(active ? availablePlans : plans).map((p) => (
+            <option key={p.code} value={p.code}>
+              {p.label} — {euros(p.base_amount_cents)} / {p.billing_interval === "month" ? "mois" : "an"}
+            </option>
+          ))}
+        </select>
+      </div>
+      <button type="button" className="text-xs text-primary underline underline-offset-2" onClick={() => setCompareOpen(true)}>
+        Comparer les formules et ce qu'elles ouvrent
+      </button>
+      {plan && (plan.description || (plan.benefits ?? []).length > 0) && (
+        <div className="rounded-md border border-border bg-muted/30 p-2.5 text-xs space-y-1.5">
+          {plan.description && <p>{plan.description}</p>}
+          {(plan.benefits ?? []).length > 0 && (
+            <ul className="space-y-0.5">
+              {(plan.benefits ?? []).map((b) => (
+                <li key={b} className="flex gap-1.5"><Check className="h-3 w-3 mt-0.5 shrink-0 text-primary" />{b}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+      {plan && plan.per_extra_person_cents > 0 &&
+        count(extraPersons, setExtraPersons, "extra", `Personnes supplémentaires (${euros(plan.per_extra_person_cents)} chacune)`)}
+      {plan && plan.per_small_place_cents > 0 &&
+        count(smallPlaces, setSmallPlaces, "small", `Lieux portés de moins de 20 usagers (${euros(plan.per_small_place_cents)})`)}
+      {plan && plan.per_large_place_cents > 0 &&
+        count(largePlaces, setLargePlaces, "large", `Lieux portés de 20 usagers ou plus (${euros(plan.per_large_place_cents)})`)}
+      <Button size="sm" className="w-full" onClick={pay} disabled={!plan || total <= 0 || busy}>
+        {busy && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+        {plan ? `Payer ${euros(total)} / ${plan.billing_interval === "month" ? "mois" : "an"}` : "Choisissez un profil"}
+      </Button>
+      {checkoutUrl && (
+        <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1 text-xs text-primary underline underline-offset-2">
+          La page de paiement ne s'est pas ouverte ? L'ouvrir ici <ExternalLink className="h-3 w-3" />
+        </a>
+      )}
+      <p className="text-[11px] text-muted-foreground">Paiement sécurisé par Stripe, renouvelé automatiquement avec le même moyen de paiement. Rappel par e-mail une semaine avant chaque renouvellement ; vous pouvez l'arrêter à tout moment.</p>
+    </div>
+  );
+
   return (
     <div ref={cardRef} className={`rounded-lg border bg-card p-4 space-y-3 transition-shadow ${highlight ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
       <div className="flex items-center justify-between gap-2">
@@ -238,7 +327,29 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
               {membership?.cancel_at_period_end ? " Le renouvellement est arrêté." : ""}
             </span>
           </p>
+          {myPlans.length > 0 && (
+            <ul className="space-y-1" aria-label={t("guildPlans.myPlans")}>
+              {myPlans.map((mp) => {
+                const e = mp.current_period_end ?? mp.membership_expires_at;
+                const on = planIsActive(mp);
+                return (
+                  <li key={mp.plan_code} className="flex items-center justify-between gap-2 rounded-md border border-border px-2.5 py-1.5 text-sm">
+                    <span className="min-w-0 truncate">{plans.find((p) => p.code === mp.plan_code)?.label ?? mp.plan_code}</span>
+                    <span className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
+                      {e && new Date(e).toLocaleDateString("fr-BE")}
+                      <Badge variant={on ? "default" : "outline"}>{on ? t("guildPlans.active") : t("guildPlans.ended")}</Badge>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           {isPayer && manageButton}
+          {availablePlans.length > 0 && (addOpen ? purchaseForm : (
+            <Button size="sm" variant="outline" className="w-full" onClick={() => setAddOpen(true)}>
+              {t("guildPlans.addPlan")}
+            </Button>
+          ))}
         </div>
       ) : pastDue ? (
         <div className="space-y-2">
@@ -257,59 +368,7 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
             : "Cette guilde valide les adhésions : envoyez d'abord une candidature."}
         </p>
       ) : (
-        <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Sans cotisation, vous suivez la guilde comme observateur. L'adhésion ouvre l'accès complet
-            {guild.membership_benefits_text ? ` : ${guild.membership_benefits_text}` : "."}
-          </p>
-          <div className="space-y-1">
-            <Label htmlFor="plan" className="text-xs">Votre profil</Label>
-            <select
-              id="plan"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              value={planCode}
-              onChange={(e) => setPlanCode(e.target.value)}
-            >
-              <option value="">{t("uiGuildEuroMembershipCard.choisir")}</option>
-              {plans.map((p) => (
-                <option key={p.code} value={p.code}>
-                  {p.label} — {euros(p.base_amount_cents)} / {p.billing_interval === "month" ? "mois" : "an"}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button type="button" className="text-xs text-primary underline underline-offset-2" onClick={() => setCompareOpen(true)}>
-            Comparer les formules et ce qu'elles ouvrent
-          </button>
-          {plan && (plan.description || (plan.benefits ?? []).length > 0) && (
-            <div className="rounded-md border border-border bg-muted/30 p-2.5 text-xs space-y-1.5">
-              {plan.description && <p>{plan.description}</p>}
-              {(plan.benefits ?? []).length > 0 && (
-                <ul className="space-y-0.5">
-                  {(plan.benefits ?? []).map((b) => (
-                    <li key={b} className="flex gap-1.5"><Check className="h-3 w-3 mt-0.5 shrink-0 text-primary" />{b}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-          {plan && plan.per_extra_person_cents > 0 &&
-            count(extraPersons, setExtraPersons, "extra", `Personnes supplémentaires (${euros(plan.per_extra_person_cents)} chacune)`)}
-          {plan && plan.per_small_place_cents > 0 &&
-            count(smallPlaces, setSmallPlaces, "small", `Lieux portés de moins de 20 usagers (${euros(plan.per_small_place_cents)})`)}
-          {plan && plan.per_large_place_cents > 0 &&
-            count(largePlaces, setLargePlaces, "large", `Lieux portés de 20 usagers ou plus (${euros(plan.per_large_place_cents)})`)}
-          <Button size="sm" className="w-full" onClick={pay} disabled={!plan || total <= 0 || busy}>
-            {busy && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
-            {plan ? `Payer ${euros(total)} / ${plan.billing_interval === "month" ? "mois" : "an"}` : "Choisissez un profil"}
-          </Button>
-          {checkoutUrl && (
-            <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1 text-xs text-primary underline underline-offset-2">
-              La page de paiement ne s'est pas ouverte ? L'ouvrir ici <ExternalLink className="h-3 w-3" />
-            </a>
-          )}
-          <p className="text-[11px] text-muted-foreground">Paiement sécurisé par Stripe, renouvelé automatiquement avec le même moyen de paiement. Rappel par e-mail une semaine avant chaque renouvellement ; vous pouvez l'arrêter à tout moment.</p>
-        </div>
+        purchaseForm
       )}
 
       <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
@@ -317,7 +376,7 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
           <DialogHeader>
             <DialogTitle>Les formules d'adhésion</DialogTitle>
             <DialogDescription>
-              Une seule adhésion, une cotisation selon votre profil. Sans cotisation, vous restez observateur.
+              {t("guildPlans.compareHint")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 sm:grid-cols-2">

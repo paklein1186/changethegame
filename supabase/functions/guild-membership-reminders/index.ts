@@ -104,9 +104,8 @@ serve(async (req) => {
     // Payeurs uniquement (stripe_customer_id renseigné), période qui se termine dans les 7 jours,
     // renouvellement non arrêté. Le rappel déjà parti pour cette période est filtré plus bas.
     const { data: rows, error } = await admin
-      .from("user_guild_memberships")
+      .from("user_guild_plans")
       .select("id, user_id, guild_id, plan_code, stripe_subscription_id, stripe_customer_id, current_period_end, renewal_reminder_sent_for, amount_paid_cents, currency")
-      .eq("role", "member")
       .eq("status", "active")
       .eq("cancel_at_period_end", false)
       .not("stripe_subscription_id", "is", null)
@@ -147,7 +146,7 @@ serve(async (req) => {
             expand: ["default_payment_method", "customer.invoice_settings.default_payment_method"],
           });
           if (!["active", "trialing"].includes(sub.status) || sub.cancel_at_period_end) {
-            await admin.from("user_guild_memberships")
+            await admin.from("user_guild_plans")
               .update({ cancel_at_period_end: Boolean(sub.cancel_at_period_end) })
               .eq("id", m.id);
             report.skipped_cancelled++;
@@ -216,7 +215,7 @@ serve(async (req) => {
         deep_link_url: `/guilds/${guild.id}?cotisation=gerer`,
       });
 
-      await admin.from("user_guild_memberships").update({ renewal_reminder_sent_for: m.current_period_end }).eq("id", m.id);
+      await admin.from("user_guild_plans").update({ renewal_reminder_sent_for: m.current_period_end }).eq("id", m.id);
       if (emailed) report.sent++;
     }
 

@@ -78,15 +78,26 @@ export async function activateFromSubscription(
 
   const { data: existing } = await admin
     .from("user_guild_memberships")
-    .select("joined_at, last_payment_at, stripe_subscription_id, current_period_end")
+    .select("joined_at, last_payment_at")
     .eq("user_id", meta.user_id)
     .eq("guild_id", guild.id)
     .maybeSingle();
+  // Une ligne par formule : un achat ne touche jamais les autres formules en cours.
+  const { data: existingPlan } = meta.plan_code
+    ? await admin
+        .from("user_guild_plans")
+        .select("last_payment_at, stripe_subscription_id, current_period_end")
+        .eq("user_id", meta.user_id)
+        .eq("guild_id", guild.id)
+        .eq("plan_code", meta.plan_code)
+        .maybeSingle()
+    : { data: null };
 
   // Déjà activé pour cette période (webhook et confirmation peuvent arriver tous les deux).
-  const alreadyDone =
-    existing?.stripe_subscription_id === sub.id && existing?.current_period_end === end;
+  const alreadyDone = existingPlan?.stripe_subscription_id === sub.id && existingPlan?.current_period_end === end;
 
+  // L'adhésion globale reçoit cette formule ; la base crée ou met à jour la ligne de la formule
+  // et remet l'adhésion globale sur la formule active la plus haute.
   await admin.from("user_guild_memberships").upsert(
     {
       user_id: meta.user_id,
@@ -97,7 +108,7 @@ export async function activateFromSubscription(
       membership_expires_at: end,
       current_period_end: end,
       cancel_at_period_end: Boolean(sub.cancel_at_period_end),
-      last_payment_at: alreadyDone ? existing.last_payment_at : now,
+      last_payment_at: alreadyDone ? existingPlan.last_payment_at : now,
       plan_code: meta.plan_code ?? null,
       payer_user_id: meta.user_id,
       stripe_customer_id: typeof sub.customer === "string" ? sub.customer : sub.customer?.id ?? null,
@@ -225,18 +236,20 @@ export async function syncCodes(admin: any, guildId: string, meta: any, subscrip
 
 /** Renouvellement payé : les bénéficiaires restent adhérents jusqu'à la nouvelle fin de période. */
 export async function extendBeneficiaries(admin: any, guildId: string, payerId: string, subscriptionId: string, end: string | null) {
+  // Formules des bénéficiaires liées à cet abonnement (la base met leur adhésion globale à jour).
   const { data: rows } = await admin
-    .from("user_guild_memberships")
+    .from("user_guild_plans")
     .select("user_id, plan_code")
     .eq("guild_id", guildId)
     .eq("stripe_subscription_id", subscriptionId)
     .neq("user_id", payerId);
   for (const r of rows ?? []) {
     await admin
-      .from("user_guild_memberships")
+      .from("user_guild_plans")
       .update({ status: "active", current_period_end: end, membership_expires_at: end })
       .eq("guild_id", guildId)
       .eq("user_id", r.user_id)
+      .eq("plan_code", r.plan_code)
       .eq("stripe_subscription_id", subscriptionId);
     if (r.plan_code) await grantBadges(admin, guildId, r.user_id, r.plan_code, end);
   }
@@ -264,15 +277,22 @@ export async function redeemCode(admin: any, userId: string, raw: unknown): Prom
 
   const { data: existing } = await admin
     .from("user_guild_memberships")
-    .select("role, status, current_period_end, stripe_subscription_id, joined_at")
+    .select("joined_at")
     .eq("guild_id", c.guild_id)
     .eq("user_id", userId)
     .maybeSingle();
+  // Refus seulement si cette même formule est déjà payée : les autres formules se cumulent.
+  const { data: samePlan } = await admin
+    .from("user_guild_plans")
+    .select("status, current_period_end, stripe_subscription_id")
+    .eq("guild_id", c.guild_id)
+    .eq("user_id", userId)
+    .eq("plan_code", c.plan_code)
+    .maybeSingle();
   const stillPaid =
-    existing?.role === "member" &&
-    existing?.stripe_subscription_id &&
-    ["active", "grace"].includes(existing?.status ?? "") &&
-    (!existing?.current_period_end || new Date(existing.current_period_end).getTime() > Date.now());
+    samePlan?.stripe_subscription_id &&
+    ["active", "grace"].includes(samePlan?.status ?? "") &&
+    (!samePlan?.current_period_end || new Date(samePlan.current_period_end).getTime() > Date.now());
   if (stillPaid) return { ok: false, reason: "already_member" };
 
   // Réservation atomique : seule la première personne qui arrive obtient le code.

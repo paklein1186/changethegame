@@ -135,6 +135,22 @@ serve(async (req) => {
       .eq("guild_id", guildId)
       .maybeSingle();
 
+    // Les formules se cumulent : seule la même formule encore en cours est refusée.
+    const { data: samePlan } = await admin
+      .from("user_guild_plans")
+      .select("status, current_period_end, stripe_subscription_id")
+      .eq("user_id", user.id)
+      .eq("guild_id", guildId)
+      .eq("plan_code", planCode)
+      .maybeSingle();
+    if (
+      samePlan?.stripe_subscription_id &&
+      ["active", "grace", "past_due"].includes(samePlan.status ?? "") &&
+      (!samePlan.current_period_end || new Date(samePlan.current_period_end).getTime() > Date.now())
+    ) {
+      return fail("You already have this plan.", 409);
+    }
+
     const siteUrl = (Deno.env.get("SITE_URL") ?? "https://changethegame.xyz").replace(/\/$/, "");
     const back = returnUrl(body?.return_url, `${siteUrl}/guilds/${guildId}`);
     const withParam = (u: string, v: string) => {

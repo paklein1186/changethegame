@@ -25,3 +25,8 @@
   their result object inline (the literal `type: "text"` only survives where the
   return is contextually typed) and shared helpers must not rely on parameter
   annotations alone.
+
+## Guild levels
+
+- A person's guild level is `guild_member_level` (highest of admin/creator 5, unexpired guild-wide roles, active plans, member 2, follower 1); quest access and N2/N3 helpers read only it, never `guilds.quest_access_levels` (deprecated).
+- Plans are cumulative in `user_guild_plans` (one row per plan); `user_guild_memberships` is a DB-maintained summary of the highest active plan. Server code writes plan state to `user_guild_plans` (webhooks, reminders); database triggers keep the two in sync, so never compute membership status from the summary alone.

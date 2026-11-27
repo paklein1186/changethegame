@@ -69,8 +69,12 @@ serve(async (req) => {
     return respond({ error: "Storage error" }, 500);
   }
 
-  const setStatus = (subscriptionId: string, patch: Record<string, unknown>) =>
-    admin.from("user_guild_memberships").update(patch).eq("stripe_subscription_id", subscriptionId);
+  // Une formule par abonnement : on met à jour la ligne de la formule (la base recalcule
+  // l'adhésion globale), et l'adhésion globale si elle porte encore cet abonnement.
+  const setStatus = async (subscriptionId: string, patch: Record<string, unknown>) => {
+    await admin.from("user_guild_plans").update(patch).eq("stripe_subscription_id", subscriptionId);
+    await admin.from("user_guild_memberships").update(patch).eq("stripe_subscription_id", subscriptionId);
+  };
 
   try {
     switch (event.type) {
