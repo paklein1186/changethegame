@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom"
 import { notifyEntityFollowersAndMembers } from "@/lib/notifyEntityActivity";
 import { useState, useMemo } from "react";
 import { autoFollowEntity } from "@/hooks/useFollow";
+import { guildFollowState } from "@/lib/guildFollowState";
 import { useContentTranslations } from "@/hooks/useContentTranslation";
 import { useAutoTranslateEntity } from "@/hooks/useAutoTranslateEntity";
 import { useTranslation } from "react-i18next";
@@ -383,6 +384,7 @@ export default function GuildDetail() {
   const currentMembership = isLoggedIn ? (guild.guild_members || []).find((gm: any) => gm.user_id === currentUser.id) : undefined;
   const isAdmin = currentMembership?.role === "ADMIN";
   const isMember = !!currentMembership;
+  const followState = guildFollowState(isFollowing, isMember, isAdmin);
 
   const requireAuth = (action: string, callback?: () => void) => {
     if (!isLoggedIn) {
@@ -507,8 +509,9 @@ export default function GuildDetail() {
             <GuestContentGate blur previewText={trDesc || ""} previewSentences={3}><p className="text-muted-foreground max-w-4xl mt-2 line-clamp-3">{trDesc}</p></GuestContentGate>
           </div>
           <div className="flex flex-row sm:flex-col gap-2 shrink-0 flex-wrap">
-              <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => requireAuth("follow this guild", toggleFollow)}>
-                <Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} /> {isFollowing ? t("common.unfollow") : t("common.follow")}
+              <Button size="sm" variant={followState.checked ? "outline" : "default"} disabled={followState.locked} aria-pressed={followState.checked} className={followState.locked ? "disabled:opacity-100" : undefined} onClick={() => requireAuth("follow this guild", toggleFollow)}>
+                {followState.locked ? <CheckCircle className="h-4 w-4 mr-1 text-primary" /> : <Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />}
+                {followState.locked ? t("common.followed") : isFollowing ? t("common.unfollow") : t("common.follow")}
               </Button>
               {!isMember && (
                 isLoggedIn ? (

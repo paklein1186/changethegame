@@ -1,5 +1,7 @@
 # Agent notes
 
+- Derive the guild header's membership-aware follow display through `guildFollowState`; keep this presentation rule tested without changing stored follows.
+
 ## Edge functions
 
 - Keep `nodeModulesDir: "none"` in root `deno.json`: published functions resolve
