@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useParams, Link } from "react-router-dom";
 import { ShieldX, LogIn, ServerCrash, FileQuestion } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,27 +6,27 @@ import { Button } from "@/components/ui/button";
 const errors: Record<string, { icon: React.ElementType; title: string; description: string; action?: { label: string; to: string } }> = {
   "404": {
     icon: FileQuestion,
-    title: "Page not found",
-    description: "The page you're looking for doesn't exist or has been removed.",
-    action: { label: "Back to Home", to: "/" },
+    get title() { return i18n.t("uiErrorPage.pageNotFound"); },
+    get description() { return i18n.t("uiErrorPage.thePageYouReLookingFor"); },
+    action: { get label() { return i18n.t("uiErrorPage.backToHome"); }, to: "/" },
   },
   "500": {
     icon: ServerCrash,
     title: "Something went wrong",
-    description: "We encountered an unexpected server error. Please try again later.",
-    action: { label: "Back to Home", to: "/" },
+    get description() { return i18n.t("uiErrorPage.weEncounteredAnUnexpectedServerError"); },
+    action: { get label() { return i18n.t("uiErrorPage.backToHome"); }, to: "/" },
   },
   "access-denied": {
     icon: ShieldX,
     title: "Access denied",
-    description: "You don't have permission to view this page or resource.",
-    action: { label: "Back to Home", to: "/" },
+    get description() { return i18n.t("uiErrorPage.youDonTHavePermissionTo"); },
+    action: { get label() { return i18n.t("uiErrorPage.backToHome"); }, to: "/" },
   },
   "login-required": {
     icon: LogIn,
-    title: "Login required",
-    description: "You need to be logged in to access this page.",
-    action: { label: "Go to Login", to: "/login" },
+    get title() { return i18n.t("uiErrorPage.loginRequired"); },
+    get description() { return i18n.t("uiErrorPage.youNeedToBeLoggedIn"); },
+    action: { get label() { return i18n.t("uiErrorPage.goToLogin"); }, to: "/login" },
   },
 };
 

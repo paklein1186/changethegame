@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,12 +16,13 @@ interface GuildKanbanBoardProps {
 }
 
 const COLUMNS = [
-  { key: "OPEN", label: "Open", color: "border-blue-400/50 bg-blue-50/30 dark:bg-blue-950/20" },
-  { key: "ACTIVE", label: "Active", color: "border-amber-400/50 bg-amber-50/30 dark:bg-amber-950/20" },
-  { key: "COMPLETED", label: "Completed", color: "border-emerald-400/50 bg-emerald-50/30 dark:bg-emerald-950/20" },
+  { key: "OPEN", get label() { return i18n.t("uiGuildKanbanBoard.open"); }, color: "border-blue-400/50 bg-blue-50/30 dark:bg-blue-950/20" },
+  { key: "ACTIVE", get label() { return i18n.t("uiGuildKanbanBoard.active"); }, color: "border-amber-400/50 bg-amber-50/30 dark:bg-amber-950/20" },
+  { key: "COMPLETED", get label() { return i18n.t("uiGuildKanbanBoard.completed"); }, color: "border-emerald-400/50 bg-emerald-50/30 dark:bg-emerald-950/20" },
 ];
 
 export function GuildKanbanBoard({ guildId, isAdmin, isMember }: GuildKanbanBoardProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -54,7 +57,7 @@ export function GuildKanbanBoard({ guildId, isAdmin, isMember }: GuildKanbanBoar
 
   const moveQuest = async (questId: string, newStatus: string) => {
     const { error } = await supabase.from("quests").update({ status: newStatus as any }).eq("id", questId);
-    if (error) { toast({ title: "Failed to move quest", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildKanbanBoard.failedToMoveQuest"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["guild-kanban-quests", guildId] });
     qc.invalidateQueries({ queryKey: ["quests-for-guild", guildId] });
   };
@@ -77,8 +80,8 @@ export function GuildKanbanBoard({ guildId, isAdmin, isMember }: GuildKanbanBoar
     setDraggingId(null);
   };
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading board…</p>;
-  if (!isMember) return <p className="text-sm text-muted-foreground">Join the guild to see the board.</p>;
+  if (isLoading) return <p className="text-sm text-muted-foreground">{t("uiGuildKanbanBoard.loadingBoard")}</p>;
+  if (!isMember) return <p className="text-sm text-muted-foreground">{t("uiGuildKanbanBoard.joinTheGuildToSeeThe")}</p>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -127,7 +130,7 @@ export function GuildKanbanBoard({ guildId, isAdmin, isMember }: GuildKanbanBoar
                 );
               })}
               {colQuests.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center py-4">No quests</p>
+                <p className="text-xs text-muted-foreground text-center py-4">{t("uiGuildKanbanBoard.noQuests")}</p>
               )}
             </div>
           </div>

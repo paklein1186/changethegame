@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef } from "react";
 import { notifyPlatformAdmins } from "@/lib/notifyAdmins";
 import { Bug, X, Send, ImagePlus, Loader2 } from "lucide-react";
@@ -8,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 export function BugReportBubble() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -20,7 +22,7 @@ export function BugReportBubble() {
     const f = e.target.files?.[0];
     if (!f) return;
     if (f.size > 10 * 1024 * 1024) {
-      toast({ title: "File too large", description: "Max 10 MB", variant: "destructive" });
+      toast({ title: t("uiBugReportBubble.fileTooLarge"), description: "Max 10 MB", variant: "destructive" });
       return;
     }
     setFile(f);
@@ -31,7 +33,7 @@ export function BugReportBubble() {
 
   const handleSend = async () => {
     if (!text.trim()) {
-      toast({ title: "Please describe the bug", variant: "destructive" });
+      toast({ title: t("uiBugReportBubble.pleaseDescribeTheBug"), variant: "destructive" });
       return;
     }
     setSending(true);
@@ -52,15 +54,15 @@ export function BugReportBubble() {
       setFile(null);
       setPreview(null);
       setOpen(false);
-      toast({ title: "Bug report sent!", description: "Thanks for helping us improve." });
+      toast({ title: "Bug report sent!", description: t("uiBugReportBubble.thanksForHelpingUsImprove") });
       notifyPlatformAdmins({
         type: "SYSTEM_BUG_REPORT",
-        title: "New bug report",
+        title: t("uiBugReportBubble.newBugReport"),
         body: text.trim().slice(0, 100) || "A bug was reported",
         deepLinkUrl: "/admin/content/reports",
       });
     } catch (e: any) {
-      toast({ title: "Failed to send", description: e.message || "Please try again.", variant: "destructive" });
+      toast({ title: t("uiBugReportBubble.failedToSend"), description: e.message || "Please try again.", variant: "destructive" });
     } finally {
       setSending(false);
     }
@@ -72,8 +74,8 @@ export function BugReportBubble() {
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-4 left-4 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-destructive text-destructive-foreground shadow-lg hover:scale-110 transition-transform"
-          aria-label="Report a bug"
-          title="Report a bug"
+          aria-label={t("uiBugReportBubble.reportABug")}
+          title={t("uiBugReportBubble.reportABug")}
         >
           <Bug size={18} />
         </button>
@@ -83,7 +85,7 @@ export function BugReportBubble() {
         <div className="fixed bottom-4 left-4 z-50 w-80 rounded-2xl border border-border bg-card shadow-xl p-4 space-y-3 animate-in slide-in-from-bottom-4 fade-in duration-200">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold flex items-center gap-1.5">
-              <Bug size={14} className="text-destructive" /> Report a Bug
+              <Bug size={14} className="text-destructive" /> {t("uiBugReportBubble.reportABug2")}
             </h4>
             <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
               <X size={16} />
@@ -115,13 +117,13 @@ export function BugReportBubble() {
               onClick={() => inputRef.current?.click()}
               className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
             >
-              <ImagePlus size={14} /> Add screenshot
+              <ImagePlus size={14} /> {t("uiBugReportBubble.addScreenshot")}
             </button>
             <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
 
             <Button size="sm" onClick={handleSend} disabled={sending || !text.trim()}>
               {sending ? <Loader2 size={14} className="animate-spin mr-1" /> : <Send size={14} className="mr-1" />}
-              Send
+              {t("uiBugReportBubble.send")}
             </Button>
           </div>
         </div>

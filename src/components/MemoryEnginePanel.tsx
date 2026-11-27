@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -28,6 +29,7 @@ export function MemoryEnginePanel({
   guildId,
   onAppendToDescription,
 }: MemoryEnginePanelProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [loading, setLoading] = useState(false);
@@ -43,12 +45,12 @@ export function MemoryEnginePanel({
       });
       if (error) throw error;
       if (data?.error) {
-        toast({ title: "AI Error", description: data.error, variant: "destructive" });
+        toast({ title: t("uiMemoryEnginePanel.aiError"), description: data.error, variant: "destructive" });
         return;
       }
       setSummary(data.summary || "");
     } catch (e: any) {
-      toast({ title: "Error", description: e.message, variant: "destructive" });
+      toast({ title: t("uiMemoryEnginePanel.error"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -59,14 +61,14 @@ export function MemoryEnginePanel({
     navigator.clipboard.writeText(summary);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast({ title: "Copied to clipboard" });
+    toast({ title: t("uiMemoryEnginePanel.copiedToClipboard") });
   };
 
   const saveToGuildDocs = async () => {
     if (!summary) return;
     const targetGuildId = guildId || (entityType === "GUILD" ? entityId : undefined);
     if (!targetGuildId) {
-      toast({ title: "No guild context to save doc" });
+      toast({ title: t("uiMemoryEnginePanel.noGuildContextToSaveDoc") });
       return;
     }
     const { data: { user } } = await supabase.auth.getUser();
@@ -79,11 +81,11 @@ export function MemoryEnginePanel({
       created_by_user_id: user.id,
     } as any);
     if (error) {
-      toast({ title: "Failed to save", variant: "destructive" });
+      toast({ title: t("uiMemoryEnginePanel.failedToSave"), variant: "destructive" });
       return;
     }
     qc.invalidateQueries({ queryKey: ["guild-docs", targetGuildId] });
-    toast({ title: "Saved to Guild Docs" });
+    toast({ title: t("uiMemoryEnginePanel.savedToGuildDocs") });
   };
 
   const canSaveToDocs = !!(guildId || entityType === "GUILD");
@@ -96,7 +98,7 @@ export function MemoryEnginePanel({
         <Badge variant="secondary" className="text-[10px]">AI</Badge>
       </div>
       <p className="text-sm text-muted-foreground">
-        Generate a comprehensive history summary covering decisions, milestones, collaborators, lessons learned, and risks for <strong>{entityName}</strong>.
+        {t("uiMemoryEnginePanel.generateAComprehensiveHistorySummaryCovering")} <strong>{entityName}</strong>.
       </p>
 
       <Button onClick={generate} disabled={loading} className="gap-2">
@@ -118,7 +120,7 @@ export function MemoryEnginePanel({
                   <BookOpen className="h-4 w-4 text-primary" /> Memory Summary
                 </CardTitle>
                 <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={copyToClipboard} title="Copy">
+                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={copyToClipboard} title={t("uiMemoryEnginePanel.copy")}>
                     {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
                   </Button>
                   <Button size="icon" variant="ghost" className="h-7 w-7" onClick={generate} title="Regenerate">
@@ -126,12 +128,12 @@ export function MemoryEnginePanel({
                   </Button>
                   {canSaveToDocs && (
                     <Button size="sm" variant="outline" className="h-7 text-xs" onClick={saveToGuildDocs}>
-                      <Plus className="h-3 w-3 mr-1" /> Save to Docs
+                      <Plus className="h-3 w-3 mr-1" /> {t("uiMemoryEnginePanel.saveToDocs")}
                     </Button>
                   )}
                   {onAppendToDescription && (
                     <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => onAppendToDescription(summary)}>
-                      <Plus className="h-3 w-3 mr-1" /> Append to Description
+                      <Plus className="h-3 w-3 mr-1" /> {t("uiMemoryEnginePanel.appendToDescription")}
                     </Button>
                   )}
                 </div>

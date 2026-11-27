@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, type ReactNode } from "react";
 import {
   DndContext,
@@ -90,6 +91,7 @@ export function SortableTabsList({
   isCustomized,
   className,
 }: SortableTabsListProps) {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
 
   const sensors = useSensors(
@@ -147,7 +149,7 @@ export function SortableTabsList({
           size="icon"
           className="h-7 w-7"
           onClick={() => setIsEditing(!isEditing)}
-          title={isEditing ? "Done editing tabs" : "Reorder tabs"}
+          title={isEditing ? t("uiSortableTabsList.doneEditingTabs") : "Reorder tabs"}
         >
           {isEditing ? (
             <Check className="h-3.5 w-3.5 text-primary" />
@@ -164,7 +166,7 @@ export function SortableTabsList({
               onReset();
               setIsEditing(false);
             }}
-            title="Reset to default order"
+            title={t("uiSortableTabsList.resetToDefaultOrder")}
           >
             <RotateCcw className="h-3 w-3 text-muted-foreground" />
           </Button>

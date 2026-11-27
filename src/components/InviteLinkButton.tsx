@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link2, Check, Copy, UserPlus, Mail, Loader2, Send } from "lucide-react";
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export function InviteLinkButton({ entityType, entityId, entityName, excludeUserIds = [] }: Props) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [email, setEmail] = useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
@@ -36,10 +38,10 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
     try {
       await navigator.clipboard.writeText(inviteUrl);
       setCopied(true);
-      toast({ title: "Link copied!", description: `Share this link to invite people to "${entityName}"` });
+      toast({ title: t("uiInviteLinkButton.linkCopied"), description: `Share this link to invite people to "${entityName}"` });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({ title: "Failed to copy", variant: "destructive" });
+      toast({ title: t("uiInviteLinkButton.failedToCopy"), variant: "destructive" });
     }
   };
 
@@ -68,7 +70,7 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
   const handleSendEmail = async () => {
     const trimmed = email.trim();
     if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      toast({ title: "Please enter a valid email", variant: "destructive" });
+      toast({ title: t("uiInviteLinkButton.pleaseEnterAValidEmail"), variant: "destructive" });
       return;
     }
 
@@ -94,7 +96,7 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
       setTimeout(() => setEmailSent(false), 3000);
     } catch (err) {
       console.error("[InviteEmail] Failed:", err);
-      toast({ title: "Failed to send email", description: "Please try again later.", variant: "destructive" });
+      toast({ title: t("uiInviteLinkButton.failedToSendEmail"), description: "Please try again later.", variant: "destructive" });
     } finally {
       setSendingEmail(false);
     }
@@ -104,7 +106,7 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
     <Popover>
       <PopoverTrigger asChild>
         <Button size="sm" variant="outline">
-          <Link2 className="h-4 w-4 mr-1" /> Invite
+          <Link2 className="h-4 w-4 mr-1" /> {t("uiInviteLinkButton.invite")}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="end">
@@ -112,10 +114,10 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
           {/* Section 1: Copy link */}
           <div>
             <p className="text-sm font-medium mb-1 flex items-center gap-1.5">
-              <Link2 className="h-3.5 w-3.5 text-muted-foreground" /> Share invite link
+              <Link2 className="h-3.5 w-3.5 text-muted-foreground" /> {t("uiInviteLinkButton.shareInviteLink")}
             </p>
             <p className="text-xs text-muted-foreground mb-2">
-              Anyone with this link can view and join "{entityName}"
+              {t("uiInviteLinkButton.anyoneWithThisLinkCanView")}{entityName}"
             </p>
             <div className="flex gap-2">
               <Input
@@ -135,14 +137,14 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
           {/* Section 2: Invite existing user */}
           <div>
             <p className="text-sm font-medium mb-1 flex items-center gap-1.5">
-              <UserPlus className="h-3.5 w-3.5 text-muted-foreground" /> Invite a member
+              <UserPlus className="h-3.5 w-3.5 text-muted-foreground" /> {t("uiInviteLinkButton.inviteAMember")}
             </p>
             <p className="text-xs text-muted-foreground mb-2">
-              Search for an existing user to notify them
+              {t("uiInviteLinkButton.searchForAnExistingUserTo")}
             </p>
             <UserSearchInput
               onSelect={handleUserSelect}
-              placeholder="Search by name…"
+              placeholder={t("uiInviteLinkButton.searchByName")}
               excludeUserIds={[...excludeUserIds, ...invitedUsers]}
             />
           </div>
@@ -152,10 +154,10 @@ export function InviteLinkButton({ entityType, entityId, entityName, excludeUser
           {/* Section 3: Invite by email */}
           <div>
             <p className="text-sm font-medium mb-1 flex items-center gap-1.5">
-              <Mail className="h-3.5 w-3.5 text-muted-foreground" /> Invite by email
+              <Mail className="h-3.5 w-3.5 text-muted-foreground" /> {t("uiInviteLinkButton.inviteByEmail")}
             </p>
             <p className="text-xs text-muted-foreground mb-2">
-              Send an invitation link to someone outside the platform
+              {t("uiInviteLinkButton.sendAnInvitationLinkToSomeone")}
             </p>
             <div className="flex gap-2">
               <Input

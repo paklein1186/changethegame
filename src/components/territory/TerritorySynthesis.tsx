@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -81,6 +82,7 @@ interface Props {
 }
 
 export function TerritorySynthesis({ territoryId, territoryName, isMember }: Props) {
+  const { t } = useTranslation();
   const { persona } = usePersona();
   const { data: summary, isLoading: summaryLoading } = useTerritorySummary(territoryId);
   const { data: contributors = [] } = useTerritoryContributors(territoryId);
@@ -178,11 +180,11 @@ export function TerritorySynthesis({ territoryId, territoryName, isMember }: Pro
                 <BookOpen className="h-7 w-7 text-muted-foreground/50" />
               </div>
               <div>
-                <p className="text-sm font-medium">No synthesis generated yet</p>
+                <p className="text-sm font-medium">{t("uiTerritorySynthesis.noSynthesisGeneratedYet")}</p>
                 <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
                   {isMember
-                    ? "Generate an AI-powered synthesis from this territory's collective knowledge base."
-                    : "Territory members can generate an AI synthesis from the knowledge base."}
+                    ? t("uiTerritorySynthesis.generateAnAiPoweredSynthesisFrom")
+                    : t("uiTerritorySynthesis.territoryMembersCanGenerateAnAi")}
                 </p>
               </div>
             </div>
@@ -197,7 +199,7 @@ export function TerritorySynthesis({ territoryId, territoryName, isMember }: Pro
               {generateMutation.data?.hasFractalContext && (
                 <div className="flex items-center gap-2 mt-5 px-3.5 py-2.5 rounded-xl bg-amber-500/5 border border-amber-500/15 text-xs text-amber-700 dark:text-amber-400">
                   <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                  🧩 Parts of this synthesis are inferred from neighboring territories due to sparse local data.
+                  {t("uiTerritorySynthesis.partsOfThisSynthesisAreInferred")}
                 </div>
               )}
             </motion.div>
@@ -246,7 +248,7 @@ export function TerritorySynthesis({ territoryId, territoryName, isMember }: Pro
       {/* CTA */}
       {!isMember && contributors.length > 0 && (
         <p className="text-xs text-center text-muted-foreground">
-          Improve this description by joining this territory and adding more knowledge.
+          {t("uiTerritorySynthesis.improveThisDescriptionByJoiningThis")}
         </p>
       )}
     </div>

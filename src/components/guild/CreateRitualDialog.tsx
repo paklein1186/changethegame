@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,6 +39,7 @@ interface Props {
 }
 
 export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCreated }: Props) {
+  const { t } = useTranslation();
   const entityId = guildId || questId || "";
   const currentUser = useCurrentUser();
   const { toast } = useToast();
@@ -112,7 +114,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
 
   const handleCreate = async () => {
     if (!title.trim()) {
-      toast({ title: "Title is required", variant: "destructive" });
+      toast({ title: t("uiCreateRitualDialog.titleIsRequired"), variant: "destructive" });
       return;
     }
     setSaving(true);
@@ -137,7 +139,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
     const { error } = await supabase.from("rituals").insert(insertData);
     setSaving(false);
     if (error) {
-      toast({ title: "Failed to create ritual", description: error.message, variant: "destructive" });
+      toast({ title: t("uiCreateRitualDialog.failedToCreateRitual"), description: error.message, variant: "destructive" });
       return;
     }
     toast({ title: "Ritual created" });
@@ -167,11 +169,11 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="font-display">
-            {step === 0 ? "Choose Session Type" :
-             step === 1 ? "Ritual Details" :
+            {step === 0 ? t("uiCreateRitualDialog.chooseSessionType") :
+             step === 1 ? t("uiCreateRitualDialog.ritualDetails") :
              step === 2 ? "Program Structure" :
              step === 3 ? "Access & Rewards" :
-             "Review & Create"}
+             t("uiCreateRitualDialog.reviewCreate")}
           </DialogTitle>
         </DialogHeader>
 
@@ -221,12 +223,12 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <Label>Title</Label>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ritual name" />
+                <Label>{t("uiCreateRitualDialog.title")}</Label>
+                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("uiCreateRitualDialog.ritualName")} />
               </div>
               <div>
-                <Label>Description</Label>
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Purpose and context…" />
+                <Label>{t("uiCreateRitualDialog.description")}</Label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder={t("uiCreateRitualDialog.purposeAndContext")} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -260,7 +262,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                   Total: <span className="font-medium text-foreground">{totalProgramMinutes}′</span> / {durationMinutes}′ target
                 </p>
                 <Button size="sm" variant="outline" onClick={addSegment}>
-                  <Plus className="h-3 w-3 mr-1" /> Add Segment
+                  <Plus className="h-3 w-3 mr-1" /> {t("uiCreateRitualDialog.addSegment")}
                 </Button>
               </div>
               <div className="space-y-2">
@@ -272,7 +274,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                         <Input
                           value={seg.title}
                           onChange={(e) => updateSegment(i, "title", e.target.value)}
-                          placeholder="Segment title"
+                          placeholder={t("uiCreateRitualDialog.segmentTitle")}
                           className="text-sm h-8"
                         />
                         <div className="flex items-center gap-1">
@@ -289,7 +291,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                           <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="none">Everyone</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="admin">{t("uiCreateRitualDialog.admin")}</SelectItem>
                             <SelectItem value="facilitator">Facilitator</SelectItem>
                             <SelectItem value="presenter">Presenter</SelectItem>
                             <SelectItem value="teacher">Teacher</SelectItem>
@@ -310,7 +312,7 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
           {step === 3 && (
             <div className="space-y-4">
               <div>
-                <Label>Access Level</Label>
+                <Label>{t("uiCreateRitualDialog.accessLevel")}</Label>
                 <Select value={accessType} onValueChange={(v) => { setAccessType(v); if (v !== "ROLES") setAccessRoles([]); }}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -324,9 +326,9 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
               {/* Role selection when ROLES access type */}
               {accessType === "ROLES" && (
                 <div className="space-y-2">
-                  <Label>Select allowed roles</Label>
+                  <Label>{t("uiCreateRitualDialog.selectAllowedRoles")}</Label>
                   {entityRoles.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">No custom roles defined for this guild. Create roles in the guild settings first.</p>
+                    <p className="text-xs text-muted-foreground">{t("uiCreateRitualDialog.noCustomRolesDefinedForThis")}</p>
                   ) : (
                     <div className="space-y-2">
                       {entityRoles.map((role: any) => (
@@ -349,21 +351,21 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
 
               {accessType === "XP_THRESHOLD" && (
                 <div>
-                  <Label>Minimum XP Level</Label>
+                  <Label>{t("uiCreateRitualDialog.minimumXpLevel")}</Label>
                   <Input type="number" value={minXp} onChange={(e) => setMinXp(Number(e.target.value))} min={0} max={15} />
                 </div>
               )}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label>Attendance XP</Label>
+                  <Label>{t("uiCreateRitualDialog.attendanceXp")}</Label>
                   <Input type="number" value={xpReward} onChange={(e) => setXpReward(Number(e.target.value))} min={0} max={50} />
                 </div>
                 <div>
-                  <Label>Facilitator Bonus XP</Label>
+                  <Label>{t("uiCreateRitualDialog.facilitatorBonusXp")}</Label>
                   <Input type="number" value={facilitatorBonus} onChange={(e) => setFacilitatorBonus(Number(e.target.value))} min={0} max={50} />
                 </div>
                 <div>
-                  <Label>Credit Reward</Label>
+                  <Label>{t("uiCreateRitualDialog.creditReward")}</Label>
                   <Input type="number" value={creditReward} onChange={(e) => setCreditReward(Number(e.target.value))} min={0} />
                 </div>
               </div>
@@ -387,11 +389,11 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                     <div><span className="text-muted-foreground">Frequency:</span> {RITUAL_FREQUENCIES[frequency as keyof typeof RITUAL_FREQUENCIES]?.label}</div>
                     <div><span className="text-muted-foreground">Duration:</span> {durationMinutes} min</div>
                     <div><span className="text-muted-foreground">Access:</span> {RITUAL_ACCESS_TYPES[accessType as keyof typeof RITUAL_ACCESS_TYPES]?.label}</div>
-                    <div><span className="text-muted-foreground">Recording:</span> {recordingEnabled ? "Yes" : "No"}</div>
+                    <div><span className="text-muted-foreground">Recording:</span> {recordingEnabled ? "Yes" : t("uiCreateRitualDialog.no")}</div>
                   </div>
                   {accessType === "ROLES" && accessRoles.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="text-xs text-muted-foreground">Roles:</span>
+                      <span className="text-xs text-muted-foreground">{t("uiCreateRitualDialog.roles")}</span>
                       {accessRoles.map((roleId) => {
                         const role = entityRoles.find((r: any) => r.id === roleId);
                         return role ? (
@@ -404,8 +406,8 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
                     </div>
                   )}
                   <div className="flex gap-2 text-xs">
-                    <Badge variant="outline" className="text-primary">+{xpReward} XP attendance</Badge>
-                    {facilitatorBonus > 0 && <Badge variant="outline">+{facilitatorBonus} XP facilitator</Badge>}
+                    <Badge variant="outline" className="text-primary">+{xpReward} {t("uiCreateRitualDialog.xpAttendance")}</Badge>
+                    {facilitatorBonus > 0 && <Badge variant="outline">+{facilitatorBonus} {t("uiCreateRitualDialog.xpFacilitator")}</Badge>}
                     {creditReward > 0 && <Badge variant="outline">+{creditReward} credits</Badge>}
                   </div>
                   {segments.length > 0 && (
@@ -429,15 +431,15 @@ export function CreateRitualDialog({ open, onOpenChange, guildId, questId, onCre
         {step > 0 && (
           <div className="flex justify-between pt-4 border-t border-border">
             <Button variant="ghost" onClick={() => setStep(step - 1)}>
-              <ArrowLeft className="h-4 w-4 mr-1" /> Back
+              <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCreateRitualDialog.back")}
             </Button>
             {step < 4 ? (
               <Button onClick={() => setStep(step + 1)}>
-                Next <ArrowRight className="h-4 w-4 ml-1" />
+                {t("uiCreateRitualDialog.next")} <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
             ) : (
               <Button onClick={handleCreate} disabled={saving}>
-                <Check className="h-4 w-4 mr-1" /> {saving ? "Creating…" : "Create Ritual"}
+                <Check className="h-4 w-4 mr-1" /> {saving ? "Creating…" : t("uiCreateRitualDialog.createRitual")}
               </Button>
             )}
           </div>

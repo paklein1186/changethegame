@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Clock, FileEdit, CircleDot, Inbox, ChevronRight, Send } from "lucide-react";
@@ -14,6 +15,7 @@ const fadeUp = {
 interface Props { userId: string }
 
 export function ContinueWhereLeftOff({ userId }: Props) {
+  const { t } = useTranslation();
   const { data } = useQuery({
     queryKey: ["continue-where-left", userId],
     queryFn: async () => {
@@ -72,7 +74,7 @@ export function ContinueWhereLeftOff({ userId }: Props) {
   return (
     <section>
       <h2 className="font-display text-xl font-semibold mb-4 flex items-center gap-2">
-        <Clock className="h-5 w-5 text-primary" /> Continue where you left off
+        <Clock className="h-5 w-5 text-primary" /> {t("uiContinueWhereLeftOff.continueWhereYouLeftOff")}
       </h2>
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {data.map((item, i) => {

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage } from "@/lib/compressImage";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function EvidenceUploader({ onUpload, questId, accept = "image/*,application/pdf", maxSizeMb = 10 }: Props) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +73,7 @@ export function EvidenceUploader({ onUpload, questId, accept = "image/*,applicat
         disabled={uploading}
       >
         {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
-        {uploading ? "Uploading…" : "Upload receipt / evidence"}
+        {uploading ? "Uploading…" : t("uiEvidenceUploader.uploadReceiptEvidence")}
       </Button>
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
     </div>

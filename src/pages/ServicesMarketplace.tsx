@@ -72,7 +72,7 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
     <PageShell bare={bare}>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold">Services</h1>
-        <p className="text-muted-foreground mt-1">Browse consultancy services offered by users and guilds.</p>
+        <p className="text-muted-foreground mt-1">{t("uiServicesMarketplace.browseConsultancyServicesOfferedByUsers")}</p>
       </div>
 
       {!isLoggedIn && (
@@ -84,7 +84,7 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
 
       <div className="mb-6 space-y-3">
         <div className="flex items-center gap-2 flex-wrap">
-          <Button variant={hostFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("all")}>All</Button>
+          <Button variant={hostFilter === "all" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("all")}>{t("uiServicesMarketplace.all")}</Button>
           <Button variant={hostFilter === "user" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("user")}>User services</Button>
           <Button variant={hostFilter === "unit" ? "default" : "outline"} size="sm" onClick={() => setHostFilter("unit")}>Unit services</Button>
         </div>
@@ -111,8 +111,8 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
         <div className="rounded-xl border border-border bg-card p-8 text-center">
           <Briefcase className="h-10 w-10 text-primary mx-auto mb-3 opacity-60" />
           <p className="text-2xl font-bold text-primary mb-1">{filtered.length}</p>
-          <p className="text-sm text-muted-foreground">services available in the ecosystem</p>
-          <p className="text-xs text-muted-foreground mt-2">Log in to browse services, view details, and book sessions.</p>
+          <p className="text-sm text-muted-foreground">{t("uiServicesMarketplace.servicesAvailableInTheEcosystem")}</p>
+          <p className="text-xs text-muted-foreground mt-2">{t("uiServicesMarketplace.logInToBrowseServicesView")}</p>
         </div>
       )}
 
@@ -157,7 +157,7 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
                           <span className="flex items-center gap-0.5"><Clock className="h-3 w-3" /> {svc.duration_minutes} min</span>
                         )}
                         {(svc as any).service_type === "service_mission" && <Badge variant="outline" className="text-[10px]"><Briefcase className="h-2.5 w-2.5 mr-0.5" />Mission</Badge>}
-                        {(svc as any).service_type === "event_attendance" && <Badge variant="outline" className="text-[10px]"><Users className="h-2.5 w-2.5 mr-0.5" />Event</Badge>}
+                        {(svc as any).service_type === "event_attendance" && <Badge variant="outline" className="text-[10px]"><Users className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesMarketplace.event")}</Badge>}
                         {(svc as any).service_type === "online_call" && <Badge variant="outline" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />Call</Badge>}
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-2">
@@ -169,7 +169,7 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
                   </Link>
                   <div className="px-5 pb-3">
                     <Link to={`/book/${svc.id}`} className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
-                      <CalendarClock className="h-3 w-3" /> Public booking page
+                      <CalendarClock className="h-3 w-3" /> {t("uiServicesMarketplace.publicBookingPage")}
                     </Link>
                   </div>
                 </div>
@@ -178,10 +178,10 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
           })}
           {!isLoading && filtered.length === 0 && (
             <div className="col-span-full text-center py-12">
-              <p className="text-muted-foreground">No services match your filters.</p>
+              <p className="text-muted-foreground">{t("uiServicesMarketplace.noServicesMatchYourFilters")}</p>
               {hf.houseFilterActive && (
                 <Button variant="link" size="sm" className="mt-2" onClick={() => hf.setHouseFilterActive(false)}>
-                  Try showing all Houses
+                  {t("uiServicesMarketplace.tryShowingAllHouses")}
                 </Button>
               )}
             </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GraduationCap, Plus, Clock, BookOpen, Play, CheckCircle } from "lucide-react";
@@ -16,6 +17,7 @@ import {
 import { filterActive } from "@/lib/softDelete";
 
 export default function MyCourses({ bare }: { bare?: boolean }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
 
   // Courses I teach (created by me or under my admin guilds/companies)
@@ -36,29 +38,29 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
       {!bare && (
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display text-2xl font-bold flex items-center gap-2">
-            <GraduationCap className="h-6 w-6 text-primary" /> My Courses
+            <GraduationCap className="h-6 w-6 text-primary" /> {t("uiMyCourses.myCourses")}
           </h1>
-          <Button asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> Create course</Link></Button>
+          <Button asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> {t("uiMyCourses.createCourse")}</Link></Button>
         </div>
       )}
 
       <Tabs defaultValue="teach">
         <TabsList className="mb-4">
           <TabsTrigger value="teach">I teach ({teachCourses.length})</TabsTrigger>
-          <TabsTrigger value="learn">I learn ({myEnrollments.length})</TabsTrigger>
+          <TabsTrigger value="learn">{t("uiMyCourses.iLearn")}{myEnrollments.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="teach">
           {bare && (
             <div className="flex justify-end mb-3">
-              <Button size="sm" asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> Create course</Link></Button>
+              <Button size="sm" asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> {t("uiMyCourses.createCourse")}</Link></Button>
             </div>
           )}
           {teachCourses.length === 0 && (
             <div className="text-center py-12">
               <GraduationCap className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-              <p className="text-muted-foreground mb-3">You haven't created any courses yet.</p>
-              <Button size="sm" asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> Create your first course</Link></Button>
+              <p className="text-muted-foreground mb-3">{t("uiMyCourses.youHavenTCreatedAnyCourses")}</p>
+              <Button size="sm" asChild><Link to="/courses/new"><Plus className="h-4 w-4 mr-1" /> {t("uiMyCourses.createYourFirstCourse")}</Link></Button>
             </div>
           )}
           <div className="grid gap-4 md:grid-cols-2">
@@ -73,7 +75,7 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
                         {course.isPublished ? (
                           <Badge className="bg-green-500/10 text-green-600 border-0 text-[10px]">Published</Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30">Draft</Badge>
+                          <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30">{t("uiMyCourses.draft")}</Badge>
                         )}
                         {course.isFree ? <Badge variant="secondary" className="text-[10px]">Free</Badge> : <Badge className="bg-primary/10 text-primary border-0 text-[10px]">€{course.priceAmount}</Badge>}
                       </div>
@@ -94,7 +96,7 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
           {myEnrollments.length === 0 && (
             <div className="text-center py-12">
               <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-              <p className="text-muted-foreground mb-3">You haven't enrolled in any courses yet.</p>
+              <p className="text-muted-foreground mb-3">{t("uiMyCourses.youHavenTEnrolledInAny")}</p>
               <Button size="sm" variant="outline" asChild><Link to="/explore?tab=courses">Browse courses</Link></Button>
             </div>
           )}
@@ -121,7 +123,7 @@ export default function MyCourses({ bare }: { bare?: boolean }) {
                       <Progress value={enrollment.progressPercentage} className="h-2 mb-3" />
                       <Button size="sm" asChild className="w-full">
                         <Link to={continueUrl}>
-                          {enrollment.completionDate ? <><CheckCircle className="h-4 w-4 mr-1" /> Review course</> : <><Play className="h-4 w-4 mr-1" /> Continue</>}
+                          {enrollment.completionDate ? <><CheckCircle className="h-4 w-4 mr-1" /> Review course</> : <><Play className="h-4 w-4 mr-1" /> {t("uiMyCourses.continue")}</>}
                         </Link>
                       </Button>
                     </div>

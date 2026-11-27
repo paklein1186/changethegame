@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom"
 import { notifyEntityFollowersAndMembers } from "@/lib/notifyEntityActivity";
 import { useState, useMemo } from "react";
 import { autoFollowEntity } from "@/hooks/useFollow";
+import { guildFollowState } from "@/lib/guildFollowState";
 import { useContentTranslations } from "@/hooks/useContentTranslation";
 import { useAutoTranslateEntity } from "@/hooks/useAutoTranslateEntity";
 import { useTranslation } from "react-i18next";
@@ -383,6 +384,7 @@ export default function GuildDetail() {
   const currentMembership = isLoggedIn ? (guild.guild_members || []).find((gm: any) => gm.user_id === currentUser.id) : undefined;
   const isAdmin = currentMembership?.role === "ADMIN";
   const isMember = !!currentMembership;
+  const followState = guildFollowState(isFollowing, isMember, isAdmin);
 
   const requireAuth = (action: string, callback?: () => void) => {
     if (!isLoggedIn) {
@@ -399,13 +401,13 @@ export default function GuildDetail() {
 
   const doJoinGuild = async () => {
     const { error } = await supabase.from("guild_members").insert({ guild_id: guild.id, user_id: currentUser.id, role: "MEMBER" as any });
-    if (error) { toast({ title: "Failed to join", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildDetail.failedToJoin"), variant: "destructive" }); return; }
     autoFollowEntity(currentUser.id, "GUILD", guild.id);
     qc.invalidateQueries({ queryKey: ["guild", id] });
     qc.invalidateQueries({ queryKey: ["guild-members-profiles", id] });
     const offersMembership = Boolean((guild as any).euro_membership_enabled || guild.enable_membership);
     toast({
-      title: "Joined guild!",
+      title: t("uiGuildDetail.joinedGuild"),
       description: offersMembership
         ? "Vous suivez la guilde comme observateur. Pour accéder à tout, devenez adhérent : voir la carte Cotisation dans l'onglet Overview."
         : undefined,
@@ -416,7 +418,7 @@ export default function GuildDetail() {
     await supabase.from("guild_members").delete().eq("guild_id", guild.id).eq("user_id", currentUser.id);
     qc.invalidateQueries({ queryKey: ["guild", id] });
     qc.invalidateQueries({ queryKey: ["guild-members-profiles", id] });
-    toast({ title: "Left guild" });
+    toast({ title: t("uiGuildDetail.leftGuild") });
   };
 
   const createGuildService = async () => {
@@ -429,7 +431,7 @@ export default function GuildDetail() {
       is_draft: svcDraft,
       owner_type: "GUILD", owner_id: guild.id,
     } as any);
-    if (error) { toast({ title: "Failed to create service", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildDetail.failedToCreateService"), variant: "destructive" }); return; }
     notifyEntityFollowersAndMembers({
       entityType: "GUILD", entityId: guild.id, entityName: guild.name,
       actorUserId: currentUser.id, notifType: "FOLLOWED_ENTITY_NEW_SERVICE",
@@ -440,7 +442,7 @@ export default function GuildDetail() {
     setSvcTitle(""); setSvcDesc(""); setSvcDuration("60"); setSvcPrice("0");
     setSvcLocationType(OnlineLocationType.JITSI); setSvcImageUrl(undefined); setSvcDraft(false);
     setCreateSvcOpen(false);
-    toast({ title: "Guild service created" });
+    toast({ title: t("uiGuildDetail.guildServiceCreated") });
   };
 
   const openEditGuildService = (svc: any) => {
@@ -464,12 +466,12 @@ export default function GuildDetail() {
       online_location_type: svcLocationType, image_url: svcImageUrl || null,
       is_draft: svcDraft,
     }).eq("id", editSvcId);
-    if (error) { toast({ title: "Failed to update service", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildDetail.failedToUpdateService"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["services-for-guild", id] });
     setSvcTitle(""); setSvcDesc(""); setSvcDuration("60"); setSvcPrice("0");
     setSvcLocationType(OnlineLocationType.JITSI); setSvcImageUrl(undefined); setSvcDraft(false);
     setEditSvcId(null); setCreateSvcOpen(false);
-    toast({ title: "Guild service updated" });
+    toast({ title: t("uiGuildDetail.guildServiceUpdated") });
   };
 
   return (
@@ -480,7 +482,7 @@ export default function GuildDetail() {
       <XpSpendDialog open={showGuildXpDialog} onOpenChange={setShowGuildXpDialog} canAfford={limits.canAffordExtraGuild} xpCost={EXTRA_GUILD_CREDIT_COST} userXp={limits.userCredits} actionLabel="join one more guild" limitLabel="guild memberships for your plan" ctgBalance={limits.userCtgBalance} onConfirm={async () => { const ok = await limits.spendCredits(EXTRA_GUILD_CREDIT_COST, `Extra guild membership: ${guild.name}`, "GUILD", guild.id); if (ok) doJoinGuild(); }} />
 
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiGuildDetail.back")}
       </Button>
 
       {guild.is_draft && <DraftBanner />}
@@ -507,8 +509,9 @@ export default function GuildDetail() {
             <GuestContentGate blur previewText={trDesc || ""} previewSentences={3}><p className="text-muted-foreground max-w-4xl mt-2 line-clamp-3">{trDesc}</p></GuestContentGate>
           </div>
           <div className="flex flex-row sm:flex-col gap-2 shrink-0 flex-wrap">
-              <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => requireAuth("follow this guild", toggleFollow)}>
-                <Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} /> {isFollowing ? t("common.unfollow") : t("common.follow")}
+              <Button size="sm" variant={followState.checked ? "outline" : "default"} disabled={followState.locked} aria-pressed={followState.checked} className={followState.locked ? "disabled:opacity-100" : undefined} onClick={() => requireAuth("follow this guild", toggleFollow)}>
+                {followState.locked ? <CheckCircle className="h-4 w-4 mr-1 text-primary" /> : <Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />}
+                {followState.locked ? t("common.followed") : isFollowing ? t("common.unfollow") : t("common.follow")}
               </Button>
               {!isMember && (
                 isLoggedIn ? (
@@ -595,7 +598,7 @@ export default function GuildDetail() {
         <TabsContent value="overview" className="mt-6 space-y-6">
           {guild.description && (
             <div>
-              <h3 className="font-display font-semibold mb-2">About</h3>
+              <h3 className="font-display font-semibold mb-2">{t("uiGuildDetail.about")}</h3>
               <div className="rounded-xl border border-border bg-card/50 p-4">
                 <GuestContentGate blur previewText={trDesc || ""} previewSentences={3}>
                   <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">{trDesc}</p>
@@ -620,7 +623,7 @@ export default function GuildDetail() {
           {isAdmin && <CapabilitiesPanel ownerType="guild" ownerId={guild.id} canManage />}
 
           <div>
-            <h3 className="font-display font-semibold mb-2">Details</h3>
+            <h3 className="font-display font-semibold mb-2">{t("uiGuildDetail.details")}</h3>
             <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Membership policy</span>
@@ -668,10 +671,10 @@ export default function GuildDetail() {
           {/* Governance Model Card */}
           {(() => {
             const govModels: Record<string, { label: string; description: string }> = {
-              "1h1v": { label: "1 Human, 1 Vote", description: "Equal — every member has one vote regardless of contribution." },
-              soft_log: { label: "Soft Logarithmic", description: "Logarithmic (soft) — contributions influence votes but are compressed." },
-              strong_log: { label: "Logarithmic (strong)", description: "Logarithmic (strong) — contributions have more influence, still capped." },
-              pure_pct: { label: "Proportional", description: "Proportional — voting power directly mirrors contribution percentage." },
+              "1h1v": { label: "1 Human, 1 Vote", description: t("uiGuildDetail.equalEveryMemberHasOneVote") },
+              soft_log: { label: "Soft Logarithmic", description: t("uiGuildDetail.logarithmicSoftContributionsInfluenceVotesBut") },
+              strong_log: { label: "Logarithmic (strong)", description: t("uiGuildDetail.logarithmicStrongContributionsHaveMoreInfluence") },
+              pure_pct: { label: "Proportional", description: t("uiGuildDetail.proportionalVotingPowerDirectlyMirrorsContribution") },
             };
             const model = (guild as any).governance_model ?? "1h1v";
             const info = govModels[model] ?? govModels["1h1v"];
@@ -690,16 +693,16 @@ export default function GuildDetail() {
 
           <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-7">
             <EntityFollowersCount entityId={guild.id} entityType="GUILD" />
-            <button onClick={() => setActiveTab("network")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{members.length}</p><p className="text-sm text-muted-foreground">Members</p></button>
-            <button onClick={() => setActiveTab("work")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{quests.length}</p><p className="text-sm text-muted-foreground">Quests</p></button>
+            <button onClick={() => setActiveTab("network")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{members.length}</p><p className="text-sm text-muted-foreground">{t("uiGuildDetail.members")}</p></button>
+            <button onClick={() => setActiveTab("work")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{quests.length}</p><p className="text-sm text-muted-foreground">{t("uiGuildDetail.quests")}</p></button>
             <button onClick={() => setActiveTab("work")} className="rounded-lg border border-border bg-card p-4 text-center hover:border-primary/30 transition-all cursor-pointer"><p className="text-2xl font-bold text-primary">{services.length}</p><p className="text-sm text-muted-foreground">Services</p></button>
             <div className="rounded-lg border border-border bg-card p-4 text-center">
               <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1"><Wallet className="h-5 w-5" />{guild.credits_balance ?? 0}</p>
-              <p className="text-sm text-muted-foreground">Guild Wallet</p>
+              <p className="text-sm text-muted-foreground">{t("uiGuildDetail.guildWallet")}</p>
             </div>
             <div className="rounded-lg border border-border bg-card p-4 text-center">
               <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1">🟡 {Math.round(membersCTGSum)}</p>
-              <p className="text-sm text-muted-foreground">Members' $CTG</p>
+              <p className="text-sm text-muted-foreground">{t("uiGuildDetail.membersCtg")}</p>
             </div>
             <GuildCTGStat guildId={guild.id} />
           </div>
@@ -782,11 +785,11 @@ export default function GuildDetail() {
           {/* Quests section */}
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-display font-semibold flex items-center gap-2"><Compass className="h-4 w-4 text-primary" /> Quests ({quests.length})</h3>
+              <h3 className="font-display font-semibold flex items-center gap-2"><Compass className="h-4 w-4 text-primary" /> {t("uiGuildDetail.quests2")}{quests.length})</h3>
               {isMember && (
                 <div className="flex items-center gap-2">
                   <Button size="sm" asChild>
-                    <Link to={`/guilds/${guild.id}/quests/new`}><Plus className="h-4 w-4 mr-1" /> New Quest</Link>
+                    <Link to={`/guilds/${guild.id}/quests/new`}><Plus className="h-4 w-4 mr-1" /> {t("uiGuildDetail.newQuest")}</Link>
                   </Button>
                   <PlanLimitBadge freeRemaining={limits.freeQuestsRemaining} limitReached={limits.questLimitReached} xpCost={EXTRA_QUEST_CREDIT_COST} itemLabel="quest" />
                 </div>
@@ -795,7 +798,7 @@ export default function GuildDetail() {
             <PendingAffiliationRequests entityType="GUILD" entityId={guild.id} isAdmin={isAdmin} />
             {!isLoggedIn && quests.some((q: any) => q.pinned_at) && (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-300 mb-3">
-                ⭐ Showing featured quests only. <button className="underline font-medium" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>Sign up</button> to see them all.
+                {t("uiGuildDetail.showingFeaturedQuestsOnly")} <button className="underline font-medium" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>{t("uiGuildDetail.signUp")}</button> {t("uiGuildDetail.toSeeThemAll")}
               </div>
             )}
             <EntityQuestsFilters quests={isLoggedIn ? quests : quests.filter((q: any) => q.pinned_at)}>
@@ -804,7 +807,7 @@ export default function GuildDetail() {
                   {filtered.length === 0 && (
                     isLoggedIn
                       ? <EmptyHint {...HINTS.empty.guildQuests} persona={persona} />
-                      : <p className="text-sm text-muted-foreground text-center py-6">No featured quests yet. <button className="underline" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>Sign up</button> to see all quests.</p>
+                      : <p className="text-sm text-muted-foreground text-center py-6">{t("uiGuildDetail.noFeaturedQuestsYet")} <button className="underline" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>{t("uiGuildDetail.signUp")}</button> {t("uiGuildDetail.toSeeAllQuests")}</p>
                   )}
                   <div className={viewMode === "grid" ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-3" : "space-y-3"}>
                     {filtered.map((q: any) => (
@@ -841,12 +844,12 @@ export default function GuildDetail() {
               <h3 className="font-display font-semibold flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary" /> Services ({services.length})</h3>
               {isMember && (
                 <Dialog open={createSvcOpen} onOpenChange={setCreateSvcOpen}>
-                  <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" /> New Service</Button></DialogTrigger>
+                  <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" /> {t("uiGuildDetail.newService")}</Button></DialogTrigger>
                   <DialogContent>
-                    <DialogHeader><DialogTitle>{editSvcId ? "Edit Service" : "Create Guild Service"}</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>{editSvcId ? t("uiGuildDetail.editService") : t("uiGuildDetail.createGuildService")}</DialogTitle></DialogHeader>
                     <div className="space-y-4 mt-2">
-                      <div><label className="text-sm font-medium mb-1 block">Title</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder="e.g. Coaching Session" maxLength={120} /></div>
-                      <div><label className="text-sm font-medium mb-1 block">Description</label><Textarea value={svcDesc} onChange={e => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.title")}</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder="e.g. Coaching Session" maxLength={120} /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiGuildDetail.description")}</label><Textarea value={svcDesc} onChange={e => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
                       <ImageUpload label="Image (optional)" currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" />
                       <div className="grid grid-cols-2 gap-3">
                         <div><label className="text-sm font-medium mb-1 block">Duration (min)</label><Input type="number" value={svcDuration} onChange={e => setSvcDuration(e.target.value)} min={15} max={480} /></div>
@@ -863,8 +866,8 @@ export default function GuildDetail() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="flex items-center justify-between"><label className="text-sm font-medium">Save as draft</label><Switch checked={svcDraft} onCheckedChange={setSvcDraft} /></div>
-                      <Button onClick={editSvcId ? updateGuildService : createGuildService} disabled={!svcTitle.trim()} className="w-full">{editSvcId ? "Update" : "Create"}</Button>
+                      <div className="flex items-center justify-between"><label className="text-sm font-medium">{t("uiGuildDetail.saveAsDraft")}</label><Switch checked={svcDraft} onCheckedChange={setSvcDraft} /></div>
+                      <Button onClick={editSvcId ? updateGuildService : createGuildService} disabled={!svcTitle.trim()} className="w-full">{editSvcId ? t("uiGuildDetail.update") : t("uiGuildDetail.create")}</Button>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -882,7 +885,7 @@ export default function GuildDetail() {
           {/* Events section */}
           {(fc as any).events && (
             <section>
-              <h3 className="font-display font-semibold flex items-center gap-2 mb-3"><CalendarDays className="h-4 w-4 text-primary" /> Events</h3>
+              <h3 className="font-display font-semibold flex items-center gap-2 mb-3"><CalendarDays className="h-4 w-4 text-primary" /> {t("uiGuildDetail.events")}</h3>
               <GuildEvents guildId={guild.id} guildName={guild.name} isMember={isMember} isAdmin={isAdmin} />
             </section>
           )}

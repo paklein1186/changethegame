@@ -189,6 +189,7 @@ async function geocodeAndPersist(id: string, name: string): Promise<{ lat: numbe
 }
 
 export function TerritoryMapView({ territories, scrollWheelZoom = true }: Props) {
+  const { t } = useTranslation();
   const { t: tr } = useTranslation();
   const qc = useQueryClient();
   const [zoom, setZoom] = useState(2);
@@ -405,7 +406,7 @@ export function TerritoryMapView({ territories, scrollWheelZoom = true }: Props)
 
       {unmappedCount > 0 && (
         <p className="text-xs text-muted-foreground text-center">
-          {unmappedCount} territor{unmappedCount > 1 ? "ies" : "y"} without coordinates — they'll appear on the map once located.
+          {unmappedCount} territor{unmappedCount > 1 ? "ies" : "y"} {t("uiTerritoryMapView.withoutCoordinatesTheyLlAppearOn")}
         </p>
       )}
     </div>

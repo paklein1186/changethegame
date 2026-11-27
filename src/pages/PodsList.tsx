@@ -91,7 +91,7 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
       setNewName(""); setNewDesc(""); setNewTopicId("none"); setNewQuestId("none"); setNewStart(""); setNewEnd(""); setNewDraft(false);
       toast({ title: "Pod created!" });
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiPodsList.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -99,37 +99,37 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
     <Dialog open={createOpen} onOpenChange={setCreateOpen}>
       {!hideFilters && (
         <DialogTrigger asChild>
-          <Button><Plus className="h-4 w-4 mr-1" /> Create Pod</Button>
+          <Button><Plus className="h-4 w-4 mr-1" /> {t("uiPodsList.createPod")}</Button>
         </DialogTrigger>
       )}
       <DialogContent className="max-w-md">
-        <DialogHeader><DialogTitle>Create a Pod</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t("uiPodsList.createAPod")}</DialogTitle></DialogHeader>
         <div className="space-y-4 mt-2">
           <div>
-            <label className="text-sm font-medium mb-1 block">Name</label>
-            <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Pod name" maxLength={100} />
+            <label className="text-sm font-medium mb-1 block">{t("uiPodsList.name")}</label>
+            <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t("uiPodsList.podName")} maxLength={100} />
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Description</label>
-            <Textarea value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder="What is this pod about?" maxLength={500} className="resize-none" />
+            <label className="text-sm font-medium mb-1 block">{t("uiPodsList.description")}</label>
+            <Textarea value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder={t("uiPodsList.whatIsThisPodAbout")} maxLength={500} className="resize-none" />
           </div>
           <div>
             <label className="text-sm font-medium mb-1 block">Type</label>
             <Select value={newType} onValueChange={setNewType}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={PodType.QUEST_POD}>Quest Pod</SelectItem>
+                <SelectItem value={PodType.QUEST_POD}>{t("uiPodsList.questPod")}</SelectItem>
                 <SelectItem value={PodType.STUDY_POD}>Study Pod</SelectItem>
               </SelectContent>
             </Select>
           </div>
           {newType === PodType.QUEST_POD && (
             <div>
-              <label className="text-sm font-medium mb-1 block">Quest</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiPodsList.quest")}</label>
               <Select value={newQuestId} onValueChange={setNewQuestId}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No quest</SelectItem>
+                  <SelectItem value="none">{t("uiPodsList.noQuest")}</SelectItem>
                   {quests.map((q) => <SelectItem key={q.id} value={q.id}>{q.title}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -137,11 +137,11 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
           )}
           {newType === PodType.STUDY_POD && (
             <div>
-              <label className="text-sm font-medium mb-1 block">Topic</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiPodsList.topic")}</label>
               <Select value={newTopicId} onValueChange={setNewTopicId}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No topic</SelectItem>
+                  <SelectItem value="none">{t("uiPodsList.noTopic")}</SelectItem>
                   {(topics ?? []).map((topic) => <SelectItem key={topic.id} value={topic.id}>{translateTopicName(topic.name, t)}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -149,21 +149,21 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
           )}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-sm font-medium mb-1 block">Start date</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiPodsList.startDate")}</label>
               <Input type="date" value={newStart} onChange={(e) => setNewStart(e.target.value)} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">End date</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiPodsList.endDate")}</label>
               <Input type="date" value={newEnd} onChange={(e) => setNewEnd(e.target.value)} />
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Save as draft</label>
+            <label className="text-sm font-medium">{t("uiPodsList.saveAsDraft")}</label>
             <Switch checked={newDraft} onCheckedChange={setNewDraft} />
           </div>
           <Button onClick={handleCreate} disabled={!newName.trim() || createPodMut.isPending} className="w-full">
             {createPodMut.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-            Create
+            {t("uiPodsList.create")}
           </Button>
         </div>
       </DialogContent>
@@ -179,7 +179,7 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
            <div className="flex items-center justify-between mb-6">
              <div>
                <h1 className="font-display text-3xl font-bold">Pods</h1>
-               <p className="text-muted-foreground mt-1">Small collaboration groups around quests and topics.</p>
+               <p className="text-muted-foreground mt-1">{t("uiPodsList.smallCollaborationGroupsAroundQuestsAnd")}</p>
              </div>
              {isLoggedIn && createDialog}
            </div>
@@ -233,7 +233,7 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
                   {isLoggedIn ? (
                     <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{pod.description}</p>
                   ) : (
-                    <p className="text-sm text-muted-foreground mt-1 italic">Log in to see details</p>
+                    <p className="text-sm text-muted-foreground mt-1 italic">{t("uiPodsList.logInToSeeDetails")}</p>
                   )}
                   {isLoggedIn && (
                     <div className="flex flex-wrap items-center gap-2 mt-3 text-xs text-muted-foreground">
@@ -249,10 +249,10 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
         })}
         {!isLoading && filtered.length === 0 && (
           <div className="col-span-full text-center py-12">
-            <p className="text-muted-foreground">No pods match your filters.</p>
+            <p className="text-muted-foreground">{t("uiPodsList.noPodsMatchYourFilters")}</p>
             {hf.houseFilterActive && (
               <Button variant="link" size="sm" className="mt-2" onClick={() => hf.setHouseFilterActive(false)}>
-                Try showing all Houses
+                {t("uiPodsList.tryShowingAllHouses")}
               </Button>
             )}
           </div>

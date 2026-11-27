@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Crown, ArrowRight, Shield, Mail } from "lucide-react";
@@ -10,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 const CLASS_A_MAILTO = "mailto:pa@changethegame.xyz?subject=Class%20A%20Membership%20Application";
 
 export function ShareholderCTA() {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   const { data: profile } = useQuery({
@@ -52,11 +54,11 @@ export function ShareholderCTA() {
             <Link to="/governance">Governance <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
           </Button>
           <Button variant="outline" size="sm" asChild>
-            <Link to="/shares">Buy more Class B</Link>
+            <Link to="/shares">{t("uiShareholderCTA.buyMoreClassB")}</Link>
           </Button>
           {!hasA && (
             <Button variant="outline" size="sm" asChild>
-              <a href={CLASS_A_MAILTO}><Mail className="h-3.5 w-3.5 mr-1" /> Apply Class A</a>
+              <a href={CLASS_A_MAILTO}><Mail className="h-3.5 w-3.5 mr-1" /> {t("uiShareholderCTA.applyClassA")}</a>
             </Button>
           )}
         </div>
@@ -68,9 +70,9 @@ export function ShareholderCTA() {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 0.3, y: 0 }}
       className="rounded-xl border border-border bg-card p-5 text-center space-y-3">
       <Crown className="h-8 w-8 text-primary mx-auto" />
-      <h3 className="font-display font-semibold">Become a member of changethegame</h3>
+      <h3 className="font-display font-semibold">{t("uiShareholderCTA.becomeAMemberOfChangethegame")}</h3>
       <p className="text-sm text-muted-foreground max-w-md mx-auto">
-        Co-own the platform, vote on decisions, and shape the ecosystem's future. Three share classes: Guardian, Steward, and Strategic Partner.
+        {t("uiShareholderCTA.coOwnThePlatformVoteOn")}
       </p>
       <Button asChild>
         <Link to="/shares">Explore Stewardship Options <ArrowRight className="ml-2 h-4 w-4" /></Link>

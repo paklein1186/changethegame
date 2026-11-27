@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, Map as MapIcon, CalendarCheck, Send, Check, Loader2, CircleCheckBig, Shield } from "lucide-react";
+import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, Map as MapIcon, CalendarCheck, Send, Check, Loader2, CircleCheckBig, Shield, Shuffle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ import { TrustNodeType } from "@/types/enums";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { publicOrigin } from "@/lib/shareUrl";
+import { digestSelection } from "@/lib/digestSelection";
 
 export interface Opportunity {
   match_id: string;
@@ -65,7 +66,7 @@ const helperUrl = (o: Opportunity) =>
  * - Guild: everything around one guild (its quests, the guild itself, its members).
  * - Quest: who could help this quest.
  */
-export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", initialCount = 5, className, asDigest = false, showMapLink = false }: {
+export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", initialCount = 5, className, asDigest = false, showMapLink = false, varySelection = false }: {
   guildId?: string;
   questId?: string;
   defaultScope?: Scope;
@@ -73,6 +74,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   className?: string;
   asDigest?: boolean;
   showMapLink?: boolean;
+  varySelection?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
@@ -90,6 +92,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   const [category, setCategory] = useState("all");
   const [place, setPlace] = useState("all");
   const [expanded, setExpanded] = useState(false);
+  const [selectionSeed, setSelectionSeed] = useState(() => Math.floor(Math.random() * 4294967296));
 
   const queryKey = ["opportunities", currentUser.id ?? null, guildId ?? null, questId ? "all" : scope];
   const { data = [], isLoading } = useQuery({
@@ -106,10 +109,11 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
     staleTime: 60_000,
   });
 
-  const rows = useMemo(() => data.filter((o) => !questId || o.quest_id === questId), [data, questId]);
+  const rows = useMemo(() => data.filter((o) => o.my_verdict !== "not_relevant" && (!questId || o.quest_id === questId)), [data, questId]);
+  const orderedRows = useMemo(() => asDigest || varySelection ? digestSelection(rows, selectionSeed) : rows, [rows, asDigest, varySelection, selectionSeed]);
   const categories = useMemo(() => [...new Set(rows.map((o) => o.need_category))].sort(), [rows]);
   const places = useMemo(() => [...new Set(rows.flatMap((o) => o.territory_names ?? []))].sort(), [rows]);
-  const filtered = rows.filter((o) =>
+  const filtered = orderedRows.filter((o) =>
     (category === "all" || o.need_category === category) && (place === "all" || (o.territory_names ?? []).includes(place)));
   const shown = expanded ? filtered : filtered.slice(0, initialCount);
 
@@ -119,7 +123,11 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
       if (error) throw error;
       return verdict;
     },
-    onSuccess: (verdict) => {
+    onSuccess: (verdict, { id }) => {
+      if (verdict === "not_relevant") {
+        qc.setQueriesData<Opportunity[]>({ queryKey: ["opportunities"] }, (previous) => previous?.filter((o) => o.match_id !== id));
+        qc.invalidateQueries({ queryKey: ["opportunity-map"] });
+      }
       qc.invalidateQueries({ queryKey: ["opportunities"] });
       if (verdict === "help") toast.success(t("matchOpportunities.helpSent"));
     },
@@ -217,6 +225,11 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
           {showMapLink && !guildId && !questId && (
             <Button variant="outline" size="sm" asChild><Link to="/opportunities/carte"><MapIcon className="mr-1.5 h-4 w-4" /> {t("matchOpportunities.map")}</Link></Button>
           )}
+          {(asDigest || varySelection) && !guildId && !questId && (
+            <Button variant="ghost" size="icon" onClick={() => setSelectionSeed((seed) => (seed + 1) >>> 0)} title={t("matchOpportunities.refreshSelection")} aria-label={t("matchOpportunities.refreshSelection")} disabled={isLoading || filtered.length <= initialCount}>
+              <Shuffle className="h-4 w-4" />
+            </Button>
+          )}
           {asDigest && !guildId && !questId && (
             <Button variant="outline" size="sm" onClick={() => setExpanded((value) => !value)}>
               {filtered.length} {t("matchOpportunities.requests")}
@@ -268,7 +281,12 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
             const title = canRequest ? opportunity.helper_name ?? opportunity.quest_title : opportunity.quest_title;
             return (
               <li key={opportunity.match_id} className="flex flex-col rounded-xl border border-border bg-card p-4">
-                <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="min-w-0 break-words text-sm font-semibold text-foreground">{title}</h3>
+                  <Button size="icon" variant="ghost" className="h-7 w-7 shrink-0 text-muted-foreground" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: opportunity.match_id, verdict: "not_relevant" })} title={t("matchOpportunities.hide")} aria-label={`${t("matchOpportunities.hide")} : ${title}`}>
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
                 <p className="mt-1 text-xs font-medium text-primary">
                   {canRequest ? opportunity.capability_label : opportunity.need_label}
                 </p>
@@ -396,7 +414,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                           <CircleCheckBig className="h-3.5 w-3.5" /> {t("matchOpportunities.markDone")}
                         </Button>
                       )}
-                      <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: o.match_id, verdict: "not_relevant" })} title={t("matchOpportunities.notRelevant")} aria-label={t("matchOpportunities.notRelevant")}>
+                      <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: o.match_id, verdict: "not_relevant" })} title={t(varySelection ? "matchOpportunities.hide" : "matchOpportunities.notRelevant")} aria-label={t(varySelection ? "matchOpportunities.hide" : "matchOpportunities.notRelevant")}>
                         <X className="h-3.5 w-3.5" />
                       </Button>
                     </div>

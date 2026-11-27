@@ -8,3 +8,4 @@
 - [x] Transformer le bloc d’opportunités de l’accueil en digest du jour fondé sur les vraies données.
 - [x] Ajouter une carte générale des rapprochements réels, indépendante de la Démo FEVE.
 - [x] Vérifier le digest, la carte et l’isolation de la démo avec un compte réel.
+- [x] Varier les cartes du digest et ajouter le masquage personnel « Ne plus voir ».

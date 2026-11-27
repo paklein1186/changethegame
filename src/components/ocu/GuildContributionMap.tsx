@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -40,6 +41,7 @@ interface ContributorRow {
 }
 
 export function GuildContributionMap({ guildId }: Props) {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryKey: ["guild-contribution-map", guildId],
     queryFn: async () => {
@@ -131,24 +133,24 @@ export function GuildContributionMap({ guildId }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="font-display font-semibold text-lg">Open Contributive Units — Guild View</h3>
+        <h3 className="font-display font-semibold text-lg">{t("uiGuildContributionMap.openContributiveUnitsGuildView")}</h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Cross-quest aggregation of verified contributions across {questCount} OCU quest{questCount !== 1 ? "s" : ""}.
+          {t("uiGuildContributionMap.crossQuestAggregationOfVerifiedContributions")} {questCount} {t("uiGuildContributionMap.ocuQuest")}{questCount !== 1 ? "s" : ""}.
         </p>
       </div>
 
       <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 flex items-start gap-2">
         <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
         <p className="text-xs text-foreground">
-          Guild % is weighted by quest envelope size. A 30% share in a €1,000 quest counts more than a 30% share in a €100 quest.
+          {t("uiGuildContributionMap.guildIsWeightedByQuestEnvelope")}
         </p>
       </div>
 
       {contributors.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border p-8 text-center">
-          <p className="text-sm text-muted-foreground">No verified OCU contributions yet.</p>
+          <p className="text-sm text-muted-foreground">{t("uiGuildContributionMap.noVerifiedOcuContributionsYet")}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            Enable OCU on quests and approve contributions to see the guild map.
+            {t("uiGuildContributionMap.enableOcuOnQuestsAndApprove")}
           </p>
         </div>
       ) : (
@@ -190,8 +192,8 @@ export function GuildContributionMap({ guildId }: Props) {
                     <th className="text-left px-3 py-2 font-medium">#</th>
                     <th className="text-left px-3 py-2 font-medium">Contributor</th>
                     <th className="text-right px-3 py-2 font-medium">Total FMV 🟩</th>
-                    <th className="text-right px-3 py-2 font-medium">Guild %</th>
-                    <th className="text-right px-3 py-2 font-medium">Quests</th>
+                    <th className="text-right px-3 py-2 font-medium">{t("uiGuildContributionMap.guild")}</th>
+                    <th className="text-right px-3 py-2 font-medium">{t("uiGuildContributionMap.quests")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -218,7 +220,7 @@ export function GuildContributionMap({ guildId }: Props) {
                       </TooltipTrigger>
                       <TooltipContent side="left" className="max-w-xs">
                         <div className="space-y-1">
-                          <p className="font-medium text-xs">{c.name} — FMV per quest</p>
+                          <p className="font-medium text-xs">{c.name} {t("uiGuildContributionMap.fmvPerQuest")}</p>
                           {c.questBreakdown.map((qb) => (
                             <div key={qb.questId} className="flex justify-between gap-4 text-xs">
                               <span className="truncate">{qb.questTitle}</span>

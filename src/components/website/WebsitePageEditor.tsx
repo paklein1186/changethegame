@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,13 +15,13 @@ import { WebsiteSectionEditor } from "./WebsiteSectionEditor";
 
 const PAGE_TYPES = [
   { value: "home", label: "Home" },
-  { value: "about", label: "About" },
+  { value: "about", get label() { return i18n.t("uiWebsitePageEditor.about"); } },
   { value: "services", label: "Services" },
   { value: "projects", label: "Projects" },
   { value: "community", label: "Community" },
   { value: "program", label: "Program" },
   { value: "contact", label: "Contact" },
-  { value: "learning", label: "Learning & Events" },
+  { value: "learning", get label() { return i18n.t("uiWebsitePageEditor.learningEvents"); } },
   { value: "custom", label: "Custom" },
 ];
 
@@ -31,6 +33,7 @@ interface Props {
 }
 
 export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(page.title);
   const [slug, setSlug] = useState(page.slug);
@@ -96,7 +99,7 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-xs">Page Title</Label>
+          <Label className="text-xs">{t("uiWebsitePageEditor.pageTitle")}</Label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} className="h-8 text-sm" />
         </div>
         <div className="space-y-1.5">
@@ -116,19 +119,19 @@ export function WebsitePageEditor({ page, websiteId, ownerType, ownerId }: Props
         </div>
       </div>
       <Button variant="outline" size="sm" onClick={() => updatePage.mutate()}>
-        <Save className="h-3.5 w-3.5 mr-1" /> Save Page
+        <Save className="h-3.5 w-3.5 mr-1" /> {t("uiWebsitePageEditor.savePage")}
       </Button>
 
       <div className="border-t border-border pt-4 mt-4">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-medium">Sections</h4>
           <Button variant="outline" size="sm" onClick={() => addSection.mutate()}>
-            <Plus className="h-3.5 w-3.5 mr-1" /> Add Section
+            <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiWebsitePageEditor.addSection")}
           </Button>
         </div>
 
         {(!sections || sections.length === 0) && (
-          <p className="text-xs text-muted-foreground">No sections yet.</p>
+          <p className="text-xs text-muted-foreground">{t("uiWebsitePageEditor.noSectionsYet")}</p>
         )}
 
         <div className="space-y-3">

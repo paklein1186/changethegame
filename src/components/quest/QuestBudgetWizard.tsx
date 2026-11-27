@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Banknote, Zap, Coins, ChevronRight, ChevronLeft, Check, HelpCircle, Leaf,
@@ -57,12 +59,13 @@ function Tip({ children }: { children: React.ReactNode }) {
 }
 
 const STEPS = [
-  { id: 0, label: "Budget", icon: Banknote, short: "Coins budget · $CTG pool · fiat compensation" },
+  { id: 0, get label() { return i18n.t("uiQuestBudgetWizard.budget"); }, icon: Banknote, short: "Coins budget · $CTG pool · fiat compensation" },
   { id: 1, label: "Rewards", icon: Zap, short: "XP & monetization" },
-  { id: 2, label: "Funding", icon: Handshake, short: "Proposals & fundraising" },
+  { id: 2, get label() { return i18n.t("uiQuestBudgetWizard.funding"); }, icon: Handshake, short: "Proposals & fundraising" },
 ];
 
 export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const current = STEPS[step];
 
@@ -116,18 +119,18 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
           <>
             <div>
               <h3 className="text-sm font-semibold flex items-center gap-1.5">
-                <Banknote className="h-4 w-4 text-primary" /> Mission Budget
-                <Tip>The fiat compensation range for this quest in euros. This is separate from Platform Credits.</Tip>
+                <Banknote className="h-4 w-4 text-primary" /> {t("uiQuestBudgetWizard.missionBudget")}
+                <Tip>{t("uiQuestBudgetWizard.theFiatCompensationRangeForThis")}</Tip>
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Set fiat compensation (paid in 🟩 Coins), and a 🌱 $CTG pool (funded from your 🔷 Credits).
+                {t("uiQuestBudgetWizard.setFiatCompensationPaidInCoins")}
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label htmlFor="bw-budgetMin" className="text-xs flex items-center gap-1">
-                  Min (€) <Tip>Minimum compensation you'd pay for this quest</Tip>
+                  Min (€) <Tip>{t("uiQuestBudgetWizard.minimumCompensationYouDPayFor")}</Tip>
                 </Label>
                 <Input
                   id="bw-budgetMin"
@@ -141,7 +144,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
               </div>
               <div>
                 <Label htmlFor="bw-budgetMax" className="text-xs flex items-center gap-1">
-                  Max (€) <Tip>Maximum compensation for this quest</Tip>
+                  Max (€) <Tip>{t("uiQuestBudgetWizard.maximumCompensationForThisQuest")}</Tip>
                 </Label>
                 <Input
                   id="bw-budgetMax"
@@ -157,7 +160,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
 
             <div>
               <Label htmlFor="bw-paymentType" className="text-xs flex items-center gap-1">
-                Payment method <Tip>How will the participant be paid?</Tip>
+                Payment method <Tip>{t("uiQuestBudgetWizard.howWillTheParticipantBePaid")}</Tip>
               </Label>
               <Select value={props.paymentType} onValueChange={props.setPaymentType}>
                 <SelectTrigger className="mt-1 text-sm">
@@ -182,7 +185,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
             <div>
               <h3 className="text-sm font-semibold flex items-center gap-1.5">
                 <Zap className="h-4 w-4 text-primary" /> Rewards
-                <Tip>XP rewards distributed to participants when they complete this quest.</Tip>
+                <Tip>{t("uiQuestBudgetWizard.xpRewardsDistributedToParticipantsWhen")}</Tip>
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
                 What do participants earn?
@@ -191,7 +194,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
 
             <div>
               <Label htmlFor="bw-rewardXp" className="text-xs flex items-center gap-1">
-                XP Reward <Tip>⭐ XP granted on completion. Permanent reputation — never decays, never purchased. Reflects who you are becoming.</Tip>
+                {t("uiQuestBudgetWizard.xpReward")} <Tip>{t("uiQuestBudgetWizard.xpGrantedOnCompletionPermanentReputation")}</Tip>
               </Label>
               <Input
                 id="bw-rewardXp"
@@ -207,8 +210,8 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
               <div className="flex items-center gap-3">
                 <Switch id="bw-monetized" checked={props.isMonetized} onCheckedChange={props.setIsMonetized} />
                 <Label htmlFor="bw-monetized" className="text-xs font-medium flex items-center gap-1">
-                  Monetize this quest
-                  <Tip>Enable $CTG and/or fiat payment for this quest.</Tip>
+                  {t("uiQuestBudgetWizard.monetizeThisQuest")}
+                  <Tip>{t("uiQuestBudgetWizard.enableCtgAndOrFiatPayment")}</Tip>
                 </Label>
               </div>
 
@@ -216,7 +219,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   <div>
                      <Label htmlFor="bw-creditReward" className="text-xs flex items-center gap-1">
-                       🌱 $CTG reward <Tip>🌱 $CTG emitted on verified completion. Contribution to the commons — not fiat-backed, not purchasable. Fades 1%/month.</Tip>
+                       🌱 $CTG reward <Tip>{t("uiQuestBudgetWizard.ctgEmittedOnVerifiedCompletionContribution")}</Tip>
                     </Label>
                     <Input
                       id="bw-creditReward"
@@ -230,7 +233,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                   </div>
                   <div>
                     <Label htmlFor="bw-priceFiat" className="text-xs flex items-center gap-1">
-                      Entry fee (€ cents) <Tip>Stripe payment required to join this quest, in euro cents. E.g. 500 = 5€.</Tip>
+                      Entry fee (€ cents) <Tip>{t("uiQuestBudgetWizard.stripePaymentRequiredToJoinThis")}</Tip>
                     </Label>
                     <Input
                       id="bw-priceFiat"
@@ -253,11 +256,11 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
           <>
             <div>
               <h3 className="text-sm font-semibold flex items-center gap-1.5">
-                <Handshake className="h-4 w-4 text-primary" /> Funding & Proposals
-                <Tip>Let the community submit proposals and/or crowdfund this quest.</Tip>
+                <Handshake className="h-4 w-4 text-primary" /> {t("uiQuestBudgetWizard.fundingProposals")}
+                <Tip>{t("uiQuestBudgetWizard.letTheCommunitySubmitProposalsAnd")}</Tip>
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Open this quest to proposals or fundraising?
+                {t("uiQuestBudgetWizard.openThisQuestToProposalsOr")}
               </p>
             </div>
 
@@ -265,8 +268,8 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
               <div className="flex items-center gap-3">
                 <Switch id="bw-proposals" checked={props.openForProposals} onCheckedChange={props.setOpenForProposals} />
                 <Label htmlFor="bw-proposals" className="text-xs font-medium flex items-center gap-1">
-                  Open for proposals
-                  <Tip>Allow the community to submit proposals for this quest. You decide which to accept.</Tip>
+                  {t("uiQuestBudgetWizard.openForProposals")}
+                  <Tip>{t("uiQuestBudgetWizard.allowTheCommunityToSubmitProposals")}</Tip>
                 </Label>
               </div>
 
@@ -274,14 +277,14 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                 <div className="space-y-3 pt-1">
                   <div>
                     <Label className="text-xs flex items-center gap-1">
-                       Pot currency <Tip>Use $CTG or fiat euros to fund accepted proposals.</Tip>
+                       Pot currency <Tip>{t("uiQuestBudgetWizard.useCtgOrFiatEurosTo")}</Tip>
                     </Label>
                     <Select value={props.fundingType} onValueChange={(v) => props.setFundingType(v as "CREDITS" | "FIAT")}>
                       <SelectTrigger className="mt-1 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="CREDITS">🌱 $CTG (contribution token)</SelectItem>
+                        <SelectItem value="CREDITS">{t("uiQuestBudgetWizard.ctgContributionToken")}</SelectItem>
                         <SelectItem value="FIAT">Fiat (€)</SelectItem>
                       </SelectContent>
                     </Select>
@@ -290,7 +293,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label htmlFor="bw-creditBudget" className="text-xs flex items-center gap-1">
-                        🌱 $CTG Pool <Tip>You spend 🔷 Credits now. Contributors earn 🌱 $CTG from this pool when they complete work. Credits and $CTG are different layers — this is how contribution value gets created.</Tip>
+                        🌱 $CTG Pool <Tip>{t("uiQuestBudgetWizard.youSpendCreditsNowContributorsEarn")}</Tip>
                       </Label>
                       <Input
                         id="bw-creditBudget"
@@ -304,7 +307,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                     </div>
                     <div>
                       <Label htmlFor="bw-fundingGoal" className="text-xs flex items-center gap-1">
-                        Goal (optional) <Tip>Target amount for this quest. Purely indicative.</Tip>
+                        Goal (optional) <Tip>{t("uiQuestBudgetWizard.targetAmountForThisQuestPurely")}</Tip>
                       </Label>
                       <Input
                         id="bw-fundingGoal"
@@ -326,7 +329,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
                 <Switch id="bw-fundraising" checked={props.allowFundraising} onCheckedChange={props.setAllowFundraising} />
                 <Label htmlFor="bw-fundraising" className="text-xs font-medium flex items-center gap-1">
                   Community fundraising
-                  <Tip>Allow others to contribute Coins to this quest's budget.</Tip>
+                  <Tip>{t("uiQuestBudgetWizard.allowOthersToContributeCoinsTo")}</Tip>
                 </Label>
               </div>
             </div>
@@ -343,7 +346,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
             disabled={step === 0}
             onClick={() => setStep(step - 1)}
           >
-            <ChevronLeft className="h-3 w-3 mr-1" /> Back
+            <ChevronLeft className="h-3 w-3 mr-1" /> {t("uiQuestBudgetWizard.back")}
           </Button>
 
           {/* Summary badges */}
@@ -366,7 +369,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
             )}
             {props.openForProposals && (
               <Badge variant="outline" className="text-[10px] py-0 gap-1">
-                <Target className="h-2.5 w-2.5" /> Proposals
+                <Target className="h-2.5 w-2.5" /> {t("uiQuestBudgetWizard.proposals")}
               </Badge>
             )}
           </div>
@@ -379,7 +382,7 @@ export function QuestBudgetWizard(props: QuestBudgetWizardProps) {
             disabled={step === STEPS.length - 1}
             onClick={() => setStep(step + 1)}
           >
-            Next <ChevronRight className="h-3 w-3 ml-1" />
+            {t("uiQuestBudgetWizard.next")} <ChevronRight className="h-3 w-3 ml-1" />
           </Button>
         </div>
       </div>

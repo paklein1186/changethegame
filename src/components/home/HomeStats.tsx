@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Zap, Sprout, Shield, Compass, Trophy, Rocket, ArrowRight } from "lucide-react";
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function HomeStats({ xp, ctgBalance, guildCount, questCount, achievements, userId }: Props) {
+  const { t } = useTranslation();
   const { percentage, isComplete, completedCount, totalSteps } = useOnboardingProgress();
 
   return (
@@ -28,12 +30,12 @@ export function HomeStats({ xp, ctgBalance, guildCount, questCount, achievements
             <div className="flex items-center gap-3">
               <Rocket className="h-6 w-6 text-primary" />
               <div>
-                <h3 className="font-display font-semibold text-sm">Complete your setup</h3>
-                <p className="text-xs text-muted-foreground">{completedCount} of {totalSteps} steps done</p>
+                <h3 className="font-display font-semibold text-sm">{t("uiHomeStats.completeYourSetup")}</h3>
+                <p className="text-xs text-muted-foreground">{completedCount} of {totalSteps} {t("uiHomeStats.stepsDone")}</p>
               </div>
             </div>
             <Button size="sm" asChild>
-              <Link to="/me/onboarding">View checklist <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+              <Link to="/me/onboarding">{t("uiHomeStats.viewChecklist")} <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
             </Button>
           </div>
           <Progress value={percentage} className="h-2" />
@@ -42,10 +44,10 @@ export function HomeStats({ xp, ctgBalance, guildCount, questCount, achievements
 
       {/* Stat cards + achievements */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard icon={Zap} label="⭐ XP" value={xp} accent />
+        <StatCard icon={Zap} label={t("uiHomeStats.xp")} value={xp} accent />
         <StatCard icon={Sprout} label="🌱 $CTG" value={ctgBalance} color="emerald" />
-        <StatCard icon={Shield} label="Guilds" value={guildCount} />
-        <StatCard icon={Compass} label="Quests" value={questCount} />
+        <StatCard icon={Shield} label={t("uiHomeStats.guilds")} value={guildCount} />
+        <StatCard icon={Compass} label={t("uiHomeStats.quests")} value={questCount} />
       </div>
 
       {achievements.length > 0 && (
@@ -57,7 +59,7 @@ export function HomeStats({ xp, ctgBalance, guildCount, questCount, achievements
             </Link>
           ))}
           <Button variant="ghost" size="sm" asChild className="shrink-0">
-            <Link to={`/users/${userId}`}>View all</Link>
+            <Link to={`/users/${userId}`}>{t("uiHomeStats.viewAll")}</Link>
           </Button>
         </div>
       )}

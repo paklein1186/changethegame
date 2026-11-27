@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -10,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ResetPassword() {
+  const { t } = useTranslation();
   const { updatePassword } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,14 +26,14 @@ export default function ResetPassword() {
       return;
     }
     if (password.length < 6) {
-      toast({ title: "Password must be at least 6 characters", variant: "destructive" });
+      toast({ title: t("uiResetPassword.passwordMustBeAtLeast6"), variant: "destructive" });
       return;
     }
     setLoading(true);
     const { error } = await updatePassword(password);
     setLoading(false);
     if (error) {
-      toast({ title: "Error", description: error, variant: "destructive" });
+      toast({ title: t("uiResetPassword.error"), description: error, variant: "destructive" });
     } else {
       toast({ title: "Password updated!" });
       // Redirect based on onboarding status — profile is already loaded via auth state
@@ -46,12 +48,12 @@ export default function ResetPassword() {
           <Link to="/" className="inline-flex items-center gap-2 font-display text-2xl font-bold">
             <img src={logoImg} alt="changethegame" className="h-7 w-7" /> changethegame
           </Link>
-          <p className="text-muted-foreground mt-2">Set your new password</p>
+          <p className="text-muted-foreground mt-2">{t("uiResetPassword.setYourNewPassword")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-8 space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="password">New password</Label>
+            <Label htmlFor="password">{t("uiResetPassword.newPassword")}</Label>
             <Input
               id="password"
               type="password"
@@ -64,7 +66,7 @@ export default function ResetPassword() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirm">Confirm new password</Label>
+            <Label htmlFor="confirm">{t("uiResetPassword.confirmNewPassword")}</Label>
             <Input
               id="confirm"
               type="password"
@@ -77,7 +79,7 @@ export default function ResetPassword() {
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Lock className="h-4 w-4 mr-2" />}
-            Update password
+            {t("uiResetPassword.updatePassword")}
           </Button>
         </form>
       </motion.div>

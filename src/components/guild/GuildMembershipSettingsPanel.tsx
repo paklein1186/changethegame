@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,7 @@ interface Props {
 }
 
 export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const { rate, toEur } = useCoinsRate();
@@ -148,20 +150,20 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
       .eq("id", guildId);
 
     if (error) {
-      toast({ title: "Failed to save membership settings", variant: "destructive" });
+      toast({ title: t("uiGuildMembershipSettingsPanel.failedToSaveMembershipSettings"), variant: "destructive" });
       return;
     }
     qc.invalidateQueries({ queryKey: ["guild-settings", guildId] });
     qc.invalidateQueries({ queryKey: ["guild", guildId] });
-    toast({ title: "Membership settings saved!" });
+    toast({ title: t("uiGuildMembershipSettingsPanel.membershipSettingsSaved") });
   };
 
   return (
     <div className="space-y-6 max-w-lg">
       <div>
-        <h3 className="text-lg font-semibold mb-1">Membership & Contributions</h3>
+        <h3 className="text-lg font-semibold mb-1">{t("uiGuildMembershipSettingsPanel.membershipContributions")}</h3>
         <p className="text-sm text-muted-foreground">
-          Optional. Turn this on if you want a member layer in your guild.
+          {t("uiGuildMembershipSettingsPanel.optionalTurnThisOnIfYou")}
         </p>
       </div>
 
@@ -169,7 +171,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
       <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
         <div>
           <Label className="text-sm font-medium">Enable membership</Label>
-          <p className="text-xs text-muted-foreground">Adds a membership system to this guild</p>
+          <p className="text-xs text-muted-foreground">{t("uiGuildMembershipSettingsPanel.addsAMembershipSystemToThis")}</p>
         </div>
         <Switch checked={enableMembership} onCheckedChange={setEnableMembership} />
       </div>
@@ -182,9 +184,9 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
             <Select value={membershipStyle} onValueChange={(v) => handleStyleChange(v as MembershipStyle)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">No membership</SelectItem>
+                <SelectItem value="none">{t("uiGuildMembershipSettingsPanel.noMembership")}</SelectItem>
                 <SelectItem value="symbolic_supporter">Symbolic supporters</SelectItem>
-                <SelectItem value="core_members">Core members</SelectItem>
+                <SelectItem value="core_members">{t("uiGuildMembershipSettingsPanel.coreMembers")}</SelectItem>
                 <SelectItem value="cooperative_circle">Cooperative circle</SelectItem>
               </SelectContent>
             </Select>
@@ -196,7 +198,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
             <Select value={billingModel} onValueChange={setBillingModel}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="one_time">One-time entry fee</SelectItem>
+                <SelectItem value="one_time">{t("uiGuildMembershipSettingsPanel.oneTimeEntryFee")}</SelectItem>
                 <SelectItem value="monthly">Monthly fee, renewed automatically</SelectItem>
                 <SelectItem value="yearly">Yearly fee, renewed automatically</SelectItem>
               </SelectContent>
@@ -204,7 +206,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
           </div>
 
           <p className="text-xs text-muted-foreground -mt-2">
-            Membership fees are paid in 🟩 Coins — 1 Coin = {rate.toFixed(2)} €. Members top up their Coins from their{" "}
+            {t("uiGuildMembershipSettingsPanel.membershipFeesArePaidInCoins")} {rate.toFixed(2)} {t("uiGuildMembershipSettingsPanel.membersTopUpTheirCoinsFrom")}{" "}
             <Link to="/settings/wallet" className="text-primary underline underline-offset-2">wallet</Link>.
           </p>
 
@@ -223,26 +225,26 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
               <div className="rounded-lg border border-border bg-card p-4 space-y-4">
                 <div>
                   <Label className="text-sm font-medium mb-1 block">
-                    {isMonthly ? (yearly ? "Yearly membership price" : "Monthly membership price") : "One-time entry price"}
+                    {isMonthly ? (yearly ? "Yearly membership price" : "Monthly membership price") : t("uiGuildMembershipSettingsPanel.oneTimeEntryPrice")}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Paid in 🟩 Coins{isMonthly
+                    {t("uiGuildMembershipSettingsPanel.paidInCoins")}{isMonthly
                       ? `, every ${yearly ? "year" : "month"}, to keep the member role. Renewed automatically from the member's Coins balance, with a reminder email one week before`
-                      : " to become a member"}.
+                      : ` ${t("uiGuildMembershipSettingsPanel.toBecomeAMember")}`}.
                   </p>
                 </div>
 
                 <Select value={priceMode} onValueChange={(v) => setPriceMode(v as "fixed" | "range")}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="fixed">Fixed price — everyone pays the same</SelectItem>
-                    <SelectItem value="range">Free choice — each member picks an amount in a range</SelectItem>
+                    <SelectItem value="fixed">{t("uiGuildMembershipSettingsPanel.fixedPriceEveryonePaysTheSame")}</SelectItem>
+                    <SelectItem value="range">{t("uiGuildMembershipSettingsPanel.freeChoiceEachMemberPicksAn")}</SelectItem>
                   </SelectContent>
                 </Select>
 
                 {priceMode === "fixed" ? (
                   <div>
-                    <Label className="text-xs mb-1 block">Price (🟩 Coins{per})</Label>
+                    <Label className="text-xs mb-1 block">{t("uiGuildMembershipSettingsPanel.priceCoins")}{per})</Label>
                     <Input
                       type="number"
                       min={0}
@@ -251,7 +253,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                     />
                     {fee > 0 && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        Members pay 🟩 {fee} Coins{per} (~{toEur(fee)} €{per}).
+                        {t("uiGuildMembershipSettingsPanel.membersPay")} {fee} {t("uiGuildMembershipSettingsPanel.coins")}{per} (~{toEur(fee)} €{per}).
                       </p>
                     )}
                   </div>
@@ -259,7 +261,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                   <>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label className="text-xs mb-1 block">Minimum (🟩 Coins{per})</Label>
+                        <Label className="text-xs mb-1 block">{t("uiGuildMembershipSettingsPanel.minimumCoins")}{per})</Label>
                         <Input
                           type="number"
                           min={0}
@@ -268,7 +270,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                         />
                       </div>
                       <div>
-                        <Label className="text-xs mb-1 block">Maximum (🟩 Coins{per})</Label>
+                        <Label className="text-xs mb-1 block">{t("uiGuildMembershipSettingsPanel.maximumCoins")}{per})</Label>
                         <Input
                           type="number"
                           min={0}
@@ -279,12 +281,12 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                     </div>
                     {validRange ? (
                       <p className="text-xs text-muted-foreground">
-                        Each member chooses what they pay between 🟩 {fee} and 🟩 {feeMax} Coins{per} (
+                        {t("uiGuildMembershipSettingsPanel.eachMemberChoosesWhatTheyPay")} {fee} {t("uiGuildMembershipSettingsPanel.and")} {feeMax} {t("uiGuildMembershipSettingsPanel.coins")}{per} (
                         {toEur(fee)} € – {toEur(feeMax)} €).
                       </p>
                     ) : (
                       <p className="text-xs text-destructive">
-                        The maximum must be higher than the minimum, otherwise the price stays fixed at 🟩 {fee} Coins.
+                        {t("uiGuildMembershipSettingsPanel.theMaximumMustBeHigherThan")} {fee} {t("uiGuildMembershipSettingsPanel.coins2")}
                       </p>
                     )}
                   </>
@@ -292,7 +294,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
 
                 {isMonthly && (
                   <div>
-                    <Label className="text-xs mb-1 block">Joining fee (🟩 Coins, optional)</Label>
+                    <Label className="text-xs mb-1 block">{t("uiGuildMembershipSettingsPanel.joiningFeeCoinsOptional")}</Label>
                     <Input
                       type="number"
                       min={0}
@@ -300,7 +302,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                       onChange={(e) => setJoiningFee(parseInt(e.target.value) || 0)}
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Charged once, on top of the first {yearly ? "yearly" : "monthly"} payment
+                      {t("uiGuildMembershipSettingsPanel.chargedOnceOnTopOfThe")} {yearly ? "yearly" : "monthly"} payment
                       {joiningFee > 0 ? ` — about ${toEur(joiningFee)} €` : ""}.
                     </p>
                   </div>
@@ -312,8 +314,8 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
           {/* Application gating */}
           <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
             <div className="pr-3">
-              <Label className="text-sm font-medium">Require an approved application before paying</Label>
-              <p className="text-xs text-muted-foreground">Candidates fill the form, an admin approves, then they can pay.</p>
+              <Label className="text-sm font-medium">{t("uiGuildMembershipSettingsPanel.requireAnApprovedApplicationBeforePaying")}</Label>
+              <p className="text-xs text-muted-foreground">{t("uiGuildMembershipSettingsPanel.candidatesFillTheFormAnAdmin")}</p>
             </div>
             <Switch checked={requiresApplication} onCheckedChange={setRequiresApplication} />
           </div>
@@ -326,43 +328,43 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                 checked={membersOnlyQuests}
                 onCheckedChange={(v) => setMembersOnlyQuests(!!v)}
               />
-              <Label className="text-sm">Only members can create quests in this guild</Label>
+              <Label className="text-sm">{t("uiGuildMembershipSettingsPanel.onlyMembersCanCreateQuestsIn")}</Label>
             </div>
             <div className="flex items-center gap-2">
               <Checkbox
                 checked={membersOnlyEvents}
                 onCheckedChange={(v) => setMembersOnlyEvents(!!v)}
               />
-              <Label className="text-sm">Only members can create events in this guild</Label>
+              <Label className="text-sm">{t("uiGuildMembershipSettingsPanel.onlyMembersCanCreateEventsIn")}</Label>
             </div>
             <div className="flex items-center gap-2">
               <Checkbox
                 checked={membersOnlyVoting}
                 onCheckedChange={(v) => setMembersOnlyVoting(!!v)}
               />
-              <Label className="text-sm">Only members can participate in guild voting and governance</Label>
+              <Label className="text-sm">{t("uiGuildMembershipSettingsPanel.onlyMembersCanParticipateInGuild")}</Label>
             </div>
           </div>
 
           {/* Benefits & commitments */}
           <div>
-            <Label className="text-sm font-medium mb-1 block">What members get</Label>
+            <Label className="text-sm font-medium mb-1 block">{t("uiGuildMembershipSettingsPanel.whatMembersGet")}</Label>
             <Textarea
               value={benefitsText}
               onChange={(e) => setBenefitsText(e.target.value)}
               rows={3}
               className="resize-none"
-              placeholder="Describe what members get..."
+              placeholder={t("uiGuildMembershipSettingsPanel.describeWhatMembersGet")}
             />
           </div>
           <div>
-            <Label className="text-sm font-medium mb-1 block">What members commit to</Label>
+            <Label className="text-sm font-medium mb-1 block">{t("uiGuildMembershipSettingsPanel.whatMembersCommitTo")}</Label>
             <Textarea
               value={commitmentsText}
               onChange={(e) => setCommitmentsText(e.target.value)}
               rows={3}
               className="resize-none"
-              placeholder="Describe what members commit to..."
+              placeholder={t("uiGuildMembershipSettingsPanel.describeWhatMembersCommitTo")}
             />
           </div>
 
@@ -382,7 +384,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                   🌱 $CTG Redistribution ({redistributionPercent}%)
                 </Label>
                 <p className="text-xs text-muted-foreground mb-2">
-                  Percent of quest-earned $CTG redistributed to the guild pool
+                  {t("uiGuildMembershipSettingsPanel.percentOfQuestEarnedCtgRedistributed")}
                 </p>
                 <Slider
                   value={[redistributionPercent]}
@@ -393,9 +395,9 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                 />
               </div>
               <div>
-                <Label className="text-sm font-medium mb-1 block">XP bonus for members (%)</Label>
+                <Label className="text-sm font-medium mb-1 block">{t("uiGuildMembershipSettingsPanel.xpBonusForMembers")}</Label>
                 <p className="text-xs text-muted-foreground mb-2">
-                  XP bonus for members in guild-related quests (may be implemented gradually)
+                  {t("uiGuildMembershipSettingsPanel.xpBonusForMembersInGuild")}
                 </p>
                 <Input
                   type="number"
@@ -408,14 +410,14 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
               <div>
                 <Label className="text-sm font-medium mb-1 block">Membership duration (months)</Label>
                 <p className="text-xs text-muted-foreground mb-2">
-                  If empty, membership does not expire automatically.
+                  {t("uiGuildMembershipSettingsPanel.ifEmptyMembershipDoesNotExpire")}
                 </p>
                 <Input
                   type="number"
                   min={1}
                   value={durationMonths}
                   onChange={(e) => setDurationMonths(e.target.value)}
-                  placeholder="No expiry"
+                  placeholder={t("uiGuildMembershipSettingsPanel.noExpiry")}
                 />
               </div>
             </div>
@@ -424,7 +426,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
       )}
 
       <Button onClick={handleSave} className="w-full">
-        <Save className="h-4 w-4 mr-2" /> Save membership settings
+        <Save className="h-4 w-4 mr-2" /> {t("uiGuildMembershipSettingsPanel.saveMembershipSettings")}
       </Button>
     </div>
   );

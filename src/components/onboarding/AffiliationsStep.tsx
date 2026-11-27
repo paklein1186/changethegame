@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Globe, Linkedin, Link2, Building2, Users, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,7 @@ export function AffiliationsStep({
   selectedEntityIds,
   onToggleEntity,
 }: Props) {
+  const { t } = useTranslation();
   const [entitySearch, setEntitySearch] = useState("");
   const guildLabel = getLabel("guild.label", persona);
   const companyLabel = getLabel("company.label", persona);
@@ -74,14 +76,14 @@ export function AffiliationsStep({
       <div>
         <h2 className="font-display text-2xl font-bold">{stepTitle} 🔗</h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Where can we learn more about you?
+          {t("uiAffiliationsStep.whereCanWeLearnMoreAbout")}
         </p>
       </div>
 
       {/* Part A: Links */}
       <div className="space-y-3">
         <p className="text-xs text-muted-foreground">
-          (Optional) Add 1–3 links. We'll use them to suggest affiliations, Houses, and possible {persona === "CREATIVE" ? "skill sessions" : "services"} you could offer. You will be able to edit everything before it's saved.
+          {t("uiAffiliationsStep.optionalAdd13LinksWe")} {persona === "CREATIVE" ? "skill sessions" : "services"} {t("uiAffiliationsStep.youCouldOfferYouWillBe")}
         </p>
 
         <div>
@@ -110,7 +112,7 @@ export function AffiliationsStep({
 
         <div>
           <label className="text-sm font-medium mb-1 flex items-center gap-1.5">
-            <Link2 className="h-3.5 w-3.5" /> Other link (Instagram, GitHub, portfolio…)
+            <Link2 className="h-3.5 w-3.5" /> {t("uiAffiliationsStep.otherLinkInstagramGithubPortfolio")}
           </label>
           <Input
             value={links.other}
@@ -125,7 +127,7 @@ export function AffiliationsStep({
       <div className="space-y-3 pt-2 border-t border-border">
         <div>
           <p className="text-sm font-medium">
-            Are you already part of any {persona === "CREATIVE" ? "traditional organization, collective, or studio" : "traditional organization, guild, or collective"}?
+            {t("uiAffiliationsStep.areYouAlreadyPartOfAny")} {persona === "CREATIVE" ? t("uiAffiliationsStep.traditionalOrganizationCollectiveOrStudio") : t("uiAffiliationsStep.traditionalOrganizationGuildOrCollective")}?
           </p>
         </div>
 
@@ -135,13 +137,13 @@ export function AffiliationsStep({
               <Input
                 value={aff.name}
                 onChange={(e) => updateAffiliation(i, "name", e.target.value)}
-                placeholder={persona === "CREATIVE" ? "Studio / Collective name" : "Organization name"}
+                placeholder={persona === "CREATIVE" ? t("uiAffiliationsStep.studioCollectiveName") : t("uiAffiliationsStep.organizationName")}
                 maxLength={200}
               />
               <Input
                 value={aff.role}
                 onChange={(e) => updateAffiliation(i, "role", e.target.value)}
-                placeholder="Your role there"
+                placeholder={t("uiAffiliationsStep.yourRoleThere")}
                 maxLength={100}
               />
             </div>
@@ -152,19 +154,19 @@ export function AffiliationsStep({
         ))}
 
         <Button variant="outline" size="sm" onClick={addAffiliation} className="gap-1">
-          <Plus className="h-3.5 w-3.5" /> Add affiliation
+          <Plus className="h-3.5 w-3.5" /> {t("uiAffiliationsStep.addAffiliation")}
         </Button>
       </div>
 
       {/* Part C: Search existing entities */}
       <div className="space-y-3 pt-2 border-t border-border">
         <p className="text-sm font-medium">
-          Search for your {guildLabel.toLowerCase()} or {companyLabel.toLowerCase()} on the platform
+          {t("uiAffiliationsStep.searchForYour")} {guildLabel.toLowerCase()} or {companyLabel.toLowerCase()} {t("uiAffiliationsStep.onThePlatform")}
         </p>
         <Input
           value={entitySearch}
           onChange={(e) => setEntitySearch(e.target.value)}
-          placeholder="Search by name…"
+          placeholder={t("uiAffiliationsStep.searchByName")}
           maxLength={100}
         />
         {filteredEntities.length > 0 && (
@@ -202,7 +204,7 @@ export function AffiliationsStep({
       </div>
 
       <p className="text-xs text-muted-foreground italic">
-        We only use your links to suggest relevant info for your profile here. You stay in control and can edit or discard anything.
+        {t("uiAffiliationsStep.weOnlyUseYourLinksTo")}
       </p>
     </div>
   );

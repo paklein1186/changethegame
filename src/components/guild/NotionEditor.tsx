@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import LinkExt from "@tiptap/extension-link";
@@ -41,6 +42,7 @@ export function NotionEditor({
   content, onChange, onSave, editable = true, placeholder = "Start writing…",
   ydoc, activeUsers = [], isSaving = false,
 }: NotionEditorProps) {
+  const { t } = useTranslation();
   const contentInitialized = useRef(false);
 
   const extensions = [
@@ -188,10 +190,10 @@ export function NotionEditor({
 
           <Separator orientation="vertical" className="h-5 mx-1" />
 
-          <ToolBtn onClick={addLink} active={editor.isActive("link")} title="Add link">
+          <ToolBtn onClick={addLink} active={editor.isActive("link")} title={t("uiNotionEditor.addLink")}>
             <LinkIcon className="h-3.5 w-3.5" />
           </ToolBtn>
-          <ToolBtn onClick={addImage} title="Add image">
+          <ToolBtn onClick={addImage} title={t("uiNotionEditor.addImage")}>
             <ImageIcon className="h-3.5 w-3.5" />
           </ToolBtn>
 
@@ -243,10 +245,10 @@ export function NotionEditor({
               size="sm"
               className="h-7 px-2 text-xs text-muted-foreground"
               onClick={onSave}
-              title="Save now"
+              title={t("uiNotionEditor.saveNow")}
             >
               <Save className="h-3.5 w-3.5 mr-1" />
-              {isSaving ? "Saving…" : "Save"}
+              {isSaving ? "Saving…" : t("uiNotionEditor.save")}
             </Button>
           )}
 

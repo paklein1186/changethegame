@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CalendarClock, Check, Copy } from "lucide-react";
@@ -21,6 +22,7 @@ export function BookingLinkButton({
   variant = "outline",
   iconOnly = false,
 }: Props) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const bookUrl = getBookingUrl(serviceId);
@@ -30,14 +32,14 @@ export function BookingLinkButton({
       await navigator.clipboard.writeText(bookUrl);
       setCopied(true);
       toast({
-        title: "Booking link copied!",
+        title: t("uiBookingLinkButton.bookingLinkCopied"),
         description: serviceName
           ? `Share "${serviceName}" booking page with anyone.`
-          : "Share this booking link with anyone — guests can sign up and book.",
+          : t("uiBookingLinkButton.shareThisBookingLinkWithAnyone"),
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({ title: "Failed to copy", variant: "destructive" });
+      toast({ title: t("uiBookingLinkButton.failedToCopy"), variant: "destructive" });
     }
   };
 
@@ -46,15 +48,15 @@ export function BookingLinkButton({
       <PopoverTrigger asChild>
         <Button size={size} variant={variant}>
           <CalendarClock className="h-4 w-4" />
-          {!iconOnly && <span className="ml-1">Booking link</span>}
+          {!iconOnly && <span className="ml-1">{t("uiBookingLinkButton.bookingLink")}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="end">
         <div className="space-y-3">
           <div>
-            <p className="text-sm font-medium mb-1">Public booking page</p>
+            <p className="text-sm font-medium mb-1">{t("uiBookingLinkButton.publicBookingPage")}</p>
             <p className="text-xs text-muted-foreground">
-              Share this link with anyone — even guests who don't have an account yet.
+              {t("uiBookingLinkButton.shareThisLinkWithAnyoneEven")}
             </p>
           </div>
           <div className="flex gap-2">

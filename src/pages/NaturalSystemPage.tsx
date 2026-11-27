@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -91,6 +92,7 @@ function useTerritoryNames(territoryIds: string[]) {
 }
 
 export default function NaturalSystemPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -150,8 +152,8 @@ export default function NaturalSystemPage() {
       <PageShell>
         <div className="max-w-5xl mx-auto py-20 text-center">
           <Leaf className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-foreground mb-2">Natural System not found</h1>
-          <p className="text-muted-foreground">This system may have been removed or doesn't exist.</p>
+          <h1 className="text-xl font-bold text-foreground mb-2">{t("uiNaturalSystemPage.naturalSystemNotFound")}</h1>
+          <p className="text-muted-foreground">{t("uiNaturalSystemPage.thisSystemMayHaveBeenRemoved")}</p>
         </div>
       </PageShell>
     );
@@ -166,7 +168,7 @@ export default function NaturalSystemPage() {
         onClick={() => navigate(-1)}
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
-        <ArrowLeft className="h-4 w-4" /> Back
+        <ArrowLeft className="h-4 w-4" /> {t("uiNaturalSystemPage.back")}
       </button>
 
       {/* ═══════════════════════════════════════════════════════
@@ -219,7 +221,7 @@ export default function NaturalSystemPage() {
 
         <div className="flex flex-wrap gap-2 mt-4">
           <Button size="sm" variant="outline" onClick={() => setLinkModalOpen(true)}>
-            <Link2 className="h-4 w-4 mr-1" /> Link to unit…
+            <Link2 className="h-4 w-4 mr-1" /> {t("uiNaturalSystemPage.linkToUnit")}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setConfigOpen(true)}>
             <Settings className="h-4 w-4 mr-1" /> Configure live data
@@ -227,7 +229,7 @@ export default function NaturalSystemPage() {
           {ns.territory_id && (
             <Link to={`/territories/${ns.territory_id}?tab=living`}>
               <Button size="sm" variant="ghost">
-                <TreePine className="h-4 w-4 mr-1" /> Territory Living dashboard
+                <TreePine className="h-4 w-4 mr-1" /> {t("uiNaturalSystemPage.territoryLivingDashboard")}
               </Button>
             </Link>
           )}
@@ -239,7 +241,7 @@ export default function NaturalSystemPage() {
          ═══════════════════════════════════════════════════════ */}
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="overview">{t("uiNaturalSystemPage.overview")}</TabsTrigger>
           <TabsTrigger value="ecosystem">Ecosystem</TabsTrigger>
         </TabsList>
 
@@ -296,7 +298,7 @@ export default function NaturalSystemPage() {
                     <BarChart3 className="h-4 w-4 text-primary" /> Data Sources
                   </h3>
                   {(metrics ?? []).length === 0 ? (
-                    <p className="text-xs text-muted-foreground">No data points recorded yet.</p>
+                    <p className="text-xs text-muted-foreground">{t("uiNaturalSystemPage.noDataPointsRecordedYet")}</p>
                   ) : (
                     <div className="space-y-2">
                       {(metrics ?? []).map(m => (
@@ -334,19 +336,19 @@ export default function NaturalSystemPage() {
               <Card>
                 <CardContent className="p-5 space-y-4">
                   <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-primary" /> Stewardship Activity
+                    <Activity className="h-4 w-4 text-primary" /> {t("uiNaturalSystemPage.stewardshipActivity")}
                   </h3>
                   <div className="grid grid-cols-3 gap-4">
-                    <Stat label="Eco Quests" value={(quests ?? []).length} />
-                    <Stat label="Completed" value={completedQuests.length} accent="text-success" />
-                    <Stat label="XP Earned" value={totalXp} />
+                    <Stat label={t("uiNaturalSystemPage.ecoQuests")} value={(quests ?? []).length} />
+                    <Stat label={t("uiNaturalSystemPage.completed")} value={completedQuests.length} accent="text-success" />
+                    <Stat label={t("uiNaturalSystemPage.xpEarned")} value={totalXp} />
                   </div>
                   {totalCredits > 0 && (
-                    <p className="text-xs text-muted-foreground">Credits budgeted: <span className="font-medium">{totalCredits} ¢</span></p>
+                    <p className="text-xs text-muted-foreground">{t("uiNaturalSystemPage.creditsBudgeted")} <span className="font-medium">{totalCredits} ¢</span></p>
                   )}
                   {(quests ?? []).length > 0 && (
                     <div className="space-y-2 mt-2">
-                      <p className="text-[11px] font-medium text-muted-foreground">Recent quests</p>
+                      <p className="text-[11px] font-medium text-muted-foreground">{t("uiNaturalSystemPage.recentQuests")}</p>
                       {(quests ?? []).slice(0, 5).map(q => (
                         <Link key={q.id} to={`/quests/${q.id}`} className="flex items-center gap-2 rounded-lg p-2 hover:bg-muted/50 transition-colors">
                           <div className="flex-1 min-w-0">
@@ -406,7 +408,7 @@ export default function NaturalSystemPage() {
                     </div>
                   )}
                   {(stewardEdges ?? []).length === 0 && (profiles ?? []).length === 0 && (guilds ?? []).length === 0 && (
-                    <p className="text-xs text-muted-foreground">No stewards linked yet.</p>
+                    <p className="text-xs text-muted-foreground">{t("uiNaturalSystemPage.noStewardsLinkedYet")}</p>
                   )}
                 </CardContent>
               </Card>
@@ -433,7 +435,7 @@ export default function NaturalSystemPage() {
                     return (
                       <Link key={l.id} to={`/territories/${l.linked_id}`}>
                         <Badge variant="outline" className="gap-1 cursor-pointer hover:bg-muted/50">
-                          <MapPin className="h-3 w-3" /> {tName || "Territory"}
+                          <MapPin className="h-3 w-3" /> {tName || t("uiNaturalSystemPage.territory")}
                         </Badge>
                       </Link>
                     );

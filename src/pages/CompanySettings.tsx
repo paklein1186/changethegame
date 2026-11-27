@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { notifyEntityFollowersAndMembers } from "@/lib/notifyEntityActivity";
 import { useState, useEffect } from "react";
@@ -57,12 +58,12 @@ import { useTranslation } from "react-i18next";
 import { translateCompanySize } from "@/lib/entityLabels";
 
 const TABS = [
-  { key: "identity", label: "Identity & Profile", icon: Shield },
+  { key: "identity", get label() { return i18n.t("uiCompanySettings.identityProfile"); }, icon: Shield },
   { key: "membership", label: "Membership Policy", icon: ClipboardList },
   { key: "applications", label: "Applications", icon: Users },
-  { key: "members", label: "Members & Roles", icon: Users },
-  { key: "roles", label: "Custom Roles", icon: Tag },
-  { key: "quests", label: "Quests", icon: Zap },
+  { key: "members", get label() { return i18n.t("uiCompanySettings.membersRoles"); }, icon: Users },
+  { key: "roles", get label() { return i18n.t("uiCompanySettings.customRoles"); }, icon: Tag },
+  { key: "quests", get label() { return i18n.t("uiCompanySettings.quests"); }, icon: Zap },
   { key: "activity", label: "Services & Bookings", icon: Briefcase },
   { key: "services-visibility", label: "Services Display", icon: ShoppingBag },
   { key: "availability", label: "Availability", icon: CalendarDays },
@@ -73,13 +74,14 @@ const TABS = [
 ];
 
 export default function CompanySettings() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data: company, isLoading } = useCompanyById(id);
   const { data: membersData } = useCompanyMembersWithProfiles(id);
   const currentUser = useCurrentUser();
 
-  if (isLoading) return <PageShell><FrenchTextOverlay><p>Loading…</p></FrenchTextOverlay></PageShell>;
-  if (!company) return <PageShell><FrenchTextOverlay><p>Traditional Organization not found.</p></FrenchTextOverlay></PageShell>;
+  if (isLoading) return <PageShell><FrenchTextOverlay><p>{t("uiCompanySettings.loading")}</p></FrenchTextOverlay></PageShell>;
+  if (!company) return <PageShell><FrenchTextOverlay><p>{t("uiCompanySettings.traditionalOrganizationNotFound")}</p></FrenchTextOverlay></PageShell>;
 
   // Check permission: must be admin member or global admin
   const members = membersData || [];
@@ -88,7 +90,7 @@ export default function CompanySettings() {
   const isAdmin = memberRole === "admin" || memberRole === "owner" || memberRole === "ADMIN" || checkIsGlobalAdmin(currentUser.email);
 
   if (!isAdmin) {
-    return <PageShell><FrenchTextOverlay><p>You must be an organization admin to access settings.</p></FrenchTextOverlay></PageShell>;
+    return <PageShell><FrenchTextOverlay><p>{t("uiCompanySettings.youMustBeAnOrganizationAdmin")}</p></FrenchTextOverlay></PageShell>;
   }
 
   return <CompanySettingsInner companyId={company.id} company={company} />;
@@ -143,11 +145,11 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
   const inviteMember = async (selectedUserId: string) => {
     if (!selectedUserId) return;
     const already = members.some((m: any) => m.user_id === selectedUserId);
-    if (already) { toast({ title: "Already a member", variant: "destructive" }); return; }
+    if (already) { toast({ title: t("uiCompanySettings.alreadyAMember"), variant: "destructive" }); return; }
     const { error } = await supabase.from("company_members").insert({
       company_id: companyId, user_id: selectedUserId, role: "member",
     });
-    if (error) { toast({ title: "Failed to add member", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiCompanySettings.failedToAddMember"), variant: "destructive" }); return; }
     sendInviteNotification({ invitedUserId: selectedUserId, inviterName: currentUser.name, entityType: "company", entityId: companyId, entityName: company?.name || "Organization" });
     setInviteOpen(false);
     qc.invalidateQueries({ queryKey: ["company-members", companyId] });
@@ -156,13 +158,13 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
       notifyEntityFollowersAndMembers({
         entityType: "COMPANY", entityId: companyId, entityName: company.name,
         actorUserId: currentUser.id, notifType: "FOLLOWED_ENTITY_NEW_MEMBER",
-        title: "New member joined an organization you follow",
+        title: t("uiCompanySettings.newMemberJoinedAnOrganizationYou"),
         body: `${company.name} has a new member`,
         deepLinkUrl: `/companies/${companyId}`,
         followersOnly: true,
       });
     }
-    toast({ title: "Member added!" });
+    toast({ title: t("uiCompanySettings.memberAdded") });
   };
 
   const promoteMember = async (memberId: string) => {
@@ -170,7 +172,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
     await supabase.from("company_members").update({ role: "admin" as any }).eq("id", memberId);
     if (gm) notifyGuildRoleChanged({ guildId: companyId, userId: gm.user_id, newRole: "Admin" });
     qc.invalidateQueries({ queryKey: ["company-members", companyId] });
-    toast({ title: "Member promoted to Admin" });
+    toast({ title: t("uiCompanySettings.memberPromotedToAdmin") });
   };
 
   const demoteMember = async (memberId: string) => {
@@ -178,13 +180,13 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
     if (!gm) return;
     const admins = members.filter((m: any) => m.role === "admin" || m.role === "ADMIN" || m.role === "owner");
     if (admins.length <= 1) {
-      toast({ title: "Cannot demote", description: "At least one admin must exist.", variant: "destructive" });
+      toast({ title: "Cannot demote", description: t("uiCompanySettings.atLeastOneAdminMustExist"), variant: "destructive" });
       return;
     }
     await supabase.from("company_members").update({ role: "member" as any }).eq("id", memberId);
     notifyGuildRoleChanged({ guildId: companyId, userId: gm.user_id, newRole: "Member" });
     qc.invalidateQueries({ queryKey: ["company-members", companyId] });
-    toast({ title: "Member demoted to Member" });
+    toast({ title: t("uiCompanySettings.memberDemotedToMember") });
   };
 
   const removeMember = async (memberId: string) => {
@@ -192,11 +194,11 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
     if (!gm || gm.user_id === currentUser.id) return;
     if (gm.role === "admin" || gm.role === "ADMIN" || gm.role === "owner") {
       const admins = members.filter((m: any) => m.role === "admin" || m.role === "ADMIN" || m.role === "owner");
-      if (admins.length <= 1) { toast({ title: "Cannot remove the last admin", variant: "destructive" }); return; }
+      if (admins.length <= 1) { toast({ title: t("uiCompanySettings.cannotRemoveTheLastAdmin"), variant: "destructive" }); return; }
     }
     await supabase.from("company_members").delete().eq("id", memberId);
     qc.invalidateQueries({ queryKey: ["company-members", companyId] });
-    toast({ title: "Member excluded" });
+    toast({ title: t("uiCompanySettings.memberExcluded") });
   };
 
   // ── Handlers ──
@@ -245,7 +247,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
         followersOnly: true,
       });
     }
-    toast({ title: "Organization profile updated!" });
+    toast({ title: t("uiCompanySettings.organizationProfileUpdated") });
   };
 
   // ── Booking stats ──
@@ -259,14 +261,14 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
   return (
     <PageShell><FrenchTextOverlay>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/companies/${companyId}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to organization</Link>
+        <Link to={`/companies/${companyId}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCompanySettings.backToOrganization")}</Link>
       </Button>
 
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           {company.logo_url && <img src={company.logo_url} alt="" className="h-10 w-10 rounded-lg" />}
           <div>
-            <h1 className="font-display text-2xl font-bold">Organization Settings</h1>
+            <h1 className="font-display text-2xl font-bold">{t("uiCompanySettings.organizationSettings")}</h1>
             <p className="text-sm text-muted-foreground">{company.name}</p>
           </div>
         </div>
@@ -299,10 +301,10 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                 <div className="space-y-5 max-w-lg">
                   <Section title="Organization Identity" icon={<Building2 className="h-5 w-5" />}>
                     <div className="space-y-4">
-                      <div><label className="text-sm font-medium mb-1 block">Name</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiCompanySettings.name")}</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
                       <ImageUpload label="Logo" currentImageUrl={logoUrl || undefined} onChange={(url) => setLogoUrl(url ?? "")} aspectRatio="1/1" description="Square logo, 256×256 recommended" />
                       <ImageUpload label="Banner (optional)" currentImageUrl={bannerUrl || undefined} onChange={(url) => setBannerUrl(url ?? "")} aspectRatio="16/9" description="Wide banner, 1200×400 recommended" />
-                      <div><label className="text-sm font-medium mb-1 block">Description</label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} className="resize-none min-h-[120px]" /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiCompanySettings.description")}</label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} className="resize-none min-h-[120px]" /></div>
                       <div className="grid grid-cols-2 gap-3">
                         <div><label className="text-sm font-medium mb-1 block">Sector</label><Input value={sector} onChange={(e) => setSector(e.target.value)} maxLength={50} /></div>
                         <div><label className="text-sm font-medium mb-1 block">{t("companySize.sizeLabel")}</label>
@@ -323,9 +325,9 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
 
                   <Separator />
 
-                  <Section title="Topics" icon={<Hash className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.topics")} icon={<Hash className="h-5 w-5" />}>
                     <SearchableTagPicker
-                      label="Topics"
+                      label={t("uiCompanySettings.topics")}
                       items={(allTopics || []).map((t: any) => ({ id: t.id, name: t.name }))}
                       selectedIds={selectedTopics}
                       onToggle={toggleTopic}
@@ -334,9 +336,9 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                     />
                   </Section>
 
-                  <Section title="Territories" icon={<MapPin className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.territories")} icon={<MapPin className="h-5 w-5" />}>
                     <SearchableTagPicker
-                      label="Territories"
+                      label={t("uiCompanySettings.territories")}
                       items={(allTerritories || []).map((t: any) => ({ id: t.id, name: t.name, subtitle: (t.level || "").toLowerCase() }))}
                       selectedIds={selectedTerritories}
                       onToggle={toggleTerritory}
@@ -345,7 +347,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                     />
                   </Section>
 
-                  <Button onClick={handleSaveIdentity} className="w-full"><Save className="h-4 w-4 mr-2" /> Save identity</Button>
+                  <Button onClick={handleSaveIdentity} className="w-full"><Save className="h-4 w-4 mr-2" /> {t("uiCompanySettings.saveIdentity")}</Button>
 
                   <Separator />
 
@@ -359,7 +361,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                         else if (key === "instagramUrl") setCompanyInstagramUrl(value);
                       }}
                     />
-                    <p className="text-xs text-muted-foreground mt-2">Links are saved when you click "Save identity" above.</p>
+                    <p className="text-xs text-muted-foreground mt-2">{t("uiCompanySettings.linksAreSavedWhenYouClick")}</p>
                   </Section>
                 </div>
               )}
@@ -391,21 +393,21 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
               {/* ── Members & Roles ── */}
               {activeTab === "members" && (
                 <div className="space-y-6 max-w-lg">
-                  <Section title="Members & Roles" icon={<Users className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.membersRoles")} icon={<Users className="h-5 w-5" />}>
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-sm text-muted-foreground">{members.length} member{members.length !== 1 ? "s" : ""}</p>
                       <div className="flex items-center gap-2">
                         <InviteLinkButton entityType="company" entityId={companyId} entityName={company?.name || "Organization"} />
                         <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
                         <DialogTrigger asChild>
-                          <Button size="sm"><UserPlus className="h-4 w-4 mr-1" /> Invite</Button>
+                          <Button size="sm"><UserPlus className="h-4 w-4 mr-1" /> {t("uiCompanySettings.invite")}</Button>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-xl overflow-visible">
-                          <DialogHeader><DialogTitle>Invite a member</DialogTitle></DialogHeader>
+                          <DialogHeader><DialogTitle>{t("uiCompanySettings.inviteAMember")}</DialogTitle></DialogHeader>
                           <div className="space-y-3 mt-2">
                             <UserSearchInput
                               onSelect={(user) => inviteMember(user.user_id)}
-                              placeholder="Type a member name…"
+                              placeholder={t("uiCompanySettings.typeAMemberName")}
                               excludeUserIds={members.map((m: any) => m.user_id)}
                             />
                           </div>
@@ -414,7 +416,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                       </div>
                     </div>
                     {members.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">No members yet.</p>
+                      <p className="text-sm text-muted-foreground">{t("uiCompanySettings.noMembersYet")}</p>
                     ) : (
                       <div className="space-y-2">
                         {members.map((m: any) => {
@@ -430,7 +432,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                                 <div className="flex items-center gap-2">
                                   <p className="font-medium text-sm truncate">{m.user?.name || "Unknown"}</p>
                                    {isAdminRole && (
-                                     <Badge variant="secondary" className="text-xs gap-1"><Crown className="h-3 w-3" /> Admin</Badge>
+                                     <Badge variant="secondary" className="text-xs gap-1"><Crown className="h-3 w-3" /> {t("uiCompanySettings.admin")}</Badge>
                                    )}
                                    {getRolesForUser(m.user_id).map((r: any) => (
                                      <Badge key={r.id} className="text-[10px] h-5 text-white border-0" style={{ backgroundColor: r.color }}>{r.name}</Badge>
@@ -441,15 +443,15 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                               {!isSelf && (
                                 <div className="flex items-center gap-1">
                                   {!isAdminRole ? (
-                                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Promote to Admin" onClick={() => promoteMember(m.id)}>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8" title={t("uiCompanySettings.promoteToAdmin")} onClick={() => promoteMember(m.id)}>
                                       <ChevronUp className="h-4 w-4 text-primary" />
                                     </Button>
                                   ) : (
-                                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Demote to Member" onClick={() => demoteMember(m.id)}>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8" title={t("uiCompanySettings.demoteToMember")} onClick={() => demoteMember(m.id)}>
                                       <ChevronDown className="h-4 w-4 text-muted-foreground" />
                                     </Button>
                                   )}
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" title="Exclude member" onClick={() => removeMember(m.id)}>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" title={t("uiCompanySettings.excludeMember")} onClick={() => removeMember(m.id)}>
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
                                 </div>
@@ -475,7 +477,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                 <div className="space-y-4">
                   <Section title={`Organization Quests (${quests.length})`} icon={<Zap className="h-5 w-5" />}><span /></Section>
                   {quests.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No quests posted by this organization yet.</p>
+                    <p className="text-sm text-muted-foreground">{t("uiCompanySettings.noQuestsPostedByThisOrganization")}</p>
                   ) : (
                     <div className="space-y-3">
                       {quests.map((quest: any) => (
@@ -498,7 +500,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
               {/* ── Services & Bookings ── */}
               {activeTab === "activity" && (
                 <div className="space-y-6">
-                  <Section title="Booking Activity" icon={<Briefcase className="h-5 w-5" />}>
+                  <Section title={t("uiCompanySettings.bookingActivity")} icon={<Briefcase className="h-5 w-5" />}>
                     <div className="grid gap-4 md:grid-cols-3 mb-4">
                       <div className="rounded-lg border border-border bg-card p-4 text-center">
                         <p className="text-2xl font-bold text-primary">{bookings.length}</p>
@@ -517,13 +519,13 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
 
                   <Section title="Services ({services.length})" icon={<Briefcase className="h-5 w-5" />}>
                     {services.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">No services yet.</p>
+                      <p className="text-sm text-muted-foreground">{t("uiCompanySettings.noServicesYet")}</p>
                     ) : (
                       <div className="space-y-2">
                         {services.map((svc: any) => (
                           <Link key={svc.id} to={`/services/${svc.id}`} className="block rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-all">
                             <p className="font-medium text-sm">{svc.title}</p>
-                            <p className="text-xs text-muted-foreground">{svc.is_draft ? "Draft" : "Active"} · €{((svc.price_amount || 0) / 100).toFixed(2)}</p>
+                            <p className="text-xs text-muted-foreground">{svc.is_draft ? t("uiCompanySettings.draft") : t("uiCompanySettings.active")} · €{((svc.price_amount || 0) / 100).toFixed(2)}</p>
                           </Link>
                         ))}
                       </div>
@@ -543,7 +545,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                 <div className="space-y-5 max-w-lg">
                   <Section title="Unit Availability" icon={<CalendarDays className="h-5 w-5" />}>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Configure when this organization is available for bookings. This schedule applies to all organization-hosted services.
+                      {t("uiCompanySettings.configureWhenThisOrganizationIsAvailable")}
                     </p>
                     <UnitAvailabilityEditor unitType="COMPANY" unitId={companyId} />
                   </Section>
@@ -554,7 +556,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
               {activeTab === "documents" && (
                 <div className="space-y-6 max-w-lg">
                   <Section title="Organization Documents" icon={<Briefcase className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-4">Upload documents, contracts, and resources for your organization.</p>
+                    <p className="text-sm text-muted-foreground mb-4">{t("uiCompanySettings.uploadDocumentsContractsAndResourcesFor")}</p>
                     <AttachmentList targetType={AttachmentTargetType.COMPANY} targetId={companyId} />
                     <div className="mt-4">
                       <AttachmentUpload targetType={AttachmentTargetType.COMPANY} targetId={companyId} />
@@ -571,7 +573,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
                       <CreditCard className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
                       <h4 className="font-display text-lg font-semibold mb-1">Coming soon</h4>
                       <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                        Organization-specific subscription plans, billing management, and team seats will be available here.
+                        {t("uiCompanySettings.organizationSpecificSubscriptionPlansBillingManagement")}
                       </p>
                     </div>
                   </Section>
@@ -602,6 +604,7 @@ function CompanySettingsInner({ companyId, company }: { companyId: string; compa
 
 // ─── Services Visibility Tab ─────────────────────────────────
 function CompanyServicesVisibilityTab({ companyId }: { companyId: string }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -704,7 +707,7 @@ function CompanyServicesVisibilityTab({ companyId }: { companyId: string }) {
         { onConflict: "company_id,service_id" }
       );
     if (error) {
-      toast({ title: "Failed to update visibility", variant: "destructive" });
+      toast({ title: t("uiCompanySettings.failedToUpdateVisibility"), variant: "destructive" });
       return;
     }
     refetchVis();
@@ -716,12 +719,12 @@ function CompanyServicesVisibilityTab({ companyId }: { companyId: string }) {
 
   return (
     <div className="space-y-5 max-w-lg">
-      <Section title="Member Services Display" icon={<ShoppingBag className="h-5 w-5" />}>
+      <Section title={t("uiCompanySettings.memberServicesDisplay")} icon={<ShoppingBag className="h-5 w-5" />}>
         <p className="text-sm text-muted-foreground mb-4">
-          Services from members with <strong>Admin</strong> or <strong>Operations</strong> roles are eligible to appear on your organization page. Toggle each service on or off.
+          {t("uiCompanySettings.servicesFromMembersWith")} <strong>{t("uiCompanySettings.admin")}</strong> or <strong>Operations</strong> {t("uiCompanySettings.rolesAreEligibleToAppearOn")}
         </p>
         {services.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No eligible member services found. Assign the <strong>Admin</strong> or <strong>Operations</strong> role to members in the Custom Roles tab to display their services.</p>
+          <p className="text-sm text-muted-foreground">{t("uiCompanySettings.noEligibleMemberServicesFoundAssign")} <strong>{t("uiCompanySettings.admin")}</strong> or <strong>Operations</strong> {t("uiCompanySettings.roleToMembersInTheCustom")}</p>
         ) : (
           <div className="space-y-2">
             {services.map((svc) => {

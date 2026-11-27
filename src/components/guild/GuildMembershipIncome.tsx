@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export function GuildMembershipIncome({ guildId }: Props) {
+  const { t } = useTranslation();
   const { data, isLoading } = useQuery({
     queryKey: ["guild-income", guildId],
     queryFn: async () => {
@@ -58,16 +60,16 @@ export function GuildMembershipIncome({ guildId }: Props) {
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-lg border border-border p-3 text-center">
             <p className="text-2xl font-bold">🟩 {data?.coins ?? 0}</p>
-            <p className="text-[10px] text-muted-foreground">Coins received</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildMembershipIncome.coinsReceived")}</p>
           </div>
           <div className="rounded-lg border border-border p-3 text-center">
             <p className="text-2xl font-bold">🔷 {data?.credits ?? 0}</p>
-            <p className="text-[10px] text-muted-foreground">Credits received</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildMembershipIncome.creditsReceived")}</p>
           </div>
         </div>
 
         {!data?.list?.length ? (
-          <p className="text-xs text-muted-foreground">No membership payment received yet.</p>
+          <p className="text-xs text-muted-foreground">{t("uiGuildMembershipIncome.noMembershipPaymentReceivedYet")}</p>
         ) : (
           <div className="space-y-2">
             {data.list.map((t: any) => (

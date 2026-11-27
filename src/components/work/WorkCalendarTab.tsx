@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -74,6 +75,7 @@ interface CalendarEvent {
 }
 
 export function WorkCalendarTab() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -269,7 +271,7 @@ export function WorkCalendarTab() {
       const provider = (ext.calendar_connections as any)?.provider || "google";
       items.push({
         id: `ext-${ext.id}`,
-        title: ext.summary || "(No title)",
+        title: ext.summary || t("uiWorkCalendarTab.noTitle"),
         date: ext.start_at,
         endDate: ext.end_at,
         durationMinutes: durationMin,
@@ -425,7 +427,7 @@ export function WorkCalendarTab() {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={navigateBack}>← Previous</Button>
           <h3 className="font-display font-semibold text-lg whitespace-nowrap">{headerLabel}</h3>
-          <Button variant="ghost" size="sm" onClick={navigateForward}>Next →</Button>
+          <Button variant="ghost" size="sm" onClick={navigateForward}>{t("uiWorkCalendarTab.next")}</Button>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={() => setSyncModalOpen(true)}>
@@ -525,7 +527,7 @@ export function WorkCalendarTab() {
           <Clock className="h-4 w-4 text-primary" /> Upcoming
         </h4>
         {filteredEvents.filter((e) => new Date(e.date) >= new Date()).length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-8">No upcoming events or rituals you're attending.</p>
+          <p className="text-sm text-muted-foreground text-center py-8">{t("uiWorkCalendarTab.noUpcomingEventsOrRitualsYou")}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {filteredEvents.filter((e) => new Date(e.date) >= new Date()).slice(0, 12).map((evt) => {
@@ -583,12 +585,12 @@ export function WorkCalendarTab() {
                       <div className="flex-1" />
                       {evt.type === "ritual" && evt.occurrenceId ? (
                         <Button size="sm" variant="default" className="h-7 text-xs gap-1" onClick={() => navigate(`/ritual-call/${evt.occurrenceId}`)}>
-                          <Video className="h-3 w-3" /> Join
+                          <Video className="h-3 w-3" /> {t("uiWorkCalendarTab.join")}
                         </Button>
                       ) : evt.visioLink ? (
                         <Button size="sm" variant="default" className="h-7 text-xs gap-1" asChild>
                           <a href={evt.visioLink} target="_blank" rel="noopener noreferrer">
-                            <Video className="h-3 w-3" /> Join
+                            <Video className="h-3 w-3" /> {t("uiWorkCalendarTab.join")}
                           </a>
                         </Button>
                       ) : null}
@@ -668,7 +670,7 @@ export function WorkCalendarTab() {
                       onClick={() => setSelectedEvent(null)}
                     >
                       {evt.entityType === "guild" ? <Shield className="h-3.5 w-3.5" /> : <Compass className="h-3.5 w-3.5" />}
-                      Go to {evt.entityName}
+                      {t("uiWorkCalendarTab.goTo")} {evt.entityName}
                     </Link>
                   )}
                 </div>
@@ -686,12 +688,12 @@ export function WorkCalendarTab() {
                   <div className="flex-1" />
                   {evt.type === "ritual" && evt.occurrenceId ? (
                     <Button size="sm" variant="default" className="text-xs gap-1" onClick={() => { setSelectedEvent(null); navigate(`/ritual-call/${evt.occurrenceId}`); }}>
-                      <Video className="h-3.5 w-3.5" /> Join call
+                      <Video className="h-3.5 w-3.5" /> {t("uiWorkCalendarTab.joinCall")}
                     </Button>
                   ) : evt.visioLink ? (
                     <Button size="sm" variant="default" className="text-xs gap-1" asChild>
                       <a href={evt.visioLink} target="_blank" rel="noopener noreferrer">
-                        <Video className="h-3.5 w-3.5" /> Join call
+                        <Video className="h-3.5 w-3.5" /> {t("uiWorkCalendarTab.joinCall")}
                       </a>
                     </Button>
                   ) : null}
@@ -708,17 +710,17 @@ export function WorkCalendarTab() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CalendarPlus className="h-5 w-5 text-primary" />
-              Sync with your calendar
+              {t("uiWorkCalendarTab.syncWithYourCalendar")}
             </DialogTitle>
             <DialogDescription>
-              Import events from your external calendars, or export your CTG events via ICS feeds.
+              {t("uiWorkCalendarTab.importEventsFromYourExternalCalendars")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-5 mt-2">
             {/* Existing Google/Outlook sync */}
             <div>
-              <h4 className="text-sm font-medium mb-2">Import from external calendar</h4>
+              <h4 className="text-sm font-medium mb-2">{t("uiWorkCalendarTab.importFromExternalCalendar")}</h4>
               <CalendarSyncTab />
             </div>
 
@@ -726,14 +728,14 @@ export function WorkCalendarTab() {
 
             {/* ICS export feeds */}
             <div>
-              <h4 className="text-sm font-medium mb-2">Subscribe from your calendar (ICS)</h4>
+              <h4 className="text-sm font-medium mb-2">{t("uiWorkCalendarTab.subscribeFromYourCalendarIcs")}</h4>
               <IcsFeedsManager compact />
               <Link
                 to="/me?tab=calendar"
                 className="text-xs text-primary hover:underline mt-2 inline-block"
                 onClick={() => setSyncModalOpen(false)}
               >
-                Advanced options → Settings
+                {t("uiWorkCalendarTab.advancedOptionsSettings")}
               </Link>
             </div>
           </div>

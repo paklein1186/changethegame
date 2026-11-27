@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Copy, Check, Play, Loader2, Globe, Code, Zap, Shield } from "lucide-react";
@@ -145,13 +146,14 @@ const reply = \`Processed: \${userMsg} (from \${unitType})\`;
 return { reply };`;
 
 export default function WebhookSpecPage() {
+  const { t } = useTranslation();
   const [testUrl, setTestUrl] = useState("");
   const [testSecret, setTestSecret] = useState("");
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
 
   const runTest = async () => {
-    if (!testUrl.trim()) { toast.error("Enter a webhook URL"); return; }
+    if (!testUrl.trim()) { toast.error(t("uiWebhookSpecPage.enterAWebhookUrl")); return; }
     setTesting(true);
     setTestResult(null);
     try {
@@ -192,7 +194,7 @@ export default function WebhookSpecPage() {
     <PageShell>
       <div className="max-w-3xl mx-auto">
         <Button variant="ghost" size="sm" asChild className="mb-4">
-          <Link to="/agents"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Agents</Link>
+          <Link to="/agents"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiWebhookSpecPage.backToAgents")}</Link>
         </Button>
 
         <div className="mb-8">
@@ -200,7 +202,7 @@ export default function WebhookSpecPage() {
             <Globe className="h-7 w-7 text-primary" /> Webhook Agent Specification
           </h1>
           <p className="text-muted-foreground">
-            Build your own agent backend. Your server receives chat messages and returns responses — either as JSON or as an SSE stream.
+            {t("uiWebhookSpecPage.buildYourOwnAgentBackendYour")}
           </p>
         </div>
 
@@ -213,8 +215,8 @@ export default function WebhookSpecPage() {
           </Card>
           <Card className="p-4 text-center">
             <Zap className="h-5 w-5 mx-auto mb-2 text-primary" />
-            <p className="text-sm font-medium">JSON or SSE</p>
-            <p className="text-xs text-muted-foreground">Simple response or stream</p>
+            <p className="text-sm font-medium">{t("uiWebhookSpecPage.jsonOrSse")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiWebhookSpecPage.simpleResponseOrStream")}</p>
           </Card>
           <Card className="p-4 text-center">
             <Shield className="h-5 w-5 mx-auto mb-2 text-primary" />
@@ -225,17 +227,17 @@ export default function WebhookSpecPage() {
 
         {/* Request Format */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold mb-1">Request Format</h2>
+          <h2 className="text-lg font-bold mb-1">{t("uiWebhookSpecPage.requestFormat")}</h2>
           <p className="text-sm text-muted-foreground mb-3">
-            Your webhook receives a <Badge variant="outline" className="text-[10px] mx-0.5">POST</Badge> request with the following JSON body:
+            {t("uiWebhookSpecPage.yourWebhookReceivesA")} <Badge variant="outline" className="text-[10px] mx-0.5">POST</Badge> {t("uiWebhookSpecPage.requestWithTheFollowingJsonBody")}
           </p>
           <CodeBlock code={REQUEST_EXAMPLE} language="JSON" />
 
           <div className="mt-4 rounded-lg border border-border bg-muted/30 p-4 text-sm space-y-2">
-            <p className="font-semibold text-foreground">Headers sent with every request:</p>
+            <p className="font-semibold text-foreground">{t("uiWebhookSpecPage.headersSentWithEveryRequest")}</p>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li><code className="bg-muted px-1 py-0.5 rounded text-foreground">Content-Type: application/json</code></li>
-              <li><code className="bg-muted px-1 py-0.5 rounded text-foreground">X-Webhook-Secret: &lt;your secret&gt;</code> — only if you configured a webhook secret on the agent</li>
+              <li><code className="bg-muted px-1 py-0.5 rounded text-foreground">{t("uiWebhookSpecPage.xWebhookSecretYourSecret")}</code> {t("uiWebhookSpecPage.onlyIfYouConfiguredAWebhook")}</li>
             </ul>
           </div>
         </section>
@@ -249,7 +251,7 @@ export default function WebhookSpecPage() {
                 <tr className="bg-muted/50 text-muted-foreground">
                   <th className="text-left p-3 font-medium">Field</th>
                   <th className="text-left p-3 font-medium">Type</th>
-                  <th className="text-left p-3 font-medium">Description</th>
+                  <th className="text-left p-3 font-medium">{t("uiWebhookSpecPage.description")}</th>
                 </tr>
               </thead>
               <tbody className="text-xs">
@@ -274,21 +276,21 @@ export default function WebhookSpecPage() {
         {/* Response Format */}
         <section className="mb-8">
           <h2 className="text-lg font-bold mb-1">Response Format</h2>
-          <p className="text-sm text-muted-foreground mb-3">Choose one of two response formats:</p>
+          <p className="text-sm text-muted-foreground mb-3">{t("uiWebhookSpecPage.chooseOneOfTwoResponseFormats")}</p>
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                <Badge variant="secondary" className="text-[10px]">Option A</Badge> JSON Response
+                <Badge variant="secondary" className="text-[10px]">{t("uiWebhookSpecPage.optionA")}</Badge> JSON Response
               </h3>
               <CodeBlock code={RESPONSE_JSON} language="JSON" />
             </div>
             <div>
               <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
-                <Badge variant="secondary" className="text-[10px]">Option B</Badge> Server-Sent Events (SSE)
+                <Badge variant="secondary" className="text-[10px]">Option B</Badge> {t("uiWebhookSpecPage.serverSentEventsSse")}
               </h3>
               <CodeBlock code={RESPONSE_SSE} language="SSE" />
               <p className="text-xs text-muted-foreground mt-2">
-                Set <code className="bg-muted px-1 py-0.5 rounded text-foreground">Content-Type: text/event-stream</code> to enable streaming. The format follows the OpenAI delta convention.
+                Set <code className="bg-muted px-1 py-0.5 rounded text-foreground">{t("uiWebhookSpecPage.contentTypeTextEventStream")}</code> {t("uiWebhookSpecPage.toEnableStreamingTheFormatFollows")}
               </p>
             </div>
           </div>
@@ -318,7 +320,7 @@ export default function WebhookSpecPage() {
         {/* Test Section */}
         <section className="mb-8">
           <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-            <Play className="h-5 w-5 text-primary" /> Test Your Webhook
+            <Play className="h-5 w-5 text-primary" /> {t("uiWebhookSpecPage.testYourWebhook")}
           </h2>
           <Card className="p-5 space-y-4">
             <div>
@@ -338,7 +340,7 @@ export default function WebhookSpecPage() {
               />
             </div>
             <Button onClick={runTest} disabled={testing} size="sm">
-              {testing ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Testing…</> : <><Play className="h-4 w-4 mr-1" /> Send Test Message</>}
+              {testing ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Testing…</> : <><Play className="h-4 w-4 mr-1" /> {t("uiWebhookSpecPage.sendTestMessage")}</>}
             </Button>
             {testResult && (
               <pre className="rounded-lg border border-border bg-muted/50 p-4 text-xs whitespace-pre-wrap font-mono max-h-64 overflow-y-auto">
@@ -350,15 +352,15 @@ export default function WebhookSpecPage() {
 
         {/* Error Handling */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold mb-3">Error Handling</h2>
+          <h2 className="text-lg font-bold mb-3">{t("uiWebhookSpecPage.errorHandling")}</h2>
           <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm space-y-2">
-            <p className="text-muted-foreground">If your webhook returns a non-2xx status code, the platform will show the error to the user. Return errors as:</p>
+            <p className="text-muted-foreground">{t("uiWebhookSpecPage.ifYourWebhookReturnsANon")}</p>
             <CodeBlock code={`{ "error": "Something went wrong" }`} language="JSON" />
             <ul className="text-xs text-muted-foreground space-y-1 mt-3">
-              <li><strong>401/403</strong> — Authentication failed (bad secret)</li>
+              <li><strong>401/403</strong> {t("uiWebhookSpecPage.authenticationFailedBadSecret")}</li>
               <li><strong>429</strong> — Rate limited</li>
-              <li><strong>500</strong> — Internal error</li>
-              <li><strong>Timeout</strong> — Requests time out after 30 seconds</li>
+              <li><strong>500</strong> {t("uiWebhookSpecPage.internalError")}</li>
+              <li><strong>Timeout</strong> {t("uiWebhookSpecPage.requestsTimeOutAfter30Seconds")}</li>
             </ul>
           </div>
         </section>

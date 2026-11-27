@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 const CONSENT_KEY = "cookie_consent";
 
 export function CookieConsentBanner() {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -37,15 +39,14 @@ export function CookieConsentBanner() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-display font-semibold text-sm mb-1">We use cookies</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  We use cookies to improve your experience. Essential cookies are required for the platform to work.
-                  Analytics cookies help us understand usage.{" "}
-                  <Link to="/cookies" className="text-primary hover:underline">Learn more</Link>
+                  {t("uiCookieConsentBanner.weUseCookiesToImproveYour")}{" "}
+                  <Link to="/cookies" className="text-primary hover:underline">{t("uiCookieConsentBanner.learnMore")}</Link>
                 </p>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <Button size="sm" onClick={() => accept("all")}>Accept all</Button>
+                  <Button size="sm" onClick={() => accept("all")}>{t("uiCookieConsentBanner.acceptAll")}</Button>
                   <Button size="sm" variant="outline" onClick={() => accept("essential")}>Essential only</Button>
                   <Button size="sm" variant="ghost" asChild>
-                    <Link to="/cookies"><Settings className="h-3.5 w-3.5 mr-1" /> Settings</Link>
+                    <Link to="/cookies"><Settings className="h-3.5 w-3.5 mr-1" /> {t("uiCookieConsentBanner.settings")}</Link>
                   </Button>
                 </div>
               </div>

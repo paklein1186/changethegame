@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
@@ -20,6 +21,7 @@ interface ProfileListDialogProps {
 }
 
 export function ProfileListDialog({ open, onOpenChange, title, icon: Icon, items }: ProfileListDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[70vh] flex flex-col">
@@ -31,7 +33,7 @@ export function ProfileListDialog({ open, onOpenChange, title, icon: Icon, items
         </DialogHeader>
         <div className="overflow-y-auto space-y-1 -mx-2 px-2 flex-1 min-h-0">
           {items.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">None yet</p>
+            <p className="text-sm text-muted-foreground text-center py-8">{t("uiProfileListDialog.noneYet")}</p>
           ) : (
             items.map((item) => (
               <Link

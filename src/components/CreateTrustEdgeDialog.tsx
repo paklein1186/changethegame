@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -29,17 +31,17 @@ interface CreateTrustEdgeDialogProps {
 }
 
 const EDGE_TYPE_LABELS: Record<string, { label: string; desc: string; icon: string }> = {
-  skill_trust: { label: "Skill Trust", desc: "Trust in their technical or domain expertise", icon: "🎯" },
-  reliability: { label: "Reliability", desc: "Dependable, follows through on commitments", icon: "🤝" },
-  collaboration: { label: "Collaboration", desc: "Great to work with, co-creates effectively", icon: "🔗" },
-  stewardship: { label: "Stewardship", desc: "Takes care of commons, governance, shared resources", icon: "🌿" },
-  financial_trust: { label: "Financial Trust", desc: "Trustworthy in financial matters", icon: "💎" },
+  skill_trust: { label: "Skill Trust", get desc() { return i18n.t("uiCreateTrustEdgeDialog.trustInTheirTechnicalOrDomain"); }, icon: "🎯" },
+  reliability: { label: "Reliability", get desc() { return i18n.t("uiCreateTrustEdgeDialog.dependableFollowsThroughOnCommitments"); }, icon: "🤝" },
+  collaboration: { label: "Collaboration", get desc() { return i18n.t("uiCreateTrustEdgeDialog.greatToWorkWithCoCreates"); }, icon: "🔗" },
+  stewardship: { label: "Stewardship", get desc() { return i18n.t("uiCreateTrustEdgeDialog.takesCareOfCommonsGovernanceShared"); }, icon: "🌿" },
+  financial_trust: { label: "Financial Trust", get desc() { return i18n.t("uiCreateTrustEdgeDialog.trustworthyInFinancialMatters"); }, icon: "💎" },
 };
 
 const VISIBILITY_OPTIONS = [
-  { value: "public", label: "Public", desc: "Visible to everyone. Earns +1 credit and full XP.", icon: Eye },
-  { value: "network", label: "Network", desc: "Visible to authenticated users only.", icon: Users },
-  { value: "private", label: "Private", desc: "Only visible to you. No XP granted.", icon: EyeOff },
+  { value: "public", get label() { return i18n.t("uiCreateTrustEdgeDialog.public"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.visibleToEveryoneEarns1Credit"); }, icon: Eye },
+  { value: "network", label: "Network", get desc() { return i18n.t("uiCreateTrustEdgeDialog.visibleToAuthenticatedUsersOnly"); }, icon: Users },
+  { value: "private", get label() { return i18n.t("uiCreateTrustEdgeDialog.private"); }, get desc() { return i18n.t("uiCreateTrustEdgeDialog.onlyVisibleToYouNoXp"); }, icon: EyeOff },
 ];
 
 const SUGGESTED_TAGS = [
@@ -72,6 +74,7 @@ export function CreateTrustEdgeDialog({
   contextTerritoryId: initialTerritoryId,
   onCreated,
 }: CreateTrustEdgeDialogProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -197,11 +200,11 @@ export function CreateTrustEdgeDialog({
   const handleSubmit = async () => {
     if (!user?.id) return;
     if (preCheck && !preCheck.canCreate) {
-      toast({ title: "Cannot create attestation", description: preCheck.warnings[0], variant: "destructive" });
+      toast({ title: t("uiCreateTrustEdgeDialog.cannotCreateAttestation"), description: preCheck.warnings[0], variant: "destructive" });
       return;
     }
     if (note.length > 300) {
-      toast({ title: "Note too long", description: "Note must be 300 characters or fewer.", variant: "destructive" });
+      toast({ title: "Note too long", description: t("uiCreateTrustEdgeDialog.noteMustBe300CharactersOr"), variant: "destructive" });
       return;
     }
 
@@ -227,7 +230,7 @@ export function CreateTrustEdgeDialog({
     setSubmitting(false);
 
     if (error) {
-      toast({ title: "Attestation failed", description: parseTrustEdgeError(error.message), variant: "destructive" });
+      toast({ title: t("uiCreateTrustEdgeDialog.attestationFailed"), description: parseTrustEdgeError(error.message), variant: "destructive" });
       return;
     }
 
@@ -266,7 +269,7 @@ export function CreateTrustEdgeDialog({
             <Shield className="h-5 w-5 text-primary" />
             Give Trust — Step {step}/{TOTAL_STEPS}
           </DialogTitle>
-          <DialogDescription className="sr-only">Create a trust attestation</DialogDescription>
+          <DialogDescription className="sr-only">{t("uiCreateTrustEdgeDialog.createATrustAttestation")}</DialogDescription>
         </DialogHeader>
 
         {/* Progress */}
@@ -284,7 +287,7 @@ export function CreateTrustEdgeDialog({
           {/* ── Step 1: Confirm target ── */}
           {step === 1 && (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">You are about to attest trust for:</p>
+              <p className="text-sm text-muted-foreground">{t("uiCreateTrustEdgeDialog.youAreAboutToAttestTrust")}</p>
               <div className="rounded-lg border bg-card p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
                   {(targetName ?? "?")[0]?.toUpperCase()}
@@ -294,14 +297,14 @@ export function CreateTrustEdgeDialog({
                   <p className="text-xs text-muted-foreground">{NODE_TYPE_LABELS[targetNodeType] ?? targetNodeType}</p>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">Trust attestations are part of the Open Trust Graph and contribute to this entity's reputation across the ecosystem.</p>
+              <p className="text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.trustAttestationsArePartOfThe")}</p>
             </div>
           )}
 
           {/* ── Step 2: Edge type ── */}
           {step === 2 && (
             <div className="space-y-3">
-              <Label className="text-sm font-semibold">What kind of trust?</Label>
+              <Label className="text-sm font-semibold">{t("uiCreateTrustEdgeDialog.whatKindOfTrust")}</Label>
               <div className="grid gap-2">
                 {Object.entries(EDGE_TYPE_LABELS).map(([k, v]) => (
                   <button
@@ -330,7 +333,7 @@ export function CreateTrustEdgeDialog({
             <div className="space-y-4">
               {/* Tags */}
               <div className="space-y-1.5">
-                <Label className="text-sm font-semibold">Tags <span className="font-normal text-xs text-muted-foreground">(determines XP specialization)</span></Label>
+                <Label className="text-sm font-semibold">Tags <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.determinesXpSpecialization")}</span></Label>
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {tags.map((tag) => {
                     const spec = classifyTagSpecialization(tag);
@@ -349,7 +352,7 @@ export function CreateTrustEdgeDialog({
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(tagInput); } }}
-                    placeholder="Search or add tags..."
+                    placeholder={t("uiCreateTrustEdgeDialog.searchOrAddTags")}
                     className="pl-8"
                   />
                 </div>
@@ -375,34 +378,34 @@ export function CreateTrustEdgeDialog({
 
               {/* Context */}
               <div className="space-y-2">
-                <Label className="text-sm font-semibold">Context <span className="font-normal text-xs text-muted-foreground">(optional — earns bonus XP)</span></Label>
+                <Label className="text-sm font-semibold">Context <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.optionalEarnsBonusXp")}</span></Label>
                 <div className="space-y-2">
                   <div>
-                    <Label className="text-xs text-muted-foreground">Quest (+1 XP)</Label>
+                    <Label className="text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.quest1Xp")}</Label>
                     <Select value={contextQuestId} onValueChange={setContextQuestId}>
-                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="No quest context" /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("uiCreateTrustEdgeDialog.noQuestContext")} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="none">{t("uiCreateTrustEdgeDialog.none")}</SelectItem>
                         {(myQuests ?? []).map((q: any) => <SelectItem key={q.id} value={q.id}>{q.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Guild (+2 XP)</Label>
+                    <Label className="text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.guild2Xp")}</Label>
                     <Select value={contextGuildId} onValueChange={setContextGuildId}>
-                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="No guild context" /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("uiCreateTrustEdgeDialog.noGuildContext")} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="none">{t("uiCreateTrustEdgeDialog.none")}</SelectItem>
                         {(myGuilds ?? []).map((g: any) => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Territory (+3 XP)</Label>
+                    <Label className="text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.territory3Xp")}</Label>
                     <Select value={contextTerritoryId} onValueChange={setContextTerritoryId}>
-                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder="No territory context" /></SelectTrigger>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("uiCreateTrustEdgeDialog.noTerritoryContext")} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="none">{t("uiCreateTrustEdgeDialog.none")}</SelectItem>
                         {(myTerritories ?? []).map((t: any) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
@@ -428,7 +431,7 @@ export function CreateTrustEdgeDialog({
                   <span className="ml-2 text-sm font-semibold text-primary">{score}/5</span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {score <= 2 ? "Low trust — still valuable for honest signal" : score <= 4 ? "Solid trust based on direct experience" : "Exceptional trust — strong conviction"}
+                  {score <= 2 ? t("uiCreateTrustEdgeDialog.lowTrustStillValuableForHonest") : score <= 4 ? t("uiCreateTrustEdgeDialog.solidTrustBasedOnDirectExperience") : "Exceptional trust — strong conviction"}
                 </p>
               </div>
 
@@ -438,7 +441,7 @@ export function CreateTrustEdgeDialog({
                 <Textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value.slice(0, 300))}
-                  placeholder="Why do you trust this entity in this area? What's your experience?"
+                  placeholder={t("uiCreateTrustEdgeDialog.whyDoYouTrustThisEntity")}
                   rows={3}
                   className="resize-none"
                 />
@@ -448,7 +451,7 @@ export function CreateTrustEdgeDialog({
               <div className="space-y-1.5">
                 <Label className="flex items-center gap-1.5 text-sm font-semibold">
                   <Link2 className="h-3.5 w-3.5" /> Evidence URL
-                  <span className="font-normal text-xs text-muted-foreground">(+1 credit)</span>
+                  <span className="font-normal text-xs text-muted-foreground">{t("uiCreateTrustEdgeDialog.1Credit")}</span>
                 </Label>
                 <Input
                   value={evidenceUrl}
@@ -459,7 +462,7 @@ export function CreateTrustEdgeDialog({
                 {preCheck?.isReciprocalRecent && !evidenceUrl && (
                   <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
                     <AlertTriangle className="h-3 w-3" />
-                    Reciprocal trust detected — add evidence to prevent XP halving.
+                    {t("uiCreateTrustEdgeDialog.reciprocalTrustDetectedAddEvidenceTo")}
                   </p>
                 )}
               </div>
@@ -497,7 +500,7 @@ export function CreateTrustEdgeDialog({
               {preCheck && visibility === "public" && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Info className="h-3.5 w-3.5" />
-                  Public attestations this week: <span className="font-semibold text-foreground">{preCheck.publicThisWeek}/3</span>
+                  {t("uiCreateTrustEdgeDialog.publicAttestationsThisWeek")} <span className="font-semibold text-foreground">{preCheck.publicThisWeek}/3</span>
                 </div>
               )}
 
@@ -540,15 +543,15 @@ export function CreateTrustEdgeDialog({
         <DialogFooter className="flex justify-between sm:justify-between gap-2">
           <Button variant="outline" onClick={() => step > 1 ? setStep(step - 1) : onOpenChange(false)} className="gap-1">
             <ChevronLeft className="h-4 w-4" />
-            {step === 1 ? "Cancel" : "Back"}
+            {step === 1 ? t("uiCreateTrustEdgeDialog.cancel") : t("uiCreateTrustEdgeDialog.back")}
           </Button>
           {step < TOTAL_STEPS ? (
             <Button onClick={() => setStep(step + 1)} disabled={!canProceed()} className="gap-1">
-              Next <ChevronRight className="h-4 w-4" />
+              {t("uiCreateTrustEdgeDialog.next")} <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
             <Button onClick={handleSubmit} disabled={submitting || checkLoading || !canProceed()} className="gap-1">
-              {submitting ? "Creating…" : <>Create Attestation <Check className="h-4 w-4" /></>}
+              {submitting ? "Creating…" : <>{t("uiCreateTrustEdgeDialog.createAttestation")} <Check className="h-4 w-4" /></>}
             </Button>
           )}
         </DialogFooter>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo, useCallback } from "react";
 import { useExploreGridDensity } from "@/pages/ExploreHub";
 import { useQuery } from "@tanstack/react-query";
@@ -257,6 +258,7 @@ interface Props {
 }
 
 export default function ExploreHouses({ bare }: Props) {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { data: allTopics, isLoading: topicsLoading } = useAllTopics();
@@ -353,19 +355,19 @@ export default function ExploreHouses({ bare }: Props) {
          <div className="flex items-center justify-between mb-4">
            <div>
               <h2 className="font-display text-xl font-semibold">
-                {effectiveUniverse === "creative" ? "Explore by Houses" : effectiveUniverse === "impact" ? "Explore by Topics" : "Explore by Houses & Topics"}
+                {effectiveUniverse === "creative" ? t("uiExploreHouses.exploreByHouses") : effectiveUniverse === "impact" ? t("uiExploreHouses.exploreByTopics") : t("uiExploreHouses.exploreByHousesTopics")}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
                 {effectiveUniverse === "creative"
-                  ? "Choose a creative House to discover studios, ensembles, and projects"
+                  ? t("uiExploreHouses.chooseACreativeHouseToDiscover")
                   : effectiveUniverse === "impact"
-                  ? "Choose a theme to discover quests, guilds, services, and events"
-                  : "Browse creative Houses and impact Topics together"}
+                  ? t("uiExploreHouses.chooseAThemeToDiscoverQuests")
+                  : t("uiExploreHouses.browseCreativeHousesAndImpactTopics")}
              </p>
            </div>
            {selectedSlugs.length > 0 && (
              <Button variant="ghost" size="sm" onClick={clearAll} className="text-xs">
-               Clear all
+               {t("uiExploreHouses.clearAll")}
              </Button>
            )}
          </div>
@@ -446,7 +448,7 @@ export default function ExploreHouses({ bare }: Props) {
               className="text-xs gap-1.5"
             >
               {matchAll ? <ToggleRight className="h-3.5 w-3.5 text-primary" /> : <ToggleLeft className="h-3.5 w-3.5" />}
-              {matchAll ? "Match ALL" : "Match ANY"}
+              {matchAll ? t("uiExploreHouses.matchAll") : "Match ANY"}
             </Button>
           )}
           <div className="flex flex-wrap gap-1.5">
@@ -469,8 +471,8 @@ export default function ExploreHouses({ bare }: Props) {
           {selectedSlugs.length > 1 && (
             <span className="text-xs text-muted-foreground">
               {matchAll
-                ? "Showing items that belong to all selected Topics"
-                : "Showing items that belong to any selected Topic"}
+                ? t("uiExploreHouses.showingItemsThatBelongToAll")
+                : t("uiExploreHouses.showingItemsThatBelongToAny")}
             </span>
           )}
         </div>
@@ -481,23 +483,23 @@ export default function ExploreHouses({ bare }: Props) {
         <div className="text-center py-16 rounded-xl border border-dashed border-border bg-muted/20">
           <Boxes className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
           <p className="font-display font-semibold text-lg">
-            {effectiveUniverse === "creative" ? "Pick one or more Houses to explore" : effectiveUniverse === "impact" ? "Pick one or more Topics to explore" : "Pick one or more Houses or Topics to explore"}
+            {effectiveUniverse === "creative" ? t("uiExploreHouses.pickOneOrMoreHousesTo") : effectiveUniverse === "impact" ? t("uiExploreHouses.pickOneOrMoreTopicsTo") : t("uiExploreHouses.pickOneOrMoreHousesOr")}
           </p>
           <p className="text-sm text-muted-foreground mt-1">
             {effectiveUniverse === "creative"
-              ? "Houses are creative realms that group circles, creations, and collaborators."
+              ? t("uiExploreHouses.housesAreCreativeRealmsThatGroup")
               : effectiveUniverse === "impact"
-              ? "Topics are thematic lenses that group missions, guilds, and services."
-              : "Houses and Topics are thematic lenses that group quests, guilds, users, and more."}
+              ? t("uiExploreHouses.topicsAreThematicLensesThatGroup")
+              : t("uiExploreHouses.housesAndTopicsAreThematicLenses")}
           </p>
         </div>
       ) : (
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="flex-wrap">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="quests">Quests {quests?.length ? `(${quests.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="overview">{t("uiExploreHouses.overview")}</TabsTrigger>
+            <TabsTrigger value="quests">{t("uiExploreHouses.quests")} {quests?.length ? `(${quests.length})` : ""}</TabsTrigger>
             <TabsTrigger value="users">Users {users?.length ? `(${users.length})` : ""}</TabsTrigger>
-            <TabsTrigger value="guilds">Guilds {guilds?.length ? `(${guilds.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="guilds">{t("uiExploreHouses.guilds")} {guilds?.length ? `(${guilds.length})` : ""}</TabsTrigger>
             <TabsTrigger value="pods">Pods {pods?.length ? `(${pods.length})` : ""}</TabsTrigger>
             <TabsTrigger value="services">Services {services?.length ? `(${services.length})` : ""}</TabsTrigger>
             <TabsTrigger value="courses">Courses {courses?.length ? `(${courses.length})` : ""}</TabsTrigger>
@@ -506,7 +508,7 @@ export default function ExploreHouses({ bare }: Props) {
 
           {/* Overview */}
           <TabsContent value="overview" className="mt-6 space-y-8">
-            <SectionPreview title="Quests" icon={Compass} items={quests} loading={questsLoading} tab="quests" setTab={setTab} renderItem={(q: any) => (
+            <SectionPreview title={t("uiExploreHouses.quests")} icon={Compass} items={quests} loading={questsLoading} tab="quests" setTab={setTab} renderItem={(q: any) => (
               <Link key={q.id} to={`/quests/${q.id}`} className="block rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all">
                 <UnitCoverImage type="QUEST" imageUrl={q.cover_image_url} name={q.title} height="h-24" />
                 <div className="p-4">
@@ -527,7 +529,7 @@ export default function ExploreHouses({ bare }: Props) {
               </Link>
             )} />
 
-            <SectionPreview title="Guilds" icon={Shield} items={guilds} loading={guildsLoading} tab="guilds" setTab={setTab} renderItem={(g: any) => (
+            <SectionPreview title={t("uiExploreHouses.guilds")} icon={Shield} items={guilds} loading={guildsLoading} tab="guilds" setTab={setTab} renderItem={(g: any) => (
               <Link key={g.id} to={`/guilds/${g.id}`} className="flex items-center gap-3 rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all">
                 <UnitCoverImage type="GUILD" logoUrl={g.logo_url} name={g.name} height="h-full" className="w-16 shrink-0" />
                 <div className="min-w-0 py-3 pr-3">
@@ -692,6 +694,7 @@ function SectionPreview({ title, icon: Icon, items, loading, tab, setTab, render
   setTab: (t: string) => void;
   renderItem: (item: any) => React.ReactNode;
 }) {
+  const { t } = useTranslation();
   if (loading) return <div className="space-y-2"><Skeleton className="h-6 w-32" /><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}</div></div>;
   if (!items || items.length === 0) return null;
 
@@ -703,7 +706,7 @@ function SectionPreview({ title, icon: Icon, items, loading, tab, setTab, render
         </h3>
         {items.length > 3 && (
           <Button variant="ghost" size="sm" className="text-xs" onClick={() => setTab(tab)}>
-            View all ({items.length})
+            {t("uiExploreHouses.viewAll")}{items.length})
           </Button>
         )}
       </div>

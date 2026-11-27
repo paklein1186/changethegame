@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +24,7 @@ const TIME_PERIODS: { key: TimePeriod; label: string; icon: React.ReactNode }[] 
   { key: "7d", label: "7 days", icon: <Clock className="h-3.5 w-3.5" /> },
   { key: "quarter", label: "Quarter", icon: <CalendarDays className="h-3.5 w-3.5" /> },
   { key: "year", label: "Year", icon: <Calendar className="h-3.5 w-3.5" /> },
-  { key: "all", label: "All time", icon: <Trophy className="h-3.5 w-3.5" /> },
+  { key: "all", get label() { return i18n.t("uiLeaderboardTab.allTime"); }, icon: <Trophy className="h-3.5 w-3.5" /> },
 ];
 
 function getDateFrom(period: TimePeriod): string | null {
@@ -323,6 +325,7 @@ function UserSection({
   title, subtitle, icon, accentClass, isLoading,
   entries, unitLabel, linkPrefix = "/users/",
 }: SectionProps & { entries: RankedUser[]; unitLabel: string; linkPrefix?: string }) {
+  const { t } = useTranslation();
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-border bg-card overflow-hidden">
       <div className={`p-4 border-b border-border ${accentClass}`}>
@@ -340,7 +343,7 @@ function UserSection({
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : entries.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">No data yet.</p>
+        <p className="text-sm text-muted-foreground text-center py-8">{t("uiLeaderboardTab.noDataYet")}</p>
       ) : (
         <div className="divide-y divide-border">
           {entries.map((entry, i) => (
@@ -452,6 +455,7 @@ function EntitySection({
   title, subtitle, icon, accentClass, isLoading,
   entries, unitLabel,
 }: SectionProps & { entries: RankedEntity[]; unitLabel: string }) {
+  const { t } = useTranslation();
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-border bg-card overflow-hidden">
       <div className={`p-4 border-b border-border ${accentClass}`}>
@@ -469,7 +473,7 @@ function EntitySection({
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : entries.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">No partnerships yet.</p>
+        <p className="text-sm text-muted-foreground text-center py-8">{t("uiLeaderboardTab.noPartnershipsYet")}</p>
       ) : (
         <div className="divide-y divide-border">
           {entries.map((entry, i) => (
@@ -508,6 +512,7 @@ function TerritorySection({
   title, subtitle, icon, accentClass, isLoading,
   entries,
 }: SectionProps & { entries: RankedTerritory[] }) {
+  const { t } = useTranslation();
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-border bg-card overflow-hidden">
       <div className={`p-4 border-b border-border ${accentClass}`}>
@@ -525,7 +530,7 @@ function TerritorySection({
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : entries.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">No territory data yet.</p>
+        <p className="text-sm text-muted-foreground text-center py-8">{t("uiLeaderboardTab.noTerritoryDataYet")}</p>
       ) : (
         <div className="divide-y divide-border">
           {entries.map((t, i) => (
@@ -571,6 +576,7 @@ function TerritorySection({
 /* ── Main Component ── */
 
 export default function LeaderboardTab() {
+  const { t } = useTranslation();
   const refreshLeaderboard = useRefreshLeaderboard();
   const [refreshing, setRefreshing] = useState(false);
   const [period, setPeriod] = useState<TimePeriod>("all");
@@ -587,7 +593,7 @@ export default function LeaderboardTab() {
       await refreshLeaderboard();
       toast.success("Leaderboard refreshed");
     } catch {
-      toast.error("Failed to refresh leaderboard");
+      toast.error(t("uiLeaderboardTab.failedToRefreshLeaderboard"));
     } finally {
       setRefreshing(false);
     }
@@ -605,7 +611,7 @@ export default function LeaderboardTab() {
             <Trophy className="h-5 w-5 text-primary" /> Leaderboard
           </h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Recognizing value across the ecosystem.
+            {t("uiLeaderboardTab.recognizingValueAcrossTheEcosystem")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -640,7 +646,7 @@ export default function LeaderboardTab() {
       <div className="grid gap-5 lg:grid-cols-2">
         <UserSection
           title="🌱 $CTG Champions"
-          subtitle={period === "all" ? "Top contributors by $CTG token balance." : `Top $CTG earned${subtitleSuffix}.`}
+          subtitle={period === "all" ? t("uiLeaderboardTab.topContributorsByCtgTokenBalance") : `Top $CTG earned${subtitleSuffix}.`}
           icon={<CurrencyIcon currency="ctg" className="h-5 w-5" />}
           accentClass="bg-amber-500/5"
           isLoading={ctgLoading}
@@ -649,8 +655,8 @@ export default function LeaderboardTab() {
         />
 
         <TerritorySection
-          title="🌍 Territory Pulse"
-          subtitle={period === "all" ? "Most active territories by humans, quests & stewards." : `Territory activity${subtitleSuffix}.`}
+          title={t("uiLeaderboardTab.territoryPulse")}
+          subtitle={period === "all" ? t("uiLeaderboardTab.mostActiveTerritoriesByHumansQuests") : `Territory activity${subtitleSuffix}.`}
           icon={<MapPin className="h-5 w-5 text-emerald-500" />}
           accentClass="bg-emerald-500/5"
           isLoading={terrLoading}
@@ -658,8 +664,8 @@ export default function LeaderboardTab() {
         />
 
         <UserSection
-          title="⭐ XP Leaders"
-          subtitle={period === "all" ? "Highest reputation by experience points." : `Most XP earned${subtitleSuffix}.`}
+          title={t("uiLeaderboardTab.xpLeaders")}
+          subtitle={period === "all" ? t("uiLeaderboardTab.highestReputationByExperiencePoints") : `Most XP earned${subtitleSuffix}.`}
           icon={<CurrencyIcon currency="xp" className="h-5 w-5" />}
           accentClass="bg-primary/5"
           isLoading={xpLoading}
@@ -669,7 +675,7 @@ export default function LeaderboardTab() {
 
         <UserSection
           title="🤝 Trust Network"
-          subtitle={period === "all" ? "Most trusted humans by peer attestations." : `New attestations${subtitleSuffix}.`}
+          subtitle={period === "all" ? t("uiLeaderboardTab.mostTrustedHumansByPeerAttestations") : `New attestations${subtitleSuffix}.`}
           icon={<Handshake className="h-5 w-5 text-blue-500" />}
           accentClass="bg-blue-500/5"
           isLoading={trustLoading}
@@ -679,7 +685,7 @@ export default function LeaderboardTab() {
 
         <EntitySection
           title="🏛️ Partnership Champions"
-          subtitle={period === "all" ? "Entities with the most accepted partnerships." : `Partnerships formed${subtitleSuffix}.`}
+          subtitle={period === "all" ? t("uiLeaderboardTab.entitiesWithTheMostAcceptedPartnerships") : `Partnerships formed${subtitleSuffix}.`}
           icon={<Shield className="h-5 w-5 text-violet-500" />}
           accentClass="bg-violet-500/5"
           isLoading={partLoading}

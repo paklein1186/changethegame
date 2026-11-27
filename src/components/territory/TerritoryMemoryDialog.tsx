@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEntry }: Props) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const addMutation = useAddTerritoryMemory();
   const updateMutation = useUpdateTerritoryMemory();
@@ -93,13 +95,13 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{editEntry ? "Edit Memory Entry" : "Add Territory Knowledge"}</DialogTitle>
+          <DialogTitle>{editEntry ? t("uiTerritoryMemoryDialog.editMemoryEntry") : t("uiTerritoryMemoryDialog.addTerritoryKnowledge")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="mem-title">Title</Label>
-            <Input id="mem-title" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Local economic overview 2025" />
+            <Label htmlFor="mem-title">{t("uiTerritoryMemoryDialog.title")}</Label>
+            <Input id="mem-title" value={title} onChange={e => setTitle(e.target.value)} placeholder={t("uiTerritoryMemoryDialog.eGLocalEconomicOverview2025")} />
           </div>
 
           <div>
@@ -130,9 +132,9 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
             <Select value={visibility} onValueChange={v => setVisibility(v as MemoryVisibility)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="PUBLIC">🌍 Public — visible to everyone</SelectItem>
-                <SelectItem value="ADMINS">🔒 Members only — territory members</SelectItem>
-                <SelectItem value="AI_ONLY">🤖 AI only — used for AI context only</SelectItem>
+                <SelectItem value="PUBLIC">{t("uiTerritoryMemoryDialog.publicVisibleToEveryone")}</SelectItem>
+                <SelectItem value="ADMINS">{t("uiTerritoryMemoryDialog.membersOnlyTerritoryMembers")}</SelectItem>
+                <SelectItem value="AI_ONLY">{t("uiTerritoryMemoryDialog.aiOnlyUsedForAiContext")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -144,10 +146,10 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
                 value={tagInput}
                 onChange={e => setTagInput(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())}
-                placeholder="Add a tag and press Enter"
+                placeholder={t("uiTerritoryMemoryDialog.addATagAndPressEnter")}
                 className="flex-1"
               />
-              <Button type="button" variant="outline" size="sm" onClick={addTag}>Add</Button>
+              <Button type="button" variant="outline" size="sm" onClick={addTag}>{t("uiTerritoryMemoryDialog.add")}</Button>
             </div>
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
@@ -163,9 +165,9 @@ export function TerritoryMemoryDialog({ open, onOpenChange, territoryId, editEnt
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiTerritoryMemoryDialog.cancel")}</Button>
           <Button onClick={handleSubmit} disabled={!title.trim() || !content.trim() || isSubmitting}>
-            {isSubmitting ? "Saving..." : editEntry ? "Update" : "Add Entry"}
+            {isSubmitting ? "Saving..." : editEntry ? t("uiTerritoryMemoryDialog.update") : t("uiTerritoryMemoryDialog.addEntry")}
           </Button>
         </DialogFooter>
       </DialogContent>

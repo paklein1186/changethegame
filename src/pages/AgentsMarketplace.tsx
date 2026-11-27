@@ -95,7 +95,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
       qc.invalidateQueries({ queryKey: ["my-agent-hires"] });
       qc.invalidateQueries({ queryKey: ["profile"] });
     },
-    onError: (e: any) => toast.error(e.message || "Failed to hire agent"),
+    onError: (e: any) => toast.error(e.message || t("uiAgentsMarketplace.failedToHireAgent")),
   });
 
   const Wrapper = bare ? "div" : PageShell;
@@ -114,7 +114,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
           {user && (
             <Button variant="outline" size="sm" asChild>
               <Link to="/my-agents">
-                <Bot className="h-4 w-4 mr-1" /> My Agents
+                <Bot className="h-4 w-4 mr-1" /> {t("uiAgentsMarketplace.myAgents")}
               </Link>
             </Button>
           )}
@@ -142,7 +142,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <span className="text-xs text-muted-foreground mr-1">Source:</span>
         {[
-          { value: "all", label: "All" },
+          { value: "all", label: t("uiAgentsMarketplace.all") },
           { value: "platform", label: "🤖 Platform" },
           { value: "custom_llm", label: "🔑 Custom" },
           { value: "webhook", label: "🔗 External" },
@@ -160,10 +160,10 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
 
         <span className="text-xs text-muted-foreground ml-3 mr-1">Billing:</span>
         {[
-          { value: "all", label: "All" },
+          { value: "all", label: t("uiAgentsMarketplace.all") },
           { value: "free", label: "Free" },
-          { value: "credits", label: "Credits" },
-          { value: "coins", label: "Coins" },
+          { value: "credits", label: t("uiAgentsMarketplace.credits") },
+          { value: "coins", label: t("uiAgentsMarketplace.coins") },
         ].map(f => (
           <button
             key={f.value}
@@ -239,7 +239,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
                   </div>
                   <div className="flex flex-col items-end gap-0.5 text-xs text-muted-foreground">
                     {Number(agent.hire_price ?? 0) > 0 && (
-                      <span><Sparkles className="h-3 w-3 inline mr-0.5" />{agent.hire_price} to hire</span>
+                      <span><Sparkles className="h-3 w-3 inline mr-0.5" />{agent.hire_price} {t("uiAgentsMarketplace.toHire")}</span>
                     )}
                     <span>
                       <Zap className="h-3 w-3 inline mr-0.5" />
@@ -251,7 +251,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
                 <div className="mt-3 pt-3 border-t border-border flex gap-2" onClick={e => e.stopPropagation()}>
                   {!user ? (
                     <Button size="sm" variant="outline" className="w-full" asChild>
-                      <Link to="/login">Log in to hire</Link>
+                      <Link to="/login">{t("uiAgentsMarketplace.logInToHire")}</Link>
                     </Button>
                   ) : !isHired ? (
                     <Button
@@ -266,7 +266,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
                   ) : (
                     <>
                       <Button size="sm" variant="outline" className="flex-1" asChild>
-                        <Link to={`/agents/${agent.id}`}>Open</Link>
+                        <Link to={`/agents/${agent.id}`}>{t("uiAgentsMarketplace.open")}</Link>
                       </Button>
                       <Button
                         size="sm"
@@ -274,7 +274,7 @@ export default function AgentsMarketplace({ bare }: { bare?: boolean }) {
                         className="flex-1"
                         onClick={() => setAttachAgentId(agent.id)}
                       >
-                        <Link2 className="h-3.5 w-3.5 mr-1" /> Attach to...
+                        <Link2 className="h-3.5 w-3.5 mr-1" /> {t("uiAgentsMarketplace.attachTo")}
                       </Button>
                     </>
                   )}

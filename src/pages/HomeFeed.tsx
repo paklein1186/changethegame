@@ -94,6 +94,7 @@ function TerritoryFlow({
 
 
 }: {result: any;originalInput: string;userId?: string;persona: string;onReset: () => void;}) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [questTitle, setQuestTitle] = useState(result.questDraft?.title || "");
   const [questDesc, setQuestDesc] = useState(result.questDraft?.description || "");
@@ -117,7 +118,7 @@ function TerritoryFlow({
       } as any);
       setMemSaved(true);
     } catch {
-      toast.error("Could not save to territory memory");
+      toast.error(t("uiHomeFeed.couldNotSaveToTerritoryMemory"));
     }
   }, [territoryId, userId, originalInput, result]);
 
@@ -140,9 +141,9 @@ function TerritoryFlow({
       single();
       if (error) throw error;
       setQuestSaved((data as any).id);
-      toast.success("Quest draft saved!");
+      toast.success(t("uiHomeFeed.questDraftSaved"));
     } catch (e: any) {
-      toast.error(e?.message || "Could not save quest");
+      toast.error(e?.message || t("uiHomeFeed.couldNotSaveQuest"));
     } finally {
       setSaving(false);
     }
@@ -173,27 +174,27 @@ function TerritoryFlow({
       {memSaved &&
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Check className="h-3.5 w-3.5 text-emerald-500" />
-          Your contribution has enriched the territory.
+          {t("uiHomeFeed.yourContributionHasEnrichedTheTerritory")}
         </div>
       }
 
       {/* Quest draft */}
       {result.questDraft &&
       <div className="space-y-3">
-          <p className="text-xs font-medium text-muted-foreground">Quest draft generated from your vision:</p>
+          <p className="text-xs font-medium text-muted-foreground">{t("uiHomeFeed.questDraftGeneratedFromYourVision")}</p>
           <div className="rounded-xl border border-border bg-card p-4 space-y-3">
             <input
             type="text"
             value={questTitle}
             onChange={(e) => setQuestTitle(e.target.value)}
             className="w-full bg-transparent text-base font-semibold text-foreground outline-none placeholder:text-muted-foreground/50"
-            placeholder="Quest title…" />
+            placeholder={t("uiHomeFeed.questTitle")} />
           
             <Textarea
             value={questDesc}
             onChange={(e) => setQuestDesc(e.target.value)}
             className="min-h-[80px] resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0"
-            placeholder="Quest description…" />
+            placeholder={t("uiHomeFeed.questDescription")} />
           
             {result.questDraft.suggestedSkills?.length > 0 &&
           <div className="flex flex-wrap gap-1.5">
@@ -205,7 +206,7 @@ function TerritoryFlow({
           }
             {result.questDraft.suggestedTopics?.length > 0 &&
           <div className="flex flex-wrap gap-1.5">
-                <span className="text-xs text-muted-foreground mr-1">Topics:</span>
+                <span className="text-xs text-muted-foreground mr-1">{t("uiHomeFeed.topics")}</span>
                 {result.questDraft.suggestedTopics.map((t: string) =>
             <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">{t}</span>
             )}
@@ -216,15 +217,15 @@ function TerritoryFlow({
             <>
                   <Button size="sm" onClick={saveQuestDraft} disabled={saving || !questTitle.trim()}>
                     {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : null}
-                    Save as draft
+                    {t("uiHomeFeed.saveAsDraft")}
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => navigate("/quests/new")}>
-                    Open full editor
+                    {t("uiHomeFeed.openFullEditor")}
                   </Button>
                 </> :
 
             <Button size="sm" variant="outline" onClick={() => navigate(`/quests/${questSaved}`)}>
-                  View quest <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                  {t("uiHomeFeed.viewQuest")} <ChevronRight className="h-3.5 w-3.5 ml-1" />
                 </Button>
             }
             </div>
@@ -236,7 +237,7 @@ function TerritoryFlow({
       {result.localAllies?.length > 0 &&
       <div className="space-y-3">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-            <MapPin className="h-3.5 w-3.5" /> Local Allies Who Could Help
+            <MapPin className="h-3.5 w-3.5" /> {t("uiHomeFeed.localAlliesWhoCouldHelp")}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {result.localAllies.map((ally: any) =>
@@ -262,7 +263,7 @@ function TerritoryFlow({
       {/* Standard suggestions */}
       {result.suggestions?.length > 0 &&
       <div className="space-y-2">
-          <p className="text-xs text-muted-foreground font-medium">Other next steps:</p>
+          <p className="text-xs text-muted-foreground font-medium">{t("uiHomeFeed.otherNextSteps")}</p>
           {result.suggestions.map((s: any, i: number) =>
         <button
           key={i}
@@ -290,7 +291,7 @@ function TerritoryFlow({
       }
 
       <div className="flex justify-center pt-2">
-        <Button variant="ghost" size="sm" onClick={onReset}>Start over</Button>
+        <Button variant="ghost" size="sm" onClick={onReset}>{t("uiHomeFeed.startOver")}</Button>
       </div>
     </motion.div>);
 
@@ -357,10 +358,10 @@ export default function HomeFeed() {
         original_text: input,
         user_explicit: true
       } as any);
-      toast.success("Thanks! Your idea has been saved for the team.");
+      toast.success(t("uiHomeFeed.thanksYourIdeaHasBeenSaved"));
       setInput("");
     } catch {
-      toast.error("Could not save idea");
+      toast.error(t("uiHomeFeed.couldNotSaveIdea"));
     }
   }, [input, currentUser.id, persona]);
 
@@ -389,7 +390,7 @@ export default function HomeFeed() {
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      toast.error("Voice input is not supported in this browser. Please use Chrome or Edge.");
+      toast.error(t("uiHomeFeed.voiceInputIsNotSupportedIn"));
       return;
     }
 
@@ -403,9 +404,9 @@ export default function HomeFeed() {
     } catch (e: any) {
       console.error("[STT] Microphone permission denied:", e);
       if (e.name === "NotAllowedError" || e.name === "PermissionDeniedError") {
-        toast.error("Microphone permission denied. Please allow access in your browser settings, or open the app in a new tab.");
+        toast.error(t("uiHomeFeed.microphonePermissionDeniedPleaseAllowAccess"));
       } else {
-        toast.error("Could not access microphone. Please try again or use a different browser.");
+        toast.error(t("uiHomeFeed.couldNotAccessMicrophonePleaseTry"));
       }
       return;
     }
@@ -458,14 +459,14 @@ export default function HomeFeed() {
         isListeningRef.current = false;
         setIsListening(false);
         recognitionRef.current = null;
-        toast.error("Microphone permission denied. Please allow access in your browser settings, or open the app in a new tab.");
+        toast.error(t("uiHomeFeed.microphonePermissionDeniedPleaseAllowAccess"));
       } else if (event.error === "no-speech") {
 
         // Normal timeout, onend will auto-restart
       } else if (event.error !== "aborted") {isListeningRef.current = false;
         setIsListening(false);
         recognitionRef.current = null;
-        toast.error("Could not capture audio. Please try again.");
+        toast.error(t("uiHomeFeed.couldNotCaptureAudioPleaseTry"));
       }
     };
 
@@ -473,7 +474,7 @@ export default function HomeFeed() {
       recognition.start();
     } catch (e: any) {
       console.error("[STT] Start failed:", e);
-      toast.error("Failed to start voice capture. Try opening the app in a new tab.");
+      toast.error(t("uiHomeFeed.failedToStartVoiceCaptureTry"));
     }
   };
 
@@ -514,10 +515,10 @@ export default function HomeFeed() {
             >
               <OpportunitiesPanel asDigest showMapLink initialCount={3} className="mb-5" />
               <DigestSections userId={currentUser.id} />
-              <OpportunitiesPanel className="mb-5" />
+              <OpportunitiesPanel varySelection className="mb-5" />
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <h2 className="text-base font-semibold text-foreground">My Task Board</h2>
+                  <h2 className="text-base font-semibold text-foreground">{t("uiHomeFeed.myTaskBoard")}</h2>
                   <HintTooltip {...HINTS.tooltips.taskBoard} />
                 </div>
                 <MyTaskBoard userId={currentUser.id} />
@@ -594,7 +595,7 @@ export default function HomeFeed() {
               }
                 {result.suggestions?.length > 0 &&
               <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground font-medium">Here are some next steps:</p>
+                    <p className="text-xs text-muted-foreground font-medium">{t("uiHomeFeed.hereAreSomeNextSteps")}</p>
                     {result.suggestions.map((s: any, i: number) =>
                 <button
                   key={i}
@@ -611,11 +612,11 @@ export default function HomeFeed() {
               }
                 {result.actionType === "OTHER" &&
               <p className="text-xs text-muted-foreground text-center">
-                    We're not sure how to route this yet, but we've saved your idea for the team. 💡
+                    {t("uiHomeFeed.weReNotSureHowTo")}
                   </p>
               }
                 <div className="flex justify-center pt-2">
-                  <Button variant="ghost" size="sm" onClick={resetAll}>Start over</Button>
+                  <Button variant="ghost" size="sm" onClick={resetAll}>{t("uiHomeFeed.startOver")}</Button>
                 </div>
               </motion.div>
             }
@@ -635,10 +636,10 @@ export default function HomeFeed() {
               <PathwayCards persona={persona} progress={progress} steps={steps} />
               <OpportunitiesPanel asDigest showMapLink initialCount={3} />
               <DigestSections userId={currentUser.id} />
-              <OpportunitiesPanel />
+              <OpportunitiesPanel varySelection />
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <h2 className="text-base font-semibold text-foreground">My Task Board</h2>
+                  <h2 className="text-base font-semibold text-foreground">{t("uiHomeFeed.myTaskBoard")}</h2>
                   <HintTooltip {...HINTS.tooltips.taskBoard} />
                 </div>
                 <MyTaskBoard userId={currentUser.id} />

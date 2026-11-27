@@ -19,7 +19,8 @@ import { Compass, CircleDot, Zap, Building2, Shield, Users } from "lucide-react"
 import { useUserQuestParticipations, useUserPodMemberships, useUserServices, useMyDrafts, useUserGuildMemberships } from "@/hooks/useEntityQueries";
 import { useUserPinnedQuests } from "@/hooks/useUserPinnedQuests";
 import { QuestStarButton } from "@/components/QuestStarButton";
-import { useMyCompanyMemberships } from "@/hooks/useNetworkData";
+import { useWorkCompanies } from "@/hooks/useWorkCompanies";
+import { Skeleton } from "@/components/ui/skeleton";
 import MyBookings from "./MyBookings";
 import MyRequests from "./MyRequests";
 import MyAvailability from "./MyAvailability";
@@ -59,12 +60,13 @@ export default function WorkHub() {
   const currentUser = useCurrentUser();
   const { label, persona } = usePersona();
 
-  const { data: myQuests } = useUserQuestParticipations(currentUser.id || undefined);
-  const { data: myPods } = useUserPodMemberships(currentUser.id || undefined);
-  const { data: myServices } = useUserServices(currentUser.id || undefined);
-  const { data: drafts } = useMyDrafts(currentUser.id || undefined);
-  const { data: myGuilds } = useUserGuildMemberships(currentUser.id || undefined);
-  const { data: myCompanies } = useMyCompanyMemberships(currentUser.id || "");
+  const { data: myQuests, isLoading: questsLoading } = useUserQuestParticipations(currentUser.id || undefined);
+  const { data: myPods, isLoading: podsLoading } = useUserPodMemberships(currentUser.id || undefined);
+  const { data: myServices, isLoading: servicesLoading } = useUserServices(currentUser.id || undefined);
+  const { data: drafts, isLoading: draftsLoading } = useMyDrafts(currentUser.id || undefined, tab === "drafts");
+  const { data: myGuilds, isLoading: guildsLoading } = useUserGuildMemberships(currentUser.id || undefined);
+  const { data: myCompanies, isLoading: companiesLoading } = useWorkCompanies(currentUser.id || undefined);
+  const teamsLoading = guildsLoading || companiesLoading || podsLoading;
   const { data: pinnedQuests } = useUserPinnedQuests(currentUser.id || undefined);
   const pinnedSet = useMemo(() => new Set((pinnedQuests || []).map((p) => p.quest_id)), [pinnedQuests]);
   const pinnedAtMap = useMemo(() => {
@@ -130,8 +132,8 @@ export default function WorkHub() {
             { value: "services", label: <><span className="hidden sm:inline">{t("work.services")}</span><span className="sm:hidden">{t("tabs.services")}</span> ({servicesList.length})</> },
             { value: "bookings", label: <>{t("tabs.bookings")}<HintTooltip {...HINTS.tooltips.workBookings} /></> },
             { value: "calendar", label: <><Calendar className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Calendar</span></> },
-            { value: "contributions", label: <><Scale className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">Contributions</span></> },
-            { value: "drafts", label: <>{t("tabs.drafts")} ({totalDrafts})</> },
+            { value: "contributions", label: <><Scale className="h-3.5 w-3.5 sm:mr-1" /> <span className="hidden sm:inline">{t("uiWorkHub.contributions")}</span></> },
+            { value: "drafts", label: <>{t("tabs.drafts")} ({drafts ? totalDrafts : "…"})</> },
           ];
           return <WorkTabsListInner tabs={workTabs} />;
         })()}
@@ -143,14 +145,15 @@ export default function WorkHub() {
 
         {/* ── Quests ── */}
         <TabsContent value="quests">
-          {nonIdeaQuests.length === 0 && (
+          {questsLoading && <WorkListLoading />}
+          {!questsLoading && nonIdeaQuests.length === 0 && (
             <EmptyHint {...HINTS.empty.workQuests} persona={persona} />
           )}
           <div className="grid gap-3 md:grid-cols-2">
             {nonIdeaQuests.map((qp: any, i: number) => (
               <motion.div key={qp.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="relative">
                 <Link to={`/quests/${qp.quest_id}`} className="flex gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-all">
-                  <Thumb src={qp.quests?.cover_image_url} fallback={questPattern} alt={qp.quests?.title || "Quest"} />
+                  <Thumb src={qp.quests?.cover_image_url} fallback={questPattern} alt={qp.quests?.title || t("uiWorkHub.quest")} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <h4 className="font-display font-semibold truncate">{qp.quests?.title}</h4>
@@ -181,11 +184,12 @@ export default function WorkHub() {
 
         {/* ── Ideas ── */}
         <TabsContent value="ideas">
-          {ideasList.length === 0 && (
+          {questsLoading && <WorkListLoading />}
+          {!questsLoading && ideasList.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Lightbulb className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground mb-4">No ideas yet. Create a quest with "Idea" status to get started!</p>
-              <Button asChild><Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> Create Idea</Link></Button>
+              <p className="text-muted-foreground mb-4">{t("uiWorkHub.noIdeasYetCreateAQuest")}</p>
+              <Button asChild><Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> {t("uiWorkHub.createIdea")}</Link></Button>
             </div>
           )}
           <div className="grid gap-3 md:grid-cols-2">
@@ -210,7 +214,8 @@ export default function WorkHub() {
 
         {/* ── Pods ── */}
         <TabsContent value="teams">
-          {teamsList.length === 0 && (
+          {teamsLoading && teamsList.length === 0 && <WorkListLoading />}
+          {!teamsLoading && teamsList.length === 0 && (
             <EmptyHint {...HINTS.empty.workTeams} persona={persona} />
           )}
           <div className="grid gap-3 md:grid-cols-2">
@@ -249,7 +254,8 @@ export default function WorkHub() {
 
         {/* ── Services ── */}
         <TabsContent value="services">
-          {servicesList.length === 0 && (
+          {servicesLoading && <WorkListLoading />}
+          {!servicesLoading && servicesList.length === 0 && (
             <EmptyHint {...HINTS.empty.workServices} persona={persona} />
           )}
           <div className="grid gap-3 md:grid-cols-2">
@@ -281,7 +287,8 @@ export default function WorkHub() {
 
         {/* ── Drafts ── */}
         <TabsContent value="drafts">
-          {totalDrafts === 0 && <p className="text-muted-foreground">No drafts.</p>}
+          {draftsLoading && <WorkListLoading />}
+          {!draftsLoading && totalDrafts === 0 && <p className="text-muted-foreground">{t("uiWorkHub.noDrafts")}</p>}
           <div className="space-y-6">
             {(drafts?.quests || []).length > 0 && (
               <div>
@@ -294,7 +301,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{q.title}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{q.description}</p>
                         </div>
@@ -315,7 +322,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{g.name}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{g.description}</p>
                         </div>
@@ -336,7 +343,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{p.name}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{p.description}</p>
                         </div>
@@ -357,7 +364,7 @@ export default function WorkHub() {
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="font-display font-semibold truncate">{s.title}</h4>
-                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">Draft</Badge>
+                            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30 shrink-0">{t("uiWorkHub.draft")}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-1">{s.description}</p>
                         </div>
@@ -381,6 +388,13 @@ export default function WorkHub() {
 }
 
 const WORK_DEFAULT_TABS = ["tasks", "quests", "teams", "services", "bookings", "calendar", "contributions", "drafts"];
+
+function WorkListLoading() {
+  return <div className="grid gap-3 md:grid-cols-2" aria-busy="true">
+    <Skeleton className="h-24 w-full rounded-lg" />
+    <Skeleton className="h-24 w-full rounded-lg" />
+  </div>;
+}
 
 function WorkTabsListInner({ tabs }: { tabs: TabDefinition[] }) {
   const { orderedTabs, saveOrder, resetOrder, isCustomized } = useTabOrder("work_hub", WORK_DEFAULT_TABS);

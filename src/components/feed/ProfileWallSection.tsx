@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { PostComposer } from "@/components/feed/PostComposer";
 import { PostCard } from "@/components/feed/PostCard";
@@ -21,10 +23,10 @@ interface ProfileWallSectionProps {
 }
 
 const SOURCE_FILTERS: { key: WallSourceFilter; label: string; icon: React.ReactNode }[] = [
-  { key: "ALL", label: "All activity", icon: <LayoutGrid className="h-3 w-3" /> },
-  { key: "PROFILE", label: "Profile", icon: <User className="h-3 w-3" /> },
-  { key: "GUILD", label: "Guilds", icon: <Shield className="h-3 w-3" /> },
-  { key: "QUEST", label: "Quests", icon: <Compass className="h-3 w-3" /> },
+  { key: "ALL", get label() { return i18n.t("uiProfileWallSection.allActivity"); }, icon: <LayoutGrid className="h-3 w-3" /> },
+  { key: "PROFILE", get label() { return i18n.t("uiProfileWallSection.profile"); }, icon: <User className="h-3 w-3" /> },
+  { key: "GUILD", get label() { return i18n.t("uiProfileWallSection.guilds"); }, icon: <Shield className="h-3 w-3" /> },
+  { key: "QUEST", get label() { return i18n.t("uiProfileWallSection.quests"); }, icon: <Compass className="h-3 w-3" /> },
   { key: "COMPANY", label: "Companies", icon: <Building2 className="h-3 w-3" /> },
   { key: "POD", label: "Pods", icon: <CircleDot className="h-3 w-3" /> },
   { key: "COURSE_EVENT", label: "Courses", icon: <GraduationCap className="h-3 w-3" /> },
@@ -47,6 +49,7 @@ const gridClasses: Record<Exclude<FeedDisplayMode, "list">, string> = {
 };
 
 export function ProfileWallSection({ profileUserId, isOwnProfile, allowComments = true, className }: ProfileWallSectionProps) {
+  const { t } = useTranslation();
    const { session } = useAuth();
    const [sourceFilter, setSourceFilter] = useState<WallSourceFilter>("ALL");
    const [sortMode, setSortMode] = useState<FeedSortMode>("recent");
@@ -119,14 +122,14 @@ export function ProfileWallSection({ profileUserId, isOwnProfile, allowComments 
                <div className="flex items-center justify-center gap-2">
                  <Button size="sm" variant="outline" asChild>
                    <Link to="/quests/new">
-                     <Compass className="h-4 w-4 mr-1" /> Start a quest
+                     <Compass className="h-4 w-4 mr-1" /> {t("uiProfileWallSection.startAQuest")}
                    </Link>
                  </Button>
                </div>
              )}
              {!isOwnProfile && (
                <p className="text-xs text-muted-foreground">
-                 Follow this person to see more of their activity in your network feed.
+                 {t("uiProfileWallSection.followThisPersonToSeeMore")}
                </p>
              )}
            </div>

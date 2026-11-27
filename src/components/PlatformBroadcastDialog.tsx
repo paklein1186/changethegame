@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useCallback } from "react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
@@ -85,6 +86,7 @@ async function resolveRecipientIds(
 }
 
 export function PlatformBroadcastDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
@@ -126,7 +128,7 @@ export function PlatformBroadcastDialog() {
       const recipientIds = await resolveRecipientIds(audiences, userId);
 
       if (recipientIds.length === 0) {
-        toast({ title: "No recipients", description: "No users match the selected audience.", variant: "destructive" });
+        toast({ title: t("uiPlatformBroadcastDialog.noRecipients"), description: t("uiPlatformBroadcastDialog.noUsersMatchTheSelectedAudience"), variant: "destructive" });
         setSending(false);
         return;
       }
@@ -273,7 +275,7 @@ export function PlatformBroadcastDialog() {
       resetForm();
       setOpen(false);
     } catch (err: any) {
-      toast({ title: "Broadcast failed", description: err?.message ?? "An unexpected error occurred.", variant: "destructive" });
+      toast({ title: t("uiPlatformBroadcastDialog.broadcastFailed"), description: err?.message ?? t("uiPlatformBroadcastDialog.anUnexpectedErrorOccurred"), variant: "destructive" });
       setSending(false);
     }
   };
@@ -294,7 +296,7 @@ export function PlatformBroadcastDialog() {
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2">
           <Megaphone className="h-4 w-4" />
-          Broadcast to users
+          {t("uiPlatformBroadcastDialog.broadcastToUsers")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl max-h-[90vh] flex flex-col">
@@ -308,12 +310,11 @@ export function PlatformBroadcastDialog() {
         <ScrollArea className="flex-1 -mx-6 px-6">
           <div className="space-y-4 pb-2">
             <p className="text-sm text-muted-foreground">
-              Send an official message from{" "}
+              {t("uiPlatformBroadcastDialog.sendAnOfficialMessageFrom")}{" "}
               <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
                 <img src={logoImg} alt="changethegame" className="h-4 w-4 rounded-sm inline-block" />
                 {SENDER_LABEL}
-              </span>.
-              Each recipient receives it in their inbox with an email notification.
+              </span>{t("uiPlatformBroadcastDialog.eachRecipientReceivesItInTheir")}
             </p>
 
             {/* Audience picker */}
@@ -326,7 +327,7 @@ export function PlatformBroadcastDialog() {
               </Label>
               <Input
                 id="broadcast-subject"
-                placeholder="e.g. Important platform update"
+                placeholder={t("uiPlatformBroadcastDialog.eGImportantPlatformUpdate")}
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 disabled={sending}
@@ -342,7 +343,7 @@ export function PlatformBroadcastDialog() {
               <Textarea
                 ref={textareaRef}
                 id="broadcast-content"
-                placeholder="Write your announcement… (Markdown supported)"
+                placeholder={t("uiPlatformBroadcastDialog.writeYourAnnouncementMarkdownSupported")}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={6}
@@ -354,7 +355,7 @@ export function PlatformBroadcastDialog() {
             {/* URL */}
             <div>
               <Label htmlFor="broadcast-url" className="text-sm font-medium flex items-center gap-1.5">
-                <Link2 className="h-3.5 w-3.5" /> Link URL <span className="text-muted-foreground font-normal">(optional)</span>
+                <Link2 className="h-3.5 w-3.5" /> {t("uiPlatformBroadcastDialog.linkUrl")} <span className="text-muted-foreground font-normal">(optional)</span>
               </Label>
               <Input
                 id="broadcast-url"
@@ -384,13 +385,13 @@ export function PlatformBroadcastDialog() {
 
         <div className="flex justify-end gap-2 pt-2 border-t">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={sending}>
-            Cancel
+            {t("uiPlatformBroadcastDialog.cancel")}
           </Button>
           <Button onClick={handleSend} disabled={!content.trim() || sending || audiences.length === 0}>
             {sending ? (
               <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Broadcasting…</>
             ) : (
-              <><Megaphone className="h-4 w-4 mr-1" /> Send broadcast</>
+              <><Megaphone className="h-4 w-4 mr-1" /> {t("uiPlatformBroadcastDialog.sendBroadcast")}</>
             )}
           </Button>
         </div>

@@ -44,8 +44,8 @@ export default function TopicHouse() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <Hash className="h-10 w-10 text-muted-foreground" />
-        <p className="text-muted-foreground">Topic not found</p>
-        <Link to="/explore" className="text-sm text-primary hover:underline">← Back to Explore</Link>
+        <p className="text-muted-foreground">{t("uiTopicHouse.topicNotFound")}</p>
+        <Link to="/explore" className="text-sm text-primary hover:underline">{t("uiTopicHouse.backToExplore")}</Link>
       </div>
     );
   }
@@ -73,7 +73,7 @@ export default function TopicHouse() {
           onClick={() => navigate("/explore?tab=houses")}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back
+          <ArrowLeft className="h-3.5 w-3.5" /> {t("uiTopicHouse.back")}
         </button>
 
         {/* Header */}
@@ -105,7 +105,7 @@ export default function TopicHouse() {
                 className="gap-1.5"
               >
                 <Heart className={cn("h-3.5 w-3.5", isFollowing && "fill-current")} />
-                {isFollowing ? "Following" : "Follow"}
+                {isFollowing ? "Following" : t("uiTopicHouse.follow")}
               </Button>
               <ShareLinkButton entityType="topic" entityId={topic.slug || topic.id} entityName={topic.name} />
             </div>
@@ -115,7 +115,7 @@ export default function TopicHouse() {
         {/* Tabs */}
         <Tabs value={tab} onValueChange={setTab} className="w-full">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="overview">{t("uiTopicHouse.overview")}</TabsTrigger>
             <TabsTrigger value="ecosystem">Ecosystem</TabsTrigger>
           </TabsList>
 

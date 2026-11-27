@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Flag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -11,7 +12,7 @@ export const PRIORITY_CONFIG: Record<Priority, { label: string; color: string; i
   HIGH: { label: "High", color: "text-red-500", iconColor: "text-red-500" },
   MEDIUM: { label: "Medium", color: "text-amber-500", iconColor: "text-amber-500" },
   LOW: { label: "Low", color: "text-blue-400", iconColor: "text-blue-400" },
-  NONE: { label: "None", color: "text-muted-foreground/40", iconColor: "text-muted-foreground/40" },
+  NONE: { get label() { return i18n.t("uiPriorityPicker.none"); }, color: "text-muted-foreground/40", iconColor: "text-muted-foreground/40" },
 };
 
 export const PRIORITY_ORDER: Record<Priority, number> = {

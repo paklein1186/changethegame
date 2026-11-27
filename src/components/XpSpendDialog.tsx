@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { AlertTriangle, ArrowRight, RefreshCw } from "lucide-react";
 import { CurrencyIcon } from "@/components/CurrencyIcon";
@@ -25,6 +26,7 @@ interface XpSpendDialogProps {
 export function XpSpendDialog({
   open, onOpenChange, canAfford, xpCost, userXp, actionLabel, limitLabel, onConfirm, ctgBalance,
 }: XpSpendDialogProps) {
+  const { t } = useTranslation();
   const [confirming, setConfirming] = useState(false);
 
   const handleConfirm = async () => {
@@ -43,11 +45,11 @@ export function XpSpendDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {canAfford
-              ? <><CurrencyIcon currency="credits" className="h-5 w-5" /> Spend Credits to continue</>
+              ? <><CurrencyIcon currency="credits" className="h-5 w-5" /> {t("uiXpSpendDialog.spendCreditsToContinue")}</>
               : <><AlertTriangle className="h-5 w-5 text-warning" /> Limit reached</>}
           </DialogTitle>
           <DialogDescription>
-            You've used all your {limitLabel}.
+            {t("uiXpSpendDialog.youVeUsedAllYour")} {limitLabel}.
           </DialogDescription>
         </DialogHeader>
 
@@ -55,14 +57,14 @@ export function XpSpendDialog({
           <div className="space-y-4">
             <div className="rounded-lg border border-border bg-muted/50 p-4 text-center">
               <p className="text-sm text-muted-foreground mb-1">
-                Spend <span className="font-bold text-primary">{xpCost} Credits</span> to {actionLabel}?
+                Spend <span className="font-bold text-primary">{xpCost} {t("uiXpSpendDialog.credits")}</span> to {actionLabel}?
               </p>
               <p className="text-xs text-muted-foreground">
-                Your balance: <span className="font-semibold">{userXp} Credits</span> → <span className="font-semibold">{userXp - xpCost} Credits</span>
+                {t("uiXpSpendDialog.yourBalance")} <span className="font-semibold">{userXp} {t("uiXpSpendDialog.credits")}</span> → <span className="font-semibold">{userXp - xpCost} {t("uiXpSpendDialog.credits")}</span>
               </p>
             </div>
             <DialogFooter className="gap-2 sm:gap-0">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiXpSpendDialog.cancel")}</Button>
               <Button onClick={handleConfirm} disabled={confirming}>
                 <CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> {confirming ? "Spending…" : `Spend ${xpCost} Credits`}
               </Button>
@@ -71,7 +73,7 @@ export function XpSpendDialog({
         ) : (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              You need <span className="font-semibold text-primary">{xpCost} Credits</span> to {actionLabel}, but you only have <span className="font-semibold">{userXp} Credits</span>.
+              {t("uiXpSpendDialog.youNeed")} <span className="font-semibold text-primary">{xpCost} {t("uiXpSpendDialog.credits")}</span> to {actionLabel}{t("uiXpSpendDialog.butYouOnlyHave")} <span className="font-semibold">{userXp} {t("uiXpSpendDialog.credits")}</span>.
             </p>
 
             {/* CTG exchange path */}
@@ -80,32 +82,31 @@ export function XpSpendDialog({
                 <div className="flex items-center gap-2">
                    <CurrencyIcon currency="ctg" className="h-4 w-4" />
                    <p className="text-sm font-medium">
-                    You have {ctgBalance.toLocaleString()} $CTG
+                    {t("uiXpSpendDialog.youHave")} {ctgBalance.toLocaleString()} $CTG
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Exchange your contribution earnings for Credits — no payment needed.
+                  {t("uiXpSpendDialog.exchangeYourContributionEarningsForCredits")}
                 </p>
                 <Button variant="outline" size="sm" asChild className="gap-1.5">
                   <Link to="/me/credits">
                     <RefreshCw className="h-3.5 w-3.5" />
-                    Exchange $CTG for Credits
+                    {t("uiXpSpendDialog.exchangeCtgForCredits")}
                   </Link>
                 </Button>
               </div>
             ) : (
               <p className="text-xs text-muted-foreground rounded-lg bg-muted/50 p-3">
-                💡 Tip: Complete quests and subtasks to earn 🌱 $CTG,
-                which you can exchange for Credits without paying €.
+                {t("uiXpSpendDialog.tipCompleteQuestsAndSubtasksTo")}
               </p>
             )}
 
             <DialogFooter className="flex-col sm:flex-row gap-2">
               <Button variant="outline" asChild>
-                <Link to="/plans">See plans <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                <Link to="/plans">{t("uiXpSpendDialog.seePlans")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
               </Button>
               <Button asChild>
-                <Link to="/me/credits"><CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> Buy Credits</Link>
+                <Link to="/me/credits"><CurrencyIcon currency="credits" className="h-4 w-4 mr-1" /> {t("uiXpSpendDialog.buyCredits")}</Link>
               </Button>
             </DialogFooter>
           </div>

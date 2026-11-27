@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { FeedSection } from "@/components/feed/FeedSection";
 import { usePersona } from "@/hooks/usePersona";
 
 export function FeedToggle() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"houses" | "all">("houses");
   const { label } = usePersona();
 
@@ -17,11 +19,11 @@ export function FeedToggle() {
         <div className="flex gap-1 rounded-lg border border-border p-0.5 bg-muted/50">
           <Button variant={mode === "houses" ? "secondary" : "ghost"} size="sm" className="h-7 text-xs"
             onClick={() => setMode("houses")}>
-            My Topics only
+            {t("uiFeedToggle.myTopicsOnly")}
           </Button>
           <Button variant={mode === "all" ? "secondary" : "ghost"} size="sm" className="h-7 text-xs"
             onClick={() => setMode("all")}>
-            Show All
+            {t("uiFeedToggle.showAll")}
           </Button>
         </div>
       </div>

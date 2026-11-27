@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ export function SendOfficialMessageDialog({
   guildName,
   trigger,
 }: SendOfficialMessageDialogProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
@@ -121,7 +123,7 @@ export function SendOfficialMessageDialog({
       setOpen(false);
     } catch (err: any) {
       toast({
-        title: "Failed to send message",
+        title: t("uiSendOfficialMessageDialog.failedToSendMessage"),
         description: err?.message,
         variant: "destructive",
       });
@@ -142,11 +144,11 @@ export function SendOfficialMessageDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Send message as {senderLabel}
+            {t("uiSendOfficialMessageDialog.sendMessageAs")} {senderLabel}
           </DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          This message will appear in <strong>{recipientName}</strong>'s inbox as an official message from <strong>{senderLabel}</strong>. They'll also receive an email notification.
+          {t("uiSendOfficialMessageDialog.thisMessageWillAppearIn")} <strong>{recipientName}</strong>{t("uiSendOfficialMessageDialog.sInboxAsAnOfficialMessage")} <strong>{senderLabel}</strong>{t("uiSendOfficialMessageDialog.theyLlAlsoReceiveAnEmail")}
         </p>
         <Textarea
           placeholder={`Write your message to ${recipientName}...`}
@@ -157,11 +159,11 @@ export function SendOfficialMessageDialog({
         />
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={sending}>
-            Cancel
+            {t("uiSendOfficialMessageDialog.cancel")}
           </Button>
           <Button onClick={handleSend} disabled={!content.trim() || sending}>
             <Mail className="h-4 w-4 mr-1" />
-            {sending ? "Sending…" : "Send official message"}
+            {sending ? "Sending…" : t("uiSendOfficialMessageDialog.sendOfficialMessage")}
           </Button>
         </div>
       </DialogContent>

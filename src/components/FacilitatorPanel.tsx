@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -30,6 +31,7 @@ interface StepItem {
 }
 
 export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, guildId }: FacilitatorPanelProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [loading, setLoading] = useState<ActionType | null>(null);
@@ -47,7 +49,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
         body: { entityType, entityId, action, inputText: action === "rewrite" ? rewriteInput : undefined },
       });
       if (error) throw error;
-      if (data?.error) { toast({ title: "AI Error", description: data.error, variant: "destructive" }); return; }
+      if (data?.error) { toast({ title: t("uiFacilitatorPanel.aiError"), description: data.error, variant: "destructive" }); return; }
 
       const r = data.result;
       if (action === "summarize") setSummaryResult(r.content || r.raw || "");
@@ -55,7 +57,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
       if (action === "agenda") setAgendaResult(r.content || r.raw || "");
       if (action === "rewrite") setRewriteResult(r);
     } catch (e: any) {
-      toast({ title: "Error", description: e.message, variant: "destructive" });
+      toast({ title: t("uiFacilitatorPanel.error"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(null);
     }
@@ -65,12 +67,12 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
     navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(null), 2000);
-    toast({ title: "Copied to clipboard" });
+    toast({ title: t("uiFacilitatorPanel.copiedToClipboard") });
   };
 
   const saveAsDoc = async (title: string, content: string) => {
     const targetGuildId = guildId || (entityType === "GUILD" ? entityId : undefined);
-    if (!targetGuildId) { toast({ title: "No guild context to save doc" }); return; }
+    if (!targetGuildId) { toast({ title: t("uiFacilitatorPanel.noGuildContextToSaveDoc") }); return; }
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -81,15 +83,15 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
       content,
       created_by_user_id: user.id,
     } as any);
-    if (error) { toast({ title: "Failed to save", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiFacilitatorPanel.failedToSave"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["guild-docs", targetGuildId] });
-    toast({ title: "Saved to Guild Docs" });
+    toast({ title: t("uiFacilitatorPanel.savedToGuildDocs") });
   };
 
   const actions = [
-    { key: "summarize" as ActionType, label: "Summarize Discussions", icon: FileText, desc: "AI summary of recent chat & activity" },
-    { key: "next_steps" as ActionType, label: "Extract Next Steps", icon: ListChecks, desc: "Actionable tasks from discussions" },
-    { key: "agenda" as ActionType, label: "Generate Agenda", icon: CalendarDays, desc: "Meeting agenda from activity & roles" },
+    { key: "summarize" as ActionType, label: "Summarize Discussions", icon: FileText, desc: t("uiFacilitatorPanel.aiSummaryOfRecentChatActivity") },
+    { key: "next_steps" as ActionType, label: t("uiFacilitatorPanel.extractNextSteps"), icon: ListChecks, desc: t("uiFacilitatorPanel.actionableTasksFromDiscussions") },
+    { key: "agenda" as ActionType, label: "Generate Agenda", icon: CalendarDays, desc: t("uiFacilitatorPanel.meetingAgendaFromActivityRoles") },
     { key: "rewrite" as ActionType, label: "Conflict-Friendly Rewrite", icon: MessageCircleHeart, desc: "Rephrase messages constructively" },
   ];
 
@@ -101,7 +103,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
         <Badge variant="secondary" className="text-[10px]">Beta</Badge>
       </div>
       <p className="text-sm text-muted-foreground">
-        AI tools to help facilitate {entityName}. Results are generated from recent activity and member context.
+        {t("uiFacilitatorPanel.aiToolsToHelpFacilitate")} {entityName}{t("uiFacilitatorPanel.resultsAreGeneratedFromRecentActivity")}
       </p>
 
       {/* Action buttons */}
@@ -134,7 +136,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
           <Textarea
             value={rewriteInput}
             onChange={(e) => setRewriteInput(e.target.value)}
-            placeholder="Paste a message that could use a kinder tone..."
+            placeholder={t("uiFacilitatorPanel.pasteAMessageThatCouldUse")}
             className="resize-none text-sm"
             rows={3}
           />
@@ -170,7 +172,7 @@ export function FacilitatorPanel({ entityType, entityId, entityName, isAdmin, gu
         {stepsResult && (
           <ResultCard
             key="steps"
-            title="Next Steps"
+            title={t("uiFacilitatorPanel.nextSteps")}
             icon={ListChecks}
             onCopy={() => copyToClipboard(stepsResult.map(s => `- ${s.title}: ${s.description}`).join("\n"), "steps")}
             copied={copied === "steps"}
@@ -253,6 +255,7 @@ function ResultCard({
   onRegenerate: () => void;
   onSaveDoc?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -266,7 +269,7 @@ function ResultCard({
               <Icon className="h-4 w-4 text-primary" /> {title}
             </CardTitle>
             <div className="flex gap-1">
-              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onCopy} title="Copy">
+              <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onCopy} title={t("uiFacilitatorPanel.copy")}>
                 {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
               </Button>
               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onRegenerate} title="Regenerate">
@@ -274,7 +277,7 @@ function ResultCard({
               </Button>
               {onSaveDoc && (
                 <Button size="sm" variant="outline" className="h-7 text-xs" onClick={onSaveDoc}>
-                  <Plus className="h-3 w-3 mr-1" /> Save to Docs
+                  <Plus className="h-3 w-3 mr-1" /> {t("uiFacilitatorPanel.saveToDocs")}
                 </Button>
               )}
             </div>

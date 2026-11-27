@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRef, useState, useEffect } from "react";
 import { ImagePlus, X, Upload, Loader2, Focus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ export function ImageUpload({
   description,
   className,
 }: ImageUploadProps) {
+  const { t } = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
   const [urlMode, setUrlMode] = useState(false);
   const [urlValue, setUrlValue] = useState(currentImageUrl ?? "");
@@ -67,7 +69,7 @@ export function ImageUpload({
       setUrlValue(urlData.publicUrl);
       setShowFocalEditor(true);
     } catch (err: any) {
-      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+      toast({ title: t("uiImageUpload.uploadFailed"), description: err.message, variant: "destructive" });
     } finally {
       setUploading(false);
     }
@@ -163,7 +165,7 @@ export function ImageUpload({
             <ImagePlus className="h-8 w-8 text-muted-foreground" />
           )}
           <span className="text-xs text-muted-foreground">
-            {uploading ? "Uploading…" : "Click to upload"}
+            {uploading ? "Uploading…" : t("uiImageUpload.clickToUpload")}
           </span>
         </button>
       )}

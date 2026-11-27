@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { SectionBanner, HINTS } from "@/components/onboarding/ContextualHint";
 import { supabase } from "@/integrations/supabase/client";
@@ -80,6 +81,7 @@ const TASK_TYPE_EXAMPLES: Record<string, string> = {
 };
 
 export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Props) {
+  const { t } = useTranslation();
   const [includeExternal, setIncludeExternal] = useState(false);
   const [period, setPeriod] = useState<"7d" | "30d" | "90d" | "all">("30d");
   const [showProposalDialog, setShowProposalDialog] = useState(false);
@@ -113,13 +115,13 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
         status: "open",
       });
       if (error) throw error;
-      toast({ title: "Proposal submitted to guild members" });
+      toast({ title: t("uiGuildOVNTab.proposalSubmittedToGuildMembers") });
       setShowProposalDialog(false);
       setProposalTaskType("");
       setProposalWeight("1.0");
       setProposalJustification("");
     } catch (e) {
-      toast({ title: "Error", description: "Unable to submit the proposal", variant: "destructive" });
+      toast({ title: t("uiGuildOVNTab.error"), description: t("uiGuildOVNTab.unableToSubmitTheProposal"), variant: "destructive" });
     } finally {
       setSubmitting(false);
     }
@@ -237,7 +239,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
   });
 
   if (isLoading || !rawData) {
-    return <p className="text-sm text-muted-foreground p-4">Loading contribution ledger…</p>;
+    return <p className="text-sm text-muted-foreground p-4">{t("uiGuildOVNTab.loadingContributionLedger")}</p>;
   }
 
   const { contribs, pieLogs, quests, profileMap, territoryMap, prevContribs } = rawData;
@@ -360,8 +362,8 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
     return (
       <div className="text-center py-12">
         <CurrencyIcon currency="weight" className="h-10 w-10" colorClassName="text-muted-foreground" />
-        <p className="text-muted-foreground">No quests linked to this guild yet.</p>
-        <p className="text-xs text-muted-foreground mt-1">When quests are hosted by or affiliated with this guild, their contribution metrics will appear here.</p>
+        <p className="text-muted-foreground">{t("uiGuildOVNTab.noQuestsLinkedToThisGuild")}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t("uiGuildOVNTab.whenQuestsAreHostedByOr")}</p>
       </div>
     );
   }
@@ -374,7 +376,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
         <div className="flex items-center gap-2">
           <Switch id="external-toggle" checked={includeExternal} onCheckedChange={setIncludeExternal} />
           <Label htmlFor="external-toggle" className="text-xs text-muted-foreground cursor-pointer">
-            Include external quests with contributors from this guild
+            {t("uiGuildOVNTab.includeExternalQuestsWithContributorsFrom")}
           </Label>
         </div>
         <div className="flex items-center gap-1">
@@ -386,7 +388,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
               className="h-7 text-xs px-2.5"
               onClick={() => setPeriod(p)}
             >
-              {p === "7d" ? "7d" : p === "30d" ? "30d" : p === "90d" ? "90d" : "All"}
+              {p === "7d" ? "7d" : p === "30d" ? "30d" : p === "90d" ? "90d" : t("uiGuildOVNTab.all")}
             </Button>
           ))}
         </div>
@@ -426,7 +428,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
           <CardContent className="p-4 text-center">
             <span className="text-lg mx-auto mb-1 block">🏛️</span>
             <p className="text-2xl font-bold text-violet-600">{totalGuildShare.toFixed(0)}</p>
-            <p className="text-[10px] text-muted-foreground">🌱 $CTG (guild share)</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildOVNTab.ctgGuildShare")}</p>
           </CardContent>
         </Card>
       </div>
@@ -518,7 +520,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
                     <span className="truncate">{c.name}</span>
                     <Badge variant="secondary" className="text-[9px]">{c.contribution_count}</Badge>
                     {recentIds.has(c.user_id) && (
-                      <Badge variant="default" className="text-[9px] bg-emerald-500">Active</Badge>
+                      <Badge variant="default" className="text-[9px] bg-emerald-500">{t("uiGuildOVNTab.active")}</Badge>
                     )}
                   </div>
                   <span className="text-right font-medium">{c.total_weighted_units.toFixed(1)}</span>
@@ -535,7 +537,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" /> Quest Breakdown
+            <BarChart3 className="h-4 w-4" /> {t("uiGuildOVNTab.questBreakdown")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -556,13 +558,13 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
           )}
           <div className="space-y-1">
             <div className="grid grid-cols-[1fr_auto_auto_auto_auto_auto_auto] gap-2 text-[10px] text-muted-foreground font-medium border-b border-border pb-1">
-              <span>Quest</span>
-              <span className="text-right">Budget</span>
-              <span className="text-right">Guild Share</span>
+              <span>{t("uiGuildOVNTab.quest")}</span>
+              <span className="text-right">{t("uiGuildOVNTab.budget")}</span>
+              <span className="text-right">{t("uiGuildOVNTab.guildShare")}</span>
               <span className="text-right">Verif.</span>
               <span className="text-right">Contributors</span>
-              <span className="text-right">Territory</span>
-              <span className="text-right">Status</span>
+              <span className="text-right">{t("uiGuildOVNTab.territory")}</span>
+              <span className="text-right">{t("uiGuildOVNTab.status")}</span>
             </div>
             {questAggs.map((q) => {
               const ratioColor = q.verification_ratio === null ? "text-muted-foreground"
@@ -582,7 +584,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
                   <span className="text-right">{q.contributor_count}</span>
                   <span className="text-right text-muted-foreground">{q.territory_name || "—"}</span>
                   <Badge variant={q.value_pie_calculated ? "default" : "secondary"} className="text-[9px] justify-self-end">
-                    {q.value_pie_calculated ? "Distributed" : "Pending"}
+                    {q.value_pie_calculated ? "Distributed" : t("uiGuildOVNTab.pending")}
                   </Badge>
                 </Link>
               );
@@ -596,7 +598,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
         {/* Task Type */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">By Task Type</CardTitle>
+            <CardTitle className="text-sm">{t("uiGuildOVNTab.byTaskType")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1.5">
@@ -617,7 +619,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
                   </div>
                 );
               })}
-              {taskTypes.length === 0 && <p className="text-xs text-muted-foreground">No task types recorded.</p>}
+              {taskTypes.length === 0 && <p className="text-xs text-muted-foreground">{t("uiGuildOVNTab.noTaskTypesRecorded")}</p>}
             </div>
           </CardContent>
         </Card>
@@ -627,7 +629,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
-                <CurrencyIcon currency="ctg" className="h-4 w-4" /> By Territory
+                <CurrencyIcon currency="ctg" className="h-4 w-4" /> {t("uiGuildOVNTab.byTerritory")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -675,20 +677,20 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
-                ⚖️ Guild Value Scale
+                {t("uiGuildOVNTab.guildValueScale")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {!hasCustomWeights && (
                 <p className="text-xs text-muted-foreground mb-3 italic">
-                  Default scale — all tasks are worth 1.0
+                  {t("uiGuildOVNTab.defaultScaleAllTasksAreWorth")}
                 </p>
               )}
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-border text-muted-foreground">
-                       <th className="text-left py-1.5 font-medium">Task Type</th>
+                       <th className="text-left py-1.5 font-medium">{t("uiGuildOVNTab.taskType")}</th>
                       <th className="text-center py-1.5 font-medium w-10">Icon</th>
                       <th className="text-right py-1.5 font-medium">Multiplier</th>
                       <th className="text-right py-1.5 font-medium">Example</th>
@@ -714,7 +716,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
                   className="text-xs mt-2 p-0 h-auto"
                   onClick={() => setShowProposalDialog(true)}
                 >
-                  Propose a change
+                  {t("uiGuildOVNTab.proposeAChange")}
                 </Button>
               )}
 
@@ -734,15 +736,15 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
       <Dialog open={showProposalDialog} onOpenChange={setShowProposalDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Propose a scale change</DialogTitle>
-            <DialogDescription>Submit a multiplier change for a task type.</DialogDescription>
+            <DialogTitle>{t("uiGuildOVNTab.proposeAScaleChange")}</DialogTitle>
+            <DialogDescription>{t("uiGuildOVNTab.submitAMultiplierChangeForA")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label className="text-xs mb-1 block">Task type</Label>
+              <Label className="text-xs mb-1 block">{t("uiGuildOVNTab.taskType2")}</Label>
               <Select value={proposalTaskType} onValueChange={setProposalTaskType}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a type…" />
+                  <SelectValue placeholder={t("uiGuildOVNTab.chooseAType")} />
                 </SelectTrigger>
                 <SelectContent>
                   {DEFAULT_TASK_TYPES.map((t) => (
@@ -754,7 +756,7 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
               </Select>
             </div>
             <div>
-              <Label className="text-xs mb-1 block">New multiplier (0.5 – 5.0)</Label>
+              <Label className="text-xs mb-1 block">{t("uiGuildOVNTab.newMultiplier0550")}</Label>
               <Input
                 type="number"
                 min={0.5}
@@ -769,18 +771,18 @@ export function GuildOVNTab({ guildId, guildName, isMember, currentUserId }: Pro
               <Textarea
                 value={proposalJustification}
                 onChange={(e) => setProposalJustification(e.target.value)}
-                placeholder="Explain why this change is relevant…"
+                placeholder={t("uiGuildOVNTab.explainWhyThisChangeIsRelevant")}
                 className="min-h-[80px]"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowProposalDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowProposalDialog(false)}>{t("uiGuildOVNTab.cancel")}</Button>
             <Button
               onClick={handleSubmitProposal}
               disabled={submitting || !proposalTaskType || proposalJustification.length < 20}
             >
-              Submit
+              {t("uiGuildOVNTab.submit")}
             </Button>
           </DialogFooter>
         </DialogContent>

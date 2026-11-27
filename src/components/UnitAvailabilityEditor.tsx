@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, CalendarOff, CalendarCheck, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
+  const { t } = useTranslation();
   const { data: existing, isLoading } = useUnitAvailability(unitType, unitId);
   const save = useSaveUnitAvailability();
   const { toast } = useToast();
@@ -91,11 +93,11 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
       });
       toast({ title: "Availability saved!" });
     } catch {
-      toast({ title: "Failed to save availability", variant: "destructive" });
+      toast({ title: t("uiUnitAvailabilityEditor.failedToSaveAvailability"), variant: "destructive" });
     }
   };
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading availability…</p>;
+  if (isLoading) return <p className="text-sm text-muted-foreground">{t("uiUnitAvailabilityEditor.loadingAvailability")}</p>;
 
   return (
     <div className="space-y-6 max-w-lg">
@@ -105,8 +107,8 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
         <Select value={mode} onValueChange={setMode}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="always_available">Always available (default Mon-Fri 9-17)</SelectItem>
-            <SelectItem value="specific_slots">Specific time slots</SelectItem>
+            <SelectItem value="always_available">{t("uiUnitAvailabilityEditor.alwaysAvailableDefaultMonFri9")}</SelectItem>
+            <SelectItem value="specific_slots">{t("uiUnitAvailabilityEditor.specificTimeSlots")}</SelectItem>
             <SelectItem value="custom_calendar">Custom calendar</SelectItem>
           </SelectContent>
         </Select>
@@ -137,7 +139,7 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
                 </div>
               ))}
               <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => addRange(day.weekday)}>
-                <Plus className="h-3 w-3 mr-1" /> Add time range
+                <Plus className="h-3 w-3 mr-1" /> {t("uiUnitAvailabilityEditor.addTimeRange")}
               </Button>
             </div>
           ))}
@@ -148,7 +150,7 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-medium flex items-center gap-2"><CalendarOff className="h-4 w-4" /> Exceptions</h4>
-          <Button variant="outline" size="sm" onClick={addException}><Plus className="h-3.5 w-3.5 mr-1" /> Add exception</Button>
+          <Button variant="outline" size="sm" onClick={addException}><Plus className="h-3.5 w-3.5 mr-1" /> {t("uiUnitAvailabilityEditor.addException")}</Button>
         </div>
         {exceptions.map((exc, i) => (
           <div key={i} className="flex items-center gap-2 rounded-lg border border-border bg-card p-3">
@@ -159,7 +161,7 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
             </div>
             {exc.isAvailable && (
               <>
-                <Input type="time" value={exc.startTime || ""} onChange={e => updateException(i, { startTime: e.target.value })} className="w-24" placeholder="Start" />
+                <Input type="time" value={exc.startTime || ""} onChange={e => updateException(i, { startTime: e.target.value })} className="w-24" placeholder={t("uiUnitAvailabilityEditor.start")} />
                 <Input type="time" value={exc.endTime || ""} onChange={e => updateException(i, { endTime: e.target.value })} className="w-24" placeholder="End" />
               </>
             )}
@@ -169,22 +171,22 @@ export function UnitAvailabilityEditor({ unitType, unitId }: Props) {
             </Button>
           </div>
         ))}
-        {exceptions.length === 0 && <p className="text-xs text-muted-foreground">No exceptions defined. Add blocked or override dates above.</p>}
+        {exceptions.length === 0 && <p className="text-xs text-muted-foreground">{t("uiUnitAvailabilityEditor.noExceptionsDefinedAddBlockedOr")}</p>}
       </div>
 
       {/* Max bookings */}
       <div>
         <label className="text-sm font-medium mb-1 block">Max bookings per day (optional)</label>
-        <Input type="number" value={maxPerDay} onChange={e => setMaxPerDay(e.target.value)} min={0} placeholder="No limit" className="w-32" />
+        <Input type="number" value={maxPerDay} onChange={e => setMaxPerDay(e.target.value)} min={0} placeholder={t("uiUnitAvailabilityEditor.noLimit")} className="w-32" />
       </div>
 
       <Button onClick={handleSave} disabled={save.isPending} className="w-full">
-        <Save className="h-4 w-4 mr-2" /> Save availability
+        <Save className="h-4 w-4 mr-2" /> {t("uiUnitAvailabilityEditor.saveAvailability")}
       </Button>
 
       {!existing && (
         <p className="text-xs text-muted-foreground text-center">
-          💡 Define availability in unit settings to improve booking accuracy for your services.
+          {t("uiUnitAvailabilityEditor.defineAvailabilityInUnitSettingsTo")}
         </p>
       )}
     </div>

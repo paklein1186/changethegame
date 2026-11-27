@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -61,6 +62,7 @@ const COIN_TX_LABELS: Record<string, string> = {
 };
 
 export function WalletTab() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const limits = usePlanLimits();
@@ -84,7 +86,7 @@ export function WalletTab() {
   useEffect(() => {
     if (searchParams.get("coins_success") === "true") {
       const amount = searchParams.get("coins_amount") || "0";
-      toast({ title: "✅ Coins added!", description: `${amount} Coins have been added to your wallet.` });
+      toast({ title: t("uiWalletTab.coinsAdded"), description: `${amount} Coins have been added to your wallet.` });
       setActiveWallet("coins");
       // Clean URL params
       searchParams.delete("coins_success");
@@ -188,7 +190,7 @@ export function WalletTab() {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiWalletTab.error"), description: err.message, variant: "destructive" });
     } finally { setBuyLoading(null); }
   };
 
@@ -199,18 +201,18 @@ export function WalletTab() {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiWalletTab.error"), description: err.message, variant: "destructive" });
     } finally { setPortalLoading(false); }
   };
 
   const handleRequestWithdrawal = async () => {
     const balance = Number(coinsBalance?.coins_balance ?? 0);
     if (balance <= 0) {
-      toast({ title: "No coins", description: "You have no Coins to withdraw.", variant: "destructive" });
+      toast({ title: t("uiWalletTab.noCoins"), description: t("uiWalletTab.youHaveNoCoinsToWithdraw"), variant: "destructive" });
       return;
     }
     if (!coinsBalance?.stripe_connect_onboarded) {
-      toast({ title: "Stripe Connect required", description: "You need to set up your Stripe Connect account first.", variant: "destructive" });
+      toast({ title: "Stripe Connect required", description: t("uiWalletTab.youNeedToSetUpYour"), variant: "destructive" });
       return;
     }
     try {
@@ -223,7 +225,7 @@ export function WalletTab() {
       if (error) throw error;
       toast({ title: "Withdrawal requested", description: `${balance} Coins → €${toEur(balance)} submitted for processing.` });
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiWalletTab.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -233,7 +235,7 @@ export function WalletTab() {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiWalletTab.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -248,23 +250,23 @@ export function WalletTab() {
         {/* ═══ HEADER ═══ */}
         <div className="space-y-2">
           <h2 className="font-display text-xl font-bold flex items-center gap-2">
-            <Wallet className="h-5 w-5 text-primary" /> Your Value Dashboard
+            <Wallet className="h-5 w-5 text-primary" /> {t("uiWalletTab.yourValueDashboard")}
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Three distinct value layers power the platform:
+            {t("uiWalletTab.threeDistinctValueLayersPowerThe")}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-muted-foreground">
             <div className="flex items-start gap-2 rounded-lg bg-muted/30 p-2.5">
               <span className="text-base leading-none mt-0.5">🔷</span>
-              <div><strong className="text-foreground">Platform Credits</strong> — Utility fuel for features, boosts &amp; quotas. Non-monetary, subject to monthly fade.</div>
+              <div><strong className="text-foreground">{t("uiWalletTab.platformCredits")}</strong> {t("uiWalletTab.utilityFuelForFeaturesBoostsQuotas")}</div>
             </div>
             <div className="flex items-start gap-2 rounded-lg bg-muted/30 p-2.5">
               <span className="text-base leading-none mt-0.5">🌱</span>
-              <div><strong className="text-foreground">🌱 $CTG</strong> — contribution token earned by producing verified work for the commons. Circulatory: fades 1%/month. Not fiat-backed. Distinct from ⭐ XP which is your permanent reputation.</div>
+              <div><strong className="text-foreground">🌱 $CTG</strong> {t("uiWalletTab.contributionTokenEarnedByProducingVerified")}</div>
             </div>
             <div className="flex items-start gap-2 rounded-lg bg-muted/30 p-2.5">
               <span className="text-base leading-none mt-0.5">⭐</span>
-              <div><strong className="text-foreground">XP</strong> — Non-transferable reputation score reflecting your mastery &amp; commitment.</div>
+              <div><strong className="text-foreground">XP</strong> {t("uiWalletTab.nonTransferableReputationScoreReflectingYour")}</div>
             </div>
           </div>
         </div>
@@ -273,7 +275,7 @@ export function WalletTab() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {/* Fiat */}
           <ValueTile icon={<Banknote className="h-5 w-5" />} label="Fiat Balance" emoji="💶"
-            tooltip="Your fiat earnings from paid services and bookings. Managed via Stripe.">
+            tooltip={t("uiWalletTab.yourFiatEarningsFromPaidServices")}>
             <Button variant="outline" size="sm" className="w-full mt-2 text-xs" onClick={handleManageSubscription} disabled={portalLoading}>
               {portalLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <ExternalLink className="h-3 w-3 mr-1" />}
               Stripe Portal
@@ -281,27 +283,27 @@ export function WalletTab() {
           </ValueTile>
 
           {/* Platform Credits (🔷) */}
-          <ValueTile icon={<CurrencyIcon currency="credits" className="h-5 w-5" />} label={<span className="inline-flex items-center gap-1">Platform Credits <HintTooltip {...HINTS.tooltips.creditFade} /></span>} emoji="🔷"
+          <ValueTile icon={<CurrencyIcon currency="credits" className="h-5 w-5" />} label={<span className="inline-flex items-center gap-1">{t("uiWalletTab.platformCredits")} <HintTooltip {...HINTS.tooltips.creditFade} /></span>} emoji="🔷"
             value={limits.userCredits}
-            tooltip="Non-monetary utility credits for platform features and quotas. Subject to 1%/month fade to encourage circulation.">
+            tooltip={t("uiWalletTab.nonMonetaryUtilityCreditsForPlatform")}>
             <p className="text-[10px] text-muted-foreground mt-1">Utility fuel</p>
           </ValueTile>
 
           {/* $CTG Token (🟡) */}
           <ValueTile icon={<CurrencyIcon currency="ctg" className="h-5 w-5" />} label={<span className="inline-flex items-center gap-1">$CTG Token <HintTooltip {...HINTS.tooltips.ctgToken} /></span>} emoji="🌱"
             value={ctgBal}
-            tooltip="🌱 $CTG = what you produce for the commons. Earned through contributions (quests, rituals, governance, documentation). Fades 1%/month. Cannot be purchased. Transfer to collaborators or exchange for Credits.">
+            tooltip={t("uiWalletTab.ctgWhatYouProduceForThe")}>
             <Button variant="ghost" size="sm" className="w-full mt-1 text-xs p-0 h-auto" onClick={() => setActiveWallet("ctg")}>
-              View Wallet
+              {t("uiWalletTab.viewWallet")}
             </Button>
           </ValueTile>
 
           {/* XP */}
-          <ValueTile icon={<CurrencyIcon currency="xp" className="h-5 w-5" />} label="XP Level" emoji="⭐"
+          <ValueTile icon={<CurrencyIcon currency="xp" className="h-5 w-5" />} label={t("uiWalletTab.xpLevel")} emoji="⭐"
             value={`Lv. ${limits.userLevel}`} subValue={`${limits.userXp} XP`}
             tooltip={ECONOMY_LABELS.xpNature}>
             <Button variant="ghost" size="sm" className="w-full mt-1 text-xs p-0 h-auto" asChild>
-              <Link to="/credit-economy">View XP Ladder</Link>
+              <Link to="/credit-economy">{t("uiWalletTab.viewXpLadder")}</Link>
             </Button>
           </ValueTile>
 
@@ -315,7 +317,7 @@ export function WalletTab() {
               </div>
             ) : (
               <Button variant="ghost" size="sm" className="w-full mt-1 text-xs p-0 h-auto" asChild>
-                <Link to="/shares">Learn about shares</Link>
+                <Link to="/shares">{t("uiWalletTab.learnAboutShares")}</Link>
               </Button>
             )}
           </ValueTile>
@@ -329,7 +331,7 @@ export function WalletTab() {
             onClick={() => setActiveWallet("platform")}
             className="gap-1.5"
           >
-            🔷 Platform Credits
+            {t("uiWalletTab.platformCredits2")}
           </Button>
           <Button
             variant={activeWallet === "ctg" ? "default" : "outline"}
@@ -345,7 +347,7 @@ export function WalletTab() {
             onClick={() => setActiveWallet("coins")}
             className="gap-1.5"
           >
-            💶 Fiat / Coins
+            {t("uiWalletTab.fiatCoins")}
           </Button>
         </div>
 
@@ -362,12 +364,12 @@ export function WalletTab() {
         {/* ═══ COINS WALLET ═══ */}
         {activeWallet === "coins" && (
           <>
-            <Section title="🟩 Coins — Mission Payouts" icon={<Banknote className="h-5 w-5" />}>
+            <Section title={t("uiWalletTab.coinsMissionPayouts")} icon={<Banknote className="h-5 w-5" />}>
               <div className="space-y-4">
                 <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-xs text-muted-foreground">Coins Balance</p>
+                      <p className="text-xs text-muted-foreground">{t("uiWalletTab.coinsBalance")}</p>
                       <p className="text-2xl font-bold">{coinsBal} 🟩</p>
                     </div>
                     <div className="text-right">
@@ -376,15 +378,13 @@ export function WalletTab() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Coins represent fiat-backed value earned from funded quests. Withdrawable to your bank via Stripe Connect.
-                    This is separate from $CTG tokens which are cooperative contribution units, and separate from ⭐ XP which is your permanent reputation.
-                    Current rate: {COIN_EUR_RATE} EUR per Coin — set by the cooperative and displayed here for transparency.
+                    {t("uiWalletTab.coinsRepresentFiatBackedValueEarned")} {COIN_EUR_RATE} {t("uiWalletTab.eurPerCoinSetByThe")}
                   </p>
                 </div>
 
                 {/* ── Add Coins ── */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-medium text-muted-foreground">Add Coins to wallet</h4>
+                  <h4 className="text-xs font-medium text-muted-foreground">{t("uiWalletTab.addCoinsToWallet")}</h4>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { coins: 250, label: "Small" },
@@ -402,7 +402,7 @@ export function WalletTab() {
                             if (error) throw error;
                             if (data?.url) window.open(data.url, "_blank");
                           } catch (err: any) {
-                            toast({ title: "Error", description: err.message, variant: "destructive" });
+                            toast({ title: t("uiWalletTab.error"), description: err.message, variant: "destructive" });
                           } finally {
                             setTopupLoading(null);
                           }
@@ -422,13 +422,13 @@ export function WalletTab() {
                     ))}
                   </div>
                   <p className="text-[10px] text-muted-foreground">
-                    Coins are fiat-backed. Used for quest pots and service payments. Withdrawable via Stripe Connect.
+                    {t("uiWalletTab.coinsAreFiatBackedUsedFor")}
                   </p>
                 </div>
 
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={handleRequestWithdrawal} disabled={coinsBal <= 0}>
-                    <Download className="h-4 w-4 mr-1" /> Withdraw to bank
+                    <Download className="h-4 w-4 mr-1" /> {t("uiWalletTab.withdrawToBank")}
                   </Button>
                   {!coinsBalance?.stripe_connect_onboarded && (
                     <Button variant="outline" size="sm" onClick={handleStripeConnectOnboarding}>
@@ -443,7 +443,7 @@ export function WalletTab() {
                     <h4 className="text-xs font-medium text-muted-foreground">Recent withdrawals</h4>
                     {withdrawals.map((w: any) => (
                       <div key={w.id} className="flex items-center justify-between py-1.5 px-2 rounded bg-muted/30 text-xs">
-                        <span>{w.amount_tokens} Coins → €{w.amount_fiat}</span>
+                        <span>{w.amount_tokens} {t("uiWalletTab.coins")}{w.amount_fiat}</span>
                         <Badge variant={w.status === "completed" ? "default" : "secondary"} className="text-[10px]">{w.status}</Badge>
                       </div>
                     ))}
@@ -454,7 +454,7 @@ export function WalletTab() {
 
             <Separator />
 
-            <Section title="Coins Transaction History" icon={<History className="h-5 w-5" />}>
+            <Section title={t("uiWalletTab.coinsTransactionHistory")} icon={<History className="h-5 w-5" />}>
               <TxFilterBar value={txFilter} onChange={setTxFilter} />
               <TxList loading={coinsTxLoading} items={filteredCoinsTx} labels={COIN_TX_LABELS} />
             </Section>
@@ -464,11 +464,11 @@ export function WalletTab() {
         {/* ═══ PLATFORM CREDITS WALLET ═══ */}
         {activeWallet === "platform" && (
           <>
-            <Section title="🔷 Platform Credits — Feature Fuel" icon={<CurrencyIcon currency="credits" className="h-5 w-5" />}>
+            <Section title={t("uiWalletTab.platformCreditsFeatureFuel")} icon={<CurrencyIcon currency="credits" className="h-5 w-5" />}>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-4">
-                    <p className="text-xs font-semibold text-foreground mb-2">Platform Credits are earned by:</p>
+                    <p className="text-xs font-semibold text-foreground mb-2">{t("uiWalletTab.platformCreditsAreEarnedBy")}</p>
                     <ul className="text-xs space-y-1 list-disc list-inside text-muted-foreground">
                       <li>Monthly plan allocation</li>
                       <li>Top-up purchases</li>
@@ -477,13 +477,13 @@ export function WalletTab() {
                     </ul>
                   </div>
                   <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-4">
-                    <p className="text-xs font-semibold text-foreground mb-2">Platform Credits are spent on:</p>
+                    <p className="text-xs font-semibold text-foreground mb-2">{t("uiWalletTab.platformCreditsAreSpentOn")}</p>
                     <ul className="text-xs space-y-1 list-disc list-inside text-muted-foreground">
-                      <li>Boosting quest visibility</li>
-                      <li>Creating quests beyond quota</li>
+                      <li>{t("uiWalletTab.boostingQuestVisibility")}</li>
+                      <li>{t("uiWalletTab.creatingQuestsBeyondQuota")}</li>
                       <li>Advanced AI insights</li>
-                      <li>Highlighting profile</li>
-                      <li>Governance proposals</li>
+                      <li>{t("uiWalletTab.highlightingProfile")}</li>
+                      <li>{t("uiWalletTab.governanceProposals")}</li>
                     </ul>
                   </div>
                 </div>
@@ -498,11 +498,11 @@ export function WalletTab() {
                 <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <Recycle className="h-5 w-5 text-amber-500" />
-                    <h4 className="font-display text-sm font-semibold">Credits Circulation</h4>
+                    <h4 className="font-display text-sm font-semibold">{t("uiWalletTab.creditsCirculation")}</h4>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-lg bg-card border border-border p-3 text-center">
-                      <p className="text-xs text-muted-foreground mb-1">Next monthly fade</p>
+                      <p className="text-xs text-muted-foreground mb-1">{t("uiWalletTab.nextMonthlyFade")}</p>
                       <p className="text-lg font-bold text-amber-600">−{estimateFade(limits.userCredits)}</p>
                       <p className="text-[10px] text-muted-foreground">{DEMURRAGE_RATE_PERCENT} of {limits.userCredits}</p>
                     </div>
@@ -512,13 +512,13 @@ export function WalletTab() {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Timer className="h-3 w-3" /> Credits fade by {DEMURRAGE_RATE_PERCENT}/month to encourage circulation.
+                    <Timer className="h-3 w-3" /> {t("uiWalletTab.creditsFadeBy")} {DEMURRAGE_RATE_PERCENT}/month to encourage circulation.
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Info className="h-3 w-3" /> Platform Credits are <strong>not money</strong>. They cannot be exchanged, withdrawn, or used for quest payouts.
+                    <Info className="h-3 w-3" /> {t("uiWalletTab.platformCreditsAre")} <strong>{t("uiWalletTab.notMoney")}</strong>{t("uiWalletTab.theyCannotBeExchangedWithdrawnOr")}
                   </p>
                 </div>
               </div>
@@ -529,7 +529,7 @@ export function WalletTab() {
             <Separator />
 
             {/* Plan & Top-Up */}
-            <Section title="Plan & Credits Top-Up" icon={<Package className="h-5 w-5" />}>
+            <Section title={t("uiWalletTab.planCreditsTopUp")} icon={<Package className="h-5 w-5" />}>
               <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-4 mb-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -537,9 +537,9 @@ export function WalletTab() {
                       <Crown className="h-4 w-4 text-primary" />
                       <h4 className="font-display text-lg font-bold">{limits.plan.planName}</h4>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">{limits.plan.monthlyIncludedCredits} Platform Credits/month included</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{limits.plan.monthlyIncludedCredits} {t("uiWalletTab.platformCreditsMonthIncluded")}</p>
                   </div>
-                  <Badge className="bg-primary text-primary-foreground">Active</Badge>
+                  <Badge className="bg-primary text-primary-foreground">{t("uiWalletTab.active")}</Badge>
                 </div>
                 <div className="flex gap-2 mt-3">
                   <Button variant="outline" size="sm" asChild>
@@ -554,7 +554,7 @@ export function WalletTab() {
                 </div>
               </div>
 
-              <h4 className="text-sm font-medium mb-3">Top Up Platform Credits</h4>
+              <h4 className="text-sm font-medium mb-3">{t("uiWalletTab.topUpPlatformCredits")}</h4>
 
               {/* CTG → Credits exchange nudge */}
               {ctgBal > 0 ? (
@@ -563,10 +563,10 @@ export function WalletTab() {
                     <CurrencyIcon currency="ctg" className="h-5 w-5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium">
-                        Exchange $CTG → Credits
+                        {t("uiWalletTab.exchangeCtgCredits")}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        You have {ctgBal.toLocaleString()} $CTG · No payment needed
+                        {t("uiWalletTab.youHave")} {ctgBal.toLocaleString()} {t("uiWalletTab.ctgNoPaymentNeeded")}
                       </p>
                     </div>
                   </div>
@@ -578,10 +578,9 @@ export function WalletTab() {
                 <div className="rounded-lg border border-border bg-muted/30 p-3 mb-4 flex items-start gap-2.5 text-xs text-muted-foreground">
                   <CurrencyIcon currency="ctg" className="h-4 w-4 shrink-0 mt-0.5" />
                   <span>
-                    Earn $CTG by completing quests and contributions — then exchange for Credits
-                    without paying €.{" "}
+                    {t("uiWalletTab.earnCtgByCompletingQuestsAnd")}{" "}
                     <Link to="/explore" className="text-primary hover:underline">
-                      Find quests →
+                      {t("uiWalletTab.findQuests")}
                     </Link>
                   </span>
                 </div>
@@ -591,7 +590,7 @@ export function WalletTab() {
                 {CREDIT_BUNDLES.map((b) => (
                   <div key={b.code} className="rounded-lg border border-border bg-card p-4 text-center">
                     <Package className="h-6 w-6 mx-auto mb-2 text-primary" />
-                    <p className="font-bold">{b.credits} Credits</p>
+                    <p className="font-bold">{b.credits} {t("uiWalletTab.credits")}</p>
                     <p className="text-lg font-bold">€{b.priceEur}</p>
                     <p className="text-xs text-muted-foreground mb-2">€{(b.priceEur / b.credits).toFixed(3)}/credit</p>
                     <Button size="sm" className="w-full" onClick={() => handleBuyCredits(b.code)} disabled={!!buyLoading}>
@@ -606,7 +605,7 @@ export function WalletTab() {
             <Separator />
 
             {/* Platform Credit Transaction History */}
-            <Section title="Platform Credit History" icon={<History className="h-5 w-5" />}>
+            <Section title={t("uiWalletTab.platformCreditHistory")} icon={<History className="h-5 w-5" />}>
               <TxFilterBar value={txFilter} onChange={setTxFilter} />
               <TxList loading={txLoading} items={filteredTx} labels={TX_TYPE_LABELS} />
             </Section>
@@ -626,7 +625,7 @@ export function WalletTab() {
               <span className="font-medium">10%</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Your plan discount ({limits.plan.planName})</span>
+              <span className="text-muted-foreground">{t("uiWalletTab.yourPlanDiscount")}{limits.plan.planName})</span>
               <span className="font-bold text-primary">{limits.plan.commissionDiscountPercent}%</span>
             </div>
             <div className="flex items-center justify-between">
@@ -686,13 +685,14 @@ function ValueTile({
 }
 
 function TxFilterBar({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-2 mb-3">
       <Filter className="h-4 w-4 text-muted-foreground" />
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue /></SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All</SelectItem>
+          <SelectItem value="all">{t("uiWalletTab.all")}</SelectItem>
           <SelectItem value="earned">Earned</SelectItem>
           <SelectItem value="spent">Spent</SelectItem>
         </SelectContent>
@@ -702,11 +702,12 @@ function TxFilterBar({ value, onChange }: { value: string; onChange: (v: string)
 }
 
 function TxList({ loading, items, labels }: { loading: boolean; items: any[]; labels: Record<string, string> }) {
+  const { t } = useTranslation();
   if (loading) {
     return <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>;
   }
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground py-4 text-center">No transactions yet.</p>;
+    return <p className="text-sm text-muted-foreground py-4 text-center">{t("uiWalletTab.noTransactionsYet")}</p>;
   }
   return (
     <div className="space-y-1">

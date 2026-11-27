@@ -1,16 +1,18 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Compass, Briefcase, Shield, Calendar, Handshake } from "lucide-react";
 import { usePersona } from "@/hooks/usePersona";
 
 export function QuickShortcuts() {
+  const { t } = useTranslation();
   const { label } = usePersona();
 
   const shortcuts = [
     { label: label("quest.label"), icon: Compass, route: "/work" },
     { label: label("service.my_label"), icon: Briefcase, route: "/me/services" },
     { label: label("guild.label"), icon: Shield, route: "/me/guilds" },
-    { label: "My Bookings", icon: Calendar, route: "/me/bookings" },
-    { label: "My Partners", icon: Handshake, route: "/work" },
+    { label: t("uiQuickShortcuts.myBookings"), icon: Calendar, route: "/me/bookings" },
+    { label: t("uiQuickShortcuts.myPartners"), icon: Handshake, route: "/work" },
   ];
 
   return (

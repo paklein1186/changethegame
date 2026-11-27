@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -51,6 +52,7 @@ const REPORT_REASONS = [
 ];
 
 function ReportPopover({ excerptId, userId }: { excerptId: string; userId: string }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState(REPORT_REASONS[0]);
   const [custom, setCustom] = useState("");
@@ -76,7 +78,7 @@ function ReportPopover({ excerptId, userId }: { excerptId: string; userId: strin
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-72 space-y-3" align="end">
-        <h4 className="font-semibold text-sm">Report this excerpt</h4>
+        <h4 className="font-semibold text-sm">{t("uiTerritoryLibraryTab.reportThisExcerpt")}</h4>
         <RadioGroup value={reason} onValueChange={setReason} className="space-y-1.5">
           {REPORT_REASONS.map(r => (
             <div key={r} className="flex items-center gap-2">
@@ -87,14 +89,14 @@ function ReportPopover({ excerptId, userId }: { excerptId: string; userId: strin
         </RadioGroup>
         {reason === "Other" && (
           <Input
-            placeholder="Describe the issue..."
+            placeholder={t("uiTerritoryLibraryTab.describeTheIssue")}
             value={custom}
             onChange={e => setCustom(e.target.value)}
             className="h-8 text-xs"
           />
         )}
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>{t("uiTerritoryLibraryTab.cancel")}</Button>
           <Button
             size="sm"
             variant="destructive"
@@ -123,6 +125,7 @@ function ExcerptCard({
   onUpvote: () => void;
   upvotePending: boolean;
 }) {
+  const { t } = useTranslation();
   const [showSource, setShowSource] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const deleteExcerpt = useDeleteExcerpt();
@@ -164,7 +167,7 @@ function ExcerptCard({
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground shrink-0">
           {excerpt.source_quest_id && (
             <Link to={`/quests/${excerpt.source_quest_id}`} className="flex items-center gap-1 hover:text-foreground transition-colors" onClick={(e) => e.stopPropagation()}>
-              <Compass className="h-3 w-3" /> Quest
+              <Compass className="h-3 w-3" /> {t("uiTerritoryLibraryTab.quest")}
             </Link>
           )}
           <span>{formatDistanceToNow(new Date(excerpt.created_at), { addSuffix: true })}</span>
@@ -188,24 +191,24 @@ function ExcerptCard({
         {isOwner && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded" title="Delete" onClick={(e) => e.stopPropagation()}>
+              <button className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded" title={t("uiTerritoryLibraryTab.delete")} onClick={(e) => e.stopPropagation()}>
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete this excerpt?</AlertDialogTitle>
+                <AlertDialogTitle>{t("uiTerritoryLibraryTab.deleteThisExcerpt")}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will remove the excerpt from the library. This action cannot be undone.
+                  {t("uiTerritoryLibraryTab.thisWillRemoveTheExcerptFrom")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t("uiTerritoryLibraryTab.cancel")}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => deleteExcerpt.mutate({ excerptId: excerpt.id, territoryId: excerpt.territory_id })}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  Delete
+                  {t("uiTerritoryLibraryTab.delete")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -342,7 +345,7 @@ function ExcerptCard({
             )}
             {excerpt.source_quest_id && (
               <Link to={`/quests/${excerpt.source_quest_id}`} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors ml-auto">
-                <Compass className="h-3 w-3" /> From Quest
+                <Compass className="h-3 w-3" /> {t("uiTerritoryLibraryTab.fromQuest")}
               </Link>
             )}
           </div>
@@ -414,6 +417,7 @@ function ExcerptCard({
 }
 
 export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Props) {
+  const { t } = useTranslation();
   const [sort, setSort] = useState<"top" | "recent">("top");
   const [showAdd, setShowAdd] = useState(false);
   const [newSynthesis, setNewSynthesis] = useState("");
@@ -425,7 +429,7 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
 
   const handleUpvote = (excerptId: string, authorUserId: string | null) => {
     if (!userId) {
-      toast.error("Sign in to upvote");
+      toast.error(t("uiTerritoryLibraryTab.signInToUpvote"));
       return;
     }
     const isUpvoted = userUpvotes.has(excerptId);
@@ -453,10 +457,10 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
             <h2 className="text-lg font-display font-semibold flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" /> Library of Excerpts
+              <BookOpen className="h-5 w-5 text-primary" /> {t("uiTerritoryLibraryTab.libraryOfExcerpts")}
             </h2>
             <p className="text-sm text-muted-foreground mt-1 max-w-xl">
-              Meaningful insights, quotes, patterns, and ideas about {territoryName}. Upvote what you find valuable to reward contributors.
+              {t("uiTerritoryLibraryTab.meaningfulInsightsQuotesPatternsAndIdeas")} {territoryName}{t("uiTerritoryLibraryTab.upvoteWhatYouFindValuableTo")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -471,7 +475,7 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
             </Button>
             {userId && (
               <Button size="sm" className="gap-1.5" onClick={() => setShowAdd(!showAdd)}>
-                <Plus className="h-3.5 w-3.5" /> Add excerpt
+                <Plus className="h-3.5 w-3.5" /> {t("uiTerritoryLibraryTab.addExcerpt")}
               </Button>
             )}
           </div>
@@ -494,7 +498,7 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
               <Textarea
                 value={newSynthesis}
                 onChange={(e) => setNewSynthesis(e.target.value)}
-                placeholder="Write the key insight or synthesis about this territory…"
+                placeholder={t("uiTerritoryLibraryTab.writeTheKeyInsightOrSynthesis")}
                 className="min-h-[80px] resize-none text-sm"
               />
             </div>
@@ -505,15 +509,15 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
               <Textarea
                 value={newSource}
                 onChange={(e) => setNewSource(e.target.value)}
-                placeholder="Paste the original prompt, conversation, or source material…"
+                placeholder={t("uiTerritoryLibraryTab.pasteTheOriginalPromptConversationOr")}
                 className="min-h-[60px] resize-none text-sm"
               />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowAdd(false)}>Cancel</Button>
+              <Button variant="ghost" size="sm" onClick={() => setShowAdd(false)}>{t("uiTerritoryLibraryTab.cancel")}</Button>
               <Button size="sm" onClick={handleCreate} disabled={!newSynthesis.trim() || createExcerpt.isPending}>
                 {createExcerpt.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Sparkles className="h-3.5 w-3.5 mr-1" />}
-                Save to Library
+                {t("uiTerritoryLibraryTab.saveToLibrary")}
               </Button>
             </div>
           </motion.div>
@@ -531,9 +535,9 @@ export function TerritoryLibraryTab({ territoryId, territoryName, userId }: Prop
       {!isLoading && excerpts.length === 0 && (
         <div className="rounded-xl border border-dashed border-border bg-muted/30 py-12 text-center">
           <BookOpen className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm font-medium">No excerpts yet</p>
+          <p className="text-sm font-medium">{t("uiTerritoryLibraryTab.noExcerptsYet")}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            Be the first to contribute meaningful knowledge to this territory's library.
+            {t("uiTerritoryLibraryTab.beTheFirstToContributeMeaningful")}
           </p>
         </div>
       )}

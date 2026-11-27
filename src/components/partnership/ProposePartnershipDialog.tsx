@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Search, Send, Shield, Building2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, fromEntityId }: Props) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"GUILD" | "COMPANY">("GUILD");
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -88,7 +90,7 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
           await supabase.from("notifications").insert({
             user_id: adminId,
             type: "UNIT_PARTNERSHIP_REQUEST",
-            title: "New partnership request",
+            title: t("uiProposePartnershipDialog.newPartnershipRequest"),
             body: `${srcName} has proposed a partnership`,
             related_entity_type: tab,
             related_entity_id: selectedId,
@@ -106,8 +108,8 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
       const isDuplicate = err?.message?.includes("duplicate") || err?.code === "23505";
       toast({
         title: isDuplicate
-          ? "You already have a pending or active partnership with this entity."
-          : "Failed to send request",
+          ? t("uiProposePartnershipDialog.youAlreadyHaveAPendingOr")
+          : t("uiProposePartnershipDialog.failedToSendRequest"),
         variant: "destructive",
       });
     }
@@ -117,12 +119,12 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Propose a partnership</DialogTitle>
+          <DialogTitle>{t("uiProposePartnershipDialog.proposeAPartnership")}</DialogTitle>
         </DialogHeader>
 
         <Tabs value={tab} onValueChange={v => { setTab(v as any); setSelectedId(null); setSearch(""); }}>
           <TabsList className="w-full">
-            <TabsTrigger value="GUILD" className="flex-1 gap-1"><Shield className="h-3.5 w-3.5" /> Guild</TabsTrigger>
+            <TabsTrigger value="GUILD" className="flex-1 gap-1"><Shield className="h-3.5 w-3.5" /> {t("uiProposePartnershipDialog.guild")}</TabsTrigger>
             <TabsTrigger value="COMPANY" className="flex-1 gap-1"><Building2 className="h-3.5 w-3.5" /> Trad. Organization</TabsTrigger>
           </TabsList>
 
@@ -132,14 +134,14 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
               <Input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder={tab === "GUILD" ? "Search guilds…" : "Search organizations…"}
+                placeholder={tab === "GUILD" ? t("uiProposePartnershipDialog.searchGuilds") : t("uiProposePartnershipDialog.searchOrganizations")}
                 className="pl-9"
               />
             </div>
 
             <div className="max-h-48 overflow-y-auto space-y-1 border rounded-lg p-1">
               {(entities ?? []).length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">No results</p>
+                <p className="text-sm text-muted-foreground text-center py-4">{t("uiProposePartnershipDialog.noResults")}</p>
               )}
               {(entities ?? []).map(e => (
                 <button
@@ -163,7 +165,7 @@ export function ProposePartnershipDialog({ open, onOpenChange, fromEntityType, f
               <Textarea
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                placeholder="Why do you want to partner?"
+                placeholder={t("uiProposePartnershipDialog.whyDoYouWantToPartner")}
                 maxLength={500}
                 className="resize-none"
                 rows={3}

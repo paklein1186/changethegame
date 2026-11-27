@@ -68,9 +68,9 @@ export default function CreditEconomyPage({ embedded }: { embedded?: boolean }) 
         </div>
 
         <CalloutBox>
-          ⭐ XP tracks <strong>who you are</strong> — permanent, individual, non-transferable.{" "}
-          🌱 $CTG tracks <strong>what you produce for the commons</strong> — circulatory, collective, fades 1%/month.{" "}
-          These two systems are complementary, not competing.
+          {t("uiCreditEconomyPage.xpTracks")} <strong>{t("uiCreditEconomyPage.whoYouAre")}</strong> — permanent, individual, non-transferable.{" "}
+          🌱 $CTG tracks <strong>{t("uiCreditEconomyPage.whatYouProduceForTheCommons")}</strong> — circulatory, collective, fades 1%/month.{" "}
+          {t("uiCreditEconomyPage.theseTwoSystemsAreComplementaryNot")}
         </CalloutBox>
 
         <CalloutBox>
@@ -81,10 +81,9 @@ export default function CreditEconomyPage({ embedded }: { embedded?: boolean }) 
 
         {/* Credits disclaimer callout */}
         <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 px-5 py-4 text-sm leading-relaxed">
-          <p className="font-semibold text-foreground">ℹ️ Platform Credits are feature fuel — they never enter quest compensation.</p>
+          <p className="font-semibold text-foreground">{t("uiCreditEconomyPage.platformCreditsAreFeatureFuelThey")}</p>
           <p className="text-muted-foreground mt-1">
-            Quest pools are funded in 🟩 Coins (fiat-backed) and/or 🌱 $CTG.
-            Coins are withdrawable to real € via Stripe Connect.
+            {t("uiCreditEconomyPage.questPoolsAreFundedInCoins")}
           </p>
         </div>
 
@@ -130,7 +129,7 @@ export default function CreditEconomyPage({ embedded }: { embedded?: boolean }) 
                     className="w-full bg-primary/60 rounded-t-sm transition-all"
                     style={{ height: `${(val / 1000) * 100}%` }}
                   />
-                  <span className="text-[9px] text-muted-foreground">{i === 0 ? "Now" : `M${i}`}</span>
+                  <span className="text-[9px] text-muted-foreground">{i === 0 ? t("uiCreditEconomyPage.now") : `M${i}`}</span>
                 </div>
               ))}
             </div>

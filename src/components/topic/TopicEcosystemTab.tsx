@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,6 +84,7 @@ type EntitySection = {
 };
 
 export function TopicEcosystemTab({ topicId }: Props) {
+  const { t } = useTranslation();
   const { data: ecosystem, isLoading: ecosystemLoading } = useTopicEcosystem(topicId);
   const { data: people = [], isLoading: peopleLoading } = useTopicPeople(topicId);
   const [search, setSearch] = useState("");
@@ -93,8 +95,8 @@ export function TopicEcosystemTab({ topicId }: Props) {
   const sections: EntitySection[] = useMemo(() => {
     if (!ecosystem) return [];
     return [
-      { key: "quests", label: "Quests", icon: Compass, linkPrefix: "/quests/", nameField: "title", items: ecosystem.quests },
-      { key: "guilds", label: "Guilds", icon: Shield, linkPrefix: "/guilds/", nameField: "name", items: ecosystem.guilds },
+      { key: "quests", label: t("uiTopicEcosystemTab.quests"), icon: Compass, linkPrefix: "/quests/", nameField: "title", items: ecosystem.quests },
+      { key: "guilds", label: t("uiTopicEcosystemTab.guilds"), icon: Shield, linkPrefix: "/guilds/", nameField: "name", items: ecosystem.guilds },
       { key: "companies", label: "Organizations", icon: Building2, linkPrefix: "/companies/", nameField: "name", items: ecosystem.companies },
       { key: "services", label: "Services", icon: Briefcase, linkPrefix: "/services/", nameField: "title", items: ecosystem.services },
       { key: "courses", label: "Courses", icon: GraduationCap, linkPrefix: "/courses/", nameField: "title", items: ecosystem.courses },
@@ -164,7 +166,7 @@ export function TopicEcosystemTab({ topicId }: Props) {
               <Input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search people…"
+                placeholder={t("uiTopicEcosystemTab.searchPeople")}
                 className="pl-8 h-8 text-sm"
               />
             </div>
@@ -195,14 +197,14 @@ export function TopicEcosystemTab({ topicId }: Props) {
             ))}
           </div>
           {filteredPeople.length > 50 && (
-            <p className="text-xs text-muted-foreground text-center">Showing 50 of {filteredPeople.length}</p>
+            <p className="text-xs text-muted-foreground text-center">{t("uiTopicEcosystemTab.showing50Of")} {filteredPeople.length}</p>
           )}
         </div>
       )}
 
       {sections.length === 0 && people.length === 0 && (
         <div className="text-center py-12 text-muted-foreground">
-          <p>No entities connected to this topic yet.</p>
+          <p>{t("uiTopicEcosystemTab.noEntitiesConnectedToThisTopic")}</p>
         </div>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { Lock } from "lucide-react";
 
@@ -29,6 +30,7 @@ export function GuestContentGate({
   previewText,
   previewSentences = 3,
 }: GuestContentGateProps) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   if (session) return <>{children}</>;
 
@@ -58,7 +60,7 @@ export function GuestContentGate({
         <div className="mt-3 flex">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm rounded-full px-3 py-1.5 border border-border shadow-sm">
             <Lock className="h-3 w-3" />
-            Sign up to see more
+            {t("uiGuestContentGate.signUpToSeeMore")}
           </div>
         </div>
       </div>
@@ -74,7 +76,7 @@ export function GuestContentGate({
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-background/80 backdrop-blur-sm rounded-full px-3 py-1.5 border border-border shadow-sm">
             <Lock className="h-3 w-3" />
-            Sign up to see more
+            {t("uiGuestContentGate.signUpToSeeMore")}
           </div>
         </div>
       </div>

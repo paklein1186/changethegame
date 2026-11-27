@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Clock, TrendingUp, TrendingDown, Leaf, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +17,7 @@ const TYPE_CONFIG: Record<string, { icon: typeof Leaf; color: string }> = {
 };
 
 export function EcoNarrativesTimeline({ naturalSystemId }: Props) {
+  const { t } = useTranslation();
   const { data: narratives, isLoading } = useEcoNarratives(naturalSystemId);
 
   if (isLoading) {
@@ -32,9 +34,9 @@ export function EcoNarrativesTimeline({ naturalSystemId }: Props) {
     return (
       <div className="rounded-xl border border-dashed border-border p-6 text-center">
         <Clock className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-        <p className="text-sm text-muted-foreground">No ecosystem events recorded yet.</p>
+        <p className="text-sm text-muted-foreground">{t("uiEcoNarrativesTimeline.noEcosystemEventsRecordedYet")}</p>
         <p className="text-xs text-muted-foreground/70 mt-1">
-          Events will appear here when eco-impact rules are triggered by linked quests.
+          {t("uiEcoNarrativesTimeline.eventsWillAppearHereWhenEco")}
         </p>
       </div>
     );

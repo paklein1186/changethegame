@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +26,7 @@ interface Bounty {
 }
 
 export function BountyBoard() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const { toast } = useToast();
@@ -61,7 +63,7 @@ export function BountyBoard() {
 
   const handleClaim = async (bounty: Bounty) => {
     if (!userId) {
-      toast({ title: "Please sign in to claim bounties", variant: "destructive" });
+      toast({ title: t("uiBountyBoard.pleaseSignInToClaimBounties"), variant: "destructive" });
       return;
     }
     setClaiming(bounty.id);
@@ -95,7 +97,7 @@ export function BountyBoard() {
       qc.invalidateQueries({ queryKey: ["ctg-bounties"] });
       qc.invalidateQueries({ queryKey: ["ctg-bounty-claims"] });
     } catch (e: any) {
-      toast({ title: "Failed to claim bounty", description: e.message, variant: "destructive" });
+      toast({ title: t("uiBountyBoard.failedToClaimBounty"), description: e.message, variant: "destructive" });
     } finally {
       setClaiming(null);
     }
@@ -113,8 +115,8 @@ export function BountyBoard() {
     return (
       <div className="rounded-xl border border-dashed border-border p-8 text-center space-y-2">
         <Pin className="h-8 w-8 mx-auto text-muted-foreground/50" />
-        <p className="text-sm text-muted-foreground font-medium">No active bounties — check back soon!</p>
-        <p className="text-xs text-muted-foreground">Bounties reward specific contributions with $CTG tokens.</p>
+        <p className="text-sm text-muted-foreground font-medium">{t("uiBountyBoard.noActiveBountiesCheckBackSoon")}</p>
+        <p className="text-xs text-muted-foreground">{t("uiBountyBoard.bountiesRewardSpecificContributionsWithCtg")}</p>
       </div>
     );
   }
@@ -181,7 +183,7 @@ export function BountyBoard() {
                 {isClaimed ? (
                   <Badge variant="outline" className="text-xs text-emerald-600 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700">
                     <Check className="h-3 w-3 mr-1" />
-                    {claim?.verified ? "Verified ✓" : "Claimed — pending verification"}
+                    {claim?.verified ? "Verified ✓" : t("uiBountyBoard.claimedPendingVerification")}
                   </Badge>
                 ) : (
                   <Button

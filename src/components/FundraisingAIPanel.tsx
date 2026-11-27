@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Sparkles, FileText, MessageSquare, Target, ArrowLeftRight, Share2, Loader2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,14 +28,15 @@ interface FundraisingAIPanelProps {
 }
 
 const actions: { key: FundraisingAction; label: string; icon: typeof FileText; desc: string }[] = [
-  { key: "pitch", label: "Generate Pitch", icon: FileText, desc: "Compelling fundraising pitch from quest description" },
-  { key: "funder_message", label: "Write to Funders", icon: MessageSquare, desc: "Personalized outreach message for potential supporters" },
-  { key: "suggest_goal", label: "Suggest Credit Goal", icon: Target, desc: "AI-recommended realistic funding target" },
-  { key: "convert", label: "Credits ↔ Fiat", icon: ArrowLeftRight, desc: "Convert between Credits and EUR" },
-  { key: "social_summary", label: "Social Summary", icon: Share2, desc: "Ready-to-share posts for social media" },
+  { key: "pitch", label: "Generate Pitch", icon: FileText, get desc() { return i18n.t("uiFundraisingAIPanel.compellingFundraisingPitchFromQuestDescription"); } },
+  { key: "funder_message", get label() { return i18n.t("uiFundraisingAIPanel.writeToFunders"); }, icon: MessageSquare, get desc() { return i18n.t("uiFundraisingAIPanel.personalizedOutreachMessageForPotentialSupporters"); } },
+  { key: "suggest_goal", get label() { return i18n.t("uiFundraisingAIPanel.suggestCreditGoal"); }, icon: Target, get desc() { return i18n.t("uiFundraisingAIPanel.aiRecommendedRealisticFundingTarget"); } },
+  { key: "convert", get label() { return i18n.t("uiFundraisingAIPanel.creditsFiat"); }, icon: ArrowLeftRight, get desc() { return i18n.t("uiFundraisingAIPanel.convertBetweenCreditsAndEur"); } },
+  { key: "social_summary", label: "Social Summary", icon: Share2, get desc() { return i18n.t("uiFundraisingAIPanel.readyToSharePostsForSocial"); } },
 ];
 
 export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState<FundraisingAction | null>(null);
   const [results, setResults] = useState<Record<string, any>>({});
   const [copied, setCopied] = useState<string | null>(null);
@@ -52,7 +55,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
       }
       setResults(prev => ({ ...prev, [action]: data.result }));
     } catch (e: any) {
-      toast({ title: "Failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiFundraisingAIPanel.failed"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(null);
     }
@@ -61,7 +64,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
   const copyText = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopied(label);
-    toast({ title: "Copied!" });
+    toast({ title: t("uiFundraisingAIPanel.copied") });
     setTimeout(() => setCopied(null), 2000);
   };
 
@@ -77,7 +80,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
         <Sparkles className="h-5 w-5 text-primary" />
         <h3 className="font-display font-semibold">Fundraising AI</h3>
       </div>
-      <p className="text-sm text-muted-foreground">AI-powered tools to help you fund and promote your quest.</p>
+      <p className="text-sm text-muted-foreground">{t("uiFundraisingAIPanel.aiPoweredToolsToHelpYou")}</p>
 
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {actions.map(a => (
@@ -114,7 +117,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
       {results.funder_message && (
         <Card className="p-4 space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">Message to Funders</h4>
+            <h4 className="text-sm font-semibold">{t("uiFundraisingAIPanel.messageToFunders")}</h4>
             <CopyBtn text={`Subject: ${results.funder_message.subject}\n\n${results.funder_message.message}\n\n${results.funder_message.closing}`} label="funder" />
           </div>
           <p className="text-xs font-medium text-primary">Subject: {results.funder_message.subject}</p>
@@ -126,15 +129,15 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
       {/* Suggest Goal Result */}
       {results.suggest_goal && (
         <Card className="p-4 space-y-3">
-          <h4 className="text-sm font-semibold">Suggested Credit Goal</h4>
+          <h4 className="text-sm font-semibold">{t("uiFundraisingAIPanel.suggestedCreditGoal")}</h4>
           <div className="grid grid-cols-2 gap-3">
             <div className="text-center p-3 rounded-md bg-primary/10">
               <p className="text-xs text-muted-foreground">Recommended</p>
-              <p className="text-xl font-bold text-primary">{results.suggest_goal.suggested_credits} Credits</p>
+              <p className="text-xl font-bold text-primary">{results.suggest_goal.suggested_credits} {t("uiFundraisingAIPanel.credits")}</p>
             </div>
             <div className="text-center p-3 rounded-md bg-muted/50">
               <p className="text-xs text-muted-foreground">Stretch Goal</p>
-              <p className="text-xl font-bold">{results.suggest_goal.stretch_goal_credits} Credits</p>
+              <p className="text-xl font-bold">{results.suggest_goal.stretch_goal_credits} {t("uiFundraisingAIPanel.credits")}</p>
             </div>
           </div>
           <p className="text-sm text-muted-foreground">{results.suggest_goal.reasoning}</p>
@@ -144,7 +147,7 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
               {results.suggest_goal.breakdown.map((b: any, i: number) => (
                 <div key={i} className="flex justify-between text-xs text-muted-foreground">
                   <span>{b.item}</span>
-                  <span className="font-medium">{b.credits} Credits</span>
+                  <span className="font-medium">{b.credits} {t("uiFundraisingAIPanel.credits")}</span>
                 </div>
               ))}
             </div>
@@ -155,18 +158,18 @@ export function FundraisingAIPanel({ quest }: FundraisingAIPanelProps) {
       {/* Convert Result */}
       {results.convert && (
         <Card className="p-4 space-y-2">
-          <h4 className="text-sm font-semibold">Credits ↔ EUR Conversion</h4>
+          <h4 className="text-sm font-semibold">{t("uiFundraisingAIPanel.creditsEurConversion")}</h4>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="p-2 rounded-md bg-muted/50">
-              <p className="text-[10px] text-muted-foreground">Budget</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiFundraisingAIPanel.budget")}</p>
               <p className="text-sm font-bold">€{results.convert.credit_budget_eur?.toFixed(2)}</p>
             </div>
             <div className="p-2 rounded-md bg-muted/50">
-              <p className="text-[10px] text-muted-foreground">Funding Goal</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiFundraisingAIPanel.fundingGoal")}</p>
               <p className="text-sm font-bold">€{results.convert.funding_goal_eur?.toFixed(2)}</p>
             </div>
             <div className="p-2 rounded-md bg-muted/50">
-              <p className="text-[10px] text-muted-foreground">Fiat → Credits</p>
+              <p className="text-[10px] text-muted-foreground">{t("uiFundraisingAIPanel.fiatCredits")}</p>
               <p className="text-sm font-bold">{results.convert.fiat_price_credits} Cr</p>
             </div>
           </div>

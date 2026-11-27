@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -34,6 +35,7 @@ function useMyServices(userId: string) {
 }
 
 export function MyServicesPanel({ userId }: { userId: string }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: allMyServices = [], isLoading } = useMyServices(userId);
@@ -99,7 +101,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
       toast({ title: editId ? "Service updated" : "Service created" });
     },
     onError: (err: any) => {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiMyServicesPanel.error"), description: err.message, variant: "destructive" });
     },
   });
 
@@ -110,7 +112,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-services"] });
-      toast({ title: "Service status toggled" });
+      toast({ title: t("uiMyServicesPanel.serviceStatusToggled") });
     },
   });
 
@@ -128,24 +130,24 @@ export function MyServicesPanel({ userId }: { userId: string }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-display text-lg font-semibold">My Services</h3>
+        <h3 className="font-display text-lg font-semibold">{t("uiMyServicesPanel.myServices")}</h3>
         <div className="flex items-center gap-2">
           <Link to="/services/new">
-            <Button><Plus className="h-4 w-4 mr-1" /> Create Service</Button>
+            <Button><Plus className="h-4 w-4 mr-1" /> {t("uiMyServicesPanel.createService")}</Button>
           </Link>
           <Dialog open={createOpen} onOpenChange={(o) => { setCreateOpen(o); if (!o) resetForm(); }}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editId ? "Edit Service" : "Create Service"}</DialogTitle>
+              <DialogTitle>{editId ? t("uiMyServicesPanel.editService") : t("uiMyServicesPanel.createService")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-2">
               <div>
-                <label className="text-sm font-medium mb-1 block">Title</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiMyServicesPanel.title")}</label>
                 <Input value={formTitle} onChange={(e) => setFormTitle(e.target.value)} placeholder="e.g. Strategy Workshop" maxLength={120} />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Description</label>
-                <Textarea value={formDesc} onChange={(e) => setFormDesc(e.target.value)} placeholder="What this service includes…" maxLength={500} className="resize-none" />
+                <label className="text-sm font-medium mb-1 block">{t("uiMyServicesPanel.description")}</label>
+                <Textarea value={formDesc} onChange={(e) => setFormDesc(e.target.value)} placeholder={t("uiMyServicesPanel.whatThisServiceIncludes")} maxLength={500} className="resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -170,7 +172,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
               </div>
               <Button onClick={() => saveMutation.mutate()} disabled={!formTitle.trim() || saveMutation.isPending} className="w-full">
                 {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
-                {editId ? "Save changes" : "Create service"}
+                {editId ? t("uiMyServicesPanel.saveChanges") : t("uiMyServicesPanel.createService2")}
               </Button>
             </div>
           </DialogContent>
@@ -181,7 +183,7 @@ export function MyServicesPanel({ userId }: { userId: string }) {
       {isLoading && <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}
 
       {!isLoading && allMyServices.length === 0 && (
-        <p className="text-muted-foreground">No services yet. Create your first service above.</p>
+        <p className="text-muted-foreground">{t("uiMyServicesPanel.noServicesYetCreateYourFirst")}</p>
       )}
 
       <div className="space-y-3">
@@ -208,13 +210,13 @@ export function MyServicesPanel({ userId }: { userId: string }) {
                 </div>
               </div>
               <Badge className={svc.is_active ? "bg-emerald-500/10 text-emerald-600 border-0" : "bg-muted text-muted-foreground border-0"}>
-                {svc.is_active ? "Active" : "Paused"}
+                {svc.is_active ? t("uiMyServicesPanel.active") : "Paused"}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{svc.description}</p>
             <div className="flex items-center gap-2">
               <Button size="sm" variant="outline" onClick={() => openEdit(svc)}>
-                <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
+                <Pencil className="h-3.5 w-3.5 mr-1" /> {t("uiMyServicesPanel.edit")}
               </Button>
               <Button size="sm" variant="outline" onClick={() => toggleMutation.mutate({ id: svc.id, isActive: svc.is_active })}>
                 {svc.is_active ? <><ToggleRight className="h-3.5 w-3.5 mr-1" /> Pause</> : <><ToggleLeft className="h-3.5 w-3.5 mr-1" /> Resume</>}

@@ -102,12 +102,12 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
   return (
     <section className="space-y-6">
       <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-        <Sparkles className="h-5 w-5 text-primary" /> Your Universe
+        <Sparkles className="h-5 w-5 text-primary" /> {t("uiYourUniverse.yourUniverse")}
       </h2>
 
       {/* Quests */}
       {data.quests.length > 0 && (
-        <SubSection title="Recommended Quests" icon={Compass} viewAllLink="/explore?tab=quests">
+        <SubSection title={t("uiYourUniverse.recommendedQuests")} icon={Compass} viewAllLink="/explore?tab=quests">
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
             {data.quests.map((quest: any, i: number) => (
               <motion.div key={quest.id} custom={i} variants={fadeUp} initial="hidden" animate="show"
@@ -130,7 +130,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
 
       {/* Guilds */}
       {data.guilds.length > 0 && (
-        <SubSection title="Guilds for you" icon={Shield} viewAllLink="/explore?tab=guilds">
+        <SubSection title={t("uiYourUniverse.guildsForYou")} icon={Shield} viewAllLink="/explore?tab=guilds">
           <div className="grid gap-3 sm:grid-cols-3">
             {data.guilds.map((guild: any, i: number) => {
               const topics = (guild.guild_topics ?? []).map((gt: any) => gt.topics).filter(Boolean);
@@ -203,7 +203,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
 
       {/* Users to follow */}
       {data.users.length > 0 && (
-        <SubSection title="People to follow" icon={Users} viewAllLink="/explore?tab=users">
+        <SubSection title={t("uiYourUniverse.peopleToFollow")} icon={Users} viewAllLink="/explore?tab=users">
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x">
             {data.users.map((u: any, i: number) => (
               <motion.div key={u.user_id} custom={i} variants={fadeUp} initial="hidden" animate="show"
@@ -225,7 +225,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
 
       {/* Services */}
       {data.services.length > 0 && (
-        <SubSection title="Services you might need" icon={Briefcase} viewAllLink="/explore?tab=services">
+        <SubSection title={t("uiYourUniverse.servicesYouMightNeed")} icon={Briefcase} viewAllLink="/explore?tab=services">
           <div className="grid gap-3 sm:grid-cols-3">
             {data.services.map((svc: any, i: number) => (
               <motion.div key={svc.id} custom={i} variants={fadeUp} initial="hidden" animate="show">
@@ -249,6 +249,7 @@ export function YourUniverse({ userId, userTopicIds, userTerritoryIds }: Props) 
 function SubSection({ title, icon: Icon, viewAllLink, children }: {
   title: string; icon: any; viewAllLink: string; children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
@@ -256,7 +257,7 @@ function SubSection({ title, icon: Icon, viewAllLink, children }: {
           <Icon className="h-4 w-4" /> {title}
         </h3>
         <Button variant="ghost" size="sm" asChild>
-          <Link to={viewAllLink}>View all <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+          <Link to={viewAllLink}>{t("uiYourUniverse.viewAll")} <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
         </Button>
       </div>
       {children}

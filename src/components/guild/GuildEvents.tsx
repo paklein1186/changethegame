@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { notifyEntityFollowersAndMembers } from "@/lib/notifyEntityActivity";
 import { Link } from "react-router-dom";
@@ -51,6 +52,7 @@ interface UnifiedItem {
 }
 
 export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEventsProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -230,7 +232,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
       acceptance_mode: acceptanceMode,
       status: "PUBLISHED",
     } as any);
-    if (error) { toast({ title: "Failed to create event", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildEvents.failedToCreateEvent"), variant: "destructive" }); return; }
     // Emit $CTG for event hosted
     supabase.rpc('emit_ctg_for_contribution', {
       p_user_id: currentUser.id,
@@ -251,14 +253,14 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
     setVisibility("GUILD_MEMBERS"); setMaxAttendees("");
     setIsPaid(false); setPricePerTicket(""); setCurrency("EUR"); setAcceptanceMode("AUTO");
     setCreateOpen(false);
-    toast({ title: "Event created!" });
+    toast({ title: t("uiGuildEvents.eventCreated") });
   };
 
   const registerForEvent = async (eventId: string) => {
     const event = events.find((e: any) => e.id === eventId);
     if (event?.is_paid) {
       const { data, error } = await supabase.functions.invoke("event-checkout", { body: { eventId } });
-      if (error || !data?.url) { toast({ title: "Payment error", variant: "destructive" }); return; }
+      if (error || !data?.url) { toast({ title: t("uiGuildEvents.paymentError"), variant: "destructive" }); return; }
       window.open(data.url, "_blank");
       return;
     }
@@ -271,10 +273,10 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
       payment_status: "NONE",
       accepted_at: autoAccept && !isFull ? new Date().toISOString() : null,
     } as any);
-    if (error) { toast({ title: "Failed to register", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiGuildEvents.failedToRegister"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["guild-events", guildId] });
     qc.invalidateQueries({ queryKey: ["my-event-registrations", guildId, currentUser.id] });
-    toast({ title: isFull ? "Added to waitlist" : autoAccept ? "Registered!" : "Registration submitted" });
+    toast({ title: isFull ? t("uiGuildEvents.addedToWaitlist") : autoAccept ? "Registered!" : "Registration submitted" });
   };
 
   const cancelRegistration = async (eventId: string) => {
@@ -283,13 +285,13 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
     await supabase.from("guild_event_attendees" as any).update({ status: "CANCELLED", cancelled_at: new Date().toISOString() } as any).eq("id", (reg as any).id);
     qc.invalidateQueries({ queryKey: ["guild-events", guildId] });
     qc.invalidateQueries({ queryKey: ["my-event-registrations", guildId, currentUser.id] });
-    toast({ title: "Registration cancelled" });
+    toast({ title: t("uiGuildEvents.registrationCancelled") });
   };
 
   const cancelEvent = async (eventId: string) => {
     await supabase.from("guild_events" as any).update({ is_cancelled: true, status: "CANCELLED" } as any).eq("id", eventId);
     qc.invalidateQueries({ queryKey: ["guild-events", guildId] });
-    toast({ title: "Event cancelled" });
+    toast({ title: t("uiGuildEvents.eventCancelled") });
   };
 
   const locationIcon = (type?: string) => {
@@ -316,7 +318,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
                 {item.ritualLabel && item.ritualLabel !== item.title && (
                   <Badge variant="secondary" className="text-[10px] shrink-0">{item.ritualLabel}</Badge>
                 )}
-                {item.isCancelled && <Badge variant="destructive" className="text-[10px]">Cancelled</Badge>}
+                {item.isCancelled && <Badge variant="destructive" className="text-[10px]">{t("uiGuildEvents.cancelled")}</Badge>}
               </div>
               <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
                 <span className="flex items-center gap-1">
@@ -334,7 +336,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
               {!item.isCancelled && !eventPast && item.visioLink && (
                 <Button size="sm" variant="default" asChild>
                   <a href={item.visioLink} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-3.5 w-3.5 mr-1" /> Join
+                    <ExternalLink className="h-3.5 w-3.5 mr-1" /> {t("uiGuildEvents.join")}
                   </a>
                 </Button>
               )}
@@ -354,7 +356,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <Link to={`/events/${item.id}`} className="font-display font-semibold text-sm truncate hover:text-primary transition-colors">{item.title}</Link>
-              {item.isCancelled && <Badge variant="destructive" className="text-[10px]">Cancelled</Badge>}
+              {item.isCancelled && <Badge variant="destructive" className="text-[10px]">{t("uiGuildEvents.cancelled")}</Badge>}
               {item.isPaid && <Badge className="bg-primary/10 text-primary border-0 text-[10px]"><Euro className="h-2.5 w-2.5 mr-0.5" />{item.pricePerTicket} {item.currency}</Badge>}
             </div>
             <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
@@ -382,12 +384,12 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
                     {item.callUrl && (
                       <Button size="sm" variant="default" asChild>
                         <a href={item.callUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-3.5 w-3.5 mr-1" /> Join
+                          <ExternalLink className="h-3.5 w-3.5 mr-1" /> {t("uiGuildEvents.join")}
                         </a>
                       </Button>
                     )}
                     <Button size="sm" variant="ghost" onClick={() => cancelRegistration(item.id)}>
-                      <X className="h-3.5 w-3.5 mr-1" /> Cancel
+                      <X className="h-3.5 w-3.5 mr-1" /> {t("uiGuildEvents.cancel")}
                     </Button>
                   </>
                 ) : (
@@ -398,7 +400,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
               </>
             )}
             {(isAdmin || item.createdByUserId === currentUser.id) && !item.isCancelled && (
-              <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelEvent(item.id)}>Cancel Event</Button>
+              <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelEvent(item.id)}>{t("uiGuildEvents.cancelEvent")}</Button>
             )}
           </div>
         </div>
@@ -406,15 +408,15 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
     );
   };
 
-  if (eventsLoading) return <p className="text-sm text-muted-foreground">Loading events…</p>;
+  if (eventsLoading) return <p className="text-sm text-muted-foreground">{t("uiGuildEvents.loadingEvents")}</p>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="font-display font-semibold">Events & Rituals</h3>
+        <h3 className="font-display font-semibold">{t("uiGuildEvents.eventsRituals")}</h3>
         {isMember && (
           <Button size="sm" onClick={() => setCreateOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" /> Create Event
+            <Plus className="h-4 w-4 mr-1" /> {t("uiGuildEvents.createEvent")}
           </Button>
         )}
       </div>
@@ -433,23 +435,23 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
         </div>
       )}
 
-      {unifiedItems.length === 0 && <p className="text-muted-foreground text-sm">No events or rituals scheduled yet.</p>}
+      {unifiedItems.length === 0 && <p className="text-muted-foreground text-sm">{t("uiGuildEvents.noEventsOrRitualsScheduledYet")}</p>}
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle>Create Event</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("uiGuildEvents.createEvent")}</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2 max-h-[70vh] overflow-y-auto pr-1">
             <div>
-              <label className="text-sm font-medium mb-1 block">Title</label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Event title" maxLength={200} />
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.title")}</label>
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("uiGuildEvents.eventTitle")} maxLength={200} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.description")}</label>
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} className="resize-none" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-medium mb-1 block">Start</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiGuildEvents.start")}</label>
                 <Input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} />
               </div>
               <div>
@@ -477,7 +479,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
             {(locationType === "OFFLINE" || locationType === "HYBRID") && (
               <div>
                 <label className="text-sm font-medium mb-1 block">Location</label>
-                <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} placeholder="Address or place name" />
+                <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} placeholder={t("uiGuildEvents.addressOrPlaceName")} />
               </div>
             )}
             <div>
@@ -485,8 +487,8 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
               <Select value={visibility} onValueChange={setVisibility}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="GUILD_MEMBERS">Guild Members Only</SelectItem>
-                  <SelectItem value="PUBLIC_LINK">Public (anyone with link)</SelectItem>
+                  <SelectItem value="GUILD_MEMBERS">{t("uiGuildEvents.guildMembersOnly")}</SelectItem>
+                  <SelectItem value="PUBLIC_LINK">{t("uiGuildEvents.publicAnyoneWithLink")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -501,7 +503,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
               </Select>
             </div>
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Paid Event</label>
+              <label className="text-sm font-medium">{t("uiGuildEvents.paidEvent")}</label>
               <Switch checked={isPaid} onCheckedChange={setIsPaid} />
             </div>
             {isPaid && (
@@ -527,7 +529,7 @@ export function GuildEvents({ guildId, guildName, isMember, isAdmin }: GuildEven
               <label className="text-sm font-medium mb-1 block">Max Attendees (optional)</label>
               <Input type="number" value={maxAttendees} onChange={(e) => setMaxAttendees(e.target.value)} placeholder="Unlimited" min={1} />
             </div>
-            <Button onClick={createEvent} disabled={!title.trim() || !startAt} className="w-full">Create Event</Button>
+            <Button onClick={createEvent} disabled={!title.trim() || !startAt} className="w-full">{t("uiGuildEvents.createEvent")}</Button>
           </div>
         </DialogContent>
       </Dialog>

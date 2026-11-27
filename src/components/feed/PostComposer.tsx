@@ -316,7 +316,7 @@ export function PostComposer({ contextType, contextId, showVisibilityPicker = fa
               await supabase.from("notifications").insert({
                 user_id: f.follower_id,
                 type: "FOLLOWED_USER_NEW_POST",
-                title: "New post from someone you follow",
+                title: t("uiPostComposer.newPostFromSomeoneYouFollow"),
                 body: `${authorName} published a new post`,
                 deep_link_url: roomId
                   ? `/${effectiveEntityType === "GUILD" ? "guilds" : "companies"}/${contextId}?tab=discussion&room=${roomId}`

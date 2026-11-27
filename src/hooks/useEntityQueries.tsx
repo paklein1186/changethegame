@@ -810,6 +810,7 @@ export function useUserAchievements(userId: string | undefined) {
 export function useUserGuildMemberships(userId: string | undefined) {
   return useQuery({
     queryKey: ["user-guild-memberships", userId],
+    staleTime: 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("guild_members")
@@ -826,6 +827,7 @@ export function useUserGuildMemberships(userId: string | undefined) {
 export function useUserQuestParticipations(userId: string | undefined) {
   return useQuery({
     queryKey: ["user-quest-participations", userId],
+    staleTime: 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("quest_participants")
@@ -842,6 +844,7 @@ export function useUserQuestParticipations(userId: string | undefined) {
 export function useUserPodMemberships(userId: string | undefined) {
   return useQuery({
     queryKey: ["user-pod-memberships", userId],
+    staleTime: 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("pod_members")
@@ -858,6 +861,7 @@ export function useUserPodMemberships(userId: string | undefined) {
 export function useUserServices(userId: string | undefined) {
   return useQuery({
     queryKey: ["user-services", userId],
+    staleTime: 60_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("services")
@@ -940,9 +944,10 @@ export function useMyBookings(userId: string | undefined) {
 }
 
 // ─── My drafts ───────────────────────────────────────────────
-export function useMyDrafts(userId: string | undefined) {
+export function useMyDrafts(userId: string | undefined, enabled = true) {
   return useQuery({
     queryKey: ["my-drafts", userId],
+    staleTime: 60_000,
     queryFn: async () => {
       if (!userId) return { quests: [], guilds: [], pods: [], services: [] };
       const [questsRes, guildsRes, podsRes, servicesRes] = await Promise.all([
@@ -958,7 +963,7 @@ export function useMyDrafts(userId: string | undefined) {
         services: servicesRes.data || [],
       };
     },
-    enabled: !!userId,
+    enabled: !!userId && enabled,
   });
 }
 

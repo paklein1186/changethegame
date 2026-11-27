@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +16,7 @@ interface CommissionEstimatorProps {
 }
 
 export function CommissionEstimator({ budgetMin, budgetMax, compact }: CommissionEstimatorProps) {
+  const { t } = useTranslation();
   const { plan, userCredits } = usePlanLimits();
   const [creditSteps, setCreditSteps] = useState(0);
 
@@ -95,7 +97,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
         {creditSteps > 0 && (
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground flex items-center gap-1">
-              <CurrencyIcon currency="credits" className="h-3 w-3" /> Credit reduction ({creditsNeeded} credits)
+              <CurrencyIcon currency="credits" className="h-3 w-3" /> {t("uiCommissionEstimator.creditReduction")}{creditsNeeded} {t("uiCommissionEstimator.credits")}
             </span>
             <span className="font-medium text-primary">-{creditSteps}%</span>
           </div>
@@ -111,7 +113,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
       {maxSteps > 0 && (
         <div className="rounded-md bg-muted/50 p-3 space-y-2">
           <p className="text-xs font-medium flex items-center gap-1">
-            <CurrencyIcon currency="credits" className="h-3 w-3" /> Reduce commission with credits
+            <CurrencyIcon currency="credits" className="h-3 w-3" /> {t("uiCommissionEstimator.reduceCommissionWithCredits")}
           </p>
           <div className="flex items-center gap-2">
             <Button
@@ -130,11 +132,11 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
               <Plus className="h-3 w-3" />
             </Button>
             <span className="text-xs text-muted-foreground">
-              ({CREDIT_COST_PER_1_PERCENT_REDUCTION} credits per 1%)
+              ({CREDIT_COST_PER_1_PERCENT_REDUCTION} {t("uiCommissionEstimator.creditsPer1")}
             </span>
           </div>
           <p className="text-[10px] text-muted-foreground">
-            Max reduction: {maxSteps}% • Floor: {COMMISSION_FLOOR}% • You have {userCredits} credits
+            Max reduction: {maxSteps}% • Floor: {COMMISSION_FLOOR}{t("uiCommissionEstimator.youHave")} {userCredits} credits
           </p>
         </div>
       )}
@@ -142,7 +144,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
       {/* Payout estimate */}
       {min > 0 && (
         <div className="rounded-md bg-primary/5 border border-primary/20 p-3">
-          <p className="text-xs text-muted-foreground font-medium mb-1">🎯 Estimated payout to collaborator</p>
+          <p className="text-xs text-muted-foreground font-medium mb-1">{t("uiCommissionEstimator.estimatedPayoutToCollaborator")}</p>
           <p className="text-lg font-bold">
             €{resultMin.payoutAmount.toLocaleString()}
             {max > min ? ` – €${resultMax.payoutAmount.toLocaleString()}` : ""}
@@ -155,7 +157,7 @@ export function CommissionEstimator({ budgetMin, budgetMax, compact }: Commissio
       )}
 
       <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-        <Info className="h-3 w-3" /> Commission is calculated on the accepted mission amount. Credits are not used for payments.
+        <Info className="h-3 w-3" /> {t("uiCommissionEstimator.commissionIsCalculatedOnTheAccepted")}
       </p>
     </div>
   );

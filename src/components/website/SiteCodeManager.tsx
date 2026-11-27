@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ function generateCode(ownerType: string, ownerId: string): string {
 }
 
 export function SiteCodeManager({ ownerType, ownerId }: Props) {
+  const { t } = useTranslation();
   const [siteCode, setSiteCode] = useState<{
     id: string;
     code: string;
@@ -101,7 +103,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
     if (!siteCode) return;
     navigator.clipboard.writeText(siteCode.code);
     setCopied(true);
-    toast.success("Code copied to clipboard");
+    toast.success(t("uiSiteCodeManager.codeCopiedToClipboard"));
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -123,7 +125,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
           <Key className="h-4 w-4 text-primary" /> Site Code
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Generate a code that external websites (like Lovable) can use to fetch your public content feed.
+          {t("uiSiteCodeManager.generateACodeThatExternalWebsites")}
         </p>
       </div>
 
@@ -136,7 +138,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
         <div className="space-y-4">
           {/* Code display */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Your Site Code</Label>
+            <Label className="text-sm font-medium">{t("uiSiteCodeManager.yourSiteCode")}</Label>
             <div className="flex items-center gap-2">
               <Input
                 readOnly
@@ -147,7 +149,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
                 variant="outline"
                 size="icon"
                 onClick={copyCode}
-                title="Copy code"
+                title={t("uiSiteCodeManager.copyCode")}
               >
                 {copied ? (
                   <CheckCircle className="h-4 w-4 text-primary" />
@@ -160,7 +162,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
               {siteCode.revoked ? (
                 <Badge variant="destructive" className="text-xs">Revoked</Badge>
               ) : (
-                <Badge variant="secondary" className="text-xs">Active</Badge>
+                <Badge variant="secondary" className="text-xs">{t("uiSiteCodeManager.active")}</Badge>
               )}
               <span className="text-xs text-muted-foreground">
                 Created {new Date(siteCode.created_at).toLocaleDateString()}
@@ -181,7 +183,7 @@ export function SiteCodeManager({ ownerType, ownerId }: Props) {
                 </a>
               </div>
               <p className="text-xs text-muted-foreground">
-                Share this URL with your website builder (e.g. Lovable) to pull your public content.
+                {t("uiSiteCodeManager.shareThisUrlWithYourWebsite")}
               </p>
             </div>
           )}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,7 @@ function MilestoneCard({
   m: MilestoneWithProgress;
   onComplete?: (code: string) => Promise<void>;
 }) {
+  const { t } = useTranslation();
   const action = MILESTONE_ROUTES[m.code];
   const [completing, setCompleting] = useState(false);
 
@@ -58,7 +60,7 @@ function MilestoneCard({
                 onClick={handleTick}
                 disabled={completing}
                 className="shrink-0 group relative"
-                title="Mark as completed"
+                title={t("uiMilestonesHub.markAsCompleted")}
               >
                 {completing ? (
                   <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -86,7 +88,7 @@ function MilestoneCard({
             )}
             {m.reward_type === "CREDITS" && (
               <Badge variant="secondary" className="text-[10px] gap-1">
-                <CurrencyIcon currency="credits" className="h-3 w-3" /> +{m.reward_amount} Credits
+                <CurrencyIcon currency="credits" className="h-3 w-3" /> +{m.reward_amount} {t("uiMilestonesHub.credits")}
               </Badge>
             )}
             {m.reward_type === "BADGE" && (
@@ -115,6 +117,7 @@ function MilestoneCard({
 }
 
 export default function MilestonesHub() {
+  const { t } = useTranslation();
   const { milestones, completedCount, totalCount, completeMilestone } = useMilestones();
   const [showCompleted, setShowCompleted] = useState(false);
 
@@ -152,10 +155,10 @@ export default function MilestonesHub() {
         <div>
           <h1 className="font-display text-3xl font-bold flex items-center gap-3">
             <Trophy className="h-8 w-8 text-primary" />
-            Your Journey
+            {t("uiMilestonesHub.yourJourney")}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Track your progress, unlock features, and earn rewards as you grow.
+            {t("uiMilestonesHub.trackYourProgressUnlockFeaturesAnd")}
           </p>
         </div>
 
@@ -172,13 +175,13 @@ export default function MilestonesHub() {
               {xpEarned > 0 && (
                 <div className="flex items-center gap-1.5 justify-end">
                   <CurrencyIcon currency="xp" className="h-4 w-4" />
-                  <span className="text-sm font-semibold">{xpEarned} XP earned</span>
+                  <span className="text-sm font-semibold">{xpEarned} {t("uiMilestonesHub.xpEarned")}</span>
                 </div>
               )}
               {creditsEarned > 0 && (
                 <div className="flex items-center gap-1.5 justify-end">
                   <CurrencyIcon currency="credits" className="h-4 w-4" />
-                  <span className="text-sm font-semibold">{creditsEarned} Credits earned</span>
+                  <span className="text-sm font-semibold">{creditsEarned} {t("uiMilestonesHub.creditsEarned")}</span>
                 </div>
               )}
             </div>
@@ -220,7 +223,7 @@ export default function MilestonesHub() {
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-semibold flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-primary" /> Completed ({completed.length})
+              <CheckCircle className="h-5 w-5 text-primary" /> {t("uiMilestonesHub.completed")}{completed.length})
             </h2>
             {completed.length > 0 && (
               <Button
@@ -243,7 +246,7 @@ export default function MilestonesHub() {
           </div>
           {completed.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">
-              No milestones completed yet. Start exploring!
+              {t("uiMilestonesHub.noMilestonesCompletedYetStartExploring")}
             </p>
           ) : showCompleted ? (
             <div className="grid gap-3 sm:grid-cols-2">

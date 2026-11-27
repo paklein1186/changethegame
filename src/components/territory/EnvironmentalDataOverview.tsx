@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Database, RefreshCw, TreePine, Droplets, Thermometer, Globe, Layers,
@@ -37,7 +39,7 @@ const DATASET_TYPE_ICONS: Record<string, typeof TreePine> = {
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   ok: { label: "Live", className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
   unavailable: { label: "Unavailable", className: "bg-destructive/15 text-destructive border-destructive/30" },
-  no_data: { label: "No data", className: "bg-muted text-muted-foreground border-border" },
+  no_data: { get label() { return i18n.t("uiEnvironmentalDataOverview.noData"); }, className: "bg-muted text-muted-foreground border-border" },
 };
 
 const INDICATOR_LABELS: Record<string, { label: string; unit: string; icon: typeof TreePine }> = {
@@ -48,6 +50,7 @@ const INDICATOR_LABELS: Record<string, { label: string; unit: string; icon: type
 };
 
 export function EnvironmentalDataOverview({ territoryId, territoryName }: Props) {
+  const { t } = useTranslation();
   const { data: matches, isLoading: matchesLoading } = useTerritoryDatasetMatches(territoryId);
   const { data: settings } = useTerritoryPrecisionSettings(territoryId);
   const { data: indicators, isLoading: indicatorsLoading } = useTerritoryLivingIndicators(territoryId);
@@ -65,7 +68,7 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
       await refreshMutation.mutateAsync(territoryId);
       toast({ title: "Environmental data refreshed!" });
     } catch {
-      toast({ title: "Failed to refresh datasets", variant: "destructive" });
+      toast({ title: t("uiEnvironmentalDataOverview.failedToRefreshDatasets"), variant: "destructive" });
     }
   };
 
@@ -86,7 +89,7 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
           </div>
           <div className="text-left">
             <h3 className="font-display text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-              Environmental Data Overview
+              {t("uiEnvironmentalDataOverview.environmentalDataOverview")}
             </h3>
             <p className="text-[11px] text-muted-foreground">
               {matches?.length ?? 0} datasets linked · Matching: {config.label}
@@ -202,7 +205,7 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
           ) : matches && matches.length > 0 ? (
             <div className="rounded-xl border border-dashed border-border p-4 text-center">
               <p className="text-xs text-muted-foreground">
-                {matches.length} datasets matched but no live indicators fetched yet.
+                {matches.length} {t("uiEnvironmentalDataOverview.datasetsMatchedButNoLiveIndicators")}
               </p>
               <Button size="sm" variant="outline" className="mt-2 text-xs" onClick={handleRefresh} disabled={isRefreshing}>
                 <RefreshCw className={cn("h-3 w-3 mr-1", isRefreshing && "animate-spin")} />
@@ -212,13 +215,13 @@ export function EnvironmentalDataOverview({ territoryId, territoryName }: Props)
           ) : (
             <div className="rounded-xl border border-dashed border-border p-6 text-center">
               <Database className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">No environmental datasets linked yet.</p>
+              <p className="text-sm text-muted-foreground">{t("uiEnvironmentalDataOverview.noEnvironmentalDatasetsLinkedYet")}</p>
               <p className="text-xs text-muted-foreground/70 mt-1">
-                Click "Refresh Data" to match datasets based on territory granularity.
+                {t("uiEnvironmentalDataOverview.clickRefreshDataToMatchDatasets")}
               </p>
               <Button size="sm" variant="outline" className="mt-3 text-xs" onClick={handleRefresh} disabled={isRefreshing}>
                 <RefreshCw className={cn("h-3 w-3 mr-1", isRefreshing && "animate-spin")} />
-                Match Datasets Now
+                {t("uiEnvironmentalDataOverview.matchDatasetsNow")}
               </Button>
             </div>
           )}

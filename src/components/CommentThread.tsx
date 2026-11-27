@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useCallback, useRef } from "react";
 import { compressImage } from "@/lib/compressImage";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,6 +37,7 @@ interface CommentThreadProps {
 }
 
 export function CommentThread({ targetType, targetId }: CommentThreadProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -118,11 +120,11 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
   const handleImageSelect = (file: File | null, isReply: boolean) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      toast({ title: "Only image files are allowed", variant: "destructive" });
+      toast({ title: t("uiCommentThread.onlyImageFilesAreAllowed"), variant: "destructive" });
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      toast({ title: "Image must be under 10MB", variant: "destructive" });
+      toast({ title: t("uiCommentThread.imageMustBeUnder10mb"), variant: "destructive" });
       return;
     }
     const preview = URL.createObjectURL(file);
@@ -147,7 +149,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
     const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "-");
     const path = `${currentUser.id}/${Date.now()}-${safeName}`;
     const { error } = await supabase.storage.from("comment-images").upload(path, file, { contentType: file.type });
-    if (error) { toast({ title: "Image upload failed", variant: "destructive" }); return null; }
+    if (error) { toast({ title: t("uiCommentThread.imageUploadFailed"), variant: "destructive" }); return null; }
     const { data: urlData } = supabase.storage.from("comment-images").getPublicUrl(path);
     return urlData.publicUrl;
   };
@@ -221,7 +223,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
         image_url: imageUrl,
       }).select("id").single();
 
-      if (error) { toast({ title: "Failed to post comment", variant: "destructive" }); return; }
+      if (error) { toast({ title: t("uiCommentThread.failedToPostComment"), variant: "destructive" }); return; }
 
       // Emit $CTG for comment
       supabase.rpc('emit_ctg_for_contribution', {
@@ -284,7 +286,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
           await supabase.from("notifications").insert({
             user_id: parentComment.author_id,
             type: "COMMENT_REPLY",
-            title: "Someone replied to your comment",
+            title: t("uiCommentThread.someoneRepliedToYourComment"),
             body: `${currentUser.name || "Someone"} replied: "${cleanSnippet.slice(0, 60)}"`,
             related_entity_type: targetType,
             related_entity_id: inserted.id,
@@ -297,7 +299,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
       toast({ title: "Comment added" });
       qc.invalidateQueries({ queryKey });
     } catch (err: any) {
-      toast({ title: err.message || "Failed to post comment", variant: "destructive" });
+      toast({ title: err.message || t("uiCommentThread.failedToPostComment"), variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -323,15 +325,15 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
         .eq("author_id", currentUser.id)
         .select("id");
       if (error) {
-        toast({ title: "Failed to delete comment", variant: "destructive" });
+        toast({ title: t("uiCommentThread.failedToDeleteComment"), variant: "destructive" });
       } else if (!data || data.length === 0) {
-        toast({ title: "You don't have permission to delete this comment", variant: "destructive" });
+        toast({ title: t("uiCommentThread.youDonTHavePermissionTo"), variant: "destructive" });
       } else {
         toast({ title: "Comment deleted" });
         qc.invalidateQueries({ queryKey });
       }
     } catch {
-      toast({ title: "Failed to delete comment", variant: "destructive" });
+      toast({ title: t("uiCommentThread.failedToDeleteComment"), variant: "destructive" });
     } finally {
       setIsDeleting(false);
       setDeleteTarget(null);
@@ -345,7 +347,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
       return (
         <div key={comment.id} className={isReply ? "ml-8 pl-4 border-l-2 border-border" : ""}>
           <div className="rounded-lg border border-border bg-muted/30 p-4 italic text-sm text-muted-foreground">
-            This comment has been removed.
+            {t("uiCommentThread.thisCommentHasBeenRemoved")}
           </div>
           {replies.length > 0 && (
             <div className="mt-2 space-y-2">{replies.map((reply) => renderComment(reply, true))}</div>
@@ -403,10 +405,10 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
                 {isOwn && !isEditing && (
                   <>
                     <Button variant="ghost" size="sm" className="h-7 px-2 text-muted-foreground hover:text-primary" onClick={() => { setEditingId(comment.id); setEditText(comment.content); }}>
-                      <Pencil className="h-3 w-3 mr-1" />Edit
+                      <Pencil className="h-3 w-3 mr-1" />{t("uiCommentThread.edit")}
                     </Button>
                     <Button variant="ghost" size="sm" className="h-7 px-2 text-muted-foreground hover:text-destructive" onClick={() => setDeleteTarget(comment.id)}>
-                      <Trash2 className="h-3 w-3 mr-1" />Delete
+                      <Trash2 className="h-3 w-3 mr-1" />{t("uiCommentThread.delete")}
                     </Button>
                   </>
                 )}
@@ -429,7 +431,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
                       value={replyText}
                       onChange={setReplyText}
                       onMentionsChange={setReplyMentions}
-                      placeholder="Write a reply… (type @ to mention)"
+                      placeholder={t("uiCommentThread.writeAReplyTypeToMention")}
                       className="min-h-[60px] flex-1"
                       maxLength={500}
                       entityContext={entityContext}
@@ -471,7 +473,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
   return (
     <>
     <div className="space-y-4">
-      {topLevel.length === 0 && deletedTopLevel.length === 0 && <p className="text-sm text-muted-foreground italic py-4">No comments yet. Start the conversation!</p>}
+      {topLevel.length === 0 && deletedTopLevel.length === 0 && <p className="text-sm text-muted-foreground italic py-4">{t("uiCommentThread.noCommentsYetStartTheConversation")}</p>}
       {[...deletedTopLevel, ...topLevel].map((comment) => renderComment(comment))}
       <div className="pt-4 border-t border-border">
         <div className="flex gap-3">
@@ -481,7 +483,7 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
               value={newComment}
               onChange={setNewComment}
               onMentionsChange={setPendingMentions}
-              placeholder="Add a comment… (type @ to mention someone)"
+              placeholder={t("uiCommentThread.addACommentTypeToMention")}
               className="min-h-[80px]"
               maxLength={1000}
               entityContext={entityContext}
@@ -515,15 +517,15 @@ export function CommentThread({ targetType, targetId }: CommentThreadProps) {
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete comment?</AlertDialogTitle>
+            <AlertDialogTitle>{t("uiCommentThread.deleteComment")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this comment? This action cannot be undone.
+              {t("uiCommentThread.areYouSureYouWantTo")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{t("uiCommentThread.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} disabled={isDeleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {isDeleting ? "Deleting…" : "Delete"}
+              {isDeleting ? "Deleting…" : t("uiCommentThread.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

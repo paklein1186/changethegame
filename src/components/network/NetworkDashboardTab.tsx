@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -300,6 +301,7 @@ function useOcuInconsistencyAlerts(entities: AdminEntity[]) {
 
 // ─── Main Component ─────────────────────────────────────────
 export default function NetworkDashboardTab() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { data: adminEntities = [], isLoading: loadingEntities } = useAdminEntities(currentUser.id);
   const { data: pendingApps = [], isLoading: loadingApps } = usePendingApplications(adminEntities);
@@ -322,8 +324,8 @@ export default function NetworkDashboardTab() {
         <IncomingBookings userId={currentUser.id} />
         <div className="text-center py-16 space-y-3">
           <Shield className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-          <p className="text-muted-foreground">You're not an admin of any entity yet.</p>
-          <p className="text-xs text-muted-foreground">Create or join a guild, pod, or organization to see your admin dashboard here.</p>
+          <p className="text-muted-foreground">{t("uiNetworkDashboardTab.youReNotAnAdminOf")}</p>
+          <p className="text-xs text-muted-foreground">{t("uiNetworkDashboardTab.createOrJoinAGuildPod")}</p>
         </div>
       </div>
     );
@@ -343,7 +345,7 @@ export default function NetworkDashboardTab() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Card><CardContent className="py-4 text-center">
           <p className="text-2xl font-bold text-primary">{pendingApps.length}</p>
-          <p className="text-xs text-muted-foreground">Pending Applications</p>
+          <p className="text-xs text-muted-foreground">{t("uiNetworkDashboardTab.pendingApplications")}</p>
         </CardContent></Card>
         <Card><CardContent className="py-4 text-center">
           <p className="text-2xl font-bold text-amber-500">{pendingPartnerships.length}</p>
@@ -351,11 +353,11 @@ export default function NetworkDashboardTab() {
         </CardContent></Card>
         <Card><CardContent className="py-4 text-center">
           <p className="text-2xl font-bold text-destructive">{totalReports}</p>
-          <p className="text-xs text-muted-foreground">Open Reports</p>
+          <p className="text-xs text-muted-foreground">{t("uiNetworkDashboardTab.openReports")}</p>
         </CardContent></Card>
         <Card><CardContent className="py-4 text-center">
           <p className="text-2xl font-bold text-accent-foreground">{decisions.length}</p>
-          <p className="text-xs text-muted-foreground">Active Decisions</p>
+          <p className="text-xs text-muted-foreground">{t("uiNetworkDashboardTab.activeDecisions")}</p>
         </CardContent></Card>
       </div>
 
@@ -365,14 +367,14 @@ export default function NetworkDashboardTab() {
           <CardContent className="py-4 flex items-start gap-3">
             <div className="text-2xl">🧮</div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold">Mixed OCU mode in {alert.guildName}</p>
+              <p className="text-sm font-semibold">{t("uiNetworkDashboardTab.mixedOcuModeIn")} {alert.guildName}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {alert.ocuQuests} of {alert.totalQuests} quests use OCU. Enable it as default to homogenize contribution tracking.
+                {alert.ocuQuests} of {alert.totalQuests} {t("uiNetworkDashboardTab.questsUseOcuEnableItAs")}
               </p>
               <div className="flex gap-2 mt-2">
                 <Button size="sm" className="h-7 text-xs" asChild>
                   <Link to={`/guilds/${alert.guildId}/settings?tab=defaults`}>
-                    <Settings className="h-3 w-3 mr-1" /> Configure in Settings
+                    <Settings className="h-3 w-3 mr-1" /> {t("uiNetworkDashboardTab.configureInSettings")}
                   </Link>
                 </Button>
                 <Button
@@ -398,7 +400,7 @@ export default function NetworkDashboardTab() {
       {/* Reports */}
       <SectionShell
         icon={MessageSquareWarning}
-        title="Open Reports"
+        title={t("uiNetworkDashboardTab.openReports")}
         count={totalReports}
         emptyMsg="No open reports across your entities."
       >
@@ -406,8 +408,8 @@ export default function NetworkDashboardTab() {
           {(reportData?.reports || []).map((r: any) => (
             <div key={r.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">Report on {r.target_type?.toLowerCase()}</p>
-                <p className="text-xs text-muted-foreground line-clamp-1">{r.reason || "No reason provided"}</p>
+                <p className="text-sm font-medium">{t("uiNetworkDashboardTab.reportOn")} {r.target_type?.toLowerCase()}</p>
+                <p className="text-xs text-muted-foreground line-clamp-1">{r.reason || t("uiNetworkDashboardTab.noReasonProvided")}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}</p>
               </div>
               <Button size="sm" variant="outline" className="text-xs h-7 ml-2" asChild>
@@ -435,7 +437,7 @@ export default function NetworkDashboardTab() {
       {/* Active Decisions */}
       <SectionShell
         icon={Vote}
-        title="Active Decisions"
+        title={t("uiNetworkDashboardTab.activeDecisions")}
         count={decisions.length}
         emptyMsg="No active polls or votes across your entities."
       >
@@ -469,6 +471,7 @@ export default function NetworkDashboardTab() {
 
 // ─── Pending Applications Section ───────────────────────────
 function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[]; currentUserId: string }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const { notifyApplicationDecision, notifyGuildMemberAdded } = useNotifications();
@@ -497,7 +500,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
       .eq("id", app.id) as any);
 
     if (error) {
-      toast({ title: "Failed to update", description: error.message, variant: "destructive" });
+      toast({ title: t("uiNetworkDashboardTab.failedToUpdate"), description: error.message, variant: "destructive" });
       setActing(false);
       return;
     }
@@ -522,7 +525,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
     <>
       <SectionShell
         icon={UserPlus}
-        title="Pending Applications"
+        title={t("uiNetworkDashboardTab.pendingApplications")}
         count={apps.length}
         emptyMsg="No pending applications across your entities."
       >
@@ -565,7 +568,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
       {/* Detail dialog */}
       <Dialog open={!!selectedApp} onOpenChange={(open) => { if (!open) setSelectedApp(null); }}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Application Details</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("uiNetworkDashboardTab.applicationDetails")}</DialogTitle></DialogHeader>
           {selectedApp && (
             <div className="space-y-4 mt-2">
               <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
@@ -588,23 +591,23 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
                   {selectedApp.answers.map((qa, i) => (
                     <div key={i} className="rounded-lg border border-border p-3">
                       <p className="text-sm font-medium text-muted-foreground">{qa.question}</p>
-                      <p className="text-sm mt-1">{qa.answer || <span className="italic text-muted-foreground">No answer</span>}</p>
+                      <p className="text-sm mt-1">{qa.answer || <span className="italic text-muted-foreground">{t("uiNetworkDashboardTab.noAnswer")}</span>}</p>
                     </div>
                   ))}
                 </div>
               )}
 
               <div>
-                <label className="text-sm font-medium mb-1 block">Admin note (optional)</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiNetworkDashboardTab.adminNoteOptional")}</label>
                 <Textarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder="Internal note…" maxLength={500} className="resize-none" />
               </div>
 
               <div className="flex gap-2">
                 <Button onClick={() => handleAction(selectedApp, "APPROVED")} disabled={acting} className="flex-1">
-                  {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />} Approve
+                  {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />} {t("uiNetworkDashboardTab.approve")}
                 </Button>
                 <Button variant="destructive" onClick={() => handleAction(selectedApp, "REJECTED")} disabled={acting} className="flex-1">
-                  {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <X className="h-4 w-4 mr-1" />} Reject
+                  {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <X className="h-4 w-4 mr-1" />} {t("uiNetworkDashboardTab.reject")}
                 </Button>
               </div>
             </div>
@@ -617,6 +620,7 @@ function PendingApplicationsSection({ apps, currentUserId }: { apps: PendingApp[
 
 // ─── Pending Partnerships Section ───────────────────────────
 function PendingPartnershipsSection({ partnerships }: { partnerships: any[] }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [acting, setActing] = useState<string | null>(null);
@@ -629,7 +633,7 @@ function PendingPartnershipsSection({ partnerships }: { partnerships: any[] }) {
       .eq("id", partnershipId);
 
     if (error) {
-      toast({ title: "Failed to update", description: error.message, variant: "destructive" });
+      toast({ title: t("uiNetworkDashboardTab.failedToUpdate"), description: error.message, variant: "destructive" });
     } else {
       toast({ title: status === "ACCEPTED" ? "Partnership accepted ✓" : "Partnership declined" });
       qc.invalidateQueries({ queryKey: ["dashboard-partnerships"] });

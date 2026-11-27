@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ interface ProposalEvaluatorProps {
 }
 
 export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluatorProps) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [comparison, setComparison] = useState<Comparison | null>(null);
@@ -56,7 +58,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
       setComparison(data.comparison || null);
       toast({ title: "AI evaluation complete" });
     } catch (e: any) {
-      toast({ title: "Evaluation failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiProposalEvaluator.evaluationFailed"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -79,8 +81,8 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             <div>
-              <h4 className="text-sm font-semibold">AI Proposal Evaluation</h4>
-              <p className="text-xs text-muted-foreground">Get a neutral analysis of all pending proposals</p>
+              <h4 className="text-sm font-semibold">{t("uiProposalEvaluator.aiProposalEvaluation")}</h4>
+              <p className="text-xs text-muted-foreground">{t("uiProposalEvaluator.getANeutralAnalysisOfAll")}</p>
             </div>
           </div>
           <Button size="sm" onClick={runEvaluation} disabled={loading}>
@@ -197,7 +199,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">Top match:</span>
               <Badge variant="default" className="text-xs">
-                {proposalTitles[comparison.topRecommendation] || "Proposal"}
+                {proposalTitles[comparison.topRecommendation] || t("uiProposalEvaluator.proposal")}
               </Badge>
             </div>
           )}
@@ -210,7 +212,7 @@ export function ProposalEvaluator({ questId, proposalTitles }: ProposalEvaluator
             </div>
           )}
           <p className="text-[10px] text-muted-foreground italic mt-2">
-            This is an AI-generated analysis to assist your decision. Final choices are always yours.
+            {t("uiProposalEvaluator.thisIsAnAiGeneratedAnalysis")}
           </p>
         </Card>
       )}

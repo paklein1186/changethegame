@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sparkles, X, ArrowRight } from "lucide-react";
@@ -18,6 +19,7 @@ const SNOOZE_MS = 1000 * 60 * 60 * 24; // 24h
  * Dismissable: snoozes for 24h, then re-appears until onboarding is done.
  */
 export function OnboardingReminderBanner() {
+  const { t } = useTranslation();
   const { user, session } = useAuth();
   const location = useLocation();
   const [snoozedUntil, setSnoozedUntil] = useState<number>(() => {
@@ -52,12 +54,12 @@ export function OnboardingReminderBanner() {
       <div className="container px-3 sm:px-4 py-2 flex items-center gap-3">
         <Sparkles className="h-4 w-4 text-primary shrink-0" />
         <p className="text-xs sm:text-sm text-foreground flex-1 min-w-0">
-          <span className="font-medium">Finish setting up your profile</span>
-          <span className="hidden sm:inline text-muted-foreground"> — pick your topics, languages and territory to get tailored matches and rewards.</span>
+          <span className="font-medium">{t("uiOnboardingReminderBanner.finishSettingUpYourProfile")}</span>
+          <span className="hidden sm:inline text-muted-foreground"> {t("uiOnboardingReminderBanner.pickYourTopicsLanguagesAndTerritory")}</span>
         </p>
         <Button asChild size="sm" variant="default" className="h-7 text-xs shrink-0">
           <Link to="/onboarding">
-            Continue <ArrowRight className="h-3 w-3 ml-1" />
+            {t("uiOnboardingReminderBanner.continue")} <ArrowRight className="h-3 w-3 ml-1" />
           </Link>
         </Button>
         <button

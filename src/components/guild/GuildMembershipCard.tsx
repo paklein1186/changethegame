@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function GuildMembershipCard({ guild }: Props) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const navigate = useNavigate();
   const {
@@ -92,7 +94,7 @@ export function GuildMembershipCard({ guild }: Props) {
     isRange ? (
       <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5">
         <p className="text-xs text-foreground">
-          Choose what you pay{monthly ? ` each ${period}` : ""}: <strong>🟩 {chosenFee} Coins</strong> (~{toEur(chosenFee)} €)
+          {t("uiGuildMembershipCard.chooseWhatYouPay")}{monthly ? ` each ${period}` : ""}: <strong>🟩 {chosenFee} {t("uiGuildMembershipCard.coins2")}</strong> (~{toEur(chosenFee)} €)
         </p>
         <Slider
           value={[chosenFee]}
@@ -128,9 +130,9 @@ export function GuildMembershipCard({ guild }: Props) {
       </Button>
       {notEnoughCoins && (
         <p className="text-xs text-muted-foreground">
-          You have 🟩 {coinsBalance} Coins and need {dueNow}. 1 Coin = {rate.toFixed(2)} €.{" "}
+          {t("uiGuildMembershipCard.youHave")} {coinsBalance} {t("uiGuildMembershipCard.coinsAndNeed")} {dueNow}{t("uiGuildMembershipCard.1Coin")} {rate.toFixed(2)} €.{" "}
           <Link to="/settings/wallet" className="text-primary underline underline-offset-2">
-            Top up your wallet
+            {t("uiGuildMembershipCard.topUpYourWallet")}
           </Link>
         </p>
       )}
@@ -147,19 +149,19 @@ export function GuildMembershipCard({ guild }: Props) {
       {!session ? (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground">
-            Log in or create an account to join this guild.
+            {t("uiGuildMembershipCard.logInOrCreateAnAccount")}
           </p>
           <Button size="sm" onClick={() => navigate("/login")} className="w-full">
-            Log in
+            {t("uiGuildMembershipCard.logIn")}
           </Button>
         </div>
       ) : isLoading ? (
         <Loader2 className="h-4 w-4 animate-spin mx-auto" />
       ) : isCreator ? (
         <div className="space-y-1">
-          <Badge className="bg-primary/10 text-primary border-0 text-xs">Founding member</Badge>
+          <Badge className="bg-primary/10 text-primary border-0 text-xs">{t("uiGuildMembershipCard.foundingMember")}</Badge>
           <p className="text-xs text-muted-foreground">
-            As the founder of this guild you are a permanent member — no application, no fee.
+            {t("uiGuildMembershipCard.asTheFounderOfThisGuild")}
           </p>
         </div>
       ) : (
@@ -173,18 +175,18 @@ export function GuildMembershipCard({ guild }: Props) {
                   <>
                     {yearly ? "Yearly" : "Monthly"} fee:{" "}
                     <strong className="text-foreground">
-                      🟩 {isRange ? `${minFee} – ${maxFee}` : recurringFee} Coins / {period}
+                      🟩 {isRange ? `${minFee} – ${maxFee}` : recurringFee} {t("uiGuildMembershipCard.coins")} {period}
                     </strong>{" "}
                     (~{toEur(minFee)} €{isRange ? ` – ${toEur(maxFee)} €` : ""})
                     {joiningFee > 0 && (
-                      <> · one-time joining fee <strong className="text-foreground">🟩 {joiningFee} Coins</strong></>
+                      <> {t("uiGuildMembershipCard.oneTimeJoiningFee")} <strong className="text-foreground">🟩 {joiningFee} {t("uiGuildMembershipCard.coins2")}</strong></>
                     )}
                   </>
                 ) : (
                   <>
-                    One-time entry fee:{" "}
+                    {t("uiGuildMembershipCard.oneTimeEntryFee")}{" "}
                     <strong className="text-foreground">
-                      🟩 {isRange ? `${minFee} – ${maxFee}` : oneTimeFee} Coins
+                      🟩 {isRange ? `${minFee} – ${maxFee}` : oneTimeFee} {t("uiGuildMembershipCard.coins2")}
                     </strong>{" "}
                     (~{toEur(minFee)} €{isRange ? ` – ${toEur(maxFee)} €` : ""})
                   </>
@@ -195,14 +197,14 @@ export function GuildMembershipCard({ guild }: Props) {
 
           {guild.membership_benefits_text && (
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-0.5">What you get</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-0.5">{t("uiGuildMembershipCard.whatYouGet")}</p>
               <p className="text-xs text-foreground">{guild.membership_benefits_text}</p>
             </div>
           )}
 
           {guild.membership_commitments_text && (
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-0.5">What you commit to</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-0.5">{t("uiGuildMembershipCard.whatYouCommitTo")}</p>
               <p className="text-xs text-foreground">{guild.membership_commitments_text}</p>
             </div>
           )}
@@ -211,8 +213,8 @@ export function GuildMembershipCard({ guild }: Props) {
           {blockedByApproval && (
             <p className="text-xs text-muted-foreground">
               {pendingApplication
-                ? "Your application is waiting for an admin decision. You'll be able to pay once it's approved."
-                : "You need to apply and be approved by an admin before you can become a paying member."}
+                ? t("uiGuildMembershipCard.yourApplicationIsWaitingForAn")
+                : t("uiGuildMembershipCard.youNeedToApplyAndBe")}
             </p>
           )}
 
@@ -220,7 +222,7 @@ export function GuildMembershipCard({ guild }: Props) {
           {!membership && (
             <div className="flex flex-col gap-2">
               <Button size="sm" variant="outline" onClick={joinAsGuest} className="w-full">
-                Join as Guest
+                {t("uiGuildMembershipCard.joinAsGuest")}
               </Button>
               {dueNow > 0 && <PayButton label={payLabel} />}
             </div>
@@ -228,8 +230,8 @@ export function GuildMembershipCard({ guild }: Props) {
 
           {isGuest && (
             <div className="space-y-2">
-              <Badge variant="outline" className="text-xs">Status: Guest</Badge>
-              <p className="text-xs text-muted-foreground">You can still participate in public quests and events.</p>
+              <Badge variant="outline" className="text-xs">{t("uiGuildMembershipCard.statusGuest")}</Badge>
+              <p className="text-xs text-muted-foreground">{t("uiGuildMembershipCard.youCanStillParticipateInPublic")}</p>
               {dueNow > 0 && <PayButton label={payLabel} />}
             </div>
           )}
@@ -237,9 +239,9 @@ export function GuildMembershipCard({ guild }: Props) {
           {isMember && active && (
             <div className="space-y-2">
               <Badge className="bg-primary/10 text-primary border-0 text-xs">
-                Status: Member{membership?.status === "grace" ? " (payment pending)" : ""}
+                {t("uiGuildMembershipCard.statusMember")}{membership?.status === "grace" ? ` ${t("uiGuildMembershipCard.paymentPending")}` : ""}
               </Badge>
-              <p className="text-xs text-muted-foreground">You have full member privileges in this guild.</p>
+              <p className="text-xs text-muted-foreground">{t("uiGuildMembershipCard.youHaveFullMemberPrivilegesIn")}</p>
               {periodEnd && (
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
                   <CalendarClock className="h-3 w-3" />
@@ -252,7 +254,7 @@ export function GuildMembershipCard({ guild }: Props) {
               )}
               {monthly && !membership?.cancel_at_period_end && periodEnd && (
                 <p className="text-[11px] text-muted-foreground">
-                  🟩 {renewalFee} Coins will be taken from your balance on {formatDate(periodEnd)}. You get a reminder email one week before.
+                  🟩 {renewalFee} {t("uiGuildMembershipCard.coinsWillBeTakenFromYour")} {formatDate(periodEnd)}{t("uiGuildMembershipCard.youGetAReminderEmailOne")}
                 </p>
               )}
               {renewalShort && (
@@ -260,7 +262,7 @@ export function GuildMembershipCard({ guild }: Props) {
                   {membership?.status === "grace"
                     ? `Renewal failed: you need 🟩 ${renewalFee} Coins and have ${coinsBalance}. Top up before ${graceEnd ? formatDate(graceEnd) : "the end of the grace period"} to stay a member.`
                     : `Your balance (🟩 ${coinsBalance}) is below the next renewal (🟩 ${renewalFee}).`}{" "}
-                  <Link to="/settings/wallet" className="underline underline-offset-2">Top up your wallet</Link>
+                  <Link to="/settings/wallet" className="underline underline-offset-2">{t("uiGuildMembershipCard.topUpYourWallet")}</Link>
                 </p>
               )}
               {membership?.last_payment_at && (
@@ -275,7 +277,7 @@ export function GuildMembershipCard({ guild }: Props) {
                   className="w-full"
                   onClick={() => cancelRenewal(!membership?.cancel_at_period_end)}
                 >
-                  {membership?.cancel_at_period_end ? "Reactivate automatic renewal" : "Stop automatic renewal"}
+                  {membership?.cancel_at_period_end ? "Reactivate automatic renewal" : t("uiGuildMembershipCard.stopAutomaticRenewal")}
                 </Button>
               )}
             </div>

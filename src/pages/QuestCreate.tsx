@@ -288,7 +288,7 @@ export default function QuestCreate() {
 
   const generateWithAI = async () => {
     if (!title.trim()) {
-      toast({ title: "Enter a title first", description: "The AI needs at least a quest title to generate suggestions.", variant: "destructive" });
+      toast({ title: t("uiQuestCreate.enterATitleFirst"), description: t("uiQuestCreate.theAiNeedsAtLeastA"), variant: "destructive" });
       return;
     }
     setAiLoading(true);
@@ -315,9 +315,9 @@ export default function QuestCreate() {
 
       setAiSuggestion(data);
       setAiSubtasks((data.subtasks || []).map((s: any) => ({ ...s, accepted: true, ctg_reward: 1 })));
-      toast({ title: "AI suggestions ready!", description: data.microcopy || "Review and edit below." });
+      toast({ title: "AI suggestions ready!", description: data.microcopy || t("uiQuestCreate.reviewAndEditBelow") });
     } catch (e: any) {
-      toast({ title: "AI generation failed", description: e.message || "Please try again.", variant: "destructive" });
+      toast({ title: t("uiQuestCreate.aiGenerationFailed"), description: e.message || "Please try again.", variant: "destructive" });
     } finally {
       setAiLoading(false);
     }
@@ -325,7 +325,7 @@ export default function QuestCreate() {
 
   const acceptDescription = () => {
     if (aiSuggestion) setDescription(aiSuggestion.description);
-    toast({ title: "Description applied" });
+    toast({ title: t("uiQuestCreate.descriptionApplied") });
   };
 
   const acceptXpAndBudget = () => {
@@ -339,7 +339,7 @@ export default function QuestCreate() {
       setFundingGoalCredits(String(aiSuggestion.fundingGoal));
       setAllowFundraising(true);
     }
-    toast({ title: "XP & budget applied" });
+    toast({ title: t("uiQuestCreate.xpBudgetApplied") });
   };
 
   const acceptHouses = () => {
@@ -366,7 +366,7 @@ export default function QuestCreate() {
 
     // Validate Coins balance
     if (finalCoinsBudget > 0 && finalCoinsBudget > coinsBalance) {
-      toast({ title: "Insufficient Coins", description: `Your Coins balance is ${coinsBalance.toFixed(0)}.`, variant: "destructive" });
+      toast({ title: t("uiQuestCreate.insufficientCoins"), description: `Your Coins balance is ${coinsBalance.toFixed(0)}.`, variant: "destructive" });
       return;
     }
     // Validate CTG balance
@@ -424,7 +424,7 @@ export default function QuestCreate() {
         .single();
 
       if (error) {
-        toast({ title: "Failed to create quest", description: error.message, variant: "destructive" });
+        toast({ title: t("uiQuestCreate.failedToCreateQuest"), description: error.message, variant: "destructive" });
         return;
       }
 
@@ -586,7 +586,7 @@ export default function QuestCreate() {
         // No guild context — still notify followers of the creator
         notifyFollowersQuestCreated({ questId: quest.id, questTitle: title.trim() });
       }
-      toast({ title: "Quest created! +5 XP" });
+      toast({ title: t("uiQuestCreate.questCreated5Xp") });
       navigate(`/quests/${quest.id}`);
     } finally {
       setSubmitting(false);
@@ -628,7 +628,7 @@ export default function QuestCreate() {
 
       <div className="max-w-2xl mx-auto">
         <h1 className="font-display text-3xl font-bold flex items-center gap-2 mb-2">
-          <Compass className="h-7 w-7 text-primary" /> Create Quest
+          <Compass className="h-7 w-7 text-primary" /> {t("uiQuestCreate.createQuest")}
         </h1>
         <p className="text-muted-foreground mb-2">
           Creating under: <span className="font-medium text-foreground">{contextLabel}</span>
@@ -639,10 +639,10 @@ export default function QuestCreate() {
           <Card className="p-4 space-y-3 mb-6">
             <div className="flex items-center gap-2">
               <Building2 className="h-5 w-5 text-primary" />
-              <h3 className="text-sm font-semibold">Launch from</h3>
+              <h3 className="text-sm font-semibold">{t("uiQuestCreate.launchFrom")}</h3>
             </div>
             <p className="text-xs text-muted-foreground">
-              Choose which entity hosts this quest, or create it as a personal quest.
+              {t("uiQuestCreate.chooseWhichEntityHostsThisQuest")}
             </p>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -668,7 +668,7 @@ export default function QuestCreate() {
                     <AvatarFallback className="text-[7px]">{g.name?.[0]}</AvatarFallback>
                   </Avatar>
                   {g.name}
-                  <Badge variant="secondary" className="ml-1 text-[8px] px-1 py-0">Guild</Badge>
+                  <Badge variant="secondary" className="ml-1 text-[8px] px-1 py-0">{t("uiQuestCreate.guild")}</Badge>
                 </Button>
               ))}
               {(userCompanies ?? []).map((c: any) => (
@@ -697,10 +697,10 @@ export default function QuestCreate() {
           <Card className="p-4 space-y-3 mb-6">
             <div className="flex items-center gap-2">
               <Handshake className="h-5 w-5 text-primary" />
-              <h3 className="text-sm font-semibold">Co-hosts (partner guilds/companies)</h3>
+              <h3 className="text-sm font-semibold">{t("uiQuestCreate.coHostsPartnerGuildsCompanies")}</h3>
             </div>
             <p className="text-xs text-muted-foreground">
-              Invite partner guilds or companies to co-host this quest. Only accepted partners of the primary host can be selected.
+              {t("uiQuestCreate.invitePartnerGuildsOrCompaniesTo")}
             </p>
             {selectedCoHosts.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -712,7 +712,7 @@ export default function QuestCreate() {
                     </Avatar>
                     <span className="text-xs font-medium">{ch.name}</span>
                     <Badge variant="outline" className="text-[8px] px-1 py-0">
-                      {ch.entityType === "GUILD" ? "Guild" : "Company"}
+                      {ch.entityType === "GUILD" ? t("uiQuestCreate.guild") : "Company"}
                     </Badge>
                     <button
                       type="button"
@@ -760,22 +760,22 @@ export default function QuestCreate() {
 
         <div className="space-y-5">
           <div>
-            <Label htmlFor="title">Title *</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Quest title" className="mt-1" />
+            <Label htmlFor="title">{t("uiQuestCreate.title")}</Label>
+            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("uiQuestCreate.questTitle")} className="mt-1" />
             <AIWriterButton
               type="rewrite_title"
               context={{ entityType: "quest", keywords: aiKeywords }}
               currentText={title}
               onAccept={(text) => setTitle(text)}
-              label="Rewrite title with AI"
+              label={t("uiQuestCreate.rewriteTitleWithAi")}
               className="mt-1"
             />
           </div>
 
           <div>
-            <Label className="text-sm font-semibold">Quest Nature *</Label>
+            <Label className="text-sm font-semibold">{t("uiQuestCreate.questNature")}</Label>
             <p className="text-xs text-muted-foreground mt-0.5 mb-2">
-              What kind of intent is this?
+              {t("uiQuestCreate.whatKindOfIntentIsThis")}
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {(Object.values(QuestNature) as QuestNature[]).map((nature) => (
@@ -800,7 +800,7 @@ export default function QuestCreate() {
 
             {questNature === QuestNature.IDEA && (
               <p className="mt-2 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                💡 Ideas are saved as drafts — not published to the Marketplace until promoted.
+                {t("uiQuestCreate.ideasAreSavedAsDraftsNot")}
               </p>
             )}
           </div>
@@ -808,16 +808,16 @@ export default function QuestCreate() {
           {/* Status — only shown for non-IDEA natures */}
           {questNature !== QuestNature.IDEA && (
             <div>
-              <Label htmlFor="questStatus">Initial Status</Label>
+              <Label htmlFor="questStatus">{t("uiQuestCreate.initialStatus")}</Label>
               <select
                 id="questStatus"
                 value={questStatus}
                 onChange={(e) => setQuestStatus(e.target.value)}
                 className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <option value="OPEN">Open — visible and accepting interest</option>
-                <option value="OPEN_FOR_PROPOSALS">Open for Proposals</option>
-                <option value="ACTIVE">Active — contributors confirmed</option>
+                <option value="OPEN">{t("uiQuestCreate.openVisibleAndAcceptingInterest")}</option>
+                <option value="OPEN_FOR_PROPOSALS">{t("uiQuestCreate.openForProposals")}</option>
+                <option value="ACTIVE">{t("uiQuestCreate.activeContributorsConfirmed")}</option>
               </select>
             </div>
           )}
@@ -826,10 +826,10 @@ export default function QuestCreate() {
           <Card className="p-4 border-primary/30 bg-primary/5 space-y-3">
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              <h3 className="font-semibold text-sm">Generate with AI</h3>
+              <h3 className="font-semibold text-sm">{t("uiQuestCreate.generateWithAi")}</h3>
             </div>
             <p className="text-xs text-muted-foreground">
-              Enter a title above and optionally add keywords, then let AI draft your quest.
+              {t("uiQuestCreate.enterATitleAboveAndOptionally")}
             </p>
             <div>
               <Label htmlFor="aiKeywords" className="text-xs">Keywords / notes (optional)</Label>
@@ -869,7 +869,7 @@ export default function QuestCreate() {
               {/* Description suggestion */}
               <Card className="p-4 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold">Suggested Description</h4>
+                  <h4 className="text-sm font-semibold">{t("uiQuestCreate.suggestedDescription")}</h4>
                   <div className="flex gap-1">
                     <Button type="button" size="sm" variant="outline" onClick={acceptDescription}>
                       <Check className="h-3 w-3 mr-1" /> Use
@@ -884,8 +884,8 @@ export default function QuestCreate() {
               {/* Subtasks suggestion */}
               {aiSubtasks.length > 0 && (
                 <Card className="p-4 space-y-2">
-                  <h4 className="text-sm font-semibold">Suggested Subtasks</h4>
-                  <p className="text-xs text-muted-foreground">Toggle subtasks to include when creating the quest.</p>
+                  <h4 className="text-sm font-semibold">{t("uiQuestCreate.suggestedSubtasks")}</h4>
+                  <p className="text-xs text-muted-foreground">{t("uiQuestCreate.toggleSubtasksToIncludeWhenCreating")}</p>
                   <div className="space-y-1.5">
                     {aiSubtasks.map((s, i) => (
                       <div
@@ -924,22 +924,22 @@ export default function QuestCreate() {
               {/* XP, Budget, Funding */}
               <Card className="p-4 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold">XP & Budget Suggestions</h4>
+                  <h4 className="text-sm font-semibold">{t("uiQuestCreate.xpBudgetSuggestions")}</h4>
                   <Button type="button" size="sm" variant="outline" onClick={acceptXpAndBudget}>
-                    <Check className="h-3 w-3 mr-1" /> Apply
+                    <Check className="h-3 w-3 mr-1" /> {t("uiQuestCreate.apply")}
                   </Button>
                 </div>
                 <div className="grid grid-cols-3 gap-3 text-sm">
                   <div className="text-center p-2 rounded-md bg-muted/50">
-                    <p className="text-xs text-muted-foreground">Reward XP</p>
+                    <p className="text-xs text-muted-foreground">{t("uiQuestCreate.rewardXp")}</p>
                     <p className="font-bold text-primary">{aiSuggestion.rewardXp}</p>
                   </div>
                   <div className="text-center p-2 rounded-md bg-muted/50">
-                    <p className="text-xs text-muted-foreground">Suggested Coins incentive</p>
+                    <p className="text-xs text-muted-foreground">{t("uiQuestCreate.suggestedCoinsIncentive")}</p>
                     <p className="font-bold text-primary">{aiSuggestion.creditBudget}</p>
                   </div>
                   <div className="text-center p-2 rounded-md bg-muted/50">
-                    <p className="text-xs text-muted-foreground">Funding Goal</p>
+                    <p className="text-xs text-muted-foreground">{t("uiQuestCreate.fundingGoal")}</p>
                     <p className="font-bold text-primary">{aiSuggestion.fundingGoal ?? "—"}</p>
                   </div>
                 </div>
@@ -950,9 +950,9 @@ export default function QuestCreate() {
                 {aiSuggestion.suggestedHouses.length > 0 && (
                   <Card className="p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-semibold">Topics</h4>
+                      <h4 className="text-xs font-semibold">{t("uiQuestCreate.topics")}</h4>
                       <Button type="button" size="sm" variant="ghost" className="h-6 text-xs" onClick={acceptHouses}>
-                        <Check className="h-3 w-3 mr-1" /> Add
+                        <Check className="h-3 w-3 mr-1" /> {t("uiQuestCreate.add")}
                       </Button>
                     </div>
                     <div className="flex flex-wrap gap-1">
@@ -965,9 +965,9 @@ export default function QuestCreate() {
                 {aiSuggestion.suggestedTerritories.length > 0 && (
                   <Card className="p-3 space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-semibold">Territories</h4>
+                      <h4 className="text-xs font-semibold">{t("uiQuestCreate.territories")}</h4>
                       <Button type="button" size="sm" variant="ghost" className="h-6 text-xs" onClick={acceptTerritories}>
-                        <Check className="h-3 w-3 mr-1" /> Add
+                        <Check className="h-3 w-3 mr-1" /> {t("uiQuestCreate.add")}
                       </Button>
                     </div>
                     <div className="flex flex-wrap gap-1">
@@ -994,21 +994,21 @@ export default function QuestCreate() {
           )}
 
           <div>
-            <Label htmlFor="desc">Description</Label>
-            <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe what this quest is about…" className="mt-1" rows={4} />
+            <Label htmlFor="desc">{t("uiQuestCreate.description")}</Label>
+            <Textarea id="desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("uiQuestCreate.describeWhatThisQuestIsAbout")} className="mt-1" rows={4} />
             <AIWriterButton
               type="rewrite_description"
               context={{ entityType: "quest", title, keywords: aiKeywords }}
               currentText={description}
               onAccept={(text) => setDescription(text)}
-              label="Rewrite description with AI"
+              label={t("uiQuestCreate.rewriteDescriptionWithAi")}
               className="mt-1"
             />
           </div>
 
           <div>
             <Label htmlFor="websiteUrl" className="flex items-center gap-1.5">
-              <Globe className="h-3.5 w-3.5" /> Link / Website URL
+              <Globe className="h-3.5 w-3.5" /> {t("uiQuestCreate.linkWebsiteUrl")}
             </Label>
             <Input
               id="websiteUrl"
@@ -1018,7 +1018,7 @@ export default function QuestCreate() {
               placeholder="https://…"
               className="mt-1"
             />
-            <p className="text-xs text-muted-foreground mt-1">Optional link displayed on the quest page</p>
+            <p className="text-xs text-muted-foreground mt-1">{t("uiQuestCreate.optionalLinkDisplayedOnTheQuest")}</p>
           </div>
 
           <ImageUpload label="Cover Image" currentImageUrl={coverImageUrl} onChange={setCoverImageUrl} aspectRatio="16/9" />
@@ -1027,19 +1027,19 @@ export default function QuestCreate() {
           <div className="rounded-lg border border-border p-4 space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-sm font-semibold flex items-center gap-1.5">
-                <Lightbulb className="h-4 w-4 text-primary" /> Needs <span className="text-muted-foreground font-normal">(optional)</span>
+                <Lightbulb className="h-4 w-4 text-primary" /> {t("uiQuestCreate.needs")} <span className="text-muted-foreground font-normal">(optional)</span>
               </label>
               <Button size="sm" variant="default" onClick={openCreateNeed}>
-                <Plus className="h-3.5 w-3.5 mr-1" /> Add Need
+                <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestCreate.addNeed")}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Describe what this quest requires — skills, funding, tools, volunteers…
+              {t("uiQuestCreate.describeWhatThisQuestRequiresSkills")}
             </p>
             {localNeeds.length === 0 ? (
               <div className="rounded-lg border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
                 <Lightbulb className="h-6 w-6 mx-auto mb-1 opacity-40" />
-                <p>No needs added yet.</p>
+                <p>{t("uiQuestCreate.noNeedsAddedYet")}</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -1081,17 +1081,17 @@ export default function QuestCreate() {
           <Dialog open={needDialogOpen} onOpenChange={setNeedDialogOpen}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{editingNeedId ? "Edit Need" : "Add a Need"}</DialogTitle>
-                <DialogDescription>Describe what this quest needs from the community.</DialogDescription>
+                <DialogTitle>{editingNeedId ? t("uiQuestCreate.editNeed") : t("uiQuestCreate.addANeed")}</DialogTitle>
+                <DialogDescription>{t("uiQuestCreate.describeWhatThisQuestNeedsFrom")}</DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Title <span className="text-destructive">*</span></label>
-                  <Input value={needForm.title} onChange={e => setNeedForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. UX designer for 2 weeks" />
+                  <label className="text-sm font-medium mb-1 block">{t("uiQuestCreate.title2")} <span className="text-destructive">*</span></label>
+                  <Input value={needForm.title} onChange={e => setNeedForm(f => ({ ...f, title: e.target.value }))} placeholder={t("uiQuestCreate.eGUxDesignerFor2")} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Description</label>
-                  <Textarea value={needForm.description} onChange={e => setNeedForm(f => ({ ...f, description: e.target.value }))} placeholder="More details…" rows={3} className="resize-none" />
+                  <label className="text-sm font-medium mb-1 block">{t("uiQuestCreate.description")}</label>
+                  <Textarea value={needForm.description} onChange={e => setNeedForm(f => ({ ...f, description: e.target.value }))} placeholder={t("uiQuestCreate.moreDetails")} rows={3} className="resize-none" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -1104,7 +1104,7 @@ export default function QuestCreate() {
                     </Select>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Status</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiQuestCreate.status")}</label>
                     <Select value={needForm.status} onValueChange={v => setNeedForm(f => ({ ...f, status: v }))}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -1115,9 +1115,9 @@ export default function QuestCreate() {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setNeedDialogOpen(false)}>Cancel</Button>
+                <Button variant="outline" onClick={() => setNeedDialogOpen(false)}>{t("uiQuestCreate.cancel")}</Button>
                 <Button onClick={saveLocalNeed} disabled={!needForm.title.trim()}>
-                  {editingNeedId ? "Update" : "Add Need"}
+                  {editingNeedId ? t("uiQuestCreate.update") : t("uiQuestCreate.addNeed")}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -1146,36 +1146,34 @@ export default function QuestCreate() {
             <Card className="p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-semibold">🧮 Track contributions & distribute value fairly?</h3>
+                  <h3 className="text-sm font-semibold">{t("uiQuestCreate.trackContributionsDistributeValueFairly")}</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Enable the Open Contributive Unit (OCU) module to log half-days,
-                    calculate each contributor's share, and govern distribution via a live pie.
+                    {t("uiQuestCreate.enableTheOpenContributiveUnitOcu")}
                   </p>
                 </div>
                 <Switch checked={ocuEnabled} onCheckedChange={(checked) => {
                   setOcuEnabled(checked);
                   // If enabling OCU on a guild quest & guild doesn't have default yet, offer to homogenize
                   if (checked && effectiveGuildId && guild && !(guild as any).ocu_default_enabled) {
-                    if (confirm("Do you want to enable OCU by default for all future quests in this guild?")) {
+                    if (confirm(t("uiQuestCreate.doYouWantToEnableOcu"))) {
                       supabase.from("guilds").update({ ocu_default_enabled: true } as any).eq("id", effectiveGuildId).then(() => {
-                        toast({ title: "🧮 OCU default enabled", description: "All future guild quests will have OCU active." });
+                        toast({ title: "🧮 OCU default enabled", description: t("uiQuestCreate.allFutureGuildQuestsWillHave") });
                       });
                     }
                   }
                 }} />
               </div>
               <Label className="text-xs text-muted-foreground">
-                Enable OCU (can also be activated later in Quest Settings)
+                {t("uiQuestCreate.enableOcuCanAlsoBeActivated")}
               </Label>
               {(guild as any)?.ocu_default_enabled && (
                 <p className="text-xs text-muted-foreground/80 rounded-md bg-muted px-3 py-1.5">
-                  ℹ️ OCU is enabled by default for this guild's quests. You can change this in Guild Settings → Quests & Pods Defaults.
+                  {t("uiQuestCreate.ocuIsEnabledByDefaultFor")}
                 </p>
               )}
               {ocuEnabled && (
                 <p className="text-xs text-primary rounded-md bg-primary/10 px-3 py-2">
-                  ✅ OCU active — contributors will log work, earn Coins from the pool,
-                  and see their % share live. A contract can be added after creation.
+                  {t("uiQuestCreate.ocuActiveContributorsWillLogWork")}
                 </p>
               )}
             </Card>
@@ -1184,7 +1182,7 @@ export default function QuestCreate() {
           {(topics ?? []).length > 0 && (
             <>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-semibold">Topics</span>
+                <span className="text-sm font-semibold">{t("uiQuestCreate.topics")}</span>
                 <span className="mx-1 text-muted-foreground text-xs">|</span>
                 {(["all", "topics", "houses"] as const).map(f => (
                   <Button
@@ -1195,7 +1193,7 @@ export default function QuestCreate() {
                     className="h-6 text-xs"
                     onClick={() => setTopicFilter(f)}
                   >
-                    {f === "all" ? "All" : f === "topics" ? "Topics" : "Houses"}
+                    {f === "all" ? t("uiQuestCreate.all") : f === "topics" ? t("uiQuestCreate.topics") : "Houses"}
                   </Button>
                 ))}
               </div>
@@ -1221,9 +1219,9 @@ export default function QuestCreate() {
           {/* Territories with Create New button */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold">Territories</span>
+              <span className="text-sm font-semibold">{t("uiQuestCreate.territories")}</span>
               <Button size="sm" variant="outline" onClick={() => setShowTerritoryWizard(true)}>
-                <MapPin className="h-3.5 w-3.5 mr-1" /> Create new territory
+                <MapPin className="h-3.5 w-3.5 mr-1" /> {t("uiQuestCreate.createNewTerritory")}
               </Button>
             </div>
             {(territories ?? []).length > 0 && (
@@ -1238,7 +1236,7 @@ export default function QuestCreate() {
                       className="h-6 text-xs"
                       onClick={() => setTerritoryFilter(f)}
                     >
-                      {f === "all" ? "All" : f === "location" ? "Locations" : "Bioregions"}
+                      {f === "all" ? t("uiQuestCreate.all") : f === "location" ? "Locations" : "Bioregions"}
                     </Button>
                   ))}
                 </div>
@@ -1267,15 +1265,15 @@ export default function QuestCreate() {
 
           <div className="flex items-center gap-2">
             <Switch id="draft" checked={isDraft} onCheckedChange={setIsDraft} />
-            <Label htmlFor="draft">Save as draft</Label>
+            <Label htmlFor="draft">{t("uiQuestCreate.saveAsDraft")}</Label>
           </div>
 
           <div className="flex gap-3 pt-2">
             <Button onClick={handleSubmit} disabled={!title.trim() || submitting || isChecking} className="flex-1">
               {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              {isDraft ? "Save Draft" : "Create Quest"}
+              {isDraft ? t("uiQuestCreate.saveDraft") : t("uiQuestCreate.createQuest")}
             </Button>
-            <Button variant="outline" onClick={() => navigate(-1)}>Cancel</Button>
+            <Button variant="outline" onClick={() => navigate(-1)}>{t("uiQuestCreate.cancel")}</Button>
           </div>
         </div>
       </div>

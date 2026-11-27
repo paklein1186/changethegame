@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -23,6 +24,7 @@ interface UserRow {
 }
 
 export function FollowersDialog({ open, onOpenChange, targetId, targetType, mode }: FollowersDialogProps) {
+  const { t } = useTranslation();
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["follow-list", targetId, targetType, mode],
     queryFn: async () => {
@@ -103,7 +105,7 @@ export function FollowersDialog({ open, onOpenChange, targetId, targetType, mode
             </div>
           ) : users.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              {mode === "followers" ? "No followers yet" : "Not following anyone yet"}
+              {mode === "followers" ? t("uiFollowersDialog.noFollowersYet") : t("uiFollowersDialog.notFollowingAnyoneYet")}
             </p>
           ) : (
             users.map((u) => (

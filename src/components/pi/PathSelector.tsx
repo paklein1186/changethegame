@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { PATHS, type PathConfig } from "@/constants/paths";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ interface PathSelectorProps {
 }
 
 export function PathSelector({ onPathSelected, className }: PathSelectorProps) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -30,7 +32,7 @@ export function PathSelector({ onPathSelected, className }: PathSelectorProps) {
     setSaving(false);
 
     if (error) {
-      toast.error("Failed to set path");
+      toast.error(t("uiPathSelector.failedToSetPath"));
       setSelectedId(null);
       return;
     }

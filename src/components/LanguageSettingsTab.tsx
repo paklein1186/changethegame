@@ -40,7 +40,7 @@ export function LanguageSettingsTab() {
 
   const handleSave = async () => {
     if (localCodes.length === 0) {
-      toast({ title: "Select at least one language", variant: "destructive" });
+      toast({ title: t("uiLanguageSettingsTab.selectAtLeastOneLanguage"), variant: "destructive" });
       return;
     }
     // Ensure preferred language is in the set
@@ -88,8 +88,7 @@ export function LanguageSettingsTab() {
 
       <Section title="Spoken Languages" icon={<Languages className="h-5 w-5" />}>
         <p className="text-sm text-muted-foreground mb-4">
-          These are the languages you speak and feel comfortable collaborating in.
-          They influence which translations and AI answers you see by default.
+          {t("uiLanguageSettingsTab.theseAreTheLanguagesYouSpeak")}
         </p>
 
         <div className="space-y-2 max-w-md">
@@ -115,12 +114,12 @@ export function LanguageSettingsTab() {
         </div>
 
         <p className="text-xs text-muted-foreground mt-3">
-          {localCodes.length} selected · Your preferred language must be included.
+          {localCodes.length} {t("uiLanguageSettingsTab.selectedYourPreferredLanguageMustBe")}
         </p>
 
         <Button onClick={handleSave} disabled={isSaving || localCodes.length === 0} className="mt-4">
           {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Save className="h-4 w-4 mr-1" />}
-          Save spoken languages
+          {t("uiLanguageSettingsTab.saveSpokenLanguages")}
         </Button>
       </Section>
     </div>

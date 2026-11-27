@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useMemo } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Search, Filter, Users, Shield, Compass, Briefcase, Building2, Boxes, Loader2, MapPin } from "lucide-react";
@@ -20,12 +21,12 @@ import { translateTopicName } from "@/lib/entityLabels";
 
 const TYPE_META: Record<SearchResultType, { label: string; icon: typeof Users; color: string }> = {
   USER: { label: "Users", icon: Users, color: "text-blue-600" },
-  GUILD: { label: "Guilds", icon: Shield, color: "text-emerald-600" },
-  QUEST: { label: "Quests", icon: Compass, color: "text-amber-600" },
+  GUILD: { get label() { return i18n.t("uiSearchPage.guilds"); }, icon: Shield, color: "text-emerald-600" },
+  QUEST: { get label() { return i18n.t("uiSearchPage.quests"); }, icon: Compass, color: "text-amber-600" },
   POD: { label: "Pods", icon: Boxes, color: "text-violet-600" },
   SERVICE: { label: "Services", icon: Briefcase, color: "text-rose-600" },
   COMPANY: { label: "Companies", icon: Building2, color: "text-cyan-600" },
-  TERRITORY: { label: "Territories", icon: MapPin, color: "text-orange-600" },
+  TERRITORY: { get label() { return i18n.t("uiSearchPage.territories"); }, icon: MapPin, color: "text-orange-600" },
 };
 
 export default function SearchPage() {
@@ -93,7 +94,7 @@ export default function SearchPage() {
     <PageShell>
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-display font-bold mb-6 flex items-center gap-2">
-          <Search className="h-6 w-6" /> Advanced Search
+          <Search className="h-6 w-6" /> {t("uiSearchPage.advancedSearch")}
         </h1>
 
         <div className="relative mb-6">
@@ -101,7 +102,7 @@ export default function SearchPage() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search across all entities…"
+            placeholder={t("uiSearchPage.searchAcrossAllEntities")}
             className="pl-10 h-12 text-base"
           />
         </div>
@@ -113,23 +114,23 @@ export default function SearchPage() {
           <Select value={typeFilter} onValueChange={setTypeFilter}>
             <SelectTrigger className="w-[140px] h-9"><SelectValue placeholder="Type" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All types</SelectItem>
+              <SelectItem value="ALL">{t("uiSearchPage.allTypes")}</SelectItem>
               {(Object.keys(TYPE_META) as SearchResultType[]).map((t) => (
                 <SelectItem key={t} value={t}>{TYPE_META[t].label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={topicId} onValueChange={setTopicId}>
-            <SelectTrigger className="w-[180px] h-9"><SelectValue placeholder="Topic" /></SelectTrigger>
+            <SelectTrigger className="w-[180px] h-9"><SelectValue placeholder={t("uiSearchPage.topic")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All topics</SelectItem>
+              <SelectItem value="ALL">{t("uiSearchPage.allTopics")}</SelectItem>
               {(topics ?? []).map((topic) => <SelectItem key={topic.id} value={topic.id}>{translateTopicName(topic.name, t)}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={territoryId} onValueChange={setTerritoryId}>
-            <SelectTrigger className="w-[160px] h-9"><SelectValue placeholder="Territory" /></SelectTrigger>
+            <SelectTrigger className="w-[160px] h-9"><SelectValue placeholder={t("uiSearchPage.territory")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All territories</SelectItem>
+              <SelectItem value="ALL">{t("uiSearchPage.allTerritories")}</SelectItem>
               {(territories ?? []).map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
             </SelectContent>
           </Select>
@@ -141,11 +142,11 @@ export default function SearchPage() {
         </div>
 
         {query.trim().length < 2 ? (
-          <p className="text-muted-foreground text-center py-12">Type at least 2 characters to search.</p>
+          <p className="text-muted-foreground text-center py-12">{t("uiSearchPage.typeAtLeast2CharactersTo")}</p>
         ) : isLoading ? (
           <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : filtered.length === 0 ? (
-          <p className="text-muted-foreground text-center py-12">No results found for "{query}".</p>
+          <p className="text-muted-foreground text-center py-12">{t("uiSearchPage.noResultsFoundFor")}{query}".</p>
         ) : (
           <div className="space-y-8">
             <p className="text-sm text-muted-foreground">{filtered.length} result{filtered.length !== 1 ? "s" : ""} found</p>

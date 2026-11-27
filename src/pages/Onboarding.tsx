@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/config";
 import { useState, useEffect, useCallback } from "react";
 import { notifyPlatformAdmins } from "@/lib/notifyAdmins";
@@ -45,16 +46,16 @@ const STEP_LABELS_CREATIVE = ["Creative Path", "Houses of Art", "Creative Ground
 const STEP_LABELS_IMPACT = ["Intention", "Identity", "Your Territory", "Languages", "Your Work", "Review Suggestions", "People to Follow", "Project", "Offering", "Get Started"];
 
 const INTENTION_OPTIONS = [
-  { key: "impact", label: "Make impact / collaborate", icon: Heart, desc: "Work on missions & social-impact projects" },
+  { key: "impact", label: "Make impact / collaborate", icon: Heart, get desc() { return i18n.t("uiOnboarding.workOnMissionsSocialImpactProjects"); } },
   { key: "creative", label: "Express myself creatively", icon: Palette, desc: "Art, writing, performance, installations" },
-  { key: "explore", label: "Explore (not sure yet)", icon: HelpCircle, desc: "Just looking around for now" },
-  { key: "project", label: "Launch or structure a project", icon: Rocket, desc: "Start a mission, initiative, or venture" },
-  { key: "community", label: "Meet people, join communities", icon: Users, desc: "Find your people and belong" },
-  { key: "work", label: "Find work / clients", icon: Briefcase, desc: "Offer your skills and get hired" },
-  { key: "learn", label: "Learn and grow skills", icon: GraduationCap, desc: "Discover new topics and train" },
-  { key: "register_org", label: "Register my organization", icon: Building2, desc: "Create a profile for my company, institution, or NGO" },
-  { key: "recruit", label: "Recruit talent for my organization", icon: Target, desc: "Find skilled individuals and guilds aligned with your mission" },
-  { key: "fund", label: "Fund or sponsor initiatives", icon: Landmark, desc: "Support projects, quests, or communities as a sponsor" },
+  { key: "explore", get label() { return i18n.t("uiOnboarding.exploreNotSureYet"); }, icon: HelpCircle, get desc() { return i18n.t("uiOnboarding.justLookingAroundForNow"); } },
+  { key: "project", get label() { return i18n.t("uiOnboarding.launchOrStructureAProject"); }, icon: Rocket, get desc() { return i18n.t("uiOnboarding.startAMissionInitiativeOrVenture"); } },
+  { key: "community", get label() { return i18n.t("uiOnboarding.meetPeopleJoinCommunities"); }, icon: Users, get desc() { return i18n.t("uiOnboarding.findYourPeopleAndBelong"); } },
+  { key: "work", label: "Find work / clients", icon: Briefcase, get desc() { return i18n.t("uiOnboarding.offerYourSkillsAndGetHired"); } },
+  { key: "learn", get label() { return i18n.t("uiOnboarding.learnAndGrowSkills"); }, icon: GraduationCap, get desc() { return i18n.t("uiOnboarding.discoverNewTopicsAndTrain"); } },
+  { key: "register_org", get label() { return i18n.t("uiOnboarding.registerMyOrganization"); }, icon: Building2, get desc() { return i18n.t("uiOnboarding.createAProfileForMyCompany"); } },
+  { key: "recruit", get label() { return i18n.t("uiOnboarding.recruitTalentForMyOrganization"); }, icon: Target, get desc() { return i18n.t("uiOnboarding.findSkilledIndividualsAndGuildsAligned"); } },
+  { key: "fund", get label() { return i18n.t("uiOnboarding.fundOrSponsorInitiatives"); }, icon: Landmark, get desc() { return i18n.t("uiOnboarding.supportProjectsQuestsOrCommunitiesAs"); } },
 ];
 
 function inferPersona(selections: string[]): "IMPACT" | "CREATIVE" | "HYBRID" {
@@ -74,6 +75,7 @@ const slideVariants = {
 };
 
 export default function Onboarding() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user: authUser, refreshProfile } = useAuth();
@@ -335,7 +337,7 @@ export default function Onboarding() {
       }
     } catch (e: any) {
       console.error("AI suggestions error:", e);
-      toast({ title: "AI suggestions unavailable", description: "You can add everything manually later.", variant: "default" });
+      toast({ title: "AI suggestions unavailable", description: t("uiOnboarding.youCanAddEverythingManuallyLater"), variant: "default" });
     } finally {
       setAiLoading(false);
     }
@@ -417,7 +419,7 @@ export default function Onboarding() {
       // Notify platform admins about new user signup
       notifyPlatformAdmins({
         type: "SYSTEM_NEW_USER",
-        title: "New user joined",
+        title: t("uiOnboarding.newUserJoined"),
         body: `${name.trim() || "Someone"} just signed up`,
         deepLinkUrl: "/admin/community/users",
         relatedEntityId: authUser.id,
@@ -627,7 +629,7 @@ export default function Onboarding() {
       setDirection(1);
       setStep(lastStepIndex);
     } catch (e: any) {
-      toast({ title: "Error saving", description: e.message, variant: "destructive" });
+      toast({ title: t("uiOnboarding.errorSaving"), description: e.message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -736,14 +738,14 @@ export default function Onboarding() {
     // Validate languages step: at least one language required
     if ((isCreativePath && step === CREATIVE_LANG_STEP) || (!isCreativePath && step === IMPACT_LANG_STEP)) {
       if (spokenLangCodes.length === 0) {
-        toast({ title: "Please select at least one language", variant: "destructive" });
+        toast({ title: t("uiOnboarding.pleaseSelectAtLeastOneLanguage"), variant: "destructive" });
         return;
       }
     }
     const isIdentityStep = (!isCreativePath && step === 1) ||
                             (isCreativePath && step === 2);
     if (isIdentityStep && !name.trim()) {
-      toast({ title: "Please enter your name", variant: "destructive" });
+      toast({ title: t("uiOnboarding.pleaseEnterYourName"), variant: "destructive" });
       return;
     }
     setDirection(1);
@@ -809,8 +811,8 @@ export default function Onboarding() {
     return (
       <div className="space-y-5">
         <div>
-          <h2 className="font-display text-2xl font-bold">Welcome to changethegame ✨</h2>
-          <p className="text-sm text-muted-foreground mt-1">What are you up to? Select everything that resonates — or choose the Creative path.</p>
+          <h2 className="font-display text-2xl font-bold">{t("uiOnboarding.welcomeToChangethegame")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("uiOnboarding.whatAreYouUpToSelect")}</p>
         </div>
 
         <button
@@ -826,8 +828,8 @@ export default function Onboarding() {
             <Palette className="h-5 w-5 text-accent-foreground" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold">🎨 I'm here for creative projects, art & expression</p>
-            <p className="text-xs text-muted-foreground">Enter the Creative path — Houses of Art, Muses, Collectives</p>
+            <p className="text-sm font-semibold">{t("uiOnboarding.iMHereForCreativeProjects")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiOnboarding.enterTheCreativePathHousesOf")}</p>
           </div>
           <ArrowRight className="h-4 w-4 text-accent shrink-0" />
         </button>
@@ -848,15 +850,15 @@ export default function Onboarding() {
             <Building2 className="h-5 w-5" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold">🏛️ I represent an organization</p>
-            <p className="text-xs text-muted-foreground">Public institution, company, university, foundation, or NGO</p>
+            <p className="text-sm font-semibold">{t("uiOnboarding.iRepresentAnOrganization")}</p>
+            <p className="text-xs text-muted-foreground">{t("uiOnboarding.publicInstitutionCompanyUniversityFoundationOr")}</p>
           </div>
           {representsOrg && <Check className="h-4 w-4 text-blue-500 shrink-0" />}
         </button>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center"><span className="bg-card px-3 text-xs text-muted-foreground">or choose your intentions</span></div>
+          <div className="relative flex justify-center"><span className="bg-card px-3 text-xs text-muted-foreground">{t("uiOnboarding.orChooseYourIntentions")}</span></div>
         </div>
 
         <div className="space-y-2">
@@ -895,15 +897,15 @@ export default function Onboarding() {
     return (
       <div className="space-y-5">
         <div>
-          <h2 className="font-display text-2xl font-bold">Choose your Houses of Art 🎨</h2>
-          <p className="text-sm text-muted-foreground mt-1">Select 2–4 creative domains that resonate with you.</p>
+          <h2 className="font-display text-2xl font-bold">{t("uiOnboarding.chooseYourHousesOfArt")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("uiOnboarding.select24CreativeDomainsThat")}</p>
         </div>
 
         <div className="flex items-center gap-2 mb-2">
           <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => {
             const creativeTopicIds = dbTopics.filter(t => (t as any).universe_type === "creative").map(t => t.id);
             setSelectedTopics(creativeTopicIds);
-          }}>Select all</Button>
+          }}>{t("uiOnboarding.selectAll")}</Button>
           <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>Clear</Button>
         </div>
 
@@ -942,7 +944,7 @@ export default function Onboarding() {
 
         {dbTopics.filter(t => (t as any).universe_type !== "creative" && !CREATIVE_HOUSE_KEYS.includes((t as any).slug || "")).length > 0 && (
           <div>
-            <p className="text-xs text-muted-foreground mb-2">Impact Topics</p>
+            <p className="text-xs text-muted-foreground mb-2">{t("uiOnboarding.impactTopics")}</p>
             <div className="flex flex-wrap gap-1.5">
               {dbTopics.filter(t => (t as any).universe_type !== "creative" && !CREATIVE_HOUSE_KEYS.includes((t as any).slug || "")).map((t) => (
                 <button
@@ -973,13 +975,13 @@ export default function Onboarding() {
     return (
       <div className="space-y-5 overflow-y-auto max-h-[500px] pr-1">
         <div>
-          <h2 className="font-display text-2xl font-bold">Your Creative Ground 🌍</h2>
-          <p className="text-sm text-muted-foreground mt-1">Which places inspire you or feel like home for your creation?</p>
+          <h2 className="font-display text-2xl font-bold">{t("uiOnboarding.yourCreativeGround")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("uiOnboarding.whichPlacesInspireYouOrFeel")}</p>
         </div>
 
         <div className="flex flex-col items-center gap-3">
           <ImageUpload
-            label="Profile picture"
+            label={t("uiOnboarding.profilePicture")}
             currentImageUrl={avatarUrl}
             onChange={(url) => setAvatarUrl(url)}
             aspectRatio="1/1"
@@ -988,14 +990,14 @@ export default function Onboarding() {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">Name</label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" maxLength={100} />
+          <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.name")}</label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiOnboarding.yourName")} maxLength={100} />
         </div>
 
         <div>
           <label className="text-sm font-medium mb-1 block">Headline</label>
           <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="e.g. Visual artist & sound designer" maxLength={120} />
-          <p className="text-xs text-muted-foreground mt-1">A short tagline visible on your profile</p>
+          <p className="text-xs text-muted-foreground mt-1">{t("uiOnboarding.aShortTaglineVisibleOnYour")}</p>
         </div>
 
 
@@ -1008,14 +1010,14 @@ export default function Onboarding() {
     return (
       <div className="space-y-5">
         <div>
-          <h2 className="font-display text-2xl font-bold">Your Creative Essence ✨</h2>
-          <p className="text-sm text-muted-foreground mt-1">Describe your creative essence in one sentence.</p>
+          <h2 className="font-display text-2xl font-bold">{t("uiOnboarding.yourCreativeEssence")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("uiOnboarding.describeYourCreativeEssenceInOne")}</p>
         </div>
 
         <Textarea
           value={bio}
           onChange={(e) => setBio(e.target.value)}
-          placeholder="I follow curiosity until it becomes form…"
+          placeholder={t("uiOnboarding.iFollowCuriosityUntilItBecomes")}
           className="min-h-[120px] resize-none text-sm"
           maxLength={1300}
         />
@@ -1025,13 +1027,13 @@ export default function Onboarding() {
             context={{ intentions: creativeIntentions, houses: selectedTopics, territories: selectedTerritories, personaType: "CREATIVE" }}
             currentText={bio}
             onAccept={(text) => setBio(text)}
-            label="✨ Write it with me"
+            label={t("uiOnboarding.writeItWithMe")}
           />
            <span className="text-xs text-muted-foreground">{bio.length}/1300</span>
         </div>
 
         <div>
-          <p className="text-xs text-muted-foreground mb-2">Or try one of these:</p>
+          <p className="text-xs text-muted-foreground mb-2">{t("uiOnboarding.orTryOneOfThese")}</p>
           <div className="space-y-1.5">
             {CREATIVE_BIO_SUGGESTIONS.map((suggestion) => (
               <button
@@ -1054,13 +1056,13 @@ export default function Onboarding() {
     return (
       <div className="space-y-5 overflow-y-auto max-h-[500px] pr-1">
         <div>
-          <h2 className="font-display text-2xl font-bold">{isOrgRep ? "About you 🏛️" : "Who are you? 🌱"}</h2>
-          <p className="text-sm text-muted-foreground mt-1">{isOrgRep ? "Tell us about yourself as the representative. Your organization profile comes next." : "A few things to help us know you better."}</p>
+          <h2 className="font-display text-2xl font-bold">{isOrgRep ? t("uiOnboarding.aboutYou") : t("uiOnboarding.whoAreYou")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{isOrgRep ? t("uiOnboarding.tellUsAboutYourselfAsThe") : t("uiOnboarding.aFewThingsToHelpUs")}</p>
         </div>
 
         <div className="flex flex-col items-center gap-3">
           <ImageUpload
-            label="Profile picture"
+            label={t("uiOnboarding.profilePicture")}
             currentImageUrl={avatarUrl}
             onChange={(url) => setAvatarUrl(url)}
             aspectRatio="1/1"
@@ -1069,14 +1071,14 @@ export default function Onboarding() {
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">Name</label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" maxLength={100} />
+          <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.name")}</label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("uiOnboarding.yourName")} maxLength={100} />
         </div>
 
         <div>
           <label className="text-sm font-medium mb-1 block">Headline</label>
-          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder={isOrgRep ? "e.g. Head of Partnerships, ACME Foundation" : "e.g. Social entrepreneur, renewable energy"} maxLength={120} />
-          <p className="text-xs text-muted-foreground mt-1">A short tagline visible on your profile</p>
+          <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder={isOrgRep ? t("uiOnboarding.eGHeadOfPartnershipsAcme") : "e.g. Social entrepreneur, renewable energy"} maxLength={120} />
+          <p className="text-xs text-muted-foreground mt-1">{t("uiOnboarding.aShortTaglineVisibleOnYour")}</p>
         </div>
 
 
@@ -1085,7 +1087,7 @@ export default function Onboarding() {
             <Hash className="h-3.5 w-3.5 text-primary" /> Houses (2–4 recommended)
           </label>
           <div className="flex items-center gap-2 mb-2">
-            <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics(dbTopics.map((t) => t.id))}>Select all</Button>
+            <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics(dbTopics.map((t) => t.id))}>{t("uiOnboarding.selectAll")}</Button>
             <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>Clear</Button>
           </div>
           <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
@@ -1113,7 +1115,7 @@ export default function Onboarding() {
           <Textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder={isOrgRep ? "I represent [Organization] and I'm here to…" : "I'm passionate about…"}
+            placeholder={isOrgRep ? t("uiOnboarding.iRepresentOrganizationAndIM") : t("uiOnboarding.iMPassionateAbout")}
             className="min-h-[120px] resize-none text-sm"
             maxLength={1300}
           />
@@ -1141,12 +1143,12 @@ export default function Onboarding() {
       <div className="space-y-5 overflow-y-auto max-h-[500px] pr-1">
         <div>
           <h2 className="font-display text-2xl font-bold">
-            {creative ? "Your places of resonance 🌍" : "Where are you based? 📍"}
+            {creative ? t("uiOnboarding.yourPlacesOfResonance") : t("uiOnboarding.whereAreYouBased")}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             {creative
-              ? "Which territories inspire you or feel like home for your creation?"
-              : "Select the territories you live in, work in, or care about."}
+              ? t("uiOnboarding.whichTerritoriesInspireYouOrFeel")
+              : t("uiOnboarding.selectTheTerritoriesYouLiveIn")}
           </p>
         </div>
 
@@ -1155,17 +1157,17 @@ export default function Onboarding() {
             <MapPin className="h-3.5 w-3.5 text-accent" /> Location
           </label>
           <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Paris, France" maxLength={100} />
-          <p className="text-xs text-muted-foreground mt-1">Free-text location visible on your profile</p>
+          <p className="text-xs text-muted-foreground mt-1">{t("uiOnboarding.freeTextLocationVisibleOnYour")}</p>
         </div>
 
         <div>
           <label className="text-sm font-medium mb-1.5 block flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5 text-accent" /> {creative ? "Places of resonance" : "Territories"}
+            <MapPin className="h-3.5 w-3.5 text-accent" /> {creative ? t("uiOnboarding.placesOfResonance") : t("uiOnboarding.territories")}
           </label>
           <Input
             value={territorySearch}
             onChange={(e) => setTerritorySearch(e.target.value)}
-            placeholder="Search territories…"
+            placeholder={t("uiOnboarding.searchTerritories")}
             maxLength={80}
             className="mb-2"
           />
@@ -1190,7 +1192,7 @@ export default function Onboarding() {
               </button>
             ))}
             {filtered.length === 0 && territorySearch.trim() && (
-              <p className="text-xs text-muted-foreground py-2">No territories match "{territorySearch}". Use "Add new Territory" above.</p>
+              <p className="text-xs text-muted-foreground py-2">{t("uiOnboarding.noTerritoriesMatch")}{territorySearch}{t("uiOnboarding.useAddNewTerritoryAbove")}</p>
             )}
           </div>
           <p className="text-xs text-muted-foreground mt-1.5">{selectedTerritories.length} selected</p>
@@ -1210,9 +1212,9 @@ export default function Onboarding() {
     return (
       <div className="space-y-5">
         <div>
-          <h2 className="font-display text-2xl font-bold">Languages you speak 🌍</h2>
+          <h2 className="font-display text-2xl font-bold">{t("uiOnboarding.languagesYouSpeak")}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Which languages do you speak and feel comfortable collaborating in?
+            {t("uiOnboarding.whichLanguagesDoYouSpeakAnd")}
           </p>
         </div>
 
@@ -1240,7 +1242,7 @@ export default function Onboarding() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          {spokenLangCodes.length} selected · Translations and AI responses will prioritize these languages.
+          {spokenLangCodes.length} {t("uiOnboarding.selectedTranslationsAndAiResponsesWill")}
         </p>
       </div>
     );
@@ -1288,26 +1290,26 @@ export default function Onboarding() {
       <div className="space-y-5 overflow-y-auto max-h-[500px] pr-1">
         <div>
           <h2 className="font-display text-2xl font-bold">
-            {creative ? "Creators in your orbit 🌌" : "People you might know 🤝"}
+            {creative ? t("uiOnboarding.creatorsInYourOrbit") : t("uiOnboarding.peopleYouMightKnow")}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             {creative
-              ? "These creators share your Houses or territories. Follow them to see their work in your feed."
-              : "Based on your topics and territories — follow people to build your network."}
+              ? t("uiOnboarding.theseCreatorsShareYourHousesOr")
+              : t("uiOnboarding.basedOnYourTopicsAndTerritories")}
           </p>
         </div>
 
         {suggestedPeopleLoading && (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            <span className="ml-2 text-sm text-muted-foreground">Finding your people…</span>
+            <span className="ml-2 text-sm text-muted-foreground">{t("uiOnboarding.findingYourPeople")}</span>
           </div>
         )}
 
         {!suggestedPeopleLoading && suggestedPeople.length === 0 && (
           <div className="text-center py-8">
             <Users className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No suggestions yet — you'll discover people as you explore!</p>
+            <p className="text-sm text-muted-foreground">{t("uiOnboarding.noSuggestionsYetYouLlDiscover")}</p>
           </div>
         )}
 
@@ -1317,7 +1319,7 @@ export default function Onboarding() {
               <span className="text-xs text-muted-foreground">{selectedFollows.length} selected</span>
               <div className="flex gap-2">
                 <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedFollows(suggestedPeople.map(p => p.user_id))}>
-                  Follow all
+                  {t("uiOnboarding.followAll")}
                 </Button>
                 <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedFollows([])} disabled={selectedFollows.length === 0}>
                   Clear
@@ -1355,7 +1357,7 @@ export default function Onboarding() {
           </>
         )}
 
-        <p className="text-xs text-muted-foreground">You can always discover and follow more people later.</p>
+        <p className="text-xs text-muted-foreground">{t("uiOnboarding.youCanAlwaysDiscoverAndFollow")}</p>
       </div>
     );
   }
@@ -1366,12 +1368,12 @@ export default function Onboarding() {
       ? [
           { value: "STARTING", label: "🌱 Seedling" },
           { value: "ONGOING", label: "🌸 Blooming" },
-          { value: "COMPLETED", label: "✨ Completed" },
+          { value: "COMPLETED", label: t("uiOnboarding.completed") },
         ]
       : [
           { value: "STARTING", label: "Starting" },
           { value: "ONGOING", label: "Ongoing" },
-          { value: "COMPLETED", label: "Completed (Achievement)" },
+          { value: "COMPLETED", label: t("uiOnboarding.completedAchievement") },
         ];
 
     return (
@@ -1379,27 +1381,27 @@ export default function Onboarding() {
         <div>
           <h2 className="font-display text-2xl font-bold">
             {creative
-              ? "Show us something you've made 🌟"
+              ? t("uiOnboarding.showUsSomethingYouVeMade")
               : posture === "initiative"
-                ? "Tell us about your initiative 🌱"
-                : "A project you're proud of? 🚀"}
+                ? t("uiOnboarding.tellUsAboutYourInitiative")
+                : t("uiOnboarding.aProjectYouReProudOf")}
           </h2>
           <p className="text-sm text-muted-foreground mt-1">
             {creative
-              ? "A creation, project, or piece you're proud of."
+              ? t("uiOnboarding.aCreationProjectOrPieceYou")
               : posture === "initiative"
-                ? "What it does, for whom and where — so the right people and resources can find it."
-                : "Past or present — share something you care about."}
+                ? t("uiOnboarding.whatItDoesForWhomAnd")
+                : t("uiOnboarding.pastOrPresentShareSomethingYou")}
           </p>
         </div>
 
         {wantsProject === null && (
           <div className="flex gap-3">
             <Button variant="default" className="flex-1" onClick={() => setWantsProject(true)}>
-              Yes, let me share
+              {t("uiOnboarding.yesLetMeShare")}
             </Button>
             <Button variant="outline" className="flex-1" onClick={() => setWantsProject(false)}>
-              Skip for now
+              {t("uiOnboarding.skipForNow")}
             </Button>
           </div>
         )}
@@ -1407,12 +1409,12 @@ export default function Onboarding() {
         {wantsProject && (
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-1 block">Title</label>
-              <Input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={creative ? "e.g. Sound Installation at the River" : "e.g. Regenerative Farm Network"} maxLength={120} />
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.title")}</label>
+              <Input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={creative ? t("uiOnboarding.eGSoundInstallationAtThe") : "e.g. Regenerative Farm Network"} maxLength={120} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Short description</label>
-              <Textarea value={projectDesc} onChange={(e) => setProjectDesc(e.target.value)} placeholder="What is it about?" className="resize-none min-h-[80px] text-sm" maxLength={500} />
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.shortDescription")}</label>
+              <Textarea value={projectDesc} onChange={(e) => setProjectDesc(e.target.value)} placeholder={t("uiOnboarding.whatIsItAbout")} className="resize-none min-h-[80px] text-sm" maxLength={500} />
               <AIWriterButton
                 type="quest_story"
                 context={{ title: projectTitle, houses: projectTopics, territories: projectTerritories, personaType }}
@@ -1422,7 +1424,7 @@ export default function Onboarding() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Status</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.status")}</label>
               <Select value={projectStatus} onValueChange={setProjectStatus}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -1433,7 +1435,7 @@ export default function Onboarding() {
               </Select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">{creative ? "Houses of Art" : "Houses"}</label>
+              <label className="text-sm font-medium mb-1.5 block">{creative ? t("uiOnboarding.housesOfArt") : "Houses"}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                 {dbTopics.map((t) => (
                   <button
@@ -1453,7 +1455,7 @@ export default function Onboarding() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">{creative ? "Places of resonance" : "Territories"}</label>
+              <label className="text-sm font-medium mb-1.5 block">{creative ? t("uiOnboarding.placesOfResonance") : t("uiOnboarding.territories")}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                 {dbTerritories.map((t) => (
                   <button
@@ -1489,9 +1491,9 @@ export default function Onboarding() {
       <div className="space-y-5 overflow-y-auto max-h-[500px] pr-1">
         <div>
           <h2 className="font-display text-2xl font-bold">
-            {creative ? "Share your craft as a skill session? 🎯" : `Offer ${serviceLabel}? 🎯`}
+            {creative ? t("uiOnboarding.shareYourCraftAsASkill") : `Offer ${serviceLabel}? 🎯`}
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">Share your skills with the ecosystem.</p>
+          <p className="text-sm text-muted-foreground mt-1">{t("uiOnboarding.shareYourSkillsWithTheEcosystem")}</p>
         </div>
 
         {wantsService === null && (
@@ -1500,7 +1502,7 @@ export default function Onboarding() {
               Yes, let's go
             </Button>
             <Button variant="outline" className="flex-1" onClick={() => { setWantsService(false); goNext(); }}>
-              Skip for now
+              {t("uiOnboarding.skipForNow")}
             </Button>
           </div>
         )}
@@ -1508,12 +1510,12 @@ export default function Onboarding() {
         {wantsService && (
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-1 block">Title</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.title")}</label>
               <Input value={serviceTitle} onChange={(e) => setServiceTitle(e.target.value)} placeholder={creative ? "e.g. Live Drawing Session" : "e.g. Strategy Workshop"} maxLength={120} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
-              <Textarea value={serviceDesc} onChange={(e) => setServiceDesc(e.target.value)} placeholder="What does this include?" className="resize-none min-h-[80px] text-sm" maxLength={500} />
+              <label className="text-sm font-medium mb-1 block">{t("uiOnboarding.description")}</label>
+              <Textarea value={serviceDesc} onChange={(e) => setServiceDesc(e.target.value)} placeholder={t("uiOnboarding.whatDoesThisInclude")} className="resize-none min-h-[80px] text-sm" maxLength={500} />
               <AIWriterButton
                 type="bio"
                 context={{ title: serviceTitle, personaType, serviceType: sLabel }}
@@ -1528,7 +1530,7 @@ export default function Onboarding() {
               <Input type="number" value={servicePrice} onChange={(e) => setServicePrice(e.target.value)} placeholder="0 = free" min={0} step={5} />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">{creative ? "Houses of Art" : "Houses"}</label>
+              <label className="text-sm font-medium mb-1.5 block">{creative ? t("uiOnboarding.housesOfArt") : "Houses"}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                 {dbTopics.map((t) => (
                   <button
@@ -1579,21 +1581,21 @@ export default function Onboarding() {
                 <Sparkles className="h-10 w-10 text-primary" />
               </div>
               <h2 className="font-display text-3xl font-bold">
-                {creative ? "Welcome, Creator! 🎨" : "You're all set! 🎉"}
+                {creative ? t("uiOnboarding.welcomeCreator") : t("uiOnboarding.youReAllSet")}
               </h2>
               <p className="text-muted-foreground mt-2 max-w-sm mx-auto">
                 {creative
-                  ? "Your creative profile is ready. The muses are waiting."
-                  : "Your profile is ready. Here's what you can do next."}
+                  ? t("uiOnboarding.yourCreativeProfileIsReadyThe")
+                  : t("uiOnboarding.yourProfileIsReadyHereS")}
               </p>
             </motion.div>
 
             {hasDraftServices && (
               <div className="w-full rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-left">
-                <p className="font-medium">✨ We've created draft {creative ? "skill sessions" : "services"} for you.</p>
+                <p className="font-medium">{t("uiOnboarding.weVeCreatedDraft")} {creative ? "skill sessions" : "services"} {t("uiOnboarding.forYou")}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  You can review and publish them in{" "}
-                  <Link to="/me/settings" className="underline text-primary">My {creative ? "Skill Sessions" : "Services"}</Link>.
+                  {t("uiOnboarding.youCanReviewAndPublishThem")}{" "}
+                  <Link to="/me/settings" className="underline text-primary">{t("uiOnboarding.my")} {creative ? "Skill Sessions" : "Services"}</Link>.
                 </p>
               </div>
             )}
@@ -1601,10 +1603,10 @@ export default function Onboarding() {
             {representsOrg && (
               <div className="w-full rounded-lg border border-primary/20 bg-primary/5 p-4 text-left">
                 <p className="font-medium text-sm flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-primary" /> Now let's set up your organization
+                  <Building2 className="h-4 w-4 text-primary" /> {t("uiOnboarding.nowLetSSetUpYour")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  You'll register your institution and configure its presence on the platform.
+                  {t("uiOnboarding.youLlRegisterYourInstitutionAnd")}
                 </p>
                 <Button asChild className="w-full mt-3" variant="default">
                   <Link
@@ -1625,7 +1627,7 @@ export default function Onboarding() {
                       } catch { /* storage unavailable */ }
                     }}
                   >
-                    <Building2 className="h-4 w-4 mr-2" /> Onboard your organization
+                    <Building2 className="h-4 w-4 mr-2" /> {t("uiOnboarding.onboardYourOrganization")}
                   </Link>
                 </Button>
               </div>
@@ -1637,47 +1639,47 @@ export default function Onboarding() {
                 <Button asChild className="w-full" variant="default">
                   <Link to={createdQuestId ? `/quests/${createdQuestId}` : "/quests/new"}>
                     <Sprout className="h-4 w-4 mr-2" />
-                    {createdQuestId ? "Open your initiative and publish its needs" : "Present your initiative"}
+                    {createdQuestId ? t("uiOnboarding.openYourInitiativeAndPublishIts") : t("uiOnboarding.presentYourInitiative")}
                   </Link>
                 </Button>
               )}
               {!creative && posture === "territory" && (
                 <Button asChild className="w-full" variant="default">
                   <Link to="/territories">
-                    <Landmark className="h-4 w-4 mr-2" /> Open your territory space
+                    <Landmark className="h-4 w-4 mr-2" /> {t("uiOnboarding.openYourTerritorySpace")}
                   </Link>
                 </Button>
               )}
               {/* Profile Enrichment CTA */}
               <Button asChild className="w-full" variant={!creative && (posture === "initiative" || posture === "territory") ? "outline" : "default"}>
                 <Link to="/profile/enrich">
-                  <Sparkles className="h-4 w-4 mr-2" /> Enrich your profile with AI
+                  <Sparkles className="h-4 w-4 mr-2" /> {t("uiOnboarding.enrichYourProfileWithAi")}
                 </Link>
               </Button>
 
               {!representsOrg && (
                 <Button asChild className="w-full" variant="outline">
                   <Link to={pendingRedirect || "/"}>
-                    <Compass className="h-4 w-4 mr-2" /> {pendingRedirect ? "Continue where you left off" : "Go to Home Feed"}
+                    <Compass className="h-4 w-4 mr-2" /> {pendingRedirect ? t("uiOnboarding.continueWhereYouLeftOff") : t("uiOnboarding.goToHomeFeed")}
                   </Link>
                 </Button>
               )}
               <div className="grid grid-cols-2 gap-3">
                 <Button asChild variant="outline">
                   <Link to="/explore?tab=guilds">
-                    <Users className="h-4 w-4 mr-2" /> {creative ? "Join a Collective" : "Join a Guild"}
+                    <Users className="h-4 w-4 mr-2" /> {creative ? t("uiOnboarding.joinACollective") : t("uiOnboarding.joinAGuild")}
                   </Link>
                 </Button>
                 {creative ? (
                   <Button asChild variant="outline">
                     <Link to="/quests/new">
-                      <Palette className="h-4 w-4 mr-2" /> Start a Creative Quest
+                      <Palette className="h-4 w-4 mr-2" /> {t("uiOnboarding.startACreativeQuest")}
                     </Link>
                   </Button>
                 ) : (
                   <Button asChild variant="outline">
                     <Link to="/me/companies">
-                      <Briefcase className="h-4 w-4 mr-2" /> Attach a Company
+                      <Briefcase className="h-4 w-4 mr-2" /> {t("uiOnboarding.attachACompany")}
                     </Link>
                   </Button>
                 )}
@@ -1686,7 +1688,7 @@ export default function Onboarding() {
                 <div className="grid grid-cols-2 gap-3">
                   <Button asChild variant="outline">
                     <Link to="/services/new">
-                      <Sparkles className="h-4 w-4 mr-2" /> Offer a Skill Session
+                      <Sparkles className="h-4 w-4 mr-2" /> {t("uiOnboarding.offerASkillSession")}
                     </Link>
                   </Button>
                   <Button asChild variant="outline">
@@ -1699,8 +1701,8 @@ export default function Onboarding() {
             </div>
 
             <p className="text-xs text-muted-foreground">
-              You can revisit onboarding anytime from{" "}
-              <Link to="/me/settings" className="underline text-primary">Settings → Open Wizard</Link>.
+              {t("uiOnboarding.youCanRevisitOnboardingAnytimeFrom")}{" "}
+              <Link to="/me/settings" className="underline text-primary">{t("uiOnboarding.settingsOpenWizard")}</Link>.
             </p>
           </>
         )}
@@ -1765,12 +1767,12 @@ export default function Onboarding() {
                 disabled={step === 0}
                 className={step === 0 ? "invisible" : ""}
               >
-                <ArrowLeft className="h-4 w-4 mr-1" /> Back
+                <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiOnboarding.back")}
               </Button>
               {showNextButton() && (
                 <Button onClick={goNext} size="sm" disabled={saving || aiLoading}>
                   {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-                  {isFinishStep ? "Finish" : "Next"} <ArrowRight className="h-4 w-4 ml-1" />
+                  {isFinishStep ? "Finish" : t("uiOnboarding.next")} <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               )}
             </div>

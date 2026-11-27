@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Check, X, Loader2, Eye } from "lucide-react";
@@ -70,6 +71,7 @@ async function inviteToMembership(guildId: string, userId: string) {
 }
 
 export function EntityApplicationsTab({ entityType, entityId, entityName, currentUserId }: EntityApplicationsTabProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { notifyApplicationDecision, notifyGuildMemberAdded } = useNotifications();
   const [apps, setApps] = useState<ApplicationRow[]>([]);
@@ -95,7 +97,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
 
     const { data, error } = await query;
     if (error) {
-      toast({ title: "Failed to load applications", variant: "destructive" });
+      toast({ title: t("uiEntityApplicationsTab.failedToLoadApplications"), variant: "destructive" });
       setLoading(false);
       return;
     }
@@ -137,7 +139,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
       .eq("id", app.id) as any);
 
     if (error) {
-      toast({ title: "Failed to update", description: error.message, variant: "destructive" });
+      toast({ title: t("uiEntityApplicationsTab.failedToUpdate"), description: error.message, variant: "destructive" });
       setActing(false);
       return;
     }
@@ -147,7 +149,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
       if (entityType !== "company") insertData.role = cfg.memberRole;
       const { error: memberError } = await (supabase.from(cfg.members as any).insert(insertData) as any);
       if (memberError && !memberError.message?.includes("duplicate")) {
-        toast({ title: "Approved but failed to add member", description: memberError.message, variant: "destructive" });
+        toast({ title: t("uiEntityApplicationsTab.approvedButFailedToAddMember"), description: memberError.message, variant: "destructive" });
       }
     }
 
@@ -179,10 +181,10 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="PENDING">Pending</SelectItem>
+            <SelectItem value="PENDING">{t("uiEntityApplicationsTab.pending")}</SelectItem>
             <SelectItem value="APPROVED">Approved</SelectItem>
             <SelectItem value="REJECTED">Rejected</SelectItem>
-            <SelectItem value="ALL">All</SelectItem>
+            <SelectItem value="ALL">{t("uiEntityApplicationsTab.all")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -192,7 +194,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : apps.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-4">No applications found.</p>
+        <p className="text-sm text-muted-foreground py-4">{t("uiEntityApplicationsTab.noApplicationsFound")}</p>
       ) : (
         <div className="rounded-lg border border-border overflow-hidden">
           <table className="w-full text-sm">
@@ -200,7 +202,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
               <tr>
                 <th className="text-left px-4 py-2 font-medium">Applicant</th>
                 <th className="text-left px-4 py-2 font-medium">Submitted</th>
-                <th className="text-left px-4 py-2 font-medium">Status</th>
+                <th className="text-left px-4 py-2 font-medium">{t("uiEntityApplicationsTab.status")}</th>
                 <th className="text-right px-4 py-2 font-medium">Actions</th>
               </tr>
             </thead>
@@ -236,7 +238,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => { setSelectedApp(app); setAdminNote(app.admin_note || ""); }}>
-                      <Eye className="h-3 w-3 mr-1" /> View
+                      <Eye className="h-3 w-3 mr-1" /> {t("uiEntityApplicationsTab.view")}
                     </Button>
                   </td>
                 </tr>
@@ -248,7 +250,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
 
       <Dialog open={!!selectedApp} onOpenChange={(open) => { if (!open) setSelectedApp(null); }}>
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Application Details</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("uiEntityApplicationsTab.applicationDetails")}</DialogTitle></DialogHeader>
           {selectedApp && (
             <div className="space-y-4 mt-2">
               <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
@@ -271,7 +273,7 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
                   {selectedApp.answers.map((qa, i) => (
                     <div key={i} className="rounded-lg border border-border p-3">
                       <p className="text-sm font-medium text-muted-foreground">{qa.question}</p>
-                      <p className="text-sm mt-1">{qa.answer || <span className="italic text-muted-foreground">No answer</span>}</p>
+                      <p className="text-sm mt-1">{qa.answer || <span className="italic text-muted-foreground">{t("uiEntityApplicationsTab.noAnswer")}</span>}</p>
                     </div>
                   ))}
                 </div>
@@ -279,14 +281,14 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
 
               {selectedApp.status === "PENDING" && (
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Admin note (optional)</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiEntityApplicationsTab.adminNoteOptional")}</label>
                   <Textarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} placeholder="Internal note…" maxLength={500} className="resize-none" />
                 </div>
               )}
 
               {selectedApp.status !== "PENDING" && selectedApp.admin_note && (
                 <div>
-                  <h4 className="text-sm font-medium mb-1">Admin note</h4>
+                  <h4 className="text-sm font-medium mb-1">{t("uiEntityApplicationsTab.adminNote")}</h4>
                   <p className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">{selectedApp.admin_note}</p>
                 </div>
               )}
@@ -294,10 +296,10 @@ export function EntityApplicationsTab({ entityType, entityId, entityName, curren
               {selectedApp.status === "PENDING" && (
                 <div className="flex gap-2">
                   <Button onClick={() => handleAction(selectedApp, "APPROVED")} disabled={acting} className="flex-1">
-                    {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />} Approve
+                    {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />} {t("uiEntityApplicationsTab.approve")}
                   </Button>
                   <Button variant="destructive" onClick={() => handleAction(selectedApp, "REJECTED")} disabled={acting} className="flex-1">
-                    {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <X className="h-4 w-4 mr-1" />} Reject
+                    {acting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <X className="h-4 w-4 mr-1" />} {t("uiEntityApplicationsTab.reject")}
                   </Button>
                 </div>
               )}

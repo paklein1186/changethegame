@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -25,6 +26,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function MyBookings({ bare }: { bare?: boolean }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const { data: allBookings = [], isLoading } = useMyBookings(currentUser.id);
@@ -72,7 +74,7 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
           const { error: notifErr } = await supabase.from("notifications").insert({
             user_id: booking.requester_id,
             type: status === "ACCEPTED" || status === "CONFIRMED" ? "BOOKING_CONFIRMED" : status === "DECLINED" || status === "CANCELLED" ? "BOOKING_CANCELLED" : "BOOKING_UPDATED",
-            title: status === "ACCEPTED" || status === "CONFIRMED" ? "Session accepted! ✅" : status === "DECLINED" ? "Booking declined" : status === "CANCELLED" ? "Booking cancelled" : `Booking ${status.toLowerCase()}`,
+            title: status === "ACCEPTED" || status === "CONFIRMED" ? "Session accepted! ✅" : status === "DECLINED" ? "Booking declined" : status === "CANCELLED" ? t("uiMyBookings.bookingCancelled") : `Booking ${status.toLowerCase()}`,
             body: bodyText,
             related_entity_type: "BOOKING",
             related_entity_id: bookingId,
@@ -90,13 +92,13 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
     <PageShell bare={bare}>
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold flex items-center gap-2">
-          <Briefcase className="h-7 w-7 text-primary" /> My Bookings
+          <Briefcase className="h-7 w-7 text-primary" /> {t("uiMyBookings.myBookings")}
         </h1>
-        <p className="text-muted-foreground mt-1">Incoming session requests for your services.</p>
+        <p className="text-muted-foreground mt-1">{t("uiMyBookings.incomingSessionRequestsForYourServices")}</p>
       </div>
 
-      {isLoading && <p className="text-muted-foreground">Loading…</p>}
-      {!isLoading && myIncoming.length === 0 && <p className="text-muted-foreground">No incoming bookings yet.</p>}
+      {isLoading && <p className="text-muted-foreground">{t("uiMyBookings.loading")}</p>}
+      {!isLoading && myIncoming.length === 0 && <p className="text-muted-foreground">{t("uiMyBookings.noIncomingBookingsYet")}</p>}
 
       <div className="space-y-3">
         {myIncoming.map((b, i) => {
@@ -125,7 +127,7 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
                     <AvatarFallback className="text-[10px]">{requester.name?.charAt(0) || "?"}</AvatarFallback>
                   </Avatar>
                   <span className="text-sm text-muted-foreground">
-                    Requested by <Link to={`/users/${b.requester_id}`} className="font-medium text-foreground hover:text-primary">{requester.name}</Link>
+                    {t("uiMyBookings.requestedBy")} <Link to={`/users/${b.requester_id}`} className="font-medium text-foreground hover:text-primary">{requester.name}</Link>
                   </span>
                 </div>
               )}
@@ -137,11 +139,11 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
                 </p>
               )}
               {b.amount != null && b.amount > 0 && (
-                <p className="text-xs text-muted-foreground mb-1">🟩 {Math.round(b.amount / 0.04).toLocaleString()} Coins (≈ €{b.amount}) — {b.payment_status || "N/A"}</p>
+                <p className="text-xs text-muted-foreground mb-1">🟩 {Math.round(b.amount / 0.04).toLocaleString()} {t("uiMyBookings.coins")}{b.amount}) — {b.payment_status || "N/A"}</p>
               )}
               {(b.status === "CONFIRMED" || b.status === "ACCEPTED") && (
                 <Link to={`/call/${b.id}`} className="inline-flex items-center gap-1 text-xs text-primary hover:underline mb-2">
-                  <Video className="h-3 w-3" /> Join call room <ExternalLink className="h-3 w-3" />
+                  <Video className="h-3 w-3" /> {t("uiMyBookings.joinCallRoom")} <ExternalLink className="h-3 w-3" />
                 </Link>
               )}
               <p className="text-[11px] text-muted-foreground mb-3">{formatDistanceToNow(new Date(b.created_at), { addSuffix: true })}</p>
@@ -159,10 +161,10 @@ export default function MyBookings({ bare }: { bare?: boolean }) {
               {(b.status === "ACCEPTED" || b.status === "CONFIRMED") && (
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(b.id, "COMPLETED")}>
-                    <CheckCircle className="h-3.5 w-3.5 mr-1" /> Mark Completed
+                    <CheckCircle className="h-3.5 w-3.5 mr-1" /> {t("uiMyBookings.markCompleted")}
                   </Button>
                   <Button size="sm" variant="destructive" onClick={() => handleUpdateStatus(b.id, "CANCELLED")}>
-                    <X className="h-3.5 w-3.5 mr-1" /> Cancel
+                    <X className="h-3.5 w-3.5 mr-1" /> {t("uiMyBookings.cancel")}
                   </Button>
                 </div>
               )}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function UserSearchInput({ onSelect, placeholder = "Search by name…", excludeUserIds = [] }: Props) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -95,7 +97,7 @@ export function UserSearchInput({ onSelect, placeholder = "Search by name…", e
       )}
       {open && query.trim().length >= 2 && !loading && results.length === 0 && (
         <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg border border-border bg-popover shadow-lg px-3 py-3 text-xs text-muted-foreground text-center">
-          No users found
+          {t("uiUserSearchInput.noUsersFound")}
         </div>
       )}
     </div>

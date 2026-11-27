@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Crown, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ interface SourceRoleTransferProps {
 }
 
 export function SourceRoleTransfer({ entityType, entityId, members, currentUserId }: SourceRoleTransferProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { roles, memberRoles, assignRole, removeRoleAssignment, invalidate } = useEntityRoles(entityType, entityId);
   const [open, setOpen] = useState(false);
@@ -45,10 +47,10 @@ export function SourceRoleTransfer({ entityType, entityId, members, currentUserI
         user_id: newUserId,
       } as any);
       invalidate();
-      toast({ title: "Source role transferred!" });
+      toast({ title: t("uiSourceRoleTransfer.sourceRoleTransferred") });
       setOpen(false);
     } catch {
-      toast({ title: "Failed to transfer", variant: "destructive" });
+      toast({ title: t("uiSourceRoleTransfer.failedToTransfer"), variant: "destructive" });
     } finally {
       setTransferring(false);
     }
@@ -60,10 +62,10 @@ export function SourceRoleTransfer({ entityType, entityId, members, currentUserI
     <div className="rounded-xl border border-border bg-card p-4 space-y-3">
       <div className="flex items-center gap-2">
         <Crown className="h-5 w-5 text-amber-500" />
-        <h4 className="font-display font-semibold">Source Role</h4>
+        <h4 className="font-display font-semibold">{t("uiSourceRoleTransfer.sourceRole")}</h4>
       </div>
       <p className="text-sm text-muted-foreground">
-        The Source role represents the founding leader. It grants admin-level override permissions across all rooms and decisions.
+        {t("uiSourceRoleTransfer.theSourceRoleRepresentsTheFounding")}
       </p>
       {currentSourceMember ? (
         <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
@@ -77,19 +79,19 @@ export function SourceRoleTransfer({ entityType, entityId, members, currentUserI
           </div>
         </div>
       ) : (
-        <p className="text-sm text-amber-600">No Source assigned yet.</p>
+        <p className="text-sm text-amber-600">{t("uiSourceRoleTransfer.noSourceAssignedYet")}</p>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
-            <ArrowRight className="h-4 w-4 mr-1" /> Transfer Source Role
+            <ArrowRight className="h-4 w-4 mr-1" /> {t("uiSourceRoleTransfer.transferSourceRole")}
           </Button>
         </DialogTrigger>
         <DialogContent>
-          <DialogHeader><DialogTitle>Transfer Source Role</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("uiSourceRoleTransfer.transferSourceRole")}</DialogTitle></DialogHeader>
           <p className="text-sm text-muted-foreground mb-4">
-            Select a member to become the new Source. This action is reversible.
+            {t("uiSourceRoleTransfer.selectAMemberToBecomeThe")}
           </p>
           <div className="space-y-2 max-h-[50vh] overflow-y-auto">
             {eligibleMembers.map((m) => (
@@ -107,7 +109,7 @@ export function SourceRoleTransfer({ entityType, entityId, members, currentUserI
               </button>
             ))}
             {eligibleMembers.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-4">No other members to transfer to.</p>
+              <p className="text-sm text-muted-foreground text-center py-4">{t("uiSourceRoleTransfer.noOtherMembersToTransferTo")}</p>
             )}
           </div>
         </DialogContent>

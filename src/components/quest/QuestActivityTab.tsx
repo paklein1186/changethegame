@@ -91,13 +91,13 @@ export function QuestActivityTab({
         <TabsContent value="updates" className="mt-4 space-y-4">
           {canPostUpdate && (
             <Button size="sm" onClick={onOpenUpdateDialog}>
-              <Send className="h-4 w-4 mr-1" /> Post Update
+              <Send className="h-4 w-4 mr-1" /> {t("uiQuestActivityTab.postUpdate")}
             </Button>
           )}
       {(updates || []).length === 0 && (
         <div className="text-center py-10">
-          <p className="text-muted-foreground">No updates yet.</p>
-          {canPostUpdate && <p className="text-sm text-muted-foreground mt-1">Share your first progress update.</p>}
+          <p className="text-muted-foreground">{t("uiQuestActivityTab.noUpdatesYet")}</p>
+          {canPostUpdate && <p className="text-sm text-muted-foreground mt-1">{t("uiQuestActivityTab.shareYourFirstProgressUpdate")}</p>}
         </div>
       )}
 
@@ -167,16 +167,16 @@ export function QuestActivityTab({
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4" /></Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onEditUpdate(update)}><Pencil className="h-4 w-4 mr-2" /> Edit</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onEditUpdate(update)}><Pencil className="h-4 w-4 mr-2" /> {t("uiQuestActivityTab.edit")}</DropdownMenuItem>
                     {isOwner && <DropdownMenuItem onClick={() => onTogglePin(update.id, update.pinned)}>{update.pinned ? "Unpin" : "Pin"}</DropdownMenuItem>}
-                    <DropdownMenuItem className="text-destructive" onClick={() => onDeleteUpdate(update.id)}>Delete</DropdownMenuItem>
+                    <DropdownMenuItem className="text-destructive" onClick={() => onDeleteUpdate(update.id)}>{t("uiQuestActivityTab.delete")}</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
             </div>
             {update.comments_enabled !== false && (
               <div className="ml-12 pt-3 border-t border-border">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Comments on this update</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">{t("uiQuestActivityTab.commentsOnThisUpdate")}</p>
                 <CommentThread targetType={CommentTargetType.QUEST_UPDATE} targetId={update.id} />
               </div>
             )}
@@ -355,7 +355,7 @@ function QuestAlivePanel({ quest, updates, participants, qfc, canPostUpdate, onO
 
       {canPostUpdate && (
         <Button size="sm" onClick={onOpenUpdateDialog}>
-          <Send className="h-4 w-4 mr-1" /> Post Update
+          <Send className="h-4 w-4 mr-1" /> {t("uiQuestActivityTab.postUpdate")}
         </Button>
       )}
     </div>

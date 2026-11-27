@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -11,35 +13,35 @@ import { toast } from "sonner";
 /* ─── Fixed vocabularies ─── */
 
 const VISIBILITY_OPTIONS = [
-  { value: "private", label: "Private", desc: "Not visible on any public website" },
-  { value: "unlisted", label: "Unlisted", desc: "Accessible via direct link only" },
-  { value: "public", label: "Public", desc: "Visible on public websites" },
+  { value: "private", get label() { return i18n.t("uiWebVisibilityEditor.private"); }, get desc() { return i18n.t("uiWebVisibilityEditor.notVisibleOnAnyPublicWebsite"); } },
+  { value: "unlisted", label: "Unlisted", get desc() { return i18n.t("uiWebVisibilityEditor.accessibleViaDirectLinkOnly"); } },
+  { value: "public", get label() { return i18n.t("uiWebVisibilityEditor.public"); }, get desc() { return i18n.t("uiWebVisibilityEditor.visibleOnPublicWebsites"); } },
 ] as const;
 
 const WEB_SCOPES = [
   { value: "personal_site", label: "Personal site", desc: "Individual user websites" },
-  { value: "guild_site", label: "Guild site", desc: "Guild / organisation websites" },
-  { value: "territory_site", label: "Territory site", desc: "Territorial entity websites" },
-  { value: "program_site", label: "Program site", desc: "Program-level websites (Libra, Erasmus…)" },
+  { value: "guild_site", get label() { return i18n.t("uiWebVisibilityEditor.guildSite"); }, get desc() { return i18n.t("uiWebVisibilityEditor.guildOrganisationWebsites"); } },
+  { value: "territory_site", get label() { return i18n.t("uiWebVisibilityEditor.territorySite"); }, desc: "Territorial entity websites" },
+  { value: "program_site", label: "Program site", get desc() { return i18n.t("uiWebVisibilityEditor.programLevelWebsitesLibraErasmus"); } },
 ] as const;
 
 const PLACEMENT_TAGS = [
-  { value: "flagship", label: "Flagship", desc: "Top 3–5 items on Home & first lines" },
-  { value: "portfolio", label: "Portfolio", desc: "Past work to showcase on Projects page" },
-  { value: "ongoing", label: "Ongoing", desc: "Currently active work" },
-  { value: "secondary", label: "Secondary", desc: "Show on listing pages, not first in line" },
-  { value: "archived", label: "Archived", desc: "Historical, hidden by default" },
-  { value: "community", label: "Community", desc: "Show on Commons / Community sections" },
-  { value: "program", label: "Program", desc: "Part of a named program" },
+  { value: "flagship", label: "Flagship", get desc() { return i18n.t("uiWebVisibilityEditor.top35ItemsOnHome"); } },
+  { value: "portfolio", label: "Portfolio", get desc() { return i18n.t("uiWebVisibilityEditor.pastWorkToShowcaseOnProjects"); } },
+  { value: "ongoing", label: "Ongoing", get desc() { return i18n.t("uiWebVisibilityEditor.currentlyActiveWork"); } },
+  { value: "secondary", label: "Secondary", get desc() { return i18n.t("uiWebVisibilityEditor.showOnListingPagesNotFirst"); } },
+  { value: "archived", label: "Archived", get desc() { return i18n.t("uiWebVisibilityEditor.historicalHiddenByDefault"); } },
+  { value: "community", label: "Community", get desc() { return i18n.t("uiWebVisibilityEditor.showOnCommonsCommunitySections"); } },
+  { value: "program", label: "Program", get desc() { return i18n.t("uiWebVisibilityEditor.partOfANamedProgram"); } },
 ] as const;
 
 const SCOPE_VALUES = WEB_SCOPES.map(s => s.value);
 const TAG_VALUES = PLACEMENT_TAGS.map(t => t.value);
 
 const OVERRIDE_OPTIONS = [
-  { value: "inherit", label: "Inherit from owner default" },
-  { value: "force_visible", label: "Always show on my website" },
-  { value: "force_hidden", label: "Hide this item from my website" },
+  { value: "inherit", get label() { return i18n.t("uiWebVisibilityEditor.inheritFromOwnerDefault"); } },
+  { value: "force_visible", get label() { return i18n.t("uiWebVisibilityEditor.alwaysShowOnMyWebsite"); } },
+  { value: "force_hidden", get label() { return i18n.t("uiWebVisibilityEditor.hideThisItemFromMyWebsite"); } },
 ] as const;
 
 /* ─── Types ─── */
@@ -77,6 +79,7 @@ export function WebVisibilityEditor({
   ownerContext,
   onSaved,
 }: Props) {
+  const { t } = useTranslation();
   const [visibility, setVisibility] = useState(initialVisibility);
   const [scopes, setScopes] = useState<string[]>(initialScopes);
   const [tags, setTags] = useState<string[]>(initialTags);
@@ -149,7 +152,7 @@ export function WebVisibilityEditor({
           <Globe className="h-4 w-4 text-primary" /> Web Visibility & Tags
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Control how this item appears on public CTG-powered websites.
+          {t("uiWebVisibilityEditor.controlHowThisItemAppearsOn")}
         </p>
       </div>
 
@@ -157,10 +160,10 @@ export function WebVisibilityEditor({
       {ownerContext && (
         <div className="space-y-2 rounded-lg border border-border bg-background p-4">
           <Label className="flex items-center gap-1.5 text-sm font-medium">
-            <Eye className="h-3.5 w-3.5" /> Web visibility on your website
+            <Eye className="h-3.5 w-3.5" /> {t("uiWebVisibilityEditor.webVisibilityOnYourWebsite")}
           </Label>
           <p className="text-xs text-muted-foreground">
-            Website owner: <strong>{ownerContext.ownerName}</strong> — Default for {entityTable}: <strong>{ownerContext.defaultVisible ? "Show all" : "Hide all"}</strong>
+            {t("uiWebVisibilityEditor.websiteOwner")} <strong>{ownerContext.ownerName}</strong> {t("uiWebVisibilityEditor.defaultFor")} {entityTable}: <strong>{ownerContext.defaultVisible ? t("uiWebVisibilityEditor.showAll") : t("uiWebVisibilityEditor.hideAll")}</strong>
           </p>
           <div className="space-y-1.5 mt-2">
             {OVERRIDE_OPTIONS.map(opt => {
@@ -194,7 +197,7 @@ export function WebVisibilityEditor({
       {/* Public visibility */}
       <div className="space-y-2">
         <Label className="flex items-center gap-1.5 text-sm font-medium">
-          <Eye className="h-3.5 w-3.5" /> Public Visibility
+          <Eye className="h-3.5 w-3.5" /> {t("uiWebVisibilityEditor.publicVisibility")}
         </Label>
         <Select value={visibility} onValueChange={setVisibility}>
           <SelectTrigger className="w-full max-w-xs">
@@ -217,7 +220,7 @@ export function WebVisibilityEditor({
           <Globe className="h-3.5 w-3.5" /> Web Scopes
         </Label>
         <p className="text-xs text-muted-foreground">
-          Who should be allowed to show this on their public website?
+          {t("uiWebVisibilityEditor.whoShouldBeAllowedToShow")}
         </p>
         <div className="flex flex-wrap gap-2">
           {WEB_SCOPES.map(scope => {
@@ -241,7 +244,7 @@ export function WebVisibilityEditor({
         </div>
         {scopes.length === 0 && visibility !== "private" && (
           <p className="text-xs text-amber-600">
-            Tip: start with "Personal site" — you can widen later.
+            {t("uiWebVisibilityEditor.tipStartWithPersonalSiteYou")}
           </p>
         )}
       </div>
@@ -252,7 +255,7 @@ export function WebVisibilityEditor({
           <Tag className="h-3.5 w-3.5" /> Web Tags
         </Label>
         <p className="text-xs text-muted-foreground">
-          How should this item be used/displayed on websites? (placement & status)
+          {t("uiWebVisibilityEditor.howShouldThisItemBeUsed")}
         </p>
         <div className="flex flex-wrap gap-2">
           {PLACEMENT_TAGS.map(tag => {
@@ -293,13 +296,13 @@ export function WebVisibilityEditor({
             placeholder="Auto"
             min={0}
           />
-          <p className="text-xs text-muted-foreground">Lower numbers appear first. Leave empty for auto.</p>
+          <p className="text-xs text-muted-foreground">{t("uiWebVisibilityEditor.lowerNumbersAppearFirstLeaveEmpty")}</p>
         </div>
       )}
 
       <Button variant="outline" size="sm" onClick={save} disabled={saving}>
         <Save className="h-3.5 w-3.5 mr-1" />
-        {saving ? "Saving…" : "Save Web Settings"}
+        {saving ? "Saving…" : t("uiWebVisibilityEditor.saveWebSettings")}
       </Button>
     </div>
   );

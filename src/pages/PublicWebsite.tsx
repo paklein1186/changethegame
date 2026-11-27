@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
@@ -40,6 +41,7 @@ interface Website {
 
 /* ─── Page ─── */
 export default function PublicWebsite() {
+  const { t } = useTranslation();
   const { websiteSlug, pageSlug } = useParams<{ websiteSlug: string; pageSlug?: string }>();
   const navigate = useNavigate();
 
@@ -95,8 +97,8 @@ export default function PublicWebsite() {
   if (error || !website) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
-        <h1 className="text-2xl font-bold text-foreground">Website not found</h1>
-        <p className="text-muted-foreground">This website doesn't exist or hasn't been published yet.</p>
+        <h1 className="text-2xl font-bold text-foreground">{t("uiPublicWebsite.websiteNotFound")}</h1>
+        <p className="text-muted-foreground">{t("uiPublicWebsite.thisWebsiteDoesnTExistOr")}</p>
       </div>
     );
   }
@@ -149,7 +151,7 @@ export default function PublicWebsite() {
             ))}
           </div>
         ) : (
-          <p className="text-center text-muted-foreground py-16">No pages configured.</p>
+          <p className="text-center text-muted-foreground py-16">{t("uiPublicWebsite.noPagesConfigured")}</p>
         )}
       </main>
 
@@ -163,7 +165,7 @@ export default function PublicWebsite() {
             rel="noopener noreferrer"
             className="hover:text-foreground transition-colors"
           >
-            Powered by changethegame
+            {t("uiPublicWebsite.poweredByChangethegame")}
           </a>
         </div>
       </footer>

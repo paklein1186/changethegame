@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 /**
  * TerritoryPortalHero.tsx
  * Hero section for the Territory Portal with single AI cover, breadcrumb, stats.
@@ -131,6 +132,7 @@ export function TerritoryPortalHero({
   onUnlock,
   onBack,
 }: TerritoryPortalHeroProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { isFollowing, toggle: toggleFollow, isLoading: followLoading } =
     useFollow(FollowTargetType.TERRITORY, territory.id);
@@ -175,12 +177,12 @@ export function TerritoryPortalHero({
           onClick={onBack}
           className="absolute top-4 left-4 inline-flex items-center gap-1 text-xs text-white/80 hover:text-white bg-black/30 backdrop-blur-sm rounded-lg px-3 py-1.5 transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back
+          <ArrowLeft className="h-3.5 w-3.5" /> {t("uiTerritoryPortalHero.back")}
         </button>
         {isPioneerTerritory && (
           <div className="absolute top-4 right-4">
             <Badge className="gap-1.5 bg-amber-500/90 text-white border-0 backdrop-blur-sm">
-              <Star className="h-3 w-3 fill-white" /> Uncharted Territory
+              <Star className="h-3 w-3 fill-white" /> {t("uiTerritoryPortalHero.unchartedTerritory")}
             </Badge>
           </div>
         )}
@@ -247,7 +249,7 @@ export function TerritoryPortalHero({
                 className="gap-1.5"
               >
                 <Heart className={cn("h-3.5 w-3.5", isFollowing && "fill-current")} />
-                {isFollowing ? "Following" : "Follow"}
+                {isFollowing ? "Following" : t("uiTerritoryPortalHero.follow")}
               </Button>
             )}
             <ShareLinkButton
@@ -273,10 +275,10 @@ export function TerritoryPortalHero({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
-                  This territory has no steward yet
+                  {t("uiTerritoryPortalHero.thisTerritoryHasNoStewardYet")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Be the first to plant roots here. Unlock this territory, set up its portal, and earn the Pioneer badge.
+                  {t("uiTerritoryPortalHero.beTheFirstToPlantRoots")}
                 </p>
               </div>
               <Button

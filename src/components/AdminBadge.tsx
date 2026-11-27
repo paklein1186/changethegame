@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Shield, Crown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useUserRoles } from "@/lib/admin";
@@ -15,6 +16,7 @@ interface AdminBadgeProps {
  * Shows nothing for non-admins.
  */
 export function AdminBadge({ userId, className }: AdminBadgeProps) {
+  const { t } = useTranslation();
   const { isAdmin, isSuperAdmin } = useUserRoles(userId);
 
   if (!isAdmin) return null;
@@ -37,7 +39,7 @@ export function AdminBadge({ userId, className }: AdminBadgeProps) {
       className={`text-[10px] px-1.5 py-0 font-semibold border-primary/40 text-primary bg-primary/10 gap-0.5 ${className ?? ""}`}
     >
       <Shield className="h-2.5 w-2.5" />
-      Admin
+      {t("uiAdminBadge.admin")}
     </Badge>
   );
 }

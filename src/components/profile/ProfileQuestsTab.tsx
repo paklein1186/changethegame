@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,10 +34,10 @@ type Quest = {
 };
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  DRAFT: { label: "Draft", color: "bg-muted text-muted-foreground" },
-  OPEN_FOR_PROPOSALS: { label: "Open for proposals", color: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
-  ACTIVE: { label: "Active", color: "bg-amber-500/10 text-amber-700 border-amber-500/30" },
-  COMPLETED: { label: "Completed", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
+  DRAFT: { get label() { return i18n.t("uiProfileQuestsTab.draft"); }, color: "bg-muted text-muted-foreground" },
+  OPEN_FOR_PROPOSALS: { get label() { return i18n.t("uiProfileQuestsTab.openForProposals"); }, color: "bg-blue-500/10 text-blue-700 border-blue-500/30" },
+  ACTIVE: { get label() { return i18n.t("uiProfileQuestsTab.active"); }, color: "bg-amber-500/10 text-amber-700 border-amber-500/30" },
+  COMPLETED: { get label() { return i18n.t("uiProfileQuestsTab.completed"); }, color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30" },
 };
 
 interface ProfileQuestsTabProps {
@@ -51,6 +53,7 @@ interface ProfileQuestsTabProps {
 export function ProfileQuestsTab({
   userId, isOwnProfile, questsCreated, questsJoined, proposals, fundedQuests, canSeePrivate,
 }: ProfileQuestsTabProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState("all");
@@ -132,17 +135,17 @@ export function ProfileQuestsTab({
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-display font-semibold flex items-center gap-2">
             <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-            Highlighted quests ({highlighted.length})
+            {t("uiProfileQuestsTab.highlightedQuests")}{highlighted.length})
           </h3>
           {isOwnProfile && (
             <Button size="sm" variant="outline" onClick={() => setHighlightsOpen(true)}>
-              <Pencil className="h-3.5 w-3.5 mr-1" /> Edit Highlights
+              <Pencil className="h-3.5 w-3.5 mr-1" /> {t("uiProfileQuestsTab.editHighlights")}
             </Button>
           )}
         </div>
         {highlighted.length === 0 ? (
           <p className="text-sm text-muted-foreground py-4">
-            {isOwnProfile ? "Star quests to feature them on your profile." : "No highlighted quests yet."}
+            {isOwnProfile ? t("uiProfileQuestsTab.starQuestsToFeatureThemOn") : t("uiProfileQuestsTab.noHighlightedQuestsYet")}
           </p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -159,16 +162,16 @@ export function ProfileQuestsTab({
           <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-amber-500 fill-amber-500" /> Edit Highlights
+                <Star className="h-4 w-4 text-amber-500 fill-amber-500" /> {t("uiProfileQuestsTab.editHighlights")}
               </DialogTitle>
               <DialogDescription>
-                Click the star to feature or remove quests from your profile highlights.
+                {t("uiProfileQuestsTab.clickTheStarToFeatureOr")}
               </DialogDescription>
             </DialogHeader>
             <div className="relative mb-2">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
-                placeholder="Search quests…"
+                placeholder={t("uiProfileQuestsTab.searchQuests")}
                 value={highlightSearch}
                 onChange={(e) => setHighlightSearch(e.target.value)}
                 className="h-9 text-sm pl-8"
@@ -188,7 +191,7 @@ export function ProfileQuestsTab({
                   return (a.title || "").localeCompare(b.title || "");
                 });
                 if (sorted.length === 0) {
-                  return <p className="text-sm text-muted-foreground py-4 text-center">No quests found.</p>;
+                  return <p className="text-sm text-muted-foreground py-4 text-center">{t("uiProfileQuestsTab.noQuestsFound")}</p>;
                 }
                 return sorted.map((q) => {
                   const isH = highlightSet.has(q.id);
@@ -227,10 +230,10 @@ export function ProfileQuestsTab({
       {/* ─── All Quests Table ─── */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-display font-semibold">All quests ({allQuests.length})</h3>
+          <h3 className="font-display font-semibold">{t("uiProfileQuestsTab.allQuests")}{allQuests.length})</h3>
           {isOwnProfile && (
             <Button size="sm" asChild>
-              <Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> Create quest</Link>
+              <Link to="/quests/new"><Plus className="h-4 w-4 mr-1" /> {t("uiProfileQuestsTab.createQuest")}</Link>
             </Button>
           )}
         </div>
@@ -240,7 +243,7 @@ export function ProfileQuestsTab({
           <div className="relative flex-1 min-w-[180px] max-w-xs">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search quests…"
+              placeholder={t("uiProfileQuestsTab.searchQuests")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="h-9 text-sm pl-8"
@@ -249,22 +252,22 @@ export function ProfileQuestsTab({
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[170px] h-9 text-xs">
               <Filter className="h-3 w-3 mr-1 shrink-0" />
-              <SelectValue placeholder="All statuses" />
+              <SelectValue placeholder={t("uiProfileQuestsTab.allStatuses")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="DRAFT">Draft</SelectItem>
-              <SelectItem value="OPEN_FOR_PROPOSALS">Open for proposals</SelectItem>
-              <SelectItem value="ACTIVE">Active</SelectItem>
-              <SelectItem value="COMPLETED">Completed</SelectItem>
+              <SelectItem value="all">{t("uiProfileQuestsTab.allStatuses")}</SelectItem>
+              <SelectItem value="DRAFT">{t("uiProfileQuestsTab.draft")}</SelectItem>
+              <SelectItem value="OPEN_FOR_PROPOSALS">{t("uiProfileQuestsTab.openForProposals")}</SelectItem>
+              <SelectItem value="ACTIVE">{t("uiProfileQuestsTab.active")}</SelectItem>
+              <SelectItem value="COMPLETED">{t("uiProfileQuestsTab.completed")}</SelectItem>
             </SelectContent>
           </Select>
           <Select value={sourceFilter} onValueChange={setSourceFilter}>
             <SelectTrigger className="w-[140px] h-9 text-xs">
-              <SelectValue placeholder="All sources" />
+              <SelectValue placeholder={t("uiProfileQuestsTab.allSources")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All sources</SelectItem>
+              <SelectItem value="all">{t("uiProfileQuestsTab.allSources")}</SelectItem>
               <SelectItem value="created">Created</SelectItem>
               <SelectItem value="joined">Joined</SelectItem>
             </SelectContent>
@@ -299,7 +302,7 @@ export function ProfileQuestsTab({
 
         {/* Quest display */}
         {tableQuests.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4">No quests match filters.</p>
+          <p className="text-sm text-muted-foreground py-4">{t("uiProfileQuestsTab.noQuestsMatchFilters")}</p>
         ) : viewMode === "kanban" ? (
           (() => {
             const groups: Record<string, Quest[]> = {};
@@ -345,7 +348,7 @@ export function ProfileQuestsTab({
                     <button
                       onClick={() => toggleHighlight(q.id)}
                       className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-background/80 backdrop-blur-sm border border-border opacity-0 group-hover:opacity-100 transition-opacity hover:bg-accent/50"
-                      title={isH ? "Remove highlight" : "Highlight quest"}
+                      title={isH ? t("uiProfileQuestsTab.removeHighlight") : t("uiProfileQuestsTab.highlightQuest")}
                     >
                       <Star className={cn("h-3.5 w-3.5", isH ? "text-amber-500 fill-amber-500" : "text-muted-foreground/40")} />
                     </button>
@@ -373,10 +376,10 @@ export function ProfileQuestsTab({
               <thead>
                 <tr className="border-b border-border bg-muted/30">
                    {isOwnProfile && <th className="py-2 px-3 text-left w-10"></th>}
-                   <th className="py-2 px-3 text-left font-medium text-muted-foreground">Quest</th>
-                   <th className="py-2 px-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Guild</th>
-                   <th className="py-2 px-3 text-left font-medium text-muted-foreground hidden sm:table-cell">Status</th>
-                   <th className="py-2 px-3 text-left font-medium text-muted-foreground hidden md:table-cell">Role</th>
+                   <th className="py-2 px-3 text-left font-medium text-muted-foreground">{t("uiProfileQuestsTab.quest")}</th>
+                   <th className="py-2 px-3 text-left font-medium text-muted-foreground hidden sm:table-cell">{t("uiProfileQuestsTab.guild")}</th>
+                   <th className="py-2 px-3 text-left font-medium text-muted-foreground hidden sm:table-cell">{t("uiProfileQuestsTab.status")}</th>
+                   <th className="py-2 px-3 text-left font-medium text-muted-foreground hidden md:table-cell">{t("uiProfileQuestsTab.role")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -390,7 +393,7 @@ export function ProfileQuestsTab({
                           <button
                             onClick={() => toggleHighlight(q.id)}
                             className="p-1 rounded hover:bg-accent/50 transition-colors"
-                            title={isH ? "Remove highlight" : "Highlight quest"}
+                            title={isH ? t("uiProfileQuestsTab.removeHighlight") : t("uiProfileQuestsTab.highlightQuest")}
                           >
                             <Star className={cn("h-4 w-4", isH ? "text-amber-500 fill-amber-500" : "text-muted-foreground/40")} />
                           </button>
@@ -433,9 +436,9 @@ export function ProfileQuestsTab({
       {/* ─── Proposals (kept as-is) ─── */}
       {(isOwnProfile || proposals.length > 0) && (
         <section>
-          <h3 className="font-display font-semibold mb-3">Proposals ({proposals.length})</h3>
+          <h3 className="font-display font-semibold mb-3">{t("uiProfileQuestsTab.proposals")}{proposals.length})</h3>
           {proposals.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4">No proposals submitted.</p>
+            <p className="text-sm text-muted-foreground py-4">{t("uiProfileQuestsTab.noProposalsSubmitted")}</p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
               {proposals.map((p: any) => (
@@ -446,7 +449,7 @@ export function ProfileQuestsTab({
                     <Badge variant={p.status === "ACCEPTED" ? "default" : p.status === "REJECTED" ? "destructive" : "outline"} className="text-[10px] capitalize">
                       {p.status?.toLowerCase()}
                     </Badge>
-                    <span className="text-[10px] text-muted-foreground">{p.requested_credits} Credits · {p.upvotes_count} votes</span>
+                    <span className="text-[10px] text-muted-foreground">{p.requested_credits} {t("uiProfileQuestsTab.credits")} {p.upvotes_count} votes</span>
                   </div>
                 </Link>
               ))}
@@ -458,14 +461,14 @@ export function ProfileQuestsTab({
       {/* ─── Funded (kept as-is) ─── */}
       {canSeePrivate && fundedQuests.length > 0 && (
         <section>
-          <h3 className="font-display font-semibold mb-3">Quests funded ({fundedQuests.length})</h3>
+          <h3 className="font-display font-semibold mb-3">{t("uiProfileQuestsTab.questsFunded")}{fundedQuests.length})</h3>
           <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
             {fundedQuests.map((f: any) => (
               <Link key={f.id} to={`/quests/${f.quest_id}`} className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-all block">
                 <h4 className="font-display font-semibold truncate">{f.quests?.title}</h4>
                 <div className="flex items-center gap-2 mt-2">
                   <Badge variant="secondary" className="text-[10px]">{f.type}</Badge>
-                  <span className="text-[10px] text-muted-foreground">{f.amount} {f.type === "CREDITS" ? "Credits" : f.currency}</span>
+                  <span className="text-[10px] text-muted-foreground">{f.amount} {f.type === "CREDITS" ? t("uiProfileQuestsTab.credits2") : f.currency}</span>
                 </div>
               </Link>
             ))}
@@ -479,6 +482,7 @@ export function ProfileQuestsTab({
 function QuestCard({ quest, isOwnProfile, isHighlighted, toggleHighlight }: {
   quest: Quest; isOwnProfile: boolean; isHighlighted: boolean; toggleHighlight: (id: string) => void;
 }) {
+  const { t } = useTranslation();
   const st = STATUS_LABELS[quest.status];
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all relative group">
@@ -486,7 +490,7 @@ function QuestCard({ quest, isOwnProfile, isHighlighted, toggleHighlight }: {
         <button
           onClick={(e) => { e.preventDefault(); toggleHighlight(quest.id); }}
           className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-background/80 backdrop-blur-sm border border-border opacity-0 group-hover:opacity-100 transition-opacity hover:bg-accent/50"
-          title="Remove highlight"
+          title={t("uiProfileQuestsTab.removeHighlight")}
         >
           <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
         </button>

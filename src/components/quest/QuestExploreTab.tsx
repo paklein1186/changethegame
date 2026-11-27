@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Users, Heart, Building2, UserPlus, Lightbulb, Loader2, Mail, Sparkles, RefreshCw, Trophy, Link2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +51,7 @@ export function QuestExploreTab({
   translatedSummary,
   isSummaryTranslated,
 }: QuestExploreTabProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -111,7 +113,7 @@ export function QuestExploreTab({
       qc.invalidateQueries({ queryKey: ["quest-detail"] });
       toast({ title: "Summary generated!" });
     } catch (e: any) {
-      toast({ title: "Failed to generate summary", description: e.message, variant: "destructive" });
+      toast({ title: t("uiQuestExploreTab.failedToGenerateSummary"), description: e.message, variant: "destructive" });
     } finally {
       setGeneratingSummary(false);
     }
@@ -169,7 +171,7 @@ export function QuestExploreTab({
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-3">
               <Building2 className="h-5 w-5 text-primary" />
-              <h3 className="font-display font-semibold">Hosted by</h3>
+              <h3 className="font-display font-semibold">{t("uiQuestExploreTab.hostedBy")}</h3>
               <Badge variant="secondary" className="text-xs ml-1">{resolvedHosts.length}</Badge>
             </div>
             {(quest.guild_id || quest.company_id) && isOwner && (
@@ -208,7 +210,7 @@ export function QuestExploreTab({
           <AccordionTrigger className="hover:no-underline">
             <div className="flex items-center gap-3">
               <Lightbulb className="h-5 w-5 text-primary" />
-              <span className="font-display font-semibold">Opportunities</span>
+              <span className="font-display font-semibold">{t("questActivity.needsSection")}</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -216,43 +218,43 @@ export function QuestExploreTab({
               {canPostUpdate && (
                 <Dialog open={inviteOpen} onOpenChange={(o) => { setInviteOpen(o); if (!o) setInviteEmail(""); }}>
                   <DialogTrigger asChild>
-                    <Button size="sm" variant="outline"><UserPlus className="h-4 w-4 mr-1" /> Invite</Button>
+                    <Button size="sm" variant="outline"><UserPlus className="h-4 w-4 mr-1" /> {t("uiQuestExploreTab.invite")}</Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader><DialogTitle>Invite a participant</DialogTitle></DialogHeader>
+                    <DialogHeader><DialogTitle>{t("uiQuestExploreTab.inviteAParticipant")}</DialogTitle></DialogHeader>
                     <div className="space-y-4 mt-2">
                       <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Search existing members</label>
+                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("uiQuestExploreTab.searchExistingMembers")}</label>
                         <UserSearchInput
                           onSelect={async (user) => {
                             const already = (participants || []).some((p: any) => p.user_id === user.user_id);
-                            if (already) { toast({ title: "Already a participant" }); return; }
+                            if (already) { toast({ title: t("uiQuestExploreTab.alreadyAParticipant") }); return; }
                             const { error } = await supabase.from("quest_participants").insert({
                               quest_id: quest.id, user_id: user.user_id, role: "COLLABORATOR", status: "ACCEPTED",
                             });
-                            if (error) { toast({ title: "Failed to invite", variant: "destructive" }); return; }
+                            if (error) { toast({ title: t("uiQuestExploreTab.failedToInvite"), variant: "destructive" }); return; }
                             sendInviteNotification({ invitedUserId: user.user_id, inviterName: currentUser.name, entityType: "quest", entityId: quest.id, entityName: quest.title });
                             setInviteOpen(false);
                             qc.invalidateQueries({ queryKey: ["quest-participants", quest.id] });
                             toast({ title: `${user.display_name || "User"} invited!` });
                           }}
-                          placeholder="Search by name…"
+                          placeholder={t("uiQuestExploreTab.searchByName")}
                           excludeUserIds={participantUserIds}
                         />
                       </div>
                       <div className="relative">
                         <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-                        <div className="relative flex justify-center text-xs"><span className="bg-background px-2 text-muted-foreground">or invite by email</span></div>
+                        <div className="relative flex justify-center text-xs"><span className="bg-background px-2 text-muted-foreground">{t("uiQuestExploreTab.orInviteByEmail")}</span></div>
                       </div>
                       <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Invite someone new via email</label>
+                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t("uiQuestExploreTab.inviteSomeoneNewViaEmail")}</label>
                         <form
                           className="flex gap-2"
                           onSubmit={async (e) => {
                             e.preventDefault();
                             const email = inviteEmail.trim().toLowerCase();
                             if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                              toast({ title: "Please enter a valid email", variant: "destructive" });
+                              toast({ title: t("uiQuestExploreTab.pleaseEnterAValidEmail"), variant: "destructive" });
                               return;
                             }
                             setInviteEmailSending(true);
@@ -265,14 +267,14 @@ export function QuestExploreTab({
                                 toast({ title: data.error, variant: "destructive" });
                               } else if (data?.type === "existing_user") {
                                 qc.invalidateQueries({ queryKey: ["quest-participants", quest.id] });
-                                toast({ title: "User found and added as participant!" });
+                                toast({ title: t("uiQuestExploreTab.userFoundAndAddedAsParticipant") });
                                 setInviteOpen(false);
                               } else {
-                                toast({ title: data?.emailSent ? "Invitation email sent!" : "Invite recorded (email delivery pending)" });
+                                toast({ title: data?.emailSent ? "Invitation email sent!" : t("uiQuestExploreTab.inviteRecordedEmailDeliveryPending") });
                                 setInviteOpen(false);
                               }
                             } catch (err: any) {
-                              toast({ title: err.message || "Failed to send invite", variant: "destructive" });
+                              toast({ title: err.message || t("uiQuestExploreTab.failedToSendInvite"), variant: "destructive" });
                             } finally {
                               setInviteEmailSending(false);
                               setInviteEmail("");
@@ -281,7 +283,7 @@ export function QuestExploreTab({
                         >
                           <Input type="email" placeholder="colleague@example.com" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="flex-1" />
                           <Button type="submit" size="sm" disabled={inviteEmailSending}>
-                            {inviteEmailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Mail className="h-4 w-4 mr-1" /> Send</>}
+                            {inviteEmailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Mail className="h-4 w-4 mr-1" /> {t("uiQuestExploreTab.send")}</>}
                           </Button>
                         </form>
                       </div>
@@ -364,7 +366,7 @@ export function QuestExploreTab({
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-3">
                 <Trophy className="h-5 w-5 text-amber-500" />
-                <span className="font-display font-semibold">Available Rewards</span>
+                <span className="font-display font-semibold">{t("uiQuestExploreTab.availableRewards")}</span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -373,21 +375,21 @@ export function QuestExploreTab({
                   <div className="rounded-lg border border-border bg-background p-3">
                     <p className="text-xs text-muted-foreground font-medium">$CTG Reward</p>
                     <p className="text-lg font-bold text-primary">{quest.credit_reward} $CTG</p>
-                    <p className="text-[10px] text-muted-foreground">Per participant on completion</p>
+                    <p className="text-[10px] text-muted-foreground">{t("uiQuestExploreTab.perParticipantOnCompletion")}</p>
                   </div>
                 )}
                 {Number((quest as any).coins_budget ?? 0) > 0 && (
                   <div className="rounded-lg border border-border bg-background p-3">
-                    <p className="text-xs text-muted-foreground font-medium">Coins Pool</p>
-                    <p className="text-lg font-bold">{Number((quest as any).coins_escrow ?? 0).toLocaleString()} Coins</p>
-                    <p className="text-[10px] text-muted-foreground">In escrow</p>
+                    <p className="text-xs text-muted-foreground font-medium">{t("uiQuestExploreTab.coinsPool")}</p>
+                    <p className="text-lg font-bold">{Number((quest as any).coins_escrow ?? 0).toLocaleString()} {t("uiQuestExploreTab.coins")}</p>
+                    <p className="text-[10px] text-muted-foreground">{t("uiQuestExploreTab.inEscrow")}</p>
                   </div>
                 )}
                 {Number((quest as any).ctg_budget ?? 0) > 0 && (
                   <div className="rounded-lg border border-border bg-background p-3">
                     <p className="text-xs text-muted-foreground font-medium">$CTG Pool</p>
                     <p className="text-lg font-bold">{Number((quest as any).ctg_escrow ?? 0).toLocaleString()} $CTG</p>
-                    <p className="text-[10px] text-muted-foreground">Frozen in escrow</p>
+                    <p className="text-[10px] text-muted-foreground">{t("uiQuestExploreTab.frozenInEscrow")}</p>
                   </div>
                 )}
               </div>

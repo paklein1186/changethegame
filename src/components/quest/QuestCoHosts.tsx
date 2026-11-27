@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Plus, X, Building2, Shield, Users2, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ export function QuestCoHostsManager({
   hosts,
   canManage,
 }: QuestCoHostsManagerProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { data: partners } = useAcceptedPartners(primaryEntityType, primaryEntityId);
   const addCoHost = useAddQuestCoHost();
@@ -37,7 +39,7 @@ export function QuestCoHostsManager({
       await addCoHost.mutateAsync({ questId, entityType, entityId });
       toast({ title: "Co-host added" });
     } catch (err: any) {
-      toast({ title: "Failed to add co-host", description: err.message, variant: "destructive" });
+      toast({ title: t("uiQuestCoHosts.failedToAddCoHost"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -47,21 +49,21 @@ export function QuestCoHostsManager({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="text-xs">
-          <Plus className="h-3 w-3 mr-1" /> Add co-host
+          <Plus className="h-3 w-3 mr-1" /> {t("uiQuestCoHosts.addCoHost")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Co-host Partner</DialogTitle>
+          <DialogTitle>{t("uiQuestCoHosts.addCoHostPartner")}</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          Only accepted partners of the primary host can be added as co-hosts.
+          {t("uiQuestCoHosts.onlyAcceptedPartnersOfThePrimary")}
         </p>
         {availablePartners.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Users2 className="h-8 w-8 mx-auto mb-2 opacity-40" />
-            <p className="text-sm">No available partners to add.</p>
-            <p className="text-xs mt-1">Create partnerships first from your guild or company settings.</p>
+            <p className="text-sm">{t("uiQuestCoHosts.noAvailablePartnersToAdd")}</p>
+            <p className="text-xs mt-1">{t("uiQuestCoHosts.createPartnershipsFirstFromYourGuild")}</p>
           </div>
         ) : (
           <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -76,7 +78,7 @@ export function QuestCoHostsManager({
                     <p className="text-sm font-medium">{p.name}</p>
                     <Badge variant="outline" className="text-[10px]">
                       {p.entityType === "GUILD" ? <Shield className="h-2.5 w-2.5 mr-0.5" /> : <Building2 className="h-2.5 w-2.5 mr-0.5" />}
-                      {p.entityType === "GUILD" ? "Guild" : "Company"}
+                      {p.entityType === "GUILD" ? t("uiQuestCoHosts.guild") : "Company"}
                     </Badge>
                   </div>
                 </div>
@@ -86,7 +88,7 @@ export function QuestCoHostsManager({
                   onClick={() => handleAdd(p.entityType, p.entityId)}
                   disabled={addCoHost.isPending}
                 >
-                  <Plus className="h-3 w-3 mr-1" /> Add
+                  <Plus className="h-3 w-3 mr-1" /> {t("uiQuestCoHosts.add")}
                 </Button>
               </div>
             ))}
@@ -99,6 +101,7 @@ export function QuestCoHostsManager({
 
 /** Compact display-only component for quest detail "Hosted by" section */
 export function QuestHostsDisplay({ hosts }: { hosts: ResolvedHost[] }) {
+  const { t } = useTranslation();
   const primary = hosts.find(h => h.role === "PRIMARY");
   const coHosts = hosts.filter(h => h.role === "CO_HOST");
 
@@ -117,7 +120,7 @@ export function QuestHostsDisplay({ hosts }: { hosts: ResolvedHost[] }) {
       )}
       {coHosts.length > 0 && (
         <>
-          <span className="text-muted-foreground text-xs">co-hosted with</span>
+          <span className="text-muted-foreground text-xs">{t("uiQuestCoHosts.coHostedWith")}</span>
           {coHosts.map((h, i) => (
             <span key={h.id} className="inline-flex items-center gap-1">
               <a href={h.entity_type === "GUILD" ? `/guilds/${h.entity_id}` : `/companies/${h.entity_id}`} className="flex items-center gap-1 hover:text-primary transition-colors">

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Save, Euro } from "lucide-react";
@@ -67,6 +68,7 @@ const MODELE_RESEAU: Omit<PlanRow, "sort_order">[] = [
 ];
 
 export function GuildEuroPlansSettings({ guild, guildId }: { guild: any; guildId: string }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [enabled, setEnabled] = useState<boolean>(Boolean(guild?.euro_membership_enabled));
@@ -240,7 +242,7 @@ export function GuildEuroPlansSettings({ guild, guildId }: { guild: any; guildId
                     value={row.billing_interval}
                     onChange={(e) => update(i, { billing_interval: e.target.value as "month" | "year" })}
                   >
-                    <option value="year">Par an</option>
+                    <option value="year">{t("uiGuildEuroPlansSettings.parAn")}</option>
                     <option value="month">Par mois</option>
                   </select>
                 </div>

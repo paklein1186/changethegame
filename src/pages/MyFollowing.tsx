@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,13 +13,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const TYPE_META: Record<string, { label: string; icon: React.ElementType; linkPrefix: string }> = {
   USER: { label: "People", icon: UserRound, linkPrefix: "/users" },
-  GUILD: { label: "Guilds & Collectives", icon: Shield, linkPrefix: "/guilds" },
+  GUILD: { get label() { return i18n.t("uiMyFollowing.guildsCollectives"); }, icon: Shield, linkPrefix: "/guilds" },
   COMPANY: { label: "Companies", icon: Building2, linkPrefix: "/companies" },
-  QUEST: { label: "Quests", icon: Compass, linkPrefix: "/quests" },
+  QUEST: { get label() { return i18n.t("uiMyFollowing.quests"); }, icon: Compass, linkPrefix: "/quests" },
   POD: { label: "Pods", icon: CircleDot, linkPrefix: "/pods" },
   SERVICE: { label: "Services", icon: Wrench, linkPrefix: "/services" },
   COURSE: { label: "Courses", icon: BookOpen, linkPrefix: "/courses" },
-  TERRITORY: { label: "Territories", icon: MapPin, linkPrefix: "/territories" },
+  TERRITORY: { get label() { return i18n.t("uiMyFollowing.territories"); }, icon: MapPin, linkPrefix: "/territories" },
 };
 
 const TYPE_ORDER = ["USER", "GUILD", "COMPANY", "QUEST", "POD", "SERVICE", "COURSE", "TERRITORY"];
@@ -30,6 +32,7 @@ interface FollowRow {
 }
 
 export default function MyFollowing() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const qc = useQueryClient();
 
@@ -103,7 +106,7 @@ export default function MyFollowing() {
   return (
     <PageShell>
       <div className="max-w-2xl mx-auto py-10 px-4">
-        <h1 className="text-2xl font-display font-bold mb-6">My Following</h1>
+        <h1 className="text-2xl font-display font-bold mb-6">{t("uiMyFollowing.myFollowing")}</h1>
 
         {isLoading ? (
           <div className="flex justify-center py-12">
@@ -111,7 +114,7 @@ export default function MyFollowing() {
           </div>
         ) : grouped.length === 0 ? (
           <p className="text-muted-foreground text-center py-12">
-            You're not following anything yet. Explore and follow entities to see them here.
+            {t("uiMyFollowing.youReNotFollowingAnythingYet")}
           </p>
         ) : (
           <div className="space-y-8">

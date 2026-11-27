@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -36,6 +37,7 @@ const REPORT_REASONS = [
 ];
 
 export default function MyStarredExcerpts() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -141,10 +143,10 @@ export default function MyStarredExcerpts() {
         reason: reportReason, custom_reason: reportCustom.trim() || null,
       });
       setReportDialog(null);
-      toast({ title: "Report submitted. Thank you." });
+      toast({ title: t("uiMyStarredExcerpts.reportSubmittedThankYou") });
     } catch (e: any) {
       if (e.message?.includes("duplicate")) toast({ title: "Already reported", variant: "destructive" });
-      else toast({ title: "Error", description: e.message, variant: "destructive" });
+      else toast({ title: t("uiMyStarredExcerpts.error"), description: e.message, variant: "destructive" });
     }
   };
 
@@ -153,7 +155,7 @@ export default function MyStarredExcerpts() {
       <div className="max-w-3xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <Star className="h-6 w-6 text-accent" />
-          <h1 className="font-display text-2xl font-bold">My Starred Excerpts</h1>
+          <h1 className="font-display text-2xl font-bold">{t("uiMyStarredExcerpts.myStarredExcerpts")}</h1>
         </div>
 
         {/* Filters */}
@@ -161,7 +163,7 @@ export default function MyStarredExcerpts() {
           <Select value={filterSource} onValueChange={setFilterSource}>
             <SelectTrigger className="w-32 text-xs h-8"><SelectValue placeholder="Source" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All sources</SelectItem>
+              <SelectItem value="all">{t("uiMyStarredExcerpts.allSources")}</SelectItem>
               <SelectItem value="agent">AI only</SelectItem>
               <SelectItem value="human">Human only</SelectItem>
             </SelectContent>
@@ -169,7 +171,7 @@ export default function MyStarredExcerpts() {
           <Select value={filterEntity} onValueChange={setFilterEntity}>
             <SelectTrigger className="w-32 text-xs h-8"><SelectValue placeholder="Entity" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All units</SelectItem>
+              <SelectItem value="all">{t("uiMyStarredExcerpts.allUnits")}</SelectItem>
               {Object.entries(ENTITY_LABELS).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
             </SelectContent>
           </Select>
@@ -181,16 +183,16 @@ export default function MyStarredExcerpts() {
               <SelectItem value="upvoted">Most upvoted</SelectItem>
             </SelectContent>
           </Select>
-          <Input placeholder="Filter by tag..." value={searchTag} onChange={(e) => setSearchTag(e.target.value)} className="w-36 text-xs h-8" />
+          <Input placeholder={t("uiMyStarredExcerpts.filterByTag")} value={searchTag} onChange={(e) => setSearchTag(e.target.value)} className="w-36 text-xs h-8" />
         </div>
 
-        {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
+        {isLoading && <p className="text-sm text-muted-foreground">{t("uiMyStarredExcerpts.loading")}</p>}
 
         {!isLoading && filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground gap-2">
             <BookOpen className="h-10 w-10 opacity-30" />
-            <p className="text-sm">You haven't starred any excerpts yet.</p>
-            <p className="text-xs">Use the ★ icon in chats to save useful insights.</p>
+            <p className="text-sm">{t("uiMyStarredExcerpts.youHavenTStarredAnyExcerpts")}</p>
+            <p className="text-xs">{t("uiMyStarredExcerpts.useTheIconInChatsTo")}</p>
           </div>
         )}
 
@@ -205,7 +207,7 @@ export default function MyStarredExcerpts() {
                 <span className="text-sm font-semibold">{first.entityName}</span>
                 {route && (
                   <Button variant="ghost" size="sm" className="text-xs h-6 px-2" onClick={() => navigate(`${route}/${first.entityId}`)}>
-                    <ExternalLink className="h-3 w-3 mr-1" /> Open
+                    <ExternalLink className="h-3 w-3 mr-1" /> {t("uiMyStarredExcerpts.open")}
                   </Button>
                 )}
               </div>
@@ -229,7 +231,7 @@ export default function MyStarredExcerpts() {
           <DialogContent className="sm:max-w-sm">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2"><Flag className="h-4 w-4 text-destructive" /> Report Excerpt</DialogTitle>
-              <DialogDescription>Why are you reporting this excerpt?</DialogDescription>
+              <DialogDescription>{t("uiMyStarredExcerpts.whyAreYouReportingThisExcerpt")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
               <Select value={reportReason} onValueChange={setReportReason}>
@@ -239,8 +241,8 @@ export default function MyStarredExcerpts() {
               {reportReason === "OTHER" && <Textarea value={reportCustom} onChange={(e) => setReportCustom(e.target.value)} placeholder="Please describe..." rows={3} className="text-sm" />}
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setReportDialog(null)}>Cancel</Button>
-              <Button variant="destructive" onClick={handleReport}><Flag className="h-3.5 w-3.5 mr-1" /> Submit</Button>
+              <Button variant="outline" onClick={() => setReportDialog(null)}>{t("uiMyStarredExcerpts.cancel")}</Button>
+              <Button variant="destructive" onClick={handleReport}><Flag className="h-3.5 w-3.5 mr-1" /> {t("uiMyStarredExcerpts.submit")}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -250,6 +252,7 @@ export default function MyStarredExcerpts() {
 }
 
 function PersonalExcerptItem({ excerpt, onDelete, onUpvote, onReport }: { excerpt: any; onDelete: () => void; onUpvote: () => void; onReport: () => void }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const displayTitle = excerpt.title || excerpt.excerpt_text.slice(0, 60) + (excerpt.excerpt_text.length > 60 ? "…" : "");
 
@@ -271,7 +274,7 @@ function PersonalExcerptItem({ excerpt, onDelete, onUpvote, onReport }: { excerp
             <DropdownMenuTrigger asChild><button className="text-muted-foreground hover:text-foreground"><MoreHorizontal className="h-3.5 w-3.5" /></button></DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="text-xs">
               <DropdownMenuItem onClick={onReport} className="text-xs gap-2"><Flag className="h-3 w-3" /> Report</DropdownMenuItem>
-              <DropdownMenuItem onClick={onDelete} className="text-xs text-destructive gap-2"><Trash2 className="h-3 w-3" /> Delete</DropdownMenuItem>
+              <DropdownMenuItem onClick={onDelete} className="text-xs text-destructive gap-2"><Trash2 className="h-3 w-3" /> {t("uiMyStarredExcerpts.delete")}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

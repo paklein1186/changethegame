@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { UserPlus, Clock, Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ export function GuildJoinButton({
   currentUserName,
   onJoined,
 }: GuildJoinButtonProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { notifyJoinRequest } = useNotifications();
   const [loading, setLoading] = useState(false);
@@ -67,10 +69,10 @@ export function GuildJoinButton({
     });
     setLoading(false);
     if (error) {
-      toast({ title: "Failed to join", description: error.message, variant: "destructive" });
+      toast({ title: t("uiGuildJoinButton.failedToJoin"), description: error.message, variant: "destructive" });
     } else {
       autoFollowEntity(currentUserId, "GUILD", guildId);
-      toast({ title: "Joined guild!" });
+      toast({ title: t("uiGuildJoinButton.joinedGuild") });
       onJoined?.();
     }
   };
@@ -90,14 +92,14 @@ export function GuildJoinButton({
     setLoading(false);
     if (error) {
       if (error.message?.includes("unique") || error.code === "23505") {
-        toast({ title: "You already have a pending application", variant: "destructive" });
+        toast({ title: t("uiGuildJoinButton.youAlreadyHaveAPendingApplication"), variant: "destructive" });
       } else {
-        toast({ title: "Failed to submit", description: error.message, variant: "destructive" });
+        toast({ title: t("uiGuildJoinButton.failedToSubmit"), description: error.message, variant: "destructive" });
       }
     } else {
       setPendingApp(true);
       setApplyOpen(false);
-      toast({ title: "Application submitted!", description: "Guild admins will review it." });
+      toast({ title: "Application submitted!", description: t("uiGuildJoinButton.guildAdminsWillReviewIt") });
       notifyJoinRequest({ entityType: "guild", entityId: guildId, entityName: guildName || "guild", applicantName: currentUserName || "Someone" });
     }
   };
@@ -109,7 +111,7 @@ export function GuildJoinButton({
     return (
       <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
         <Lock className="h-4 w-4" />
-        <span>Invite-only guild</span>
+        <span>{t("uiGuildJoinButton.inviteOnlyGuild")}</span>
       </div>
     );
   }
@@ -118,7 +120,7 @@ export function GuildJoinButton({
   if (joinPolicy === GuildJoinPolicy.APPROVAL_REQUIRED && pendingApp) {
     return (
       <Badge variant="outline" className="gap-1">
-        <Clock className="h-3 w-3" /> Application pending
+        <Clock className="h-3 w-3" /> {t("uiGuildJoinButton.applicationPending")}
       </Badge>
     );
   }
@@ -131,18 +133,18 @@ export function GuildJoinButton({
           setAnswers(applicationQuestions.map(() => ""));
           setApplyOpen(true);
         }}>
-          <UserPlus className="h-4 w-4 mr-1" /> Apply to join
+          <UserPlus className="h-4 w-4 mr-1" /> {t("uiGuildJoinButton.applyToJoin")}
         </Button>
 
         <Dialog open={applyOpen} onOpenChange={setApplyOpen}>
           <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Apply to join</DialogTitle>
-              <DialogDescription>Answer the questions below. Guild admins will review your application.</DialogDescription>
+              <DialogTitle>{t("uiGuildJoinButton.applyToJoin")}</DialogTitle>
+              <DialogDescription>{t("uiGuildJoinButton.answerTheQuestionsBelowGuildAdmins")}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-2">
               {applicationQuestions.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No specific questions — just submit to apply.</p>
+                <p className="text-sm text-muted-foreground">{t("uiGuildJoinButton.noSpecificQuestionsJustSubmitTo")}</p>
               ) : (
                 applicationQuestions.map((q, i) => (
                   <div key={i}>
@@ -154,7 +156,7 @@ export function GuildJoinButton({
                         next[i] = e.target.value;
                         setAnswers(next);
                       }}
-                      placeholder="Your answer…"
+                      placeholder={t("uiGuildJoinButton.yourAnswer")}
                       maxLength={1000}
                       className="resize-none"
                     />
@@ -163,7 +165,7 @@ export function GuildJoinButton({
               )}
               <Button onClick={handleSubmitApplication} disabled={loading} className="w-full">
                 {loading && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-                Submit application
+                {t("uiGuildJoinButton.submitApplication")}
               </Button>
             </div>
           </DialogContent>
@@ -176,7 +178,7 @@ export function GuildJoinButton({
   return (
     <Button size="sm" variant="outline" onClick={handleOpenJoin} disabled={loading}>
       {loading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <UserPlus className="h-4 w-4 mr-1" />}
-      Join Guild
+      {t("uiGuildJoinButton.joinGuild")}
     </Button>
   );
 }

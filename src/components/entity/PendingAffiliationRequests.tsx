@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link2, CheckCircle2, XCircle, Loader2, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ interface PendingRequest {
 }
 
 export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -61,9 +63,9 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
     setProcessing(id);
     const { error } = await supabase.rpc("approve_quest_affiliation", { _affiliation_id: id } as any);
     if (error) {
-      toast({ title: "Error approving", description: error.message, variant: "destructive" });
+      toast({ title: t("uiPendingAffiliationRequests.errorApproving"), description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Affiliation approved", description: "The quest is now linked to this entity." });
+      toast({ title: "Affiliation approved", description: t("uiPendingAffiliationRequests.theQuestIsNowLinkedTo") });
       qc.invalidateQueries({ queryKey: ["pending-affiliations", entityType, entityId] });
       qc.invalidateQueries({ queryKey: ["quests-for-guild", entityId] });
       qc.invalidateQueries({ queryKey: ["quests-for-company", entityId] });
@@ -76,7 +78,7 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
     setProcessing(id);
     const { error } = await supabase.rpc("reject_quest_affiliation", { _affiliation_id: id } as any);
     if (error) {
-      toast({ title: "Error declining", description: error.message, variant: "destructive" });
+      toast({ title: t("uiPendingAffiliationRequests.errorDeclining"), description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Affiliation declined" });
       qc.invalidateQueries({ queryKey: ["pending-affiliations", entityType, entityId] });
@@ -91,7 +93,7 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
       <CardContent className="p-4 space-y-3">
         <h4 className="font-display font-semibold text-sm flex items-center gap-2">
           <Link2 className="h-4 w-4 text-amber-600" />
-          Pending Quest Affiliations
+          {t("uiPendingAffiliationRequests.pendingQuestAffiliations")}
           <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-300">{requests.length}</Badge>
         </h4>
         <div className="space-y-2">
@@ -106,7 +108,7 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
                   {req.quest_title}
                 </button>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Requested by {req.created_by_name}
+                  {t("uiPendingAffiliationRequests.requestedBy")} {req.created_by_name}
                 </p>
               </div>
               <div className="flex items-center gap-1.5 ml-3 shrink-0">
@@ -118,7 +120,7 @@ export function PendingAffiliationRequests({ entityType, entityId, isAdmin }: Pr
                   disabled={processing === req.id}
                 >
                   {processing === req.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3 mr-1" />}
-                  Approve
+                  {t("uiPendingAffiliationRequests.approve")}
                 </Button>
                 <Button
                   size="sm"

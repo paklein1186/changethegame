@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useCallback } from "react";
 import { Plus, MapPin, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function AddTerritoryDialog({ onCreated }: Props) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [postalCode, setPostalCode] = useState("");
@@ -43,10 +45,10 @@ export function AddTerritoryDialog({ onCreated }: Props) {
       if (data?.[0]) {
         setGeocoded({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), display: data[0].display_name });
       } else {
-        toast({ title: "Could not find location", description: "Try a different name or postal code", variant: "destructive" });
+        toast({ title: t("uiAddTerritoryDialog.couldNotFindLocation"), description: t("uiAddTerritoryDialog.tryADifferentNameOrPostal"), variant: "destructive" });
       }
     } catch {
-      toast({ title: "Geocoding failed", variant: "destructive" });
+      toast({ title: t("uiAddTerritoryDialog.geocodingFailed"), variant: "destructive" });
     } finally {
       setGeocoding(false);
     }
@@ -67,7 +69,7 @@ export function AddTerritoryDialog({ onCreated }: Props) {
 
     if (existing) {
       onCreated(existing.id);
-      toast({ title: "This territory already exists; it has been selected for you." });
+      toast({ title: t("uiAddTerritoryDialog.thisTerritoryAlreadyExistsItHas") });
       setOpen(false);
       resetForm();
       return;
@@ -89,7 +91,7 @@ export function AddTerritoryDialog({ onCreated }: Props) {
       .select()
       .single();
 
-    if (error) { toast({ title: "Failed to create territory", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiAddTerritoryDialog.failedToCreateTerritory"), variant: "destructive" }); return; }
 
     onCreated(newTerritory.id);
     qc.invalidateQueries({ queryKey: ["territories"] });
@@ -109,18 +111,18 @@ export function AddTerritoryDialog({ onCreated }: Props) {
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Plus className="h-3.5 w-3.5 mr-1" /> New Territory
+          <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiAddTerritoryDialog.newTerritory")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-primary" /> New Territory
+            <MapPin className="h-5 w-5 text-primary" /> {t("uiAddTerritoryDialog.newTerritory")}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <div>
-            <label className="text-sm font-medium mb-1 block">Name *</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiAddTerritoryDialog.name")}</label>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Marseille" maxLength={80} />
           </div>
           <div>
@@ -150,7 +152,7 @@ export function AddTerritoryDialog({ onCreated }: Props) {
             )}
           </div>
           <div>
-            <label className="text-sm font-medium mb-1 block">Level</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiAddTerritoryDialog.level")}</label>
             <Select value={level} onValueChange={(v) => setLevel(v as TerritoryLevel)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -167,8 +169,8 @@ export function AddTerritoryDialog({ onCreated }: Props) {
               <SelectTrigger><SelectValue placeholder="Auto-detect" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value={TerritorialGranularity.DISTRICT_OR_COMMUNE}>District / Commune</SelectItem>
-                <SelectItem value={TerritorialGranularity.NUTS3}>NUTS3 (County-level)</SelectItem>
-                <SelectItem value={TerritorialGranularity.NUTS2}>NUTS2 (Province-level)</SelectItem>
+                <SelectItem value={TerritorialGranularity.NUTS3}>{t("uiAddTerritoryDialog.nuts3CountyLevel")}</SelectItem>
+                <SelectItem value={TerritorialGranularity.NUTS2}>{t("uiAddTerritoryDialog.nuts2ProvinceLevel")}</SelectItem>
                 <SelectItem value={TerritorialGranularity.NUTS1}>NUTS1 (Major region)</SelectItem>
                 <SelectItem value={TerritorialGranularity.COUNTRY}>Country</SelectItem>
                 <SelectItem value={TerritorialGranularity.CUSTOM_PERIMETER}>Custom Perimeter</SelectItem>
@@ -176,7 +178,7 @@ export function AddTerritoryDialog({ onCreated }: Props) {
             </Select>
           </div>
           <Button onClick={handleSubmit} disabled={!name.trim()} className="w-full">
-            Create Territory
+            {t("uiAddTerritoryDialog.createTerritory")}
           </Button>
         </div>
       </DialogContent>

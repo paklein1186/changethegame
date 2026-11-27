@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Globe, Loader2, Sparkles, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ interface Props {
 }
 
 export function UrlScrapePanel({ topics, territories, onApply }: Props) {
+  const { t } = useTranslation();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ScrapeResult | null>(null);
@@ -62,14 +64,14 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
 
       if (error) throw error;
       if (data?.error) {
-        toast({ title: "Scrape failed", description: data.error, variant: "destructive" });
+        toast({ title: t("uiUrlScrapePanel.scrapeFailed"), description: data.error, variant: "destructive" });
         return;
       }
 
       setResult(data as ScrapeResult);
-      toast({ title: "Page analyzed!", description: "Review the suggestions below." });
+      toast({ title: "Page analyzed!", description: t("uiUrlScrapePanel.reviewTheSuggestionsBelow") });
     } catch (e: any) {
-      toast({ title: "Scrape failed", description: e.message || "Could not analyze this URL.", variant: "destructive" });
+      toast({ title: t("uiUrlScrapePanel.scrapeFailed"), description: e.message || t("uiUrlScrapePanel.couldNotAnalyzeThisUrl"), variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -121,18 +123,18 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
     if (result.description) parts.push("description");
     if (topicIds.length) parts.push(`${topicIds.length} topics`);
     if (territoryIds.length) parts.push(`${territoryIds.length} territories`);
-    toast({ title: "Applied!", description: parts.length ? `Pre-filled: ${parts.join(", ")}` : "No matching data found." });
+    toast({ title: "Applied!", description: parts.length ? `Pre-filled: ${parts.join(", ")}` : t("uiUrlScrapePanel.noMatchingDataFound") });
   };
 
   return (
     <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
       <div className="flex items-center gap-2 text-sm font-medium">
         <Globe className="h-4 w-4 text-primary" />
-        <span>Import from URL</span>
+        <span>{t("uiUrlScrapePanel.importFromUrl")}</span>
         <Sparkles className="h-3.5 w-3.5 text-amber-500" />
       </div>
       <p className="text-xs text-muted-foreground">
-        Paste a website URL to auto-fill title, description, topics &amp; territories.
+        {t("uiUrlScrapePanel.pasteAWebsiteUrlToAuto")}
       </p>
 
       <div className="flex gap-2">
@@ -162,19 +164,19 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
           <div className="space-y-1.5">
             {result.name && (
               <div className="flex items-start gap-2">
-                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">Title</span>
+                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">{t("uiUrlScrapePanel.title")}</span>
                 <span className="text-xs">{result.name}</span>
               </div>
             )}
             {result.description && (
               <div className="flex items-start gap-2">
-                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">Description</span>
+                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">{t("uiUrlScrapePanel.description")}</span>
                 <span className="text-xs line-clamp-3">{result.description}</span>
               </div>
             )}
             {result.suggestedTopics.length > 0 && (
               <div className="flex items-start gap-2">
-                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">Topics</span>
+                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">{t("uiUrlScrapePanel.topics")}</span>
                 <div className="flex flex-wrap gap-1">
                   {result.suggestedTopics.map((t) => {
                     const matched = topics.some(
@@ -201,7 +203,7 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
             )}
             {result.suggestedTerritories.length > 0 && (
               <div className="flex items-start gap-2">
-                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">Territories</span>
+                <span className="text-xs font-medium text-muted-foreground shrink-0 w-20">{t("uiUrlScrapePanel.territories")}</span>
                 <div className="flex flex-wrap gap-1">
                   {result.suggestedTerritories.map((t) => {
                     const matched = territories.some(
@@ -235,7 +237,7 @@ export function UrlScrapePanel({ topics, territories, onApply }: Props) {
             disabled={applied}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            {applied ? "Applied ✓" : "Apply suggestions"}
+            {applied ? "Applied ✓" : t("uiUrlScrapePanel.applySuggestions")}
           </Button>
         </div>
       )}

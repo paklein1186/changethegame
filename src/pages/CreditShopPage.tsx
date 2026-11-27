@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -22,77 +24,78 @@ interface ShopItem {
 
 const SHOP_ITEMS: ShopItem[] = [
   {
-    label: "Create an extra quest",
+    get label() { return i18n.t("uiCreditShopPage.createAnExtraQuest"); },
     cost: CREDIT_COSTS.EXTRA_QUEST_CREATION,
-    description: "Exceed your plan's quest limit with a one-time credit spend.",
+    get description() { return i18n.t("uiCreditShopPage.exceedYourPlanSQuestLimit"); },
     icon: <Rocket className="h-5 w-5" />,
     category: "capacity",
   },
   {
-    label: "Open an extra pod",
+    get label() { return i18n.t("uiCreditShopPage.openAnExtraPod"); },
     cost: CREDIT_COSTS.EXTRA_POD_CREATION,
-    description: "Spin up an additional pod beyond your plan allowance.",
+    get description() { return i18n.t("uiCreditShopPage.spinUpAnAdditionalPodBeyond"); },
     icon: <Store className="h-5 w-5" />,
     category: "capacity",
   },
   {
-    label: "Boost quest visibility",
+    get label() { return i18n.t("uiCreditShopPage.boostQuestVisibility"); },
     cost: CREDIT_COSTS.BOOST_QUEST_VISIBILITY,
-    description: "Push your quest higher in Explore and search results for 7 days.",
+    get description() { return i18n.t("uiCreditShopPage.pushYourQuestHigherInExplore"); },
     icon: <Eye className="h-5 w-5" />,
     category: "visibility",
   },
   {
     label: "Boost service visibility",
     cost: CREDIT_COSTS.BOOST_SERVICE_VISIBILITY,
-    description: "Increase your service's ranking in the marketplace for 7 days.",
+    get description() { return i18n.t("uiCreditShopPage.increaseYourServiceSRankingIn"); },
     icon: <Megaphone className="h-5 w-5" />,
     category: "visibility",
   },
   {
-    label: "Feature quest for 7 days",
+    get label() { return i18n.t("uiCreditShopPage.featureQuestFor7Days"); },
     cost: CREDIT_COSTS.FEATURE_QUEST_7D,
-    description: "Pin your quest to the Featured section on the Explore page.",
+    get description() { return i18n.t("uiCreditShopPage.pinYourQuestToTheFeatured"); },
     icon: <Star className="h-5 w-5" />,
     category: "visibility",
   },
   {
-    label: "Boost guild in Explore",
+    get label() { return i18n.t("uiCreditShopPage.boostGuildInExplore"); },
     cost: CREDIT_COSTS.BOOST_GUILD_EXPLORE,
-    description: "Highlight your guild for increased discoverability.",
+    get description() { return i18n.t("uiCreditShopPage.highlightYourGuildForIncreasedDiscoverability"); },
     icon: <ShieldCheck className="h-5 w-5" />,
     category: "visibility",
   },
   {
     label: "Boost course visibility",
     cost: CREDIT_COSTS.BOOST_COURSE,
-    description: "Promote your course in the learning hub.",
+    get description() { return i18n.t("uiCreditShopPage.promoteYourCourseInTheLearning"); },
     icon: <GraduationCap className="h-5 w-5" />,
     category: "visibility",
   },
   {
     label: "AI Pro session",
     cost: CREDIT_COSTS.ENABLE_AI_PRO_SESSION,
-    description: "Unlock an advanced AI assistant session with extended context.",
+    get description() { return i18n.t("uiCreditShopPage.unlockAnAdvancedAiAssistantSession"); },
     icon: <Bot className="h-5 w-5" />,
     category: "utility",
   },
   {
-    label: "Reduce commission by 1%",
+    get label() { return i18n.t("uiCreditShopPage.reduceCommissionBy1"); },
     cost: CREDIT_COSTS.REDUCE_COMMISSION_BY_1_PERCENT,
-    description: "Permanently lower the platform fee on your next booking or service sale.",
+    get description() { return i18n.t("uiCreditShopPage.permanentlyLowerThePlatformFeeOn"); },
     icon: <Percent className="h-5 w-5" />,
     category: "utility",
   },
 ];
 
 const CATEGORIES = [
-  { key: "capacity" as const, label: "⚡ Extra Capacity", description: "Go beyond your plan limits" },
-  { key: "visibility" as const, label: "📣 Visibility Boosts", description: "Get noticed in Explore & search" },
+  { key: "capacity" as const, label: "⚡ Extra Capacity", get description() { return i18n.t("uiCreditShopPage.goBeyondYourPlanLimits"); } },
+  { key: "visibility" as const, label: "📣 Visibility Boosts", get description() { return i18n.t("uiCreditShopPage.getNoticedInExploreSearch"); } },
   { key: "utility" as const, label: "🛠 Utility & Tools", description: "Unlock special features" },
 ];
 
 export default function CreditShopPage() {
+  const { t } = useTranslation();
   const { userCredits } = usePlanLimits();
 
   return (
@@ -103,7 +106,7 @@ export default function CreditShopPage() {
           to="/me"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" /> Back to Me
+          <ArrowLeft className="h-4 w-4" /> {t("uiCreditShopPage.backToMe")}
         </Link>
 
         {/* Header */}
@@ -113,17 +116,17 @@ export default function CreditShopPage() {
           className="text-center space-y-2"
         >
           <h1 className="font-display text-2xl font-bold flex items-center justify-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" /> Credit Shop
+            <Sparkles className="h-6 w-6 text-primary" /> {t("uiCreditShopPage.creditShop")}
           </h1>
           <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            Spend your Credits on boosts, extra capacity, and platform tools.
+            {t("uiCreditShopPage.spendYourCreditsOnBoostsExtra")}
           </p>
 
           {/* Balance */}
           <div className="flex items-center justify-center gap-3 pt-2">
             <Badge variant="outline" className="text-base px-4 py-1.5 gap-2 font-semibold">
               <CurrencyIcon currency="credits" className="h-4 w-4" />
-              {userCredits.toLocaleString()} Credits
+              {userCredits.toLocaleString()} {t("uiCreditShopPage.credits")}
             </Badge>
             <Link to="/me/credits">
               <Button variant="outline" size="sm" className="gap-1.5 text-xs">
@@ -192,14 +195,13 @@ export default function CreditShopPage() {
           className="rounded-xl border border-border bg-muted/30 p-5 space-y-3"
         >
           <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-            <CurrencyIcon currency="credits" className="h-4 w-4" /> How to get Credits
+            <CurrencyIcon currency="credits" className="h-4 w-4" /> {t("uiCreditShopPage.howToGetCredits")}
           </h3>
           <div className="grid sm:grid-cols-3 gap-3 text-xs text-muted-foreground">
             <div className="flex items-start gap-2">
               <ArrowRight className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
               <span>
-                <strong className="text-foreground">Buy with €</strong> — Instant Stripe
-                purchase from the{" "}
+                <strong className="text-foreground">{t("uiCreditShopPage.buyWith")}</strong> {t("uiCreditShopPage.instantStripePurchaseFromThe")}{" "}
                 <Link to="/me/credits" className="text-primary hover:underline">
                   Top Up page
                 </Link>
@@ -209,15 +211,13 @@ export default function CreditShopPage() {
             <div className="flex items-start gap-2">
               <ArrowRight className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
               <span>
-                <strong className="text-foreground">Exchange $CTG</strong> — Convert
-                contribution tokens earned through quests. No payment needed.
+                <strong className="text-foreground">Exchange $CTG</strong> {t("uiCreditShopPage.convertContributionTokensEarnedThroughQuests")}
               </span>
             </div>
             <div className="flex items-start gap-2">
               <ArrowRight className="h-3.5 w-3.5 mt-0.5 text-primary shrink-0" />
               <span>
-                <strong className="text-foreground">Level up</strong> — Earn bonus credits
-                at XP Level 5 (+50) and Level 10 (+150).
+                <strong className="text-foreground">{t("uiCreditShopPage.levelUp")}</strong> {t("uiCreditShopPage.earnBonusCreditsAtXpLevel")}
               </span>
             </div>
           </div>
@@ -225,8 +225,7 @@ export default function CreditShopPage() {
 
         {/* Disclaimer */}
         <p className="text-[11px] text-muted-foreground text-center">
-          Credits are non-refundable. Subject to 1%/month demurrage. Spending is
-          triggered inline when you perform the action (e.g. creating an extra quest).
+          {t("uiCreditShopPage.creditsAreNonRefundableSubjectTo")}
         </p>
       </div>
     </PageShell>

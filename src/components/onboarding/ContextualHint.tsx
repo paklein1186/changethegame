@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 /**
  * ContextualHint System — Option A
  *
@@ -204,6 +206,7 @@ interface HintTooltipProps {
 }
 
 export function HintTooltip({ content, learnMore, className }: HintTooltipProps) {
+  const { t } = useTranslation();
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -212,7 +215,7 @@ export function HintTooltip({ content, learnMore, className }: HintTooltipProps)
             "inline-flex items-center justify-center h-4 w-4 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground transition-colors",
             className
           )}
-          aria-label="More info"
+          aria-label={t("uiContextualHint.moreInfo")}
         >
           <Info className="h-3 w-3" />
         </button>
@@ -224,7 +227,7 @@ export function HintTooltip({ content, learnMore, className }: HintTooltipProps)
             to={learnMore}
             className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline mt-2"
           >
-            Learn more <ArrowRight className="h-3 w-3" />
+            {t("uiContextualHint.learnMore")} <ArrowRight className="h-3 w-3" />
           </Link>
         )}
       </PopoverContent>
@@ -292,78 +295,78 @@ export const HINTS = {
     home: {
       id: "home-intro",
       variant: "info" as const,
-      title: "Your mission control",
+      get title() { return i18n.t("uiContextualHint.yourMissionControl"); },
       body: "Type anything you want to do or achieve — Pi will route you toward the right quests, guilds, and collaborators. Below you'll find your active tasks and what's moving in your network.",
     },
 
     explore: {
       id: "explore-intro",
       variant: "tip" as const,
-      title: "The full map of the network",
+      get title() { return i18n.t("uiContextualHint.theFullMapOfTheNetwork"); },
       body: "Each tab below is a different type of entity. Guilds are lasting collectives, Quests are time-bounded actions, Services are bookable skills, Territories are living places. Drag tabs to reorder them.",
     },
 
     feed: {
       id: "feed-intro",
       variant: "info" as const,
-      title: "One stream, the whole network",
+      get title() { return i18n.t("uiContextualHint.oneStreamTheWholeNetwork"); },
       body: "Posts from guilds, territories, quests, and people you follow appear here. Filter by topic house (#) or source type to focus on what's relevant to your work.",
     },
 
     work: {
       id: "work-intro",
       variant: "tip" as const,
-      title: "Your personal workshop",
+      get title() { return i18n.t("uiContextualHint.yourPersonalWorkshop"); },
       body: "Everything you're building lives here: active quests, your offer (services), your teams (guilds & pods), your calendar and bookings. It's not a to-do list — it's your entire contribution layer.",
     },
 
     network: {
       id: "network-intro",
       variant: "info" as const,
-      title: "Your relational capital",
+      get title() { return i18n.t("uiContextualHint.yourRelationalCapital"); },
       body: "Who you follow, who follows you, your XP ranking, the territories and topics you're tracking. Use the Matchmaker tab to let the AI surface the right collaborators for what you're doing.",
     },
 
     guildFirst: {
       id: "guild-first-visit",
       variant: "tip" as const,
-      title: "You're visiting a Guild",
+      get title() { return i18n.t("uiContextualHint.youReVisitingAGuild"); },
       body: "Guilds are living organisations inside the network — they hold quests, knowledge, members, and their own economy. Follow to see activity in your feed, or apply to join if membership is open.",
     },
 
     questFirst: {
       id: "quest-first-visit",
       variant: "tip" as const,
-      title: "A Quest is a bounded action",
+      get title() { return i18n.t("uiContextualHint.aQuestIsABoundedAction"); },
       body: "It has a goal, a team, a timeline, and a reward. Join to contribute, complete deliverables to earn XP and $CTG tokens, and leave a traceable contribution in your personal OVN.",
     },
 
     territoryFirst: {
       id: "territory-first-visit",
       variant: "tip" as const,
-      title: "A Territory is a living place",
+      get title() { return i18n.t("uiContextualHint.aTerritoryIsALivingPlace"); },
       body: "This is a bioregional or geographic unit. It connects human activity (guilds, quests, events) to measurable ecological and social indicators in the Living Dashboard.",
     },
 
     agents: {
       id: "agents-intro",
       variant: "info" as const,
-      title: "AI agents amplify your team",
+      get title() { return i18n.t("uiContextualHint.aiAgentsAmplifyYourTeam"); },
       body: "Agents are AI co-pilots with specialised roles: grant writing, territory analysis, facilitation, coaching. Deploy one inside a guild or quest — they work best with a specific mandate.",
     },
 
     walletFirst: {
       id: "wallet-first-visit",
       variant: "economy" as const,
-      title: "The platform has 5 value layers",
+      get title() { return i18n.t("uiContextualHint.thePlatformHas5ValueLayers"); },
       body: "Fiat €, 🟩 Coins (fiat-backed), 🔷 Credits (platform utility, fades 1%/month), 🌱 $CTG (earned by contribution, has 1%/month demurrage), and ⭐ XP (reputation, permanent). Each works differently.",
-      cta: { label: "See how value flows", to: "/ecosystem?tab=ovn" },
+      cta: { get label() { return i18n.t("uiContextualHint.seeHowValueFlows"); }, to: "/ecosystem?tab=ovn" },
     },
 
     ovnFirst: {
       id: "ovn-first-visit",
       variant: "economy" as const,
-      title: "The Open Value Network is your contribution ledger",
+      get title() { return i18n.t("uiContextualHint.theOpenValueNetworkIsYour"); },
       body: "Every subtask, proposal, review, and governance vote you complete is logged here with a weighted unit score. $CTG is distributed based on these weights. The guild can vote to adjust them.",
     },
   },

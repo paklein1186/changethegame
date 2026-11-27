@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -40,15 +42,16 @@ import { EntityRolesManager } from "@/components/EntityRolesManager";
 import { useEntityRoles } from "@/hooks/useEntityRoles";
 
 const TABS = [
-  { key: "identity", label: "Identity & Profile", icon: Shield },
+  { key: "identity", get label() { return i18n.t("uiPodSettings.identityProfile"); }, icon: Shield },
   { key: "membership", label: "Membership Policy", icon: ClipboardList },
   { key: "applications", label: "Applications", icon: Users },
-  { key: "members", label: "Members & Roles", icon: Users },
-  { key: "roles", label: "Custom Roles", icon: Tag },
+  { key: "members", get label() { return i18n.t("uiPodSettings.membersRoles"); }, icon: Users },
+  { key: "roles", get label() { return i18n.t("uiPodSettings.customRoles"); }, icon: Tag },
   { key: "documents", label: "Documents", icon: Briefcase },
 ];
 
 export default function PodSettings() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const currentUser = useCurrentUser();
 
@@ -67,20 +70,21 @@ export default function PodSettings() {
   });
 
   if (isLoading) return <PageShell><FrenchTextOverlay><Loader2 className="h-6 w-6 animate-spin mx-auto mt-16" /></FrenchTextOverlay></PageShell>;
-  if (!pod) return <PageShell><FrenchTextOverlay><p>Pod not found.</p></FrenchTextOverlay></PageShell>;
+  if (!pod) return <PageShell><FrenchTextOverlay><p>{t("uiPodSettings.podNotFound")}</p></FrenchTextOverlay></PageShell>;
 
   const currentMembership = pod.pod_members?.find(
     (pm: any) => pm.user_id === currentUser.id
   );
   const isCreator = !!currentUser.id && pod.creator_id === currentUser.id;
   if (currentMembership?.role !== "HOST" && !isCreator) {
-    return <PageShell><FrenchTextOverlay><p>You must be a host of this pod to access settings.</p></FrenchTextOverlay></PageShell>;
+    return <PageShell><FrenchTextOverlay><p>{t("uiPodSettings.youMustBeAHostOf")}</p></FrenchTextOverlay></PageShell>;
   }
 
   return <PodSettingsInner podId={pod.id} pod={pod} />;
 }
 
 function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const { getRolesForUser } = useEntityRoles("pod", podId);
@@ -141,7 +145,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
         universe_visibility: universeVisibility,
       } as any)
       .eq("id", podId);
-    if (error) { toast({ title: "Failed to save", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiPodSettings.failedToSave"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["pod-settings", podId] });
     qc.invalidateQueries({ queryKey: ["pod", podId] });
     toast({ title: "Pod identity updated!" });
@@ -150,15 +154,15 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
   const inviteMember = async (selectedUserId: string) => {
     if (!selectedUserId) return;
     const already = members.some((m: any) => m.user_id === selectedUserId);
-    if (already) { toast({ title: "Already a member", variant: "destructive" }); return; }
+    if (already) { toast({ title: t("uiPodSettings.alreadyAMember"), variant: "destructive" }); return; }
     const { error } = await supabase.from("pod_members").insert({
       pod_id: podId, user_id: selectedUserId, role: "MEMBER" as any,
     });
-    if (error) { toast({ title: "Failed to add member", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiPodSettings.failedToAddMember"), variant: "destructive" }); return; }
     sendInviteNotification({ invitedUserId: selectedUserId, inviterName: currentUser.name, entityType: "pod", entityId: podId, entityName: pod?.name || "Pod" });
     setInviteOpen(false);
     refetchMembers();
-    toast({ title: "Member added!" });
+    toast({ title: t("uiPodSettings.memberAdded") });
   };
 
   const toggleMemberRole = async (memberId: string) => {
@@ -166,7 +170,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
     if (!pm) return;
     const hosts = members.filter((m: any) => m.role === "HOST");
     if (pm.role === "HOST" && hosts.length <= 1) {
-      toast({ title: "Cannot demote", description: "At least one host must exist.", variant: "destructive" });
+      toast({ title: "Cannot demote", description: t("uiPodSettings.atLeastOneHostMustExist"), variant: "destructive" });
       return;
     }
     const newRole = pm.role === "HOST" ? "MEMBER" : "HOST";
@@ -175,7 +179,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
       await supabase.from("notifications").insert({
         user_id: pm.user_id,
         type: "UNIT_CO_HOST_CHANGED",
-        title: newRole === "HOST" ? "You are now a pod host" : "Pod host role updated",
+        title: newRole === "HOST" ? t("uiPodSettings.youAreNowAPodHost") : t("uiPodSettings.podHostRoleUpdated"),
         body: newRole === "HOST"
           ? `You've been made a host of "${pod.name}"`
           : `Your host role in "${pod.name}" was changed`,
@@ -193,30 +197,30 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
     if (!pm || pm.user_id === currentUser.id) return;
     if (pm.role === "HOST") {
       const hosts = members.filter((m: any) => m.role === "HOST");
-      if (hosts.length <= 1) { toast({ title: "Cannot remove the last host", variant: "destructive" }); return; }
+      if (hosts.length <= 1) { toast({ title: t("uiPodSettings.cannotRemoveTheLastHost"), variant: "destructive" }); return; }
     }
     await supabase.from("pod_members").delete().eq("id", memberId);
     refetchMembers();
-    toast({ title: "Member removed" });
+    toast({ title: t("uiPodSettings.memberRemoved") });
   };
 
   return (
     <PageShell><FrenchTextOverlay>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/pods/${podId}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to pod</Link>
+        <Link to={`/pods/${podId}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiPodSettings.backToPod")}</Link>
       </Button>
 
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           {pod.image_url && <img src={pod.image_url} className="h-10 w-10 rounded-lg object-cover" alt="" />}
           <div>
-            <h1 className="font-display text-2xl font-bold">Pod Settings</h1>
+            <h1 className="font-display text-2xl font-bold">{t("uiPodSettings.podSettings")}</h1>
             <p className="text-sm text-muted-foreground">{pod.name}</p>
           </div>
           {pod.is_draft ? (
-            <Badge variant="outline" className="ml-auto"><AlertCircle className="h-3 w-3 mr-1" /> Draft</Badge>
+            <Badge variant="outline" className="ml-auto"><AlertCircle className="h-3 w-3 mr-1" /> {t("uiPodSettings.draft")}</Badge>
           ) : (
-            <Badge className="bg-primary/10 text-primary border-0 ml-auto"><ShieldCheck className="h-3 w-3 mr-1" /> Active</Badge>
+            <Badge className="bg-primary/10 text-primary border-0 ml-auto"><ShieldCheck className="h-3 w-3 mr-1" /> {t("uiPodSettings.active")}</Badge>
           )}
         </div>
 
@@ -248,11 +252,11 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
                 <div className="space-y-5 max-w-lg">
                   <Section title="Pod Identity" icon={<Shield className="h-5 w-5" />}>
                     <div className="space-y-4">
-                      <div><label className="text-sm font-medium mb-1 block">Name</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
+                      <div><label className="text-sm font-medium mb-1 block">{t("uiPodSettings.name")}</label><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} /></div>
                       <ImageUpload label="Cover Image" currentImageUrl={imageUrl || undefined} onChange={(url) => setImageUrl(url ?? "")} aspectRatio="16/9" description="Cover image, recommended 1200×400" />
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <label className="text-sm font-medium">Description</label>
+                          <label className="text-sm font-medium">{t("uiPodSettings.description")}</label>
                           <AIWriterButton
                             type="guild_identity"
                             context={{ title: name, guildType: type, memberCount: pod.pod_members?.length || 0 }}
@@ -266,7 +270,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
                         <Select value={type} onValueChange={setType}>
                           <SelectTrigger><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="QUEST_POD">Quest Pod</SelectItem>
+                            <SelectItem value="QUEST_POD">{t("uiPodSettings.questPod")}</SelectItem>
                             <SelectItem value="STUDY_GROUP">Study Group</SelectItem>
                             <SelectItem value="PROJECT_TEAM">Project Team</SelectItem>
                           </SelectContent>
@@ -277,11 +281,11 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
 
                   <Separator />
 
-                  <Section title="Topic" icon={<Hash className="h-5 w-5" />}>
+                  <Section title={t("uiPodSettings.topic")} icon={<Hash className="h-5 w-5" />}>
                     <Select value={topicId || "__none__"} onValueChange={(v) => setTopicId(v === "__none__" ? "" : v)}>
-                      <SelectTrigger><SelectValue placeholder="Select a topic…" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("uiPodSettings.selectATopic")} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="__none__">None</SelectItem>
+                        <SelectItem value="__none__">{t("uiPodSettings.none")}</SelectItem>
                         {allTopics.map((t: any) => (
                           <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
                         ))}
@@ -292,11 +296,11 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
                   <Section title="Dates" icon={<Settings className="h-5 w-5" />}>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-sm font-medium mb-1 block">Start date</label>
+                        <label className="text-sm font-medium mb-1 block">{t("uiPodSettings.startDate")}</label>
                         <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-1 block">End date</label>
+                        <label className="text-sm font-medium mb-1 block">{t("uiPodSettings.endDate")}</label>
                         <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                       </div>
                     </div>
@@ -304,7 +308,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
 
                   <Section title="Universe Visibility" icon={<Settings className="h-5 w-5" />}>
                     <p className="text-xs text-muted-foreground mb-2">
-                      Control in which universe this pod appears when users filter by Creative or Impact.
+                      {t("uiPodSettings.controlInWhichUniverseThisPod")}
                     </p>
                     <Select value={universeVisibility} onValueChange={setUniverseVisibility}>
                       <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
@@ -316,7 +320,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
                     </Select>
                   </Section>
 
-                  <Button onClick={handleSaveIdentity} className="w-full"><Save className="h-4 w-4 mr-2" /> Save identity</Button>
+                  <Button onClick={handleSaveIdentity} className="w-full"><Save className="h-4 w-4 mr-2" /> {t("uiPodSettings.saveIdentity")}</Button>
                 </div>
               )}
 
@@ -348,15 +352,15 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
                   <div className="flex items-center justify-between">
                     <Section title={`Members (${members.length})`} icon={<Users className="h-5 w-5" />}><span /></Section>
                     <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-                      <DialogTrigger asChild><Button size="sm"><UserPlus className="h-4 w-4 mr-1" /> Add member</Button></DialogTrigger>
+                      <DialogTrigger asChild><Button size="sm"><UserPlus className="h-4 w-4 mr-1" /> {t("uiPodSettings.addMember")}</Button></DialogTrigger>
                       <DialogContent className="sm:max-w-xl overflow-visible">
-                        <DialogHeader><DialogTitle>Add Member</DialogTitle></DialogHeader>
+                        <DialogHeader><DialogTitle>{t("uiPodSettings.addMember2")}</DialogTitle></DialogHeader>
                         <div className="space-y-4 mt-2">
                           <div>
-                            <label className="text-sm font-medium mb-1 block">Search by name</label>
+                            <label className="text-sm font-medium mb-1 block">{t("uiPodSettings.searchByName")}</label>
                             <UserSearchInput
                               onSelect={(user) => inviteMember(user.user_id)}
-                              placeholder="Type a member name…"
+                              placeholder={t("uiPodSettings.typeAMemberName")}
                               excludeUserIds={members.map((m: any) => m.user_id)}
                             />
                           </div>
@@ -370,7 +374,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
                       <thead className="bg-muted/50">
                         <tr>
                           <th className="text-left px-4 py-2 font-medium">User</th>
-                          <th className="text-left px-4 py-2 font-medium">Role</th>
+                          <th className="text-left px-4 py-2 font-medium">{t("uiPodSettings.role")}</th>
                           <th className="text-left px-4 py-2 font-medium">Joined</th>
                           <th className="text-right px-4 py-2 font-medium">Actions</th>
                         </tr>
@@ -404,11 +408,11 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
                             <td className="px-4 py-3 text-right">
                               <div className="flex justify-end gap-1">
                                 {m.role === "HOST" ? (
-                                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => toggleMemberRole(m.id)} title="Demote to member">
+                                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => toggleMemberRole(m.id)} title={t("uiPodSettings.demoteToMember")}>
                                     <ChevronDown className="h-3.5 w-3.5" /> Demote
                                   </Button>
                                 ) : (
-                                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10" onClick={() => toggleMemberRole(m.id)} title="Promote to host">
+                                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10" onClick={() => toggleMemberRole(m.id)} title={t("uiPodSettings.promoteToHost")}>
                                     <ChevronUp className="h-3.5 w-3.5" /> Promote
                                   </Button>
                                 )}
@@ -438,7 +442,7 @@ function PodSettingsInner({ podId, pod }: { podId: string; pod: any }) {
               {activeTab === "documents" && (
                 <div className="space-y-6 max-w-lg">
                   <Section title="Pod Documents" icon={<Briefcase className="h-5 w-5" />}>
-                    <p className="text-sm text-muted-foreground mb-4">Upload documents, resources, and files for pod members.</p>
+                    <p className="text-sm text-muted-foreground mb-4">{t("uiPodSettings.uploadDocumentsResourcesAndFilesFor")}</p>
                     <AttachmentList targetType={AttachmentTargetType.POD} targetId={pod.id} />
                     <div className="mt-4">
                       <AttachmentUpload targetType={AttachmentTargetType.POD} targetId={pod.id} />

@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -20,29 +22,30 @@ const fadeUp = {
 };
 
 const ORG_TYPES = [
-  { icon: Landmark, label: "Public Sector", desc: "Government agencies, municipalities, public institutions" },
-  { icon: Building2, label: "Corporations", desc: "Companies bringing innovation and resources to the ecosystem" },
-  { icon: GraduationCap, label: "Academics & Research", desc: "Universities, labs, and research institutions" },
+  { icon: Landmark, get label() { return i18n.t("uiOrganizationsLanding.publicSector"); }, get desc() { return i18n.t("uiOrganizationsLanding.governmentAgenciesMunicipalitiesPublicInstitutions"); } },
+  { icon: Building2, label: "Corporations", get desc() { return i18n.t("uiOrganizationsLanding.companiesBringingInnovationAndResourcesTo"); } },
+  { icon: GraduationCap, label: "Academics & Research", get desc() { return i18n.t("uiOrganizationsLanding.universitiesLabsAndResearchInstitutions"); } },
   { icon: Heart, label: "Foundations", desc: "Philanthropic organizations driving systemic change" },
-  { icon: Leaf, label: "NGOs", desc: "Non-profits working on social and environmental impact" },
+  { icon: Leaf, label: "NGOs", get desc() { return i18n.t("uiOrganizationsLanding.nonProfitsWorkingOnSocialAnd"); } },
 ];
 
 const STEPS = [
-  { step: "01", title: "Create your profile", desc: "Add your organization details — or let AI scrape your website to auto-fill." },
-  { step: "02", title: "AI maps your mission", desc: "We match your topics, territories, and causes to the ecosystem." },
-  { step: "03", title: "Launch opportunities", desc: "Post quests, jobs, or calls for proposals to find aligned talent." },
-  { step: "04", title: "Match with builders", desc: "Discover guilds, users, and pods aligned with your mission." },
+  { step: "01", get title() { return i18n.t("uiOrganizationsLanding.createYourProfile"); }, get desc() { return i18n.t("uiOrganizationsLanding.addYourOrganizationDetailsOrLet"); } },
+  { step: "02", get title() { return i18n.t("uiOrganizationsLanding.aiMapsYourMission"); }, get desc() { return i18n.t("uiOrganizationsLanding.weMatchYourTopicsTerritoriesAnd"); } },
+  { step: "03", title: "Launch opportunities", get desc() { return i18n.t("uiOrganizationsLanding.postQuestsJobsOrCallsFor"); } },
+  { step: "04", get title() { return i18n.t("uiOrganizationsLanding.matchWithBuilders"); }, get desc() { return i18n.t("uiOrganizationsLanding.discoverGuildsUsersAndPodsAligned"); } },
 ];
 
 const WHY_JOIN = [
-  { icon: Users, title: "Access talent", desc: "Find skilled individuals and guilds aligned with your mission." },
-  { icon: Target, title: "Launch calls for proposals", desc: "Create monetized quests open to the entire ecosystem." },
-  { icon: Handshake, title: "Co-create with guilds", desc: "Partner with mission-driven communities." },
-  { icon: MapPin, title: "Territorial impact", desc: "Strengthen your presence in specific territories." },
-  { icon: Compass, title: "Discover innovations", desc: "Explore regenerative practices and new approaches." },
+  { icon: Users, title: "Access talent", get desc() { return i18n.t("uiOrganizationsLanding.findSkilledIndividualsAndGuildsAligned"); } },
+  { icon: Target, get title() { return i18n.t("uiOrganizationsLanding.launchCallsForProposals"); }, get desc() { return i18n.t("uiOrganizationsLanding.createMonetizedQuestsOpenToThe"); } },
+  { icon: Handshake, get title() { return i18n.t("uiOrganizationsLanding.coCreateWithGuilds"); }, get desc() { return i18n.t("uiOrganizationsLanding.partnerWithMissionDrivenCommunities"); } },
+  { icon: MapPin, title: "Territorial impact", get desc() { return i18n.t("uiOrganizationsLanding.strengthenYourPresenceInSpecificTerritories"); } },
+  { icon: Compass, title: "Discover innovations", get desc() { return i18n.t("uiOrganizationsLanding.exploreRegenerativePracticesAndNewApproaches"); } },
 ];
 
 export default function OrganizationsLanding() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [guestOpen, setGuestOpen] = useState(false);
@@ -86,8 +89,8 @@ export default function OrganizationsLanding() {
               <Button size="sm" asChild><Link to="/">Enter</Link></Button>
             ) : (
               <>
-                <Button size="sm" variant="ghost" asChild><Link to="/login">Log in</Link></Button>
-                <Button size="sm" asChild><Link to="/welcome">Sign up</Link></Button>
+                <Button size="sm" variant="ghost" asChild><Link to="/login">{t("uiOrganizationsLanding.logIn")}</Link></Button>
+                <Button size="sm" asChild><Link to="/welcome">{t("uiOrganizationsLanding.signUp")}</Link></Button>
               </>
             )}
           </nav>
@@ -100,7 +103,7 @@ export default function OrganizationsLanding() {
         <div className="container py-16 sm:py-24 md:py-32 text-center relative z-10 px-4">
           <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <Badge variant="secondary" className="mb-4 px-3 py-1 text-xs font-medium">
-              <Building2 className="h-3 w-3 mr-1" /> For Institutions & Organizations
+              <Building2 className="h-3 w-3 mr-1" /> {t("uiOrganizationsLanding.forInstitutionsOrganizations")}
             </Badge>
           </motion.div>
 
@@ -109,21 +112,21 @@ export default function OrganizationsLanding() {
             transition={{ delay: 0.1, duration: 0.6 }}
             className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-4xl mx-auto leading-[1.1] px-2"
           >
-            Institutions shaping the future with{" "}
+            {t("uiOrganizationsLanding.institutionsShapingTheFutureWith")}{" "}
             <span className="text-primary">regenerative collaboration.</span>
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25, duration: 0.6 }}
             className="mt-5 text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
           >
-            Connect with innovators, territories and mission-driven builders across 45+ countries.
+            {t("uiOrganizationsLanding.connectWithInnovatorsTerritoriesAndMission")}
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
             className="mt-8 flex flex-col sm:flex-row gap-3 justify-center"
           >
             <Button size="lg" className="gap-2" onClick={() => handleGatedClick("create an organization profile", "/onboarding/organization")}>
-              <Building2 className="h-4 w-4" /> Create Organization Profile
+              <Building2 className="h-4 w-4" /> {t("uiOrganizationsLanding.createOrganizationProfile")}
             </Button>
             <Button size="lg" variant="outline" className="gap-2" asChild>
               <Link to="/explore"><Compass className="h-4 w-4" /> Explore Ecosystem</Link>
@@ -135,7 +138,7 @@ export default function OrganizationsLanding() {
       {/* Why Join */}
       <section ref={triggerRef} className="border-t border-border bg-muted/40">
         <div className="container py-16 md:py-24">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">Why join the ecosystem?</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-12">{t("uiOrganizationsLanding.whyJoinTheEcosystem")}</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {WHY_JOIN.map((item, i) => (
               <motion.div key={item.title} custom={i} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
@@ -173,9 +176,9 @@ export default function OrganizationsLanding() {
       {/* Organization Types */}
       <section className="border-t border-border bg-muted/40">
         <div className="container py-16 md:py-24">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-4">Types of organizations</h2>
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-4">{t("uiOrganizationsLanding.typesOfOrganizations")}</h2>
           <p className="text-muted-foreground text-center mb-12 max-w-lg mx-auto">
-            Whether public or private, large or small — there's a place for structured institutions.
+            {t("uiOrganizationsLanding.whetherPublicOrPrivateLargeOr")}
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {ORG_TYPES.map((t, i) => (
@@ -190,8 +193,8 @@ export default function OrganizationsLanding() {
           </div>
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground mb-3">
-              If you're a <strong>DAO, collective, or community</strong>, consider creating a{" "}
-              <Link to="/create/guild-info" className="text-primary font-medium hover:underline">Guild</Link> instead.
+              {t("uiOrganizationsLanding.ifYouReA")} <strong>{t("uiOrganizationsLanding.daoCollectiveOrCommunity")}</strong>{t("uiOrganizationsLanding.considerCreatingA")}{" "}
+              <Link to="/create/guild-info" className="text-primary font-medium hover:underline">{t("uiOrganizationsLanding.guild")}</Link> instead.
             </p>
           </div>
         </div>
@@ -206,23 +209,23 @@ export default function OrganizationsLanding() {
             <div className="grid gap-4 sm:grid-cols-2 text-left">
               <div className="rounded-xl border border-border bg-card p-4">
                 <Zap className="h-5 w-5 text-amber-500 mb-2" />
-                <h3 className="font-semibold text-sm mb-1">XP — Reputation</h3>
-                <p className="text-xs text-muted-foreground">Non-financial reputation earned through contributions. Unlocks governance rights.</p>
+                <h3 className="font-semibold text-sm mb-1">{t("uiOrganizationsLanding.xpReputation")}</h3>
+                <p className="text-xs text-muted-foreground">{t("uiOrganizationsLanding.nonFinancialReputationEarnedThroughContributions")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
                 <Sparkles className="h-5 w-5 text-blue-500 mb-2" />
-                <h3 className="font-semibold text-sm mb-1">Credits — Platform Currency</h3>
-                <p className="text-xs text-muted-foreground">Internal currency for premium features, earned through sponsorship or conversion.</p>
+                <h3 className="font-semibold text-sm mb-1">{t("uiOrganizationsLanding.creditsPlatformCurrency")}</h3>
+                <p className="text-xs text-muted-foreground">{t("uiOrganizationsLanding.internalCurrencyForPremiumFeaturesEarned")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
                 <Globe className="h-5 w-5 text-emerald-500 mb-2" />
                 <h3 className="font-semibold text-sm mb-1">Money — Real Transactions</h3>
-                <p className="text-xs text-muted-foreground">Stripe-powered payments for quests, services, and events.</p>
+                <p className="text-xs text-muted-foreground">{t("uiOrganizationsLanding.stripePoweredPaymentsForQuestsServices")}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
                 <Shield className="h-5 w-5 text-purple-500 mb-2" />
-                <h3 className="font-semibold text-sm mb-1">Open Collaboration</h3>
-                <p className="text-xs text-muted-foreground">Reputation-based trust. Governance rights depend on XP and contribution history.</p>
+                <h3 className="font-semibold text-sm mb-1">{t("uiOrganizationsLanding.openCollaboration")}</h3>
+                <p className="text-xs text-muted-foreground">{t("uiOrganizationsLanding.reputationBasedTrustGovernanceRightsDepend")}</p>
               </div>
             </div>
           </motion.div>
@@ -232,14 +235,14 @@ export default function OrganizationsLanding() {
       {/* Final CTA */}
       <section className="border-t border-border bg-primary/5">
         <div className="container py-16 text-center">
-          <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">Ready to join the ecosystem?</h2>
-          <p className="text-muted-foreground mb-6">Create your organization profile and start collaborating.</p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">{t("uiOrganizationsLanding.readyToJoinTheEcosystem")}</h2>
+          <p className="text-muted-foreground mb-6">{t("uiOrganizationsLanding.createYourOrganizationProfileAndStart")}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button size="lg" onClick={() => handleGatedClick("create an organization profile", "/onboarding/organization")}>
-              Create Organization Profile <ArrowRight className="h-4 w-4 ml-1" />
+              {t("uiOrganizationsLanding.createOrganizationProfile")} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/explore">Explore the platform</Link>
+              <Link to="/explore">{t("uiOrganizationsLanding.exploreThePlatform")}</Link>
             </Button>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { notifyPlatformAdmins } from "@/lib/notifyAdmins";
 import { Flag } from "lucide-react";
@@ -16,6 +17,7 @@ interface ReportButtonProps {
 }
 
 export function ReportButton({ targetType, targetId, variant = "sm" }: ReportButtonProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -23,7 +25,7 @@ export function ReportButton({ targetType, targetId, variant = "sm" }: ReportBut
 
   const submit = async () => {
     if (!reason.trim()) {
-      toast({ title: "Please provide a reason", variant: "destructive" });
+      toast({ title: t("uiReportButton.pleaseProvideAReason"), variant: "destructive" });
       return;
     }
     const { error } = await supabase.from("reports").insert({
@@ -33,13 +35,13 @@ export function ReportButton({ targetType, targetId, variant = "sm" }: ReportBut
       reason: reason.trim(),
       status: "OPEN",
     });
-    if (error) { toast({ title: "Failed to submit report", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiReportButton.failedToSubmitReport"), variant: "destructive" }); return; }
     setReason("");
     setOpen(false);
-    toast({ title: "Report submitted", description: "An admin will review it shortly." });
+    toast({ title: "Report submitted", description: t("uiReportButton.anAdminWillReviewItShortly") });
     notifyPlatformAdmins({
       type: "SYSTEM_ABUSE_REPORT",
-      title: "New content report",
+      title: t("uiReportButton.newContentReport"),
       body: `${targetType} was reported`,
       deepLinkUrl: "/admin/content/reports",
       relatedEntityId: targetId,
@@ -65,11 +67,11 @@ export function ReportButton({ targetType, targetId, variant = "sm" }: ReportBut
         </DialogHeader>
         <div className="space-y-4 mt-2">
           <p className="text-sm text-muted-foreground">
-            Please describe why you're reporting this content. An admin will review your report.
+            {t("uiReportButton.pleaseDescribeWhyYouReReporting")}
           </p>
-          <Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Describe the issue…" className="min-h-[100px] resize-none" maxLength={500} />
+          <Textarea value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t("uiReportButton.describeTheIssue")} className="min-h-[100px] resize-none" maxLength={500} />
           <Button onClick={submit} disabled={!reason.trim()} className="w-full">
-            <Flag className="h-4 w-4 mr-1" /> Submit Report
+            <Flag className="h-4 w-4 mr-1" /> {t("uiReportButton.submitReport")}
           </Button>
         </div>
       </DialogContent>

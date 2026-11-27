@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -10,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ForgotPassword() {
+  const { t } = useTranslation();
   const { resetPassword } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
@@ -23,7 +25,7 @@ export default function ForgotPassword() {
     const { error } = await resetPassword(email.trim());
     setLoading(false);
     if (error) {
-      toast({ title: "Error", description: error, variant: "destructive" });
+      toast({ title: t("uiForgotPassword.error"), description: error, variant: "destructive" });
     } else {
       setSent(true);
     }
@@ -36,17 +38,17 @@ export default function ForgotPassword() {
           <Link to="/" className="inline-flex items-center gap-2 font-display text-2xl font-bold">
             <img src={logoImg} alt="changethegame" className="h-7 w-7" /> changethegame
           </Link>
-          <p className="text-muted-foreground mt-2">Reset your password</p>
+          <p className="text-muted-foreground mt-2">{t("uiForgotPassword.resetYourPassword")}</p>
         </div>
 
         {sent ? (
           <div className="rounded-2xl border border-border bg-card p-8 text-center space-y-4">
             <CheckCircle className="h-12 w-12 text-primary mx-auto" />
-            <h2 className="font-display text-xl font-bold">Check your email</h2>
+            <h2 className="font-display text-xl font-bold">{t("uiForgotPassword.checkYourEmail")}</h2>
             <p className="text-sm text-muted-foreground">
-              We sent a password reset link to <strong>{email}</strong>. Click the link to set a new password.
+              {t("uiForgotPassword.weSentAPasswordResetLink")} <strong>{email}</strong>{t("uiForgotPassword.clickTheLinkToSetA")}
             </p>
-            <Link to="/login" className="text-sm text-primary hover:underline">Back to login</Link>
+            <Link to="/login" className="text-sm text-primary hover:underline">{t("uiForgotPassword.backToLogin")}</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-8 space-y-5">
@@ -57,17 +59,17 @@ export default function ForgotPassword() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t("uiForgotPassword.youExampleCom")}
                 required
                 autoComplete="email"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
-              Send reset link
+              {t("uiForgotPassword.sendResetLink")}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              <Link to="/login" className="text-primary hover:underline">Back to login</Link>
+              <Link to="/login" className="text-primary hover:underline">{t("uiForgotPassword.backToLogin")}</Link>
             </p>
           </form>
         )}

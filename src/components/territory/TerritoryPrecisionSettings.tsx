@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Settings2, Globe, Target, Map } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +22,7 @@ interface Props {
 
 const PRECISION_OPTIONS = [
   { value: TerritorialPrecisionLevel.STRICT_MATCH, label: "Strict Match", icon: "🎯", desc: "Only exact granularity datasets" },
-  { value: TerritorialPrecisionLevel.PERIMETER_MATCH, label: "Perimeter Match", icon: "📐", desc: "Exact + fallback to broader levels" },
+  { value: TerritorialPrecisionLevel.PERIMETER_MATCH, label: "Perimeter Match", icon: "📐", get desc() { return i18n.t("uiTerritoryPrecisionSettings.exactFallbackToBroaderLevels"); } },
   { value: TerritorialPrecisionLevel.BIOREGIONAL_MATCH, label: "Bioregional Match", icon: "🌍", desc: "Ecoregion + territorial fallback" },
 ];
 
@@ -34,6 +36,7 @@ const GRANULARITY_OPTIONS = [
 ];
 
 export function TerritoryPrecisionSettings({ territoryId }: Props) {
+  const { t } = useTranslation();
   const { data: settings, isLoading } = useTerritoryPrecisionSettings(territoryId);
   const updateMutation = useUpdateTerritoryPrecision();
   const { toast } = useToast();
@@ -61,9 +64,9 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
         auto_expand_perimeter: autoExpand,
         custom_perimeter_name: granularity === "CUSTOM_PERIMETER" ? customName : null,
       });
-      toast({ title: "Precision settings saved!" });
+      toast({ title: t("uiTerritoryPrecisionSettings.precisionSettingsSaved") });
     } catch {
-      toast({ title: "Failed to save settings", variant: "destructive" });
+      toast({ title: t("uiTerritoryPrecisionSettings.failedToSaveSettings"), variant: "destructive" });
     }
   };
 
@@ -82,7 +85,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
             Living Systems Precision
           </h3>
           <p className="text-[11px] text-muted-foreground">
-            Configure how environmental datasets are matched
+            {t("uiTerritoryPrecisionSettings.configureHowEnvironmentalDatasetsAreMatched")}
           </p>
         </div>
       </div>
@@ -90,7 +93,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
       {/* Precision Level */}
       <div className="space-y-2">
         <label className="text-xs font-medium text-foreground">
-          Matching precision for living systems
+          {t("uiTerritoryPrecisionSettings.matchingPrecisionForLivingSystems")}
         </label>
         <div className="grid gap-2">
           {PRECISION_OPTIONS.map((opt) => (
@@ -109,7 +112,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
                 <p className="text-[10px] text-muted-foreground">{opt.desc}</p>
               </div>
               {precision === opt.value && (
-                <Badge variant="default" className="text-[9px] px-1.5">Active</Badge>
+                <Badge variant="default" className="text-[9px] px-1.5">{t("uiTerritoryPrecisionSettings.active")}</Badge>
               )}
             </button>
           ))}
@@ -121,7 +124,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
         <label className="text-xs font-medium text-foreground">Territorial granularity</label>
         <Select value={granularity || ""} onValueChange={(v) => setGranularity(v || null)}>
           <SelectTrigger className="text-xs">
-            <SelectValue placeholder="Auto-detect from level" />
+            <SelectValue placeholder={t("uiTerritoryPrecisionSettings.autoDetectFromLevel")} />
           </SelectTrigger>
           <SelectContent>
             {GRANULARITY_OPTIONS.map((opt) => (
@@ -136,7 +139,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
       {/* Custom perimeter name */}
       {granularity === "CUSTOM_PERIMETER" && (
         <div className="space-y-2">
-          <label className="text-xs font-medium text-foreground">Custom perimeter name</label>
+          <label className="text-xs font-medium text-foreground">{t("uiTerritoryPrecisionSettings.customPerimeterName")}</label>
           <Input
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
@@ -152,7 +155,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
         <div>
           <p className="text-xs font-medium text-foreground">Auto-expand perimeter</p>
           <p className="text-[10px] text-muted-foreground">
-            Fallback to broader levels when no exact match found
+            {t("uiTerritoryPrecisionSettings.fallbackToBroaderLevelsWhenNo")}
           </p>
         </div>
         <Switch checked={autoExpand} onCheckedChange={setAutoExpand} />
@@ -164,7 +167,7 @@ export function TerritoryPrecisionSettings({ territoryId }: Props) {
         className="w-full text-xs"
         size="sm"
       >
-        Save Precision Settings
+        {t("uiTerritoryPrecisionSettings.savePrecisionSettings")}
       </Button>
     </div>
   );

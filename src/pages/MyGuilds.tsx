@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Shield, Users, ArrowLeft } from "lucide-react";
@@ -9,6 +10,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useUserGuildMemberships } from "@/hooks/useEntityQueries";
 
 export default function MyGuilds({ bare }: { bare?: boolean }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { data: memberships = [], isLoading } = useUserGuildMemberships(currentUser.id);
 
@@ -34,7 +36,7 @@ export default function MyGuilds({ bare }: { bare?: boolean }) {
             </div>
           </div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Users className="h-3.5 w-3.5" /> Member
+            <Users className="h-3.5 w-3.5" /> {t("uiMyGuilds.member")}
           </div>
         </Link>
       </motion.div>
@@ -46,23 +48,23 @@ export default function MyGuilds({ bare }: { bare?: boolean }) {
       {!bare && (
         <>
           <Button variant="ghost" size="sm" asChild className="mb-4">
-            <Link to="/"><ArrowLeft className="h-4 w-4 mr-1" /> Back</Link>
+            <Link to="/"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiMyGuilds.back")}</Link>
           </Button>
           <h1 className="font-display text-3xl font-bold flex items-center gap-2 mb-8">
-            <Shield className="h-7 w-7 text-primary" /> My Guilds
+            <Shield className="h-7 w-7 text-primary" /> {t("uiMyGuilds.myGuilds")}
           </h1>
         </>
       )}
 
-      {isLoading && <p className="text-muted-foreground">Loading…</p>}
+      {isLoading && <p className="text-muted-foreground">{t("uiMyGuilds.loading")}</p>}
 
       {!isLoading && memberships.length === 0 && (
-        <p className="text-muted-foreground">You haven't joined any guilds yet. <Link to="/explore?tab=guilds" className="text-primary hover:underline">Browse guilds</Link></p>
+        <p className="text-muted-foreground">{t("uiMyGuilds.youHavenTJoinedAnyGuilds")} <Link to="/explore?tab=guilds" className="text-primary hover:underline">{t("uiMyGuilds.browseGuilds")}</Link></p>
       )}
 
       {adminGuilds.length > 0 && (
         <section className="mb-8">
-          <h2 className="font-display text-lg font-semibold mb-3">I am Admin ({adminGuilds.length})</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">{t("uiMyGuilds.iAmAdmin")}{adminGuilds.length})</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {adminGuilds.map((gm, i) => renderGuild(gm, i))}
           </div>
@@ -71,7 +73,7 @@ export default function MyGuilds({ bare }: { bare?: boolean }) {
 
       {memberGuilds.length > 0 && (
         <section>
-          <h2 className="font-display text-lg font-semibold mb-3">I am Member ({memberGuilds.length})</h2>
+          <h2 className="font-display text-lg font-semibold mb-3">{t("uiMyGuilds.iAmMember")}{memberGuilds.length})</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {memberGuilds.map((gm, i) => renderGuild(gm, i))}
           </div>

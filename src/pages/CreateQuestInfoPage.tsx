@@ -5,19 +5,19 @@ export default function CreateQuestInfoPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.createQuest.title")} subtitle={t("pages.createQuest.subtitle")}>
-      <ContentSection title="A Quest Can Be">
+      <ContentSection title={t("uiCreateQuestInfoPage.aQuestCanBe")}>
         <ContentList items={["A project you want to start", "An initiative in your guild", "A creative act", "A social or territorial action"]} />
       </ContentSection>
 
-      <ContentSection title="Quest Lifecycle">
+      <ContentSection title={t("uiCreateQuestInfoPage.questLifecycle")}>
         <ContentList items={["Starting", "Ongoing", "Completed (achievement)"]} />
       </ContentSection>
 
-      <ContentSection title="You Can Add">
+      <ContentSection title={t("uiCreateQuestInfoPage.youCanAdd")}>
         <ContentList items={["Houses", "Territories", "Credits / funding", "Images", "Participants"]} />
       </ContentSection>
 
-      <ContentCTA links={[{ label: "Create a quest now", href: "/quests/new" }]} />
+      <ContentCTA links={[{ label: t("uiCreateQuestInfoPage.createAQuestNow"), href: "/quests/new" }]} />
     </ContentPageShell>
   );
 }

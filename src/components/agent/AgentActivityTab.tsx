@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function AgentActivityTab({ agentId }: Props) {
+  const { t } = useTranslation();
   const { data: usage, isLoading } = useQuery({
     queryKey: ["agent-activity-feed", agentId],
     queryFn: async () => {
@@ -30,12 +32,12 @@ export default function AgentActivityTab({ agentId }: Props) {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-2">
-          <Activity className="h-4 w-4" /> Activity Feed
+          <Activity className="h-4 w-4" /> {t("uiAgentActivityTab.activityFeed")}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {!usage?.length ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">No activity recorded yet.</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">{t("uiAgentActivityTab.noActivityRecordedYet")}</p>
         ) : (
           <div className="space-y-0">
             {usage.map((record: any, i: number) => (

@@ -5,7 +5,7 @@ export default function AIInfoPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.ai.title")} subtitle={t("pages.ai.subtitle")}>
-      <ContentSection title="AI Agents Assist You By">
+      <ContentSection title={t("uiAIInfoPage.aiAgentsAssistYouBy")}>
         <ContentList items={[
           "Summarizing missions",
           "Proposing collaborators",
@@ -19,7 +19,7 @@ export default function AIInfoPage() {
       </ContentSection>
 
       <ContentSection title="Contextual Memory">
-        <p>Each unit (guild, quest, company, territory, pod) has its own AI agent with contextual memory. Agents only access data within their unit — never globally.</p>
+        <p>{t("uiAIInfoPage.eachUnitGuildQuestCompanyTerritory")}</p>
       </ContentSection>
     </ContentPageShell>
   );

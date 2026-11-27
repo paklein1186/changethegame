@@ -205,7 +205,7 @@ function CreateDecisionForm({ guildId, entityType, entityId, userId, onCreated }
       const optionsPayload = needsOptions
         ? options.filter(o => o.label.trim()).map((o, i) => ({ id: i, label: o.label.trim(), description: o.description }))
         : decisionType === "VOTE_SIMPLE"
-          ? [{ id: 0, label: "Yes" }, { id: 1, label: "No" }, { id: 2, label: "Abstain" }]
+          ? [{ id: 0, label: "Yes" }, { id: 1, label: t("uiGuildDecisions.no") }, { id: 2, label: "Abstain" }]
           : [{ id: 0, label: "I consent" }, { id: 1, label: "I object" }];
 
       const { error } = await supabase.from("decision_polls").insert({
@@ -546,7 +546,7 @@ function VotingSection({ decision, type, options, votes, myVote, canVote, isOpen
         supabase.from("notifications").insert({
           user_id: decision.created_by,
           type: "ENTITY_NEW_DECISION",
-          title: "Someone responded to your decision",
+          title: t("uiGuildDecisions.someoneRespondedToYourDecision"),
           body: `A member responded to "${truncQ}"`,
           related_entity_type: decision.entity_type,
           related_entity_id: decision.entity_id,

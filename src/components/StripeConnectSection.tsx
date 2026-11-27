@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Zap, Plug, ExternalLink, Loader2, CheckCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ interface ConnectStatus {
 }
 
 export function StripeConnectSection() {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<ConnectStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
@@ -43,7 +45,7 @@ export function StripeConnectSection() {
   useEffect(() => {
     if (searchParams.get("stripe_connect") === "success") {
       fetchStatus();
-      toast.success("Stripe Connect status updated");
+      toast.success(t("uiStripeConnectSection.stripeConnectStatusUpdated"));
     }
   }, [searchParams]);
 
@@ -56,7 +58,7 @@ export function StripeConnectSection() {
         window.location.href = data.url;
       }
     } catch (e: any) {
-      toast.error(e.message || "Failed to start Stripe onboarding");
+      toast.error(e.message || t("uiStripeConnectSection.failedToStartStripeOnboarding"));
       setConnecting(false);
     }
   };
@@ -70,7 +72,7 @@ export function StripeConnectSection() {
         window.open(data.url, "_blank");
       }
     } catch (e: any) {
-      toast.error(e.message || "Failed to open Stripe dashboard");
+      toast.error(e.message || t("uiStripeConnectSection.failedToOpenStripeDashboard"));
     } finally {
       setOpeningDashboard(false);
     }
@@ -84,7 +86,7 @@ export function StripeConnectSection() {
           <h3 className="text-lg font-semibold">Connected Apps</h3>
         </div>
         <div className="flex items-center justify-center py-8 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin mr-2" /> Checking Stripe status…
+          <Loader2 className="h-5 w-5 animate-spin mr-2" /> {t("uiStripeConnectSection.checkingStripeStatus")}
         </div>
       </div>
     );
@@ -110,7 +112,7 @@ export function StripeConnectSection() {
               <div>
                 <p className="font-medium">Stripe Connect</p>
                 <p className="text-xs text-muted-foreground">
-                  Receive payouts from bookings, quests, events & courses
+                  {t("uiStripeConnectSection.receivePayoutsFromBookingsQuestsEvents")}
                 </p>
               </div>
             </div>
@@ -123,7 +125,7 @@ export function StripeConnectSection() {
                 <AlertTriangle className="h-3 w-3 mr-1" /> Onboarding incomplete
               </Badge>
             ) : (
-              <Badge variant="outline">Not connected</Badge>
+              <Badge variant="outline">{t("uiStripeConnectSection.notConnected")}</Badge>
             )}
           </div>
 
@@ -142,7 +144,7 @@ export function StripeConnectSection() {
 
           {isConnected && !isComplete && (
             <p className="text-sm text-muted-foreground">
-              Your Stripe account setup is not complete. Click below to continue onboarding.
+              {t("uiStripeConnectSection.yourStripeAccountSetupIsNot")}
             </p>
           )}
 
@@ -154,7 +156,7 @@ export function StripeConnectSection() {
                 ) : (
                   <Plug className="h-4 w-4 mr-1" />
                 )}
-                {isConnected ? "Continue onboarding" : "Connect Stripe"}
+                {isConnected ? t("uiStripeConnectSection.continueOnboarding") : "Connect Stripe"}
               </Button>
             )}
             {isComplete && (
@@ -164,12 +166,12 @@ export function StripeConnectSection() {
                 ) : (
                   <ExternalLink className="h-4 w-4 mr-1" />
                 )}
-                Open Stripe Dashboard
+                {t("uiStripeConnectSection.openStripeDashboard")}
               </Button>
             )}
             {isConnected && (
               <Button onClick={fetchStatus} variant="ghost" size="sm">
-                Refresh status
+                {t("uiStripeConnectSection.refreshStatus")}
               </Button>
             )}
           </div>

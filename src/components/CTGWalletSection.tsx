@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,19 +33,19 @@ import { Link } from "react-router-dom";
 
 // ── Type icons & labels ──
 const TX_META: Record<string, { icon: string; label: string }> = {
-  EARNED_QUEST: { icon: "🌱", label: "Earned (Quest)" },
-  EARNED_SUBTASK: { icon: "🌱", label: "Earned (Subtask)" },
+  EARNED_QUEST: { icon: "🌱", get label() { return i18n.t("uiCTGWalletSection.earnedQuest"); } },
+  EARNED_SUBTASK: { icon: "🌱", get label() { return i18n.t("uiCTGWalletSection.earnedSubtask"); } },
   EARNED_SERVICE: { icon: "🌱", label: "Earned (Service)" },
   EARNED_RITUAL: { icon: "🌱", label: "Earned (Ritual)" },
   EARNED_GOVERNANCE: { icon: "🌱", label: "Earned (Governance)" },
   EARNED_MENTORSHIP: { icon: "🌱", label: "Earned (Mentorship)" },
   TRANSFER_IN: { icon: "↓", label: "Received" },
   TRANSFER_OUT: { icon: "↑", label: "Sent" },
-  EXCHANGE_TO_CREDITS: { icon: "↔", label: "Exchanged to Credits" },
+  EXCHANGE_TO_CREDITS: { icon: "↔", get label() { return i18n.t("uiCTGWalletSection.exchangedToCredits"); } },
   DEMURRAGE: { icon: "⏳", label: "Demurrage" },
-  COMMONS_EMISSION: { icon: "🌍", label: "Commons share" },
-  ADMIN_GRANT: { icon: "🔧", label: "Admin grant" },
-  ADMIN_DEDUCT: { icon: "🔧", label: "Admin deduction" },
+  COMMONS_EMISSION: { icon: "🌍", get label() { return i18n.t("uiCTGWalletSection.commonsShare"); } },
+  ADMIN_GRANT: { icon: "🔧", get label() { return i18n.t("uiCTGWalletSection.adminGrant"); } },
+  ADMIN_DEDUCT: { icon: "🔧", get label() { return i18n.t("uiCTGWalletSection.adminDeduction"); } },
 };
 
 const CONTRIBUTION_TYPE_LABELS: Record<string, string> = {
@@ -66,6 +68,7 @@ const CONTRIBUTION_TYPE_LABELS: Record<string, string> = {
 const PAGE_SIZE = 20;
 
 export function CTGWalletSection() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const { toast } = useToast();
@@ -160,15 +163,15 @@ export function CTGWalletSection() {
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground font-medium">Your $CTG Balance</p>
+            <p className="text-xs text-muted-foreground font-medium">{t("uiCTGWalletSection.yourCtgBalance")}</p>
             <CTGBalanceBadge balance={balance} lifetimeEarned={lifetimeEarned} size="lg" />
           </div>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" onClick={() => setTransferOpen(true)} className="gap-1.5">
-              <Send className="h-3.5 w-3.5" /> Send $CTG
+              <Send className="h-3.5 w-3.5" /> {t("uiCTGWalletSection.sendCtg")}
             </Button>
             <Button size="sm" variant="outline" onClick={() => setExchangeOpen(true)} className="gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5" /> Exchange to Credits
+              <RefreshCw className="h-3.5 w-3.5" /> {t("uiCTGWalletSection.exchangeToCredits")}
             </Button>
           </div>
         </div>
@@ -211,12 +214,12 @@ export function CTGWalletSection() {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                {Math.round(lifetimeEarned)}/{nextTier.minLifetime} $CTG to reach <span className="font-medium">{nextTier.icon} {nextTier.label}</span>
+                {Math.round(lifetimeEarned)}/{nextTier.minLifetime} {t("uiCTGWalletSection.ctgToReach")} <span className="font-medium">{nextTier.icon} {nextTier.label}</span>
               </p>
             </>
           ) : (
             <p className="text-xs font-medium" style={{ color: tier.color }}>
-              Maximum tier reached — thank you for your stewardship!
+              {t("uiCTGWalletSection.maximumTierReachedThankYouFor")}
             </p>
           )}
         </div>
@@ -237,7 +240,7 @@ export function CTGWalletSection() {
                 Monthly fade ({DEMURRAGE_RATE_PERCENT})
               </p>
               <p className="text-[10px] text-muted-foreground">
-                Returns to commons pool
+                {t("uiCTGWalletSection.returnsToCommonsPool")}
               </p>
             </div>
             <div className="text-right">
@@ -245,7 +248,7 @@ export function CTGWalletSection() {
                 −{estimateFade(balance)} $CTG
               </p>
               <p className="text-[10px] text-muted-foreground">
-                next cycle
+                {t("uiCTGWalletSection.nextCycle")}
               </p>
             </div>
           </div>
@@ -255,7 +258,7 @@ export function CTGWalletSection() {
         {balance > 50 && exchangeRate && (
           <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
             <span className="text-xs text-muted-foreground">
-              ⏳ Your $CTG fades 1%/month. Exchange surplus to Credits now.
+              {t("uiCTGWalletSection.yourCtgFades1MonthExchange")}
             </span>
             <Button variant="ghost" size="sm" className="text-xs shrink-0" onClick={() => setExchangeOpen(true)}>
               Exchange →
@@ -264,7 +267,7 @@ export function CTGWalletSection() {
         )}
 
         <p className="text-xs text-muted-foreground">
-          <Link to="/me?tab=wallet" className="text-primary hover:underline">← View Platform Credits</Link>
+          <Link to="/me?tab=wallet" className="text-primary hover:underline">{t("uiCTGWalletSection.viewPlatformCredits")}</Link>
         </p>
       </div>
 
@@ -280,7 +283,7 @@ export function CTGWalletSection() {
           <Select value={txFilter} onValueChange={setTxFilter}>
             <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="all">{t("uiCTGWalletSection.all")}</SelectItem>
               <SelectItem value="earned">Earned</SelectItem>
               <SelectItem value="sent">Sent</SelectItem>
               <SelectItem value="received">Received</SelectItem>
@@ -292,7 +295,7 @@ export function CTGWalletSection() {
         {txLoading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
         ) : filteredTx.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4 text-center">No transactions yet. Contribute to earn $CTG!</p>
+          <p className="text-sm text-muted-foreground py-4 text-center">{t("uiCTGWalletSection.noTransactionsYetContributeToEarn")}</p>
         ) : (
           <div className="space-y-1">
             {filteredTx.map((tx: any) => {
@@ -328,7 +331,7 @@ export function CTGWalletSection() {
           </Button>
           <span className="text-xs text-muted-foreground">Page {page + 1}</span>
           <Button size="sm" variant="ghost" disabled={transactions.length < PAGE_SIZE} onClick={() => setPage(p => p + 1)}>
-            Next →
+            {t("uiCTGWalletSection.next")}
           </Button>
         </div>
       </div>
@@ -336,27 +339,25 @@ export function CTGWalletSection() {
       {/* ═══ SECTION 3: How to earn ═══ */}
       <div className="rounded-xl border border-border bg-card p-6 space-y-3">
         <h3 className="font-semibold text-sm flex items-center gap-2">
-          <Info className="h-4 w-4 text-muted-foreground" /> How to earn $CTG
+          <Info className="h-4 w-4 text-muted-foreground" /> {t("uiCTGWalletSection.howToEarnCtg")}
           <Tooltip><TooltipTrigger asChild>
-            <Badge variant="outline" className="text-[10px] cursor-help">≠ XP</Badge>
+            <Badge variant="outline" className="text-[10px] cursor-help">{t("uiCTGWalletSection.xp")}</Badge>
           </TooltipTrigger>
           <TooltipContent className="max-w-[220px] text-xs">
-            XP (⭐) is permanent reputation. $CTG (🌱) is contribution to the commons — it circulates.
+            {t("uiCTGWalletSection.xpIsPermanentReputationCtgIs")}
           </TooltipContent></Tooltip>
         </h3>
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground">
-            🌱 <strong className="text-foreground">$CTG is earned by producing verified value for the commons.</strong>{" "}
-            Unlike XP (which is permanent), $CTG circulates — it fades gently at 1%/month
-            (demurrage), encouraging continuous contribution rather than hoarding.
-            It cannot be purchased.
+            🌱 <strong className="text-foreground">{t("uiCTGWalletSection.ctgIsEarnedByProducingVerified")}</strong>{" "}
+            {t("uiCTGWalletSection.unlikeXpWhichIsPermanentCtg")}
           </p>
           <div className="flex gap-4 text-xs">
             <span className="text-violet-600 dark:text-violet-400">
-              ⭐ XP = who you <em>are</em> (permanent)
+              {t("uiCTGWalletSection.xpWhoYou")} <em>{t("uiCTGWalletSection.xpAre")}</em> {t("uiCTGWalletSection.xpPermanent")}
             </span>
             <span className="text-emerald-600 dark:text-emerald-400">
-              🌱 $CTG = what you <em>produce</em> (circulatory)
+              {t("uiCTGWalletSection.ctgWhatYou")} <em>{t("uiCTGWalletSection.ctgProduce")}</em> {t("uiCTGWalletSection.ctgCirculatory")}
             </span>
           </div>
         </div>
@@ -364,9 +365,9 @@ export function CTGWalletSection() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs text-muted-foreground">
-                <th className="py-2 pr-4">Contribution Type</th>
+                <th className="py-2 pr-4">{t("uiCTGWalletSection.contributionType")}</th>
                 <th className="py-2 pr-4 text-right">$CTG Earned</th>
-                <th className="py-2 text-right">Commons Share</th>
+                <th className="py-2 text-right">{t("uiCTGWalletSection.commonsShare2")}</th>
               </tr>
             </thead>
             <tbody>
@@ -422,6 +423,7 @@ function StatCard({ label, value, color }: { label: string; value: string | numb
 
 // ── Transfer Modal (2-step wizard) ──
 function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpenChange: (v: boolean) => void; onSuccess: () => void }) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();
   const [step, setStep] = useState<1 | 2>(1);
@@ -494,9 +496,9 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><Send className="h-4 w-4" /> Send $CTG</DialogTitle>
+          <DialogTitle className="flex items-center gap-2"><Send className="h-4 w-4" /> {t("uiCTGWalletSection.sendCtg")}</DialogTitle>
           <DialogDescription>
-            {step === 1 ? "Choose a recipient and amount." : "Review and confirm your transfer."}
+            {step === 1 ? t("uiCTGWalletSection.chooseARecipientAndAmount") : t("uiCTGWalletSection.reviewAndConfirmYourTransfer")}
           </DialogDescription>
         </DialogHeader>
 
@@ -523,7 +525,7 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
                   <Input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search by name (min 3 chars)..."
+                    placeholder={t("uiCTGWalletSection.searchByNameMin3Chars")}
                     className="mt-1"
                   />
                   {searchResults.length > 0 && (
@@ -550,7 +552,7 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
 
             {/* Amount */}
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Amount ($CTG)</label>
+              <label className="text-xs font-medium text-muted-foreground">{t("uiCTGWalletSection.amountCtg")}</label>
               <Input
                 type="number" value={amount}
                 onChange={(e) => setAmount(e.target.value)}
@@ -558,8 +560,8 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
                 className="mt-1"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Available: {ownBalance.toLocaleString()} $CTG
-                {amt > 0 && <span className="ml-2">→ New balance: <strong>{Math.max(0, newBalance).toLocaleString()}</strong></span>}
+                {t("uiCTGWalletSection.available")} {ownBalance.toLocaleString()} $CTG
+                {amt > 0 && <span className="ml-2">{t("uiCTGWalletSection.newBalance")} <strong>{Math.max(0, newBalance).toLocaleString()}</strong></span>}
               </p>
             </div>
 
@@ -568,7 +570,7 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
               <label className="text-xs font-medium text-muted-foreground">Note (optional, max 200 chars)</label>
               <Textarea
                 value={note} onChange={(e) => setNote(e.target.value.slice(0, 200))}
-                rows={2} placeholder="What's this for?"
+                rows={2} placeholder={t("uiCTGWalletSection.whatSThisFor")}
                 className="mt-1"
               />
               <p className="text-[10px] text-muted-foreground text-right">{note.length}/200</p>
@@ -585,7 +587,7 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
                   <AvatarFallback>{selectedUser.name?.[0] || "?"}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm text-muted-foreground">Sending to</p>
+                  <p className="text-sm text-muted-foreground">{t("uiCTGWalletSection.sendingTo")}</p>
                   <p className="font-semibold">{selectedUser.name}</p>
                 </div>
               </div>
@@ -596,7 +598,7 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
               </div>
               <Separator />
               <p className="text-xs text-muted-foreground text-center">
-                Your balance after: <strong>{Math.max(0, newBalance).toLocaleString()} $CTG</strong>
+                {t("uiCTGWalletSection.yourBalanceAfter")} <strong>{Math.max(0, newBalance).toLocaleString()} $CTG</strong>
               </p>
             </div>
             {error && (
@@ -610,7 +612,7 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
         <DialogFooter className="gap-2 sm:gap-0">
           {step === 2 && (
             <Button variant="ghost" onClick={() => { setStep(1); setError(null); }} className="gap-1.5 mr-auto">
-              <ArrowLeft className="h-4 w-4" /> Back
+              <ArrowLeft className="h-4 w-4" /> {t("uiCTGWalletSection.back")}
             </Button>
           )}
           {step === 1 ? (
@@ -624,7 +626,7 @@ function TransferModal({ open, onOpenChange, onSuccess }: { open: boolean; onOpe
           ) : (
             <Button onClick={handleConfirm} disabled={loading} className="gap-1.5">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-              Confirm Transfer
+              {t("uiCTGWalletSection.confirmTransfer")}
             </Button>
           )}
         </DialogFooter>
@@ -639,6 +641,7 @@ function ExchangeModal({
 }: {
   open: boolean; onOpenChange: (v: boolean) => void; balance: number; rate: number | null; onSuccess: () => void;
 }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -685,7 +688,7 @@ function ExchangeModal({
       onOpenChange(false);
       setAmount("");
     } catch (err: any) {
-      toast({ title: "Exchange failed", description: err.message, variant: "destructive" });
+      toast({ title: t("uiCTGWalletSection.exchangeFailed"), description: err.message, variant: "destructive" });
     } finally { setLoading(false); }
   };
 
@@ -695,7 +698,7 @@ function ExchangeModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><RefreshCw className="h-4 w-4" /> Exchange $CTG → Credits</DialogTitle>
+          <DialogTitle className="flex items-center gap-2"><RefreshCw className="h-4 w-4" /> {t("uiCTGWalletSection.exchangeCtgCredits")}</DialogTitle>
           <DialogDescription>
             {rate ? `Current rate: 1 $CTG = ${rate} credits` : "Exchange temporarily unavailable."}
           </DialogDescription>
@@ -704,7 +707,7 @@ function ExchangeModal({
           <div className="space-y-5">
             {/* Slider */}
             <div className="space-y-3">
-              <label className="text-xs font-medium text-muted-foreground">Amount ($CTG)</label>
+              <label className="text-xs font-medium text-muted-foreground">{t("uiCTGWalletSection.amountCtg")}</label>
               <Slider
                 value={[amt]}
                 onValueChange={([v]) => setAmount(String(v))}
@@ -724,7 +727,7 @@ function ExchangeModal({
             {/* Preview */}
             {amt > 0 && (
               <div className="rounded-lg border border-border bg-muted/30 p-4 text-center space-y-1">
-                <p className="text-xs text-muted-foreground">You will receive</p>
+                <p className="text-xs text-muted-foreground">{t("uiCTGWalletSection.youWillReceive")}</p>
                 <div className="flex items-center justify-center gap-2">
                   <p className="text-2xl font-bold text-primary">{displayCredits.toLocaleString()} credits</p>
                   {previewLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
@@ -736,12 +739,12 @@ function ExchangeModal({
             {isOver50 && (
               <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-xs flex items-center gap-2 text-amber-700 dark:text-amber-400">
                 <AlertTriangle className="h-4 w-4 shrink-0" />
-                This represents over 50% of your $CTG balance. Are you sure?
+                {t("uiCTGWalletSection.thisRepresentsOver50OfYour")}
               </div>
             )}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground py-4">No active exchange rate is configured.</p>
+          <p className="text-sm text-muted-foreground py-4">{t("uiCTGWalletSection.noActiveExchangeRateIsConfigured")}</p>
         )}
         <DialogFooter>
           <Button onClick={handleExchange} disabled={loading || !rate || amt <= 0 || amt > balance} className="gap-1.5">
@@ -756,6 +759,7 @@ function ExchangeModal({
 
 // ── Commons Pool Card ──
 function CommonsPoolCard({ userId }: { userId?: string }) {
+  const { t } = useTranslation();
   const { data: commons } = useQuery({
     queryKey: ["ctg-commons-wallet"],
     queryFn: async () => {
@@ -813,11 +817,11 @@ function CommonsPoolCard({ userId }: { userId?: string }) {
       />
       <p className="text-xs text-muted-foreground">
         <span className="font-semibold">{Math.round(balance)}</span> / {threshold} $CTG
-        {" — "}Fills as contributors share with the commons. Redistributed to active contributors when full.
+        {" — "}{t("uiCTGWalletSection.fillsAsContributorsShareWithThe")}
       </p>
       {lastPulse && lastPulse.userAmount > 0 && (
         <p className="text-xs text-emerald-600 dark:text-emerald-400">
-          Last Pulse: {formatDistanceToNow(new Date(lastPulse.pulseDate), { addSuffix: true })} — you received <strong>{lastPulse.userAmount} $CTG</strong>
+          Last Pulse: {formatDistanceToNow(new Date(lastPulse.pulseDate), { addSuffix: true })} {t("uiCTGWalletSection.youReceived")} <strong>{lastPulse.userAmount} $CTG</strong>
         </p>
       )}
     </div>

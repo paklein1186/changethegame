@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ interface Props {
 export function ReportConcernDialog({
   open, onOpenChange, distributionId, questId, questTitle, distributionDate,
 }: Props) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const [reason, setReason] = useState("");
@@ -33,7 +35,7 @@ export function ReportConcernDialog({
 
   const handleSubmit = async () => {
     if (reason.trim().length < 30) {
-      toast({ title: "Please describe your concern in at least 30 characters.", variant: "destructive" });
+      toast({ title: t("uiReportConcernDialog.pleaseDescribeYourConcernInAt"), variant: "destructive" });
       return;
     }
     setSubmitting(true);
@@ -71,7 +73,7 @@ export function ReportConcernDialog({
       });
     }
 
-    toast({ title: "Concern submitted", description: "Your report has been sent confidentially to platform admins." });
+    toast({ title: "Concern submitted", description: t("uiReportConcernDialog.yourReportHasBeenSentConfidentially") });
     setSubmitting(false);
     setReason("");
     onOpenChange(false);
@@ -81,18 +83,18 @@ export function ReportConcernDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>⚠️ Report a Distribution Concern</DialogTitle>
+          <DialogTitle>{t("uiReportConcernDialog.reportADistributionConcern")}</DialogTitle>
           <DialogDescription>
-            Quest: {questTitle} — Distribution: {new Date(distributionDate).toLocaleDateString()}
+            {t("uiReportConcernDialog.quest")} {questTitle} — Distribution: {new Date(distributionDate).toLocaleDateString()}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium mb-1 block">Describe your concern *</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiReportConcernDialog.describeYourConcern")}</label>
             <Textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="What seems unfair about this distribution? (min 30 characters)"
+              placeholder={t("uiReportConcernDialog.whatSeemsUnfairAboutThisDistribution")}
               rows={4}
             />
             <p className="text-[10px] text-muted-foreground mt-1">{reason.length}/30 min characters</p>
@@ -115,7 +117,7 @@ export function ReportConcernDialog({
               <Select value={currency} onValueChange={setCurrency}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="coins">🟩 Coins</SelectItem>
+                  <SelectItem value="coins">{t("uiReportConcernDialog.coins")}</SelectItem>
                   <SelectItem value="ctg">🌱 $CTG</SelectItem>
                   <SelectItem value="both">Both</SelectItem>
                 </SelectContent>
@@ -124,15 +126,15 @@ export function ReportConcernDialog({
           </div>
 
           <p className="text-[10px] text-muted-foreground border-t border-border pt-2">
-            Your report is confidential. Quest admins will not see the content of your report, only that a concern was raised on this distribution.
+            {t("uiReportConcernDialog.yourReportIsConfidentialQuestAdmins")}
           </p>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiReportConcernDialog.cancel")}</Button>
           <Button onClick={handleSubmit} disabled={submitting || reason.trim().length < 30}>
             {submitting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-            Submit privately to platform admins
+            {t("uiReportConcernDialog.submitPrivatelyToPlatformAdmins")}
           </Button>
         </DialogFooter>
       </DialogContent>

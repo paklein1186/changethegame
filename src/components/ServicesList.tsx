@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { LayoutList, LayoutGrid, Trash2, Video, Briefcase, Users } from "lucide-react";
@@ -15,9 +16,10 @@ interface ServicesListProps {
 }
 
 export function ServicesList({ services, isAdmin, onToggleActive, onDelete }: ServicesListProps) {
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
-  if (services.length === 0) return <p className="text-muted-foreground">No services yet.</p>;
+  if (services.length === 0) return <p className="text-muted-foreground">{t("uiServicesList.noServicesYet")}</p>;
 
   return (
     <div className="space-y-3">
@@ -35,7 +37,7 @@ export function ServicesList({ services, isAdmin, onToggleActive, onDelete }: Se
                   <LayoutList className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">List view</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">{t("uiServicesList.listView")}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -48,7 +50,7 @@ export function ServicesList({ services, isAdmin, onToggleActive, onDelete }: Se
                   <LayoutGrid className="h-3.5 w-3.5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">Grid view</TooltipContent>
+              <TooltipContent side="bottom" className="text-xs">{t("uiServicesList.gridView")}</TooltipContent>
             </Tooltip>
           </div>
         </TooltipProvider>
@@ -84,11 +86,11 @@ export function ServicesList({ services, isAdmin, onToggleActive, onDelete }: Se
                 <div className="flex items-center gap-2 mt-1">
                   {svc.service_type === "online_call" && <Badge variant="outline" className="text-[10px]"><Video className="h-2.5 w-2.5 mr-0.5" />Call</Badge>}
                   {svc.service_type === "service_mission" && <Badge variant="outline" className="text-[10px]"><Briefcase className="h-2.5 w-2.5 mr-0.5" />Mission</Badge>}
-                  {svc.service_type === "event_attendance" && <Badge variant="outline" className="text-[10px]"><Users className="h-2.5 w-2.5 mr-0.5" />Event</Badge>}
+                  {svc.service_type === "event_attendance" && <Badge variant="outline" className="text-[10px]"><Users className="h-2.5 w-2.5 mr-0.5" />{t("uiServicesList.event")}</Badge>}
                   {(svc as any)._provider_name && (
                     <span className="text-xs text-muted-foreground">by {(svc as any)._provider_name}</span>
                   )}
-                  {svc.is_draft && <Badge variant="outline" className="text-[10px]">Draft</Badge>}
+                  {svc.is_draft && <Badge variant="outline" className="text-[10px]">{t("uiServicesList.draft")}</Badge>}
                 </div>
               </div>
             </Link>

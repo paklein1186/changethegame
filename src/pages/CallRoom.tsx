@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
@@ -49,6 +51,7 @@ function JitsiEmbed({
   avatarUrl?: string;
   onError: () => void;
 }) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const apiRef = useRef<any>(null);
   const [loaded, setLoaded] = useState(false);
@@ -136,13 +139,13 @@ function JitsiEmbed({
     return (
       <div className="flex flex-col items-center justify-center h-full bg-muted/30 rounded-xl p-8 text-center">
         <AlertTriangle className="h-12 w-12 text-warning mb-4" />
-        <h3 className="font-display text-lg font-semibold mb-2">Couldn't load the call</h3>
+        <h3 className="font-display text-lg font-semibold mb-2">{t("uiCallRoom.couldnTLoadTheCall")}</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          The video call couldn't be initialized. Try joining directly:
+          {t("uiCallRoom.theVideoCallCouldnTBe")}
         </p>
         <Button asChild>
           <a href={jitsiUrl} target="_blank" rel="noopener noreferrer">
-            <Video className="h-4 w-4 mr-2" /> Open call room <ExternalLink className="h-3.5 w-3.5 ml-1" />
+            <Video className="h-4 w-4 mr-2" /> {t("uiCallRoom.openCallRoom")} <ExternalLink className="h-3.5 w-3.5 ml-1" />
           </a>
         </Button>
       </div>
@@ -153,7 +156,7 @@ function JitsiEmbed({
     <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden bg-black/5">
       {!loaded && (
         <div className="flex items-center justify-center h-full">
-          <p className="text-muted-foreground text-sm animate-pulse">Loading call…</p>
+          <p className="text-muted-foreground text-sm animate-pulse">{t("uiCallRoom.loadingCall")}</p>
         </div>
       )}
     </div>
@@ -174,13 +177,13 @@ function getSessionStatus(booking: any): {
 
   const isConfirmed = booking.status === "CONFIRMED" || booking.status === "ACCEPTED";
   if (!isConfirmed) {
-    return { label: "Not active", variant: "destructive", canJoin: false, message: "This session is not confirmed yet." };
+    return { get label() { return i18n.t("uiCallRoom.notActive"); }, variant: "destructive", canJoin: false, get message() { return i18n.t("uiCallRoom.thisSessionIsNotConfirmedYet"); } };
   }
 
   if (start && now < start) {
     const diffMin = Math.round((start.getTime() - now.getTime()) / 60000);
     return {
-      label: "Not started",
+      get label() { return i18n.t("uiCallRoom.notStarted"); },
       variant: "secondary",
       canJoin: true,
       message: diffMin > 60
@@ -190,15 +193,16 @@ function getSessionStatus(booking: any): {
   }
 
   if (end && now > end) {
-    return { label: "Finished", variant: "outline", canJoin: true, message: "This session has ended. Notes are still accessible." };
+    return { label: "Finished", variant: "outline", canJoin: true, get message() { return i18n.t("uiCallRoom.thisSessionHasEndedNotesAre"); } };
   }
 
-  return { label: "Live now", variant: "default", canJoin: true };
+  return { get label() { return i18n.t("uiCallRoom.liveNow"); }, variant: "default", canJoin: true };
 }
 
 // ─── Main Component ────────────────────────────────────────────
 
 export default function CallRoom() {
+  const { t } = useTranslation();
   const { bookingId } = useParams<{ bookingId: string }>();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
@@ -261,7 +265,7 @@ export default function CallRoom() {
   if (isLoading) {
     return (
       <PageShell>
-        <p className="text-muted-foreground py-24 text-center">Loading session…</p>
+        <p className="text-muted-foreground py-24 text-center">{t("uiCallRoom.loadingSession")}</p>
       </PageShell>
     );
   }
@@ -271,10 +275,10 @@ export default function CallRoom() {
       <PageShell>
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <FileQuestion className="h-16 w-16 text-muted-foreground mb-4" />
-          <h1 className="font-display text-2xl font-bold mb-2">Session not found</h1>
-          <p className="text-muted-foreground mb-6">This booking doesn't exist or has been removed.</p>
+          <h1 className="font-display text-2xl font-bold mb-2">{t("uiCallRoom.sessionNotFound")}</h1>
+          <p className="text-muted-foreground mb-6">{t("uiCallRoom.thisBookingDoesnTExistOr")}</p>
           <Button variant="outline" asChild>
-            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Work</Link>
+            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCallRoom.backToWork")}</Link>
           </Button>
         </div>
       </PageShell>
@@ -287,9 +291,9 @@ export default function CallRoom() {
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
           <h1 className="font-display text-2xl font-bold mb-2">Access denied</h1>
-          <p className="text-muted-foreground mb-6">You don't have permission to join this call.</p>
+          <p className="text-muted-foreground mb-6">{t("uiCallRoom.youDonTHavePermissionTo")}</p>
           <Button variant="outline" asChild>
-            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Work</Link>
+            <Link to="/work"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCallRoom.backToWork")}</Link>
           </Button>
         </div>
       </PageShell>
@@ -306,7 +310,7 @@ export default function CallRoom() {
       {/* Breadcrumb bar */}
       <div className="border-b border-border bg-card px-4 py-2 flex items-center gap-2 text-sm">
         <Link to="/me/bookings" className="text-muted-foreground hover:text-foreground transition-colors">
-          My bookings
+          {t("uiCallRoom.myBookings")}
         </Link>
         <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
         {service && (
@@ -324,7 +328,7 @@ export default function CallRoom() {
             {status.label}
           </Badge>
           <Button variant="ghost" size="sm" asChild>
-            <Link to={`/bookings/${booking.id}`}><ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back</Link>
+            <Link to={`/bookings/${booking.id}`}><ArrowLeft className="h-3.5 w-3.5 mr-1" /> {t("uiCallRoom.back")}</Link>
           </Button>
         </div>
       </div>
@@ -354,7 +358,7 @@ export default function CallRoom() {
           ) : (
             <div className="flex flex-col items-center justify-center h-full bg-muted/20 rounded-xl p-8 text-center">
               <Video className="h-16 w-16 text-muted-foreground mb-4" />
-              <h2 className="font-display text-xl font-semibold mb-2">Call not available</h2>
+              <h2 className="font-display text-xl font-semibold mb-2">{t("uiCallRoom.callNotAvailable")}</h2>
               <p className="text-muted-foreground">{status.message}</p>
             </div>
           )}
@@ -367,7 +371,7 @@ export default function CallRoom() {
             {/* Session header */}
             <div>
               <h2 className="font-display text-lg font-semibold">
-                Session with {otherProfile?.name || "…"}
+                {t("uiCallRoom.sessionWith")} {otherProfile?.name || "…"}
               </h2>
               {service && (
                 <Link to={`/services/${service.id}`} className="text-sm text-primary hover:underline" target="_blank">
@@ -393,7 +397,7 @@ export default function CallRoom() {
                   )}
                 </p>
               ) : (
-                <p className="text-sm text-muted-foreground">No time set</p>
+                <p className="text-sm text-muted-foreground">{t("uiCallRoom.noTimeSet")}</p>
               )}
               {service?.duration_minutes && (
                 <p className="text-xs text-muted-foreground">{service.duration_minutes} min session</p>
@@ -444,7 +448,7 @@ export default function CallRoom() {
               <Textarea
                 value={notes}
                 onChange={(e) => handleNotesChange(e.target.value)}
-                placeholder="Take notes during the session…"
+                placeholder={t("uiCallRoom.takeNotesDuringTheSession")}
                 className="min-h-[120px] resize-none text-sm"
                 maxLength={5000}
               />
@@ -455,7 +459,7 @@ export default function CallRoom() {
               <h3 className="text-xs font-semibold uppercase text-muted-foreground">Links</h3>
               <div className="flex flex-col gap-1">
                 <Link to={`/bookings/${booking.id}`} className="text-sm text-primary hover:underline">
-                  Booking details
+                  {t("uiCallRoom.bookingDetails")}
                 </Link>
                 {service && (
                   <a href={`/services/${service.id}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
@@ -464,7 +468,7 @@ export default function CallRoom() {
                 )}
                 {booking.call_url && (
                   <a href={booking.call_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
-                    Direct Jitsi link <ExternalLink className="inline h-3 w-3" />
+                    {t("uiCallRoom.directJitsiLink")} <ExternalLink className="inline h-3 w-3" />
                   </a>
                 )}
               </div>

@@ -109,7 +109,7 @@ export default function Signup() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.email")}</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required autoComplete="email" />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("uiSignup.youExampleCom")} required autoComplete="email" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.password")}</Label>

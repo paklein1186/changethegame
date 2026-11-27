@@ -71,13 +71,14 @@ function LanguageSwitcherInline() {
 }
 
 function ThemeToggleButton() {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
   return (
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="flex items-center justify-center h-9 w-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? t("uiAppNav.switchToLightMode") : t("uiAppNav.switchToDarkMode")}
     >
       {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </button>

@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useRef } from "react";
 import { compressImage } from "@/lib/compressImage";
 import { Plus, Briefcase, MapPin, FileText, Upload, Trash2, ExternalLink, Link as LinkIcon, Loader2, Sparkles } from "lucide-react";
@@ -17,8 +18,8 @@ import { useTranslation } from "react-i18next";
 import { translateTopicName } from "@/lib/entityLabels";
 
 const CONTRACT_TYPES = [
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
+  { value: "full-time", get label() { return i18n.t("uiCompanyJobsTab.fullTime"); } },
+  { value: "part-time", get label() { return i18n.t("uiCompanyJobsTab.partTime"); } },
   { value: "contract", label: "Contract" },
   { value: "freelance", label: "Freelance" },
   { value: "internship", label: "Internship" },
@@ -26,7 +27,7 @@ const CONTRACT_TYPES = [
 ];
 
 const REMOTE_POLICIES = [
-  { value: "on-site", label: "On-site" },
+  { value: "on-site", get label() { return i18n.t("uiCompanyJobsTab.onSite"); } },
   { value: "remote", label: "Remote" },
   { value: "hybrid", label: "Hybrid" },
 ];
@@ -81,7 +82,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
     const path = `${userId}/jobs/${Date.now()}_${safeName}`;
     const { error } = await supabase.storage.from("entity-images").upload(path, file);
     if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      toast({ title: t("uiCompanyJobsTab.uploadFailed"), description: error.message, variant: "destructive" });
       setUploading(false);
       return;
     }
@@ -112,11 +113,11 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
         if (ext.contract_type) setContractType(ext.contract_type);
         if (ext.remote_policy) setRemotePolicy(ext.remote_policy);
         if (ext.location) setLocationText(ext.location);
-        toast({ title: "Info extracted", description: "Review and edit the pre-filled fields." });
+        toast({ title: "Info extracted", description: t("uiCompanyJobsTab.reviewAndEditThePreFilled") });
       }
     } catch (e) {
       console.error("Extraction failed:", e);
-      toast({ title: "Extraction failed", description: "Fill the form manually.", variant: "destructive" });
+      toast({ title: t("uiCompanyJobsTab.extractionFailed"), description: t("uiCompanyJobsTab.fillTheFormManually"), variant: "destructive" });
     } finally {
       setExtracting(false);
     }
@@ -150,7 +151,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
       resetForm();
       setOpen(false);
     } catch {
-      toast({ title: "Error creating job", variant: "destructive" });
+      toast({ title: t("uiCompanyJobsTab.errorCreatingJob"), variant: "destructive" });
     }
   };
 
@@ -164,15 +165,15 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
       {isAdmin && (
         <Dialog open={open} onOpenChange={(v) => { if (!v) resetForm(); setOpen(v); }}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Add Job Position</Button>
+            <Button size="sm"><Plus className="h-4 w-4 mr-1" /> {t("uiCompanyJobsTab.addJobPosition")}</Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-            <DialogHeader><DialogTitle className="flex items-center gap-2"><Briefcase className="h-5 w-5 text-primary" /> Add Job Position</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle className="flex items-center gap-2"><Briefcase className="h-5 w-5 text-primary" /> {t("uiCompanyJobsTab.addJobPosition")}</DialogTitle></DialogHeader>
 
             {/* Step 1: File upload */}
             {step === "file" && (
               <div className="space-y-4 mt-2">
-                <p className="text-sm text-muted-foreground">Upload a job description document or paste a URL (optional).</p>
+                <p className="text-sm text-muted-foreground">{t("uiCompanyJobsTab.uploadAJobDescriptionDocumentOr")}</p>
                 <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleFileUpload} />
                 {docUrl ? (
                   <div className="flex items-center gap-2 text-sm bg-muted rounded-lg p-3">
@@ -186,7 +187,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                   <div className="space-y-3">
                     <Button variant="outline" className="w-full h-20 flex-col gap-2" onClick={() => fileRef.current?.click()} disabled={uploading}>
                       <Upload className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-sm">{uploading ? "Uploading…" : "Upload document (PDF, DOC…)"}</span>
+                      <span className="text-sm">{uploading ? "Uploading…" : t("uiCompanyJobsTab.uploadDocumentPdfDoc")}</span>
                     </Button>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <div className="flex-1 h-px bg-border" />
@@ -195,7 +196,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                     </div>
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Paste a URL to the job description…"
+                        placeholder={t("uiCompanyJobsTab.pasteAUrlToTheJob")}
                         className="text-sm"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") handleUrlPaste((e.target as HTMLInputElement).value);
@@ -212,8 +213,8 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                 )}
                 <Button size="sm" className="w-full" onClick={handleContinueToDetails} disabled={extracting}>
                   {docUrl ? (
-                    <><Sparkles className="h-3.5 w-3.5 mr-1" /> Extract & continue</>
-                  ) : "Skip — fill manually"}
+                    <><Sparkles className="h-3.5 w-3.5 mr-1" /> {t("uiCompanyJobsTab.extractContinue")}</>
+                  ) : t("uiCompanyJobsTab.skipFillManually")}
                 </Button>
               </div>
             )}
@@ -224,16 +225,16 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                 {extracting && (
                   <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 rounded-lg p-3">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Extracting job info from document…</span>
+                    <span>{t("uiCompanyJobsTab.extractingJobInfoFromDocument")}</span>
                   </div>
                 )}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Title *</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.title")}</label>
                   <Input value={title} onChange={e => setTitle(e.target.value)} maxLength={120} placeholder="e.g. Frontend Developer" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Description</label>
-                  <Textarea value={description} onChange={e => setDescription(e.target.value)} maxLength={2000} className="resize-none min-h-[100px]" placeholder="Describe the role…" />
+                  <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.description")}</label>
+                  <Textarea value={description} onChange={e => setDescription(e.target.value)} maxLength={2000} className="resize-none min-h-[100px]" placeholder={t("uiCompanyJobsTab.describeTheRole")} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -265,7 +266,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
 
                 {/* Topics */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Topics</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.topics")}</label>
                   <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
                     {allTopics.map((t: any) => (
                       <Badge key={t.id} variant={selectedTopics.includes(t.id) ? "default" : "outline"} className="cursor-pointer text-xs" onClick={() => toggleTopic(t.id)}>
@@ -277,7 +278,7 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
 
                 {/* Territories */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Territories</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiCompanyJobsTab.territories")}</label>
                   <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
                     {allTerritories.map((t: any) => (
                       <Badge key={t.id} variant={selectedTerritories.includes(t.id) ? "default" : "outline"} className="cursor-pointer text-xs" onClick={() => toggleTerritory(t.id)}>
@@ -288,9 +289,9 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setStep("file")}>Back</Button>
+                  <Button variant="outline" size="sm" onClick={() => setStep("file")}>{t("uiCompanyJobsTab.back")}</Button>
                   <Button onClick={handleCreate} className="flex-1" disabled={!title.trim() || createJob.isPending}>
-                    {createJob.isPending ? "Creating…" : "Create Job Position"}
+                    {createJob.isPending ? "Creating…" : t("uiCompanyJobsTab.createJobPosition")}
                   </Button>
                 </div>
               </div>
@@ -299,10 +300,10 @@ export function CompanyJobsTab({ companyId, isAdmin }: Props) {
         </Dialog>
       )}
 
-      {isLoading && <p className="text-muted-foreground text-sm">Loading…</p>}
+      {isLoading && <p className="text-muted-foreground text-sm">{t("uiCompanyJobsTab.loading")}</p>}
 
       {jobs.length === 0 && !isLoading && (
-        <p className="text-muted-foreground text-sm">No job positions yet.</p>
+        <p className="text-muted-foreground text-sm">{t("uiCompanyJobsTab.noJobPositionsYet")}</p>
       )}
 
       <div className="grid gap-3">

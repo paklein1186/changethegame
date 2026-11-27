@@ -86,7 +86,7 @@ export default function PlansPage() {
     fetchPlans();
     if (success) {
       refresh();
-      toast({ title: "Plan updated!", description: "Your subscription has been activated." });
+      toast({ title: "Plan updated!", description: t("uiPlansPage.yourSubscriptionHasBeenActivated") });
     }
   }, [success]);
 
@@ -121,7 +121,7 @@ export default function PlansPage() {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiPlansPage.error"), description: err.message, variant: "destructive" });
     } finally {
       setCheckoutLoading(null);
     }
@@ -134,7 +134,7 @@ export default function PlansPage() {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiPlansPage.error"), description: err.message, variant: "destructive" });
     } finally {
       setPortalLoading(false);
     }
@@ -147,20 +147,20 @@ export default function PlansPage() {
     <PageShell>
       <div className="max-w-5xl mx-auto">
         <Button variant="ghost" size="sm" asChild className="mb-4">
-          <Link to="/me"><ArrowLeft className="h-4 w-4 mr-1" /> Back to Me</Link>
+          <Link to="/me"><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiPlansPage.backToMe")}</Link>
         </Button>
 
         {success && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="rounded-lg border border-success/30 bg-success/5 p-4 mb-6 flex items-center gap-3">
             <CheckCircle className="h-5 w-5 text-success" />
-            <p className="text-sm font-medium">Your plan has been updated successfully!</p>
+            <p className="text-sm font-medium">{t("uiPlansPage.yourPlanHasBeenUpdatedSuccessfully")}</p>
           </motion.div>
         )}
 
         <div className="text-center mb-10">
-          <h1 className="font-display text-3xl font-bold mb-2">Choose Your Participation Level</h1>
+          <h1 className="font-display text-3xl font-bold mb-2">{t("uiPlansPage.chooseYourParticipationLevel")}</h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            Changethegame remains open to all. Plans accelerate your visibility and tools — they do not buy influence.
+            {t("uiPlansPage.changethegameRemainsOpenToAllPlans")}
           </p>
         </div>
 
@@ -192,7 +192,7 @@ export default function PlansPage() {
                 >
                   {isCurrentPlan && (
                     <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                      Your Plan
+                      {t("uiPlansPage.yourPlan")}
                     </Badge>
                   )}
                   {isHighlighted && !isCurrentPlan && (
@@ -221,18 +221,18 @@ export default function PlansPage() {
                   <ul className="space-y-1.5 mb-4 flex-1 text-xs">
                     <PlanFeature icon={<CurrencyIcon currency="credits" className="h-3 w-3" />} label={`${plan.monthly_included_credits} credits/mo`} />
                     <PlanFeature label={`${plan.free_quests_per_week >= 30 ? "∞" : plan.free_quests_per_week} quests/week`} />
-                    <PlanFeature label={plan.max_guild_memberships === null ? "∞ guilds" : `${plan.max_guild_memberships} guilds`} />
+                    <PlanFeature label={plan.max_guild_memberships === null ? t("uiPlansPage.guilds") : `${plan.max_guild_memberships} guilds`} />
                     <PlanFeature label={plan.max_pods === null ? "∞ pods" : `${plan.max_pods} pods`} />
                     <PlanFeature label={plan.max_services_active === null ? "∞ services" : `${plan.max_services_active} services`} />
                     <PlanFeature label={plan.max_courses === null ? "∞ courses" : `${plan.max_courses} courses`} />
-                    <PlanFeature label={plan.max_territories === null ? "∞ territories" : `${plan.max_territories} territories`} />
+                    <PlanFeature label={plan.max_territories === null ? t("uiPlansPage.territories") : `${plan.max_territories} territories`} />
                     <PlanFeature icon={<Eye className="h-3 w-3" />} label={`${plan.visibility_ranking} visibility`} highlight={plan.visibility_ranking !== "standard"} />
                     <PlanFeature icon={<Sparkles className="h-3 w-3" />} label={`AI: ${plan.ai_muse_mode}`} highlight={plan.ai_muse_mode !== "basic"} />
                     <PlanFeature label={`${plan.max_attachment_size_mb} MB uploads`} />
                     {plan.commission_discount_percentage > 0 && <PlanFeature icon={<TrendingDown className="h-3 w-3" />} label={`${plan.commission_discount_percentage}% commission off`} highlight />}
-                    {plan.can_create_territory && <PlanFeature label="Create territories" highlight />}
-                    {plan.can_create_company && <PlanFeature icon={<Building2 className="h-3 w-3" />} label="Create companies" highlight />}
-                    {plan.partnership_proposals_enabled && <PlanFeature label="Partnership proposals" highlight />}
+                    {plan.can_create_territory && <PlanFeature label={t("uiPlansPage.createTerritories")} highlight />}
+                    {plan.can_create_company && <PlanFeature icon={<Building2 className="h-3 w-3" />} label={t("uiPlansPage.createCompanies")} highlight />}
+                    {plan.partnership_proposals_enabled && <PlanFeature label={t("uiPlansPage.partnershipProposals")} highlight />}
                     {plan.ai_agents_enabled && <PlanFeature label="AI Agents" highlight />}
                     {plan.monthly_agent_interactions > 0 && (
                       <PlanFeature
@@ -241,10 +241,10 @@ export default function PlansPage() {
                         highlight
                       />
                     )}
-                    {plan.territory_intelligence_enabled && <PlanFeature label="Territory intelligence" highlight />}
+                    {plan.territory_intelligence_enabled && <PlanFeature label={t("uiPlansPage.territoryIntelligence")} highlight />}
                     {plan.fundraising_tools_enabled && <PlanFeature label="Fundraising tools" highlight />}
                     {plan.memory_engine_enabled && <PlanFeature label="Memory engine" highlight />}
-                    {plan.custom_guild_tools && <PlanFeature label="Custom guild tools" highlight />}
+                    {plan.custom_guild_tools && <PlanFeature label={t("uiPlansPage.customGuildTools")} highlight />}
                     <PlanFeature label={`${plan.xp_multiplier}x XP multiplier`} />
                   </ul>
 
@@ -279,7 +279,7 @@ export default function PlansPage() {
         {/* Economy info */}
         <div className="mt-10 rounded-xl border border-border bg-muted/30 p-6 text-center max-w-3xl mx-auto">
           <h3 className="font-display text-lg font-bold mb-3 flex items-center justify-center gap-2">
-            <Zap className="h-5 w-5 text-primary" /> Understanding the Hybrid Economy
+            <Zap className="h-5 w-5 text-primary" /> {t("uiPlansPage.understandingTheHybridEconomy")}
           </h3>
           <div className="grid md:grid-cols-5 gap-3 text-sm">
             <div className="p-3 rounded-lg bg-card border border-border">
@@ -287,19 +287,19 @@ export default function PlansPage() {
               <p className="text-muted-foreground text-xs">Mission payments &amp; services. Real-world income via Stripe.</p>
             </div>
             <div className="p-3 rounded-lg bg-card border border-teal-200 dark:border-teal-800">
-              <p className="font-semibold text-teal-700 dark:text-teal-300 mb-1">🟩 Coins</p>
-              <p className="text-muted-foreground text-xs">Fiat-backed internal units for quest pots and payouts. Withdrawable.</p>
+              <p className="font-semibold text-teal-700 dark:text-teal-300 mb-1">{t("uiPlansPage.coins")}</p>
+              <p className="text-muted-foreground text-xs">{t("uiPlansPage.fiatBackedInternalUnitsForQuest")}</p>
             </div>
             <div className="p-3 rounded-lg bg-card border border-emerald-200 dark:border-emerald-800">
               <p className="font-semibold text-emerald-700 dark:text-emerald-300 mb-1">🌱 $CTG Token</p>
-              <p className="text-muted-foreground text-xs">Contribution token. Earned by doing verified work. Not purchasable. Fades 1%/month.</p>
+              <p className="text-muted-foreground text-xs">{t("uiPlansPage.contributionTokenEarnedByDoingVerified")}</p>
             </div>
             <div className="p-3 rounded-lg bg-card border border-border">
-              <p className="font-semibold text-primary mb-1">🔷 Credits</p>
-              <p className="text-muted-foreground text-xs">Platform fuel for boosts, extra capacity, and AI features. Not monetary.</p>
+              <p className="font-semibold text-primary mb-1">{t("uiPlansPage.credits")}</p>
+              <p className="text-muted-foreground text-xs">{t("uiPlansPage.platformFuelForBoostsExtraCapacity")}</p>
             </div>
             <div className="p-3 rounded-lg bg-card border border-border">
-              <p className="font-semibold text-primary mb-1">⭐ XP</p>
+              <p className="font-semibold text-primary mb-1">{t("uiPlansPage.xp")}</p>
               <p className="text-muted-foreground text-xs">Reputation. Permanent, never purchased, never decays.</p>
             </div>
           </div>
@@ -307,7 +307,7 @@ export default function PlansPage() {
 
         <div className="mt-6 text-center text-sm text-muted-foreground space-y-1">
           <p>
-            Need more credits? <Link to="/me/credits" className="text-primary hover:underline">Buy credit bundles →</Link>
+            {t("uiPlansPage.needMoreCredits")} <Link to="/me/credits" className="text-primary hover:underline">{t("uiPlansPage.buyCreditBundles")}</Link>
           </p>
           <p className="text-xs">{ECONOMY_LABELS.creditsDisclaimer}</p>
         </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useCallback, useEffect, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
@@ -80,6 +81,7 @@ export function MentionTextarea({
   mentionHint,
   entityContext,
 }: Props) {
+  const { t } = useTranslation();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -293,7 +295,7 @@ export function MentionTextarea({
             <div className="px-3 py-2 text-xs text-muted-foreground">Searching…</div>
           )}
           {!loading && suggestions.length === 0 && query.length >= 1 && (
-            <div className="px-3 py-2 text-xs text-muted-foreground">No results found</div>
+            <div className="px-3 py-2 text-xs text-muted-foreground">{t("uiMentionTextarea.noResultsFound")}</div>
           )}
           {suggestions.map((item, i) => {
             const isBulk = item.id.startsWith("bulk:");
@@ -319,7 +321,7 @@ export function MentionTextarea({
                   {isBulk ? `@${item.name}` : item.name}
                 </span>
                 <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                  {isBulk ? "Notify all" : ENTITY_LABEL[item.entityType]}
+                  {isBulk ? t("uiMentionTextarea.notifyAll") : ENTITY_LABEL[item.entityType]}
                 </span>
               </button>
             );

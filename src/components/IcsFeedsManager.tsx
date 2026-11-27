@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,20 +30,20 @@ interface IcsFeed {
 const FEED_CONFIGS: { type: FeedType; label: string; description: string; icon: typeof Calendar }[] = [
   {
     type: "PERSONAL_ALL",
-    label: "All my CTG events",
-    description: "Bookings, rituals, and guild events you attend",
+    get label() { return i18n.t("uiIcsFeedsManager.allMyCtgEvents"); },
+    get description() { return i18n.t("uiIcsFeedsManager.bookingsRitualsAndGuildEventsYou"); },
     icon: Calendar,
   },
   {
     type: "PERSONAL_ONLY_BOOKINGS",
-    label: "Only my bookings",
-    description: "Service bookings where you are provider or client",
+    get label() { return i18n.t("uiIcsFeedsManager.onlyMyBookings"); },
+    get description() { return i18n.t("uiIcsFeedsManager.serviceBookingsWhereYouAreProvider"); },
     icon: Briefcase,
   },
   {
     type: "PERSONAL_ONLY_RITUALS",
-    label: "Only rituals & events",
-    description: "Ritual sessions and guild events you attend",
+    get label() { return i18n.t("uiIcsFeedsManager.onlyRitualsEvents"); },
+    get description() { return i18n.t("uiIcsFeedsManager.ritualSessionsAndGuildEventsYou"); },
     icon: Users,
   },
 ];
@@ -56,6 +58,7 @@ interface IcsFeedsManagerProps {
 }
 
 export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -98,7 +101,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
     const url = buildIcsUrl(feed.id, feed.token);
     await navigator.clipboard.writeText(url);
     setCopiedFeed(feed.id);
-    toast({ title: "ICS URL copied to clipboard" });
+    toast({ title: t("uiIcsFeedsManager.icsUrlCopiedToClipboard") });
     setTimeout(() => setCopiedFeed(null), 2000);
   };
 
@@ -117,7 +120,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
     setRegeneratingFeed(null);
     setRevealedFeeds((prev) => { const n = new Set(prev); n.delete(feed.id); return n; });
     refetch();
-    toast({ title: "URL regenerated", description: "The old URL is now invalid." });
+    toast({ title: "URL regenerated", description: t("uiIcsFeedsManager.theOldUrlIsNowInvalid") });
   };
 
   const handleToggleActive = async (feed: IcsFeed, active: boolean) => {
@@ -151,7 +154,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
               ICS Calendar Feeds
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Subscribe to your changethegame events in Google Calendar, Apple Calendar, Outlook, or any tool that supports ICS feeds. These feeds are read-only and automatically refresh.
+              {t("uiIcsFeedsManager.subscribeToYourChangethegameEventsIn")}
             </p>
           </div>
           <Separator />
@@ -160,7 +163,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
 
       {compact && (
         <p className="text-xs text-muted-foreground">
-          Use these ICS links to subscribe from Google Calendar, Apple Calendar, or Outlook.
+          {t("uiIcsFeedsManager.useTheseIcsLinksToSubscribe")}
         </p>
       )}
 
@@ -198,7 +201,7 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
                     disabled={!feed.is_active}
                   >
                     {isCopied ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
-                    {isCopied ? "Copied" : "Copy URL"}
+                    {isCopied ? t("uiIcsFeedsManager.copied") : t("uiIcsFeedsManager.copyUrl")}
                   </Button>
                   {!compact && (
                     <>
@@ -254,18 +257,18 @@ export function IcsFeedsManager({ compact = false }: IcsFeedsManagerProps) {
           <div className="rounded-xl bg-muted/50 p-4 space-y-3">
             <h4 className="text-sm font-medium flex items-center gap-2">
               <Info className="h-4 w-4 text-primary" />
-              How to subscribe
+              {t("uiIcsFeedsManager.howToSubscribe")}
             </h4>
             <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
-              <li><strong>Google Calendar:</strong> Settings → Add calendar → From URL → paste your ICS URL → Add calendar.</li>
-              <li><strong>Apple Calendar:</strong> File → New Calendar Subscription → paste your ICS URL.</li>
-              <li><strong>Outlook:</strong> Add calendar → Subscribe from web → paste your ICS URL.</li>
-              <li><strong>Infomaniak:</strong> Other calendars → Subscribe → paste your ICS URL.</li>
+              <li><strong>Google Calendar:</strong> {t("uiIcsFeedsManager.settingsAddCalendarFromUrlPaste")}</li>
+              <li><strong>Apple Calendar:</strong> {t("uiIcsFeedsManager.fileNewCalendarSubscriptionPasteYour")}</li>
+              <li><strong>Outlook:</strong> {t("uiIcsFeedsManager.addCalendarSubscribeFromWebPaste")}</li>
+              <li><strong>Infomaniak:</strong> {t("uiIcsFeedsManager.otherCalendarsSubscribePasteYourIcs")}</li>
             </ul>
             <div className="flex items-start gap-2 mt-3 p-2.5 rounded-lg bg-destructive/5 border border-destructive/10">
               <ShieldAlert className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
               <p className="text-xs text-muted-foreground">
-                Anyone with this link can view your exported events. If a link is compromised, click the regenerate button to revoke it and create a new one.
+                {t("uiIcsFeedsManager.anyoneWithThisLinkCanView")}
               </p>
             </div>
           </div>

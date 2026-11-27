@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
 import { compressImage } from "@/lib/compressImage";
 import { Paperclip, X, FileText, Image, Film, Music, File, Upload, Heart, Trash2, Pencil, Check } from "lucide-react";
@@ -33,6 +34,7 @@ function formatSize(bytes: number) {
 }
 
 export function AttachmentUpload({ targetType, targetId, onAttachmentsChange, className }: AttachmentUploadProps) {
+  const { t } = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
   const currentUser = useCurrentUser();
   const qc = useQueryClient();
@@ -105,7 +107,7 @@ export function AttachmentUpload({ targetType, targetId, onAttachmentsChange, cl
         className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-muted/30 p-4 hover:border-primary/40 hover:bg-muted/50 transition-all cursor-pointer"
       >
         <Upload className="h-5 w-5 text-muted-foreground" />
-        <span className="text-xs text-muted-foreground">Drop files or click to upload</span>
+        <span className="text-xs text-muted-foreground">{t("uiAttachmentUpload.dropFilesOrClickToUpload")}</span>
       </div>
       <input ref={fileRef} type="file" multiple onChange={(e) => handleFiles(e.target.files)} className="hidden" />
     </div>
@@ -114,6 +116,7 @@ export function AttachmentUpload({ targetType, targetId, onAttachmentsChange, cl
 
 /** Read-only list of attachments for detail pages */
 export function AttachmentList({ targetType, targetId }: { targetType: AttachmentTargetType; targetId: string }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const qc = useQueryClient();
   const listKey = ["attachments-list", targetType, targetId];
@@ -180,7 +183,7 @@ export function AttachmentList({ targetType, targetId }: { targetType: Attachmen
       qc.invalidateQueries({ queryKey: listKey });
       toast.success("Document deleted");
     },
-    onError: () => toast.error("Failed to delete document"),
+    onError: () => toast.error(t("uiAttachmentUpload.failedToDeleteDocument")),
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);

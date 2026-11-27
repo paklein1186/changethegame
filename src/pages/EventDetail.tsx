@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ import { ArrowLeft, CalendarDays, MapPin, Video, Users, Euro, Check, X, Clock, S
 import { format, isPast } from "date-fns";
 
 export default function EventDetail() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const currentUser = useCurrentUser();
   const { session } = useAuth();
@@ -114,9 +116,9 @@ export default function EventDetail() {
       payment_status: "NONE",
       accepted_at: autoAccept && !isFull ? new Date().toISOString() : null,
     } as any);
-    if (error) { toast({ title: "Failed to register", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiEventDetail.failedToRegister"), variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["event-registrations", id] });
-    toast({ title: isFull ? "Added to waitlist" : autoAccept ? "Registered!" : "Registration submitted, awaiting approval" });
+    toast({ title: isFull ? t("uiEventDetail.addedToWaitlist") : autoAccept ? "Registered!" : "Registration submitted, awaiting approval" });
   };
 
   const registerPaid = async () => {
@@ -124,7 +126,7 @@ export default function EventDetail() {
     const { data, error } = await supabase.functions.invoke("event-checkout", {
       body: { eventId: id },
     });
-    if (error || !data?.url) { toast({ title: "Payment error", description: error?.message || "Could not start checkout", variant: "destructive" }); return; }
+    if (error || !data?.url) { toast({ title: t("uiEventDetail.paymentError"), description: error?.message || t("uiEventDetail.couldNotStartCheckout"), variant: "destructive" }); return; }
     window.open(data.url, "_blank");
   };
 
@@ -132,7 +134,7 @@ export default function EventDetail() {
     if (!myReg) return;
     await supabase.from("guild_event_attendees" as any).update({ status: "CANCELLED", cancelled_at: new Date().toISOString() } as any).eq("id", myReg.id);
     qc.invalidateQueries({ queryKey: ["event-registrations", id] });
-    toast({ title: "Registration cancelled" });
+    toast({ title: t("uiEventDetail.registrationCancelled") });
   };
 
   const handleHostAction = async () => {
@@ -153,18 +155,18 @@ export default function EventDetail() {
     await supabase.from("guild_events" as any).update({ is_cancelled: true, status: "CANCELLED" } as any).eq("id", id);
     qc.invalidateQueries({ queryKey: ["event-detail", id] });
     setCancelDialogOpen(false);
-    toast({ title: "Event cancelled" });
+    toast({ title: t("uiEventDetail.eventCancelled") });
   };
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!event) return <PageShell><p>Event not found.</p></PageShell>;
+  if (isLoading) return <PageShell><p>{t("uiEventDetail.loading")}</p></PageShell>;
+  if (!event) return <PageShell><p>{t("uiEventDetail.eventNotFound")}</p></PageShell>;
 
   const locationIcon = event.location_type === "ONLINE" ? <Video className="h-4 w-4" /> : <MapPin className="h-4 w-4" />;
 
   return (
     <PageShell>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/guilds/${event.guild_id}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to Guild</Link>
+        <Link to={`/guilds/${event.guild_id}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiEventDetail.backToGuild")}</Link>
       </Button>
 
       {/* Header */}
@@ -173,12 +175,12 @@ export default function EventDetail() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h1 className="font-display text-2xl font-bold">{event.title}</h1>
-              {isCancelled && <Badge variant="destructive">Cancelled</Badge>}
+              {isCancelled && <Badge variant="destructive">{t("uiEventDetail.cancelled")}</Badge>}
               {event.is_paid && <Badge className="bg-primary/10 text-primary border-0"><Euro className="h-3 w-3 mr-0.5" />{event.price_per_ticket} {event.currency}</Badge>}
             </div>
             {hostGuild && (
               <p className="text-sm text-muted-foreground">
-                Hosted by <Link to={`/guilds/${hostGuild.id}`} className="text-primary hover:underline">{hostGuild.name}</Link>
+                {t("uiEventDetail.hostedBy")} <Link to={`/guilds/${hostGuild.id}`} className="text-primary hover:underline">{hostGuild.name}</Link>
               </p>
             )}
             <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-2">
@@ -197,16 +199,16 @@ export default function EventDetail() {
               )
             )}
             {!isCancelled && !eventPast && !session && (
-              <Button asChild><Link to="/login">Log in to register</Link></Button>
+              <Button asChild><Link to="/login">{t("uiEventDetail.logInToRegister")}</Link></Button>
             )}
             {myReg && (
               <div className="text-right space-y-1">
                 <Badge variant="secondary" className="capitalize">{myReg.status.toLowerCase()}</Badge>
                 {myReg.status !== "CANCELLED" && (
-                  <Button size="sm" variant="ghost" onClick={cancelMyRegistration}><X className="h-3.5 w-3.5 mr-1" />Cancel</Button>
+                  <Button size="sm" variant="ghost" onClick={cancelMyRegistration}><X className="h-3.5 w-3.5 mr-1" />{t("uiEventDetail.cancel")}</Button>
                 )}
                 {myReg.status === "ACCEPTED" && event.call_url && (
-                  <Button size="sm" asChild><a href={event.call_url} target="_blank" rel="noopener noreferrer">Join Call</a></Button>
+                  <Button size="sm" asChild><a href={event.call_url} target="_blank" rel="noopener noreferrer">{t("uiEventDetail.joinCall")}</a></Button>
                 )}
               </div>
             )}
@@ -214,13 +216,13 @@ export default function EventDetail() {
             {canManage && (
               <div className="flex gap-1.5">
                 <Button size="sm" variant="outline" asChild>
-                  <Link to={`/events/${id}/edit`}><Pencil className="h-3.5 w-3.5 mr-1" />Edit</Link>
+                  <Link to={`/events/${id}/edit`}><Pencil className="h-3.5 w-3.5 mr-1" />{t("uiEventDetail.edit")}</Link>
                 </Button>
                 <Button size="sm" variant="outline" asChild>
-                  <Link to={`/events/${id}/settings`}><Settings className="h-3.5 w-3.5 mr-1" />Settings</Link>
+                  <Link to={`/events/${id}/settings`}><Settings className="h-3.5 w-3.5 mr-1" />{t("uiEventDetail.settings")}</Link>
                 </Button>
                 {!isCancelled && (
-                  <Button size="sm" variant="destructive" onClick={() => setCancelDialogOpen(true)}>Cancel Event</Button>
+                  <Button size="sm" variant="destructive" onClick={() => setCancelDialogOpen(true)}>{t("uiEventDetail.cancelEvent")}</Button>
                 )}
               </div>
             )}
@@ -231,7 +233,7 @@ export default function EventDetail() {
       {/* Tabs */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="overview"><Shield className="h-4 w-4 mr-1" />Overview</TabsTrigger>
+          <TabsTrigger value="overview"><Shield className="h-4 w-4 mr-1" />{t("uiEventDetail.overview")}</TabsTrigger>
           <TabsTrigger value="participants"><Users className="h-4 w-4 mr-1" />Participants ({acceptedCount})</TabsTrigger>
           <TabsTrigger value="wall"><MessageSquare className="h-4 w-4 mr-1" />Wall</TabsTrigger>
         </TabsList>
@@ -239,7 +241,7 @@ export default function EventDetail() {
         <TabsContent value="overview" className="mt-6 space-y-4">
           {event.description && <div className="prose prose-sm max-w-none"><p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">{event.description}</p></div>}
           {event.location_text && <p className="text-sm text-muted-foreground">📍 {event.location_text}</p>}
-          {event.call_url && <p className="text-sm"><a href={event.call_url} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">🔗 Event link</a></p>}
+          {event.call_url && <p className="text-sm"><a href={event.call_url} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">{t("uiEventDetail.eventLink")}</a></p>}
           <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-lg border border-border bg-card p-4 text-center">
               <p className="text-2xl font-bold text-primary">{acceptedCount}</p>
@@ -257,7 +259,7 @@ export default function EventDetail() {
         </TabsContent>
 
         <TabsContent value="participants" className="mt-6 space-y-3">
-          {registrations.length === 0 && <p className="text-sm text-muted-foreground">No registrations yet.</p>}
+          {registrations.length === 0 && <p className="text-sm text-muted-foreground">{t("uiEventDetail.noRegistrationsYet")}</p>}
           {registrations.map((reg: any) => (
             <div key={reg.id} className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
               <Avatar className="h-9 w-9">
@@ -293,8 +295,8 @@ export default function EventDetail() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">Wall and discussions are only visible to participants.</p>
-              {!session && <Button asChild className="mt-3"><Link to="/login">Log in</Link></Button>}
+              <p className="text-muted-foreground">{t("uiEventDetail.wallAndDiscussionsAreOnlyVisible")}</p>
+              {!session && <Button asChild className="mt-3"><Link to="/login">{t("uiEventDetail.logIn")}</Link></Button>}
             </div>
           )}
         </TabsContent>
@@ -304,14 +306,14 @@ export default function EventDetail() {
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel this event?</AlertDialogTitle>
+            <AlertDialogTitle>{t("uiEventDetail.cancelThisEvent")}</AlertDialogTitle>
             <AlertDialogDescription>
-              All participants will be notified. Paid registrations will need manual refunds via Stripe dashboard.
+              {t("uiEventDetail.allParticipantsWillBeNotifiedPaid")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep Event</AlertDialogCancel>
-            <AlertDialogAction onClick={cancelEvent} className="bg-destructive text-destructive-foreground">Cancel Event</AlertDialogAction>
+            <AlertDialogCancel>{t("uiEventDetail.keepEvent")}</AlertDialogCancel>
+            <AlertDialogAction onClick={cancelEvent} className="bg-destructive text-destructive-foreground">{t("uiEventDetail.cancelEvent")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

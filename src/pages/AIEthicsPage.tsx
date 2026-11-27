@@ -6,7 +6,7 @@ export default function AIEthicsPage() {
   return (
     <ContentPageShell title={t("pages.aiEthics.title")} subtitle={t("pages.aiEthics.subtitle")}>
       <ContentSection title="Why We Use AI">
-        <p>AI amplifies human collaboration, creativity, and coordination. It is never a replacement for human agency or decision-making.</p>
+        <p>{t("uiAIEthicsPage.aiAmplifiesHumanCollaborationCreativityAnd")}</p>
       </ContentSection>
 
       <ContentSection title="Principles">

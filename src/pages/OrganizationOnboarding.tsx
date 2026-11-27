@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,10 +26,10 @@ import { EntityCreationWizard } from "@/components/EntityCreationWizard";
 import { FrenchTextOverlay } from "@/components/onboarding/FrenchTextOverlay";
 
 const ORG_TYPES = [
-  { value: "public_sector", label: "Public Sector", icon: Landmark, desc: "Government, municipality, public institution" },
-  { value: "corporation", label: "Company / Corporation", icon: Building2, desc: "Private company, startup, SME" },
+  { value: "public_sector", get label() { return i18n.t("uiOrganizationOnboarding.publicSector"); }, icon: Landmark, get desc() { return i18n.t("uiOrganizationOnboarding.governmentMunicipalityPublicInstitution"); } },
+  { value: "corporation", label: "Company / Corporation", icon: Building2, get desc() { return i18n.t("uiOrganizationOnboarding.privateCompanyStartupSme"); } },
   { value: "academic", label: "Academic / Research", icon: GraduationCap, desc: "University, lab, research center" },
-  { value: "foundation", label: "Foundation", icon: Heart, desc: "Philanthropic or grant-making organization" },
+  { value: "foundation", label: "Foundation", icon: Heart, get desc() { return i18n.t("uiOrganizationOnboarding.philanthropicOrGrantMakingOrganization"); } },
   { value: "ngo", label: "NGO", icon: Leaf, desc: "Non-profit, association, structured NGO" },
   { value: "cooperative", label: "Cooperative", icon: Handshake, desc: "Formal cooperative structure" },
 ];
@@ -38,6 +40,7 @@ const STEPS = ["type", "info", "ai_scrape", "classify", "review"] as const;
 type Step = typeof STEPS[number];
 
 export default function OrganizationOnboarding() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const currentUser = useCurrentUser();
@@ -148,7 +151,7 @@ export default function OrganizationOnboarding() {
       }
     } catch (e) {
       console.error("Scrape error:", e);
-      toast({ title: "Couldn't scrape the URL, please fill in manually.", variant: "destructive" });
+      toast({ title: t("uiOrganizationOnboarding.couldnTScrapeTheUrlPlease"), variant: "destructive" });
     } finally {
       setScraping(false);
     }
@@ -156,7 +159,7 @@ export default function OrganizationOnboarding() {
 
   const handleSubmit = async () => {
     if (!orgName.trim()) {
-      toast({ title: "Organization name is required", variant: "destructive" });
+      toast({ title: t("uiOrganizationOnboarding.organizationNameIsRequired"), variant: "destructive" });
       return;
     }
     setIsSubmitting(true);
@@ -205,7 +208,7 @@ export default function OrganizationOnboarding() {
       navigate(`/organizations/${companyId}/next-steps`);
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Failed to create organization", description: e.message, variant: "destructive" });
+      toast({ title: t("uiOrganizationOnboarding.failedToCreateOrganization"), description: e.message, variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -234,9 +237,9 @@ export default function OrganizationOnboarding() {
           {step === "type" && (
             <motion.div key="type" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <h1 className="font-display text-2xl md:text-3xl font-bold mb-2 flex items-center gap-3">
-                <Building2 className="h-7 w-7 text-primary" /> What type of organization?
+                <Building2 className="h-7 w-7 text-primary" /> {t("uiOrganizationOnboarding.whatTypeOfOrganization")}
               </h1>
-              <p className="text-muted-foreground mb-8">Select the category that best describes your institution.</p>
+              <p className="text-muted-foreground mb-8">{t("uiOrganizationOnboarding.selectTheCategoryThatBestDescribes")}</p>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 {ORG_TYPES.map((t) => (
@@ -256,12 +259,12 @@ export default function OrganizationOnboarding() {
               </div>
 
               <div className="mt-6 rounded-xl border border-primary/20 bg-primary/5 p-4">
-                <p className="text-sm font-medium mb-2">Not a traditional organization?</p>
+                <p className="text-sm font-medium mb-2">{t("uiOrganizationOnboarding.notATraditionalOrganization")}</p>
                 <p className="text-xs text-muted-foreground mb-3">
-                  Create a <strong>Guild</strong> (community, collective, DAO) or a <strong>Pod</strong> (micro-team, study group) instead.
+                  {t("uiOrganizationOnboarding.createA")} <strong>{t("uiOrganizationOnboarding.guild")}</strong> {t("uiOrganizationOnboarding.communityCollectiveDaoOrA")} <strong>Pod</strong> (micro-team, study group) instead.
                 </p>
                 <Button variant="outline" size="sm" onClick={() => setShowEntityWizard(true)} className="gap-1.5">
-                  <Plus className="h-3.5 w-3.5" /> Create a Guild or Pod
+                  <Plus className="h-3.5 w-3.5" /> {t("uiOrganizationOnboarding.createAGuildOrPod")}
                 </Button>
               </div>
 
@@ -272,12 +275,12 @@ export default function OrganizationOnboarding() {
           {/* STEP 2: Basic Info */}
           {step === "info" && (
             <motion.div key="info" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h1 className="font-display text-2xl font-bold mb-2">Your Project or Organization</h1>
-              <p className="text-muted-foreground mb-6">Paste a website URL to auto-fill your profile — name, logo, mission, and more. We'll use AI to extract the best info.</p>
+              <h1 className="font-display text-2xl font-bold mb-2">{t("uiOrganizationOnboarding.yourProjectOrOrganization")}</h1>
+              <p className="text-muted-foreground mb-6">{t("uiOrganizationOnboarding.pasteAWebsiteUrlToAuto")}</p>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Organization Name *</label>
+                  <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.organizationName")}</label>
                   <Input value={orgName} onChange={e => setOrgName(e.target.value)} placeholder="e.g. United Nations Development Programme" maxLength={100} />
                 </div>
                 <div>
@@ -291,12 +294,12 @@ export default function OrganizationOnboarding() {
               </div>
 
               <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> Back</Button>
+                <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> {t("uiOrganizationOnboarding.back")}</Button>
                 <Button onClick={() => { setStep("ai_scrape"); if (websiteUrl || linkedinUrl) handleScrape(); else setScraped(false); }}>
                   {websiteUrl || linkedinUrl ? (
-                    <><Sparkles className="h-4 w-4 mr-1" /> Scrape & Continue</>
+                    <><Sparkles className="h-4 w-4 mr-1" /> {t("uiOrganizationOnboarding.scrapeContinue")}</>
                   ) : (
-                    <>Continue <ChevronRight className="h-4 w-4 ml-1" /></>
+                    <>{t("uiOrganizationOnboarding.continue")} <ChevronRight className="h-4 w-4 ml-1" /></>
                   )}
                 </Button>
               </div>
@@ -308,7 +311,7 @@ export default function OrganizationOnboarding() {
             <motion.div key="ai_scrape" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <h1 className="font-display text-2xl font-bold mb-2 flex items-center gap-2">
                 <Sparkles className="h-6 w-6 text-primary" />
-                {scraping ? "AI is analyzing your organization..." : "Review & Edit"}
+                {scraping ? t("uiOrganizationOnboarding.aiIsAnalyzingYourOrganization") : t("uiOrganizationOnboarding.reviewEdit")}
               </h1>
 
               {scraping ? (
@@ -319,21 +322,21 @@ export default function OrganizationOnboarding() {
               ) : (
                 <div className="space-y-4 mt-6">
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Organization Name</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.organizationName2")}</label>
                     <Input value={orgName} onChange={e => setOrgName(e.target.value)} maxLength={100} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1 block">Mission Statement</label>
-                    <Textarea value={mission} onChange={e => setMission(e.target.value)} placeholder="What's your organization's mission?" className="resize-none" rows={3} />
+                    <Textarea value={mission} onChange={e => setMission(e.target.value)} placeholder={t("uiOrganizationOnboarding.whatSYourOrganizationSMission")} className="resize-none" rows={3} />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Description</label>
-                    <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Brief description..." className="resize-none" rows={3} />
+                    <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.description")}</label>
+                    <Textarea value={description} onChange={e => setDescription(e.target.value)} placeholder={t("uiOrganizationOnboarding.briefDescription")} className="resize-none" rows={3} />
                   </div>
                   <div>
                     <label className="text-sm font-medium mb-1 block">Scale</label>
                     <Select value={scaleCategory} onValueChange={setScaleCategory}>
-                      <SelectTrigger><SelectValue placeholder="Select scale" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("uiOrganizationOnboarding.selectScale")} /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="small">Small</SelectItem>
                         <SelectItem value="medium">Medium</SelectItem>
@@ -345,7 +348,7 @@ export default function OrganizationOnboarding() {
 
                   {suggestedTopics.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium mb-1 block">AI-Suggested Topics</label>
+                      <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.aiSuggestedTopics")}</label>
                       <div className="flex flex-wrap gap-1.5">
                         {suggestedTopics.map(t => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}
                       </div>
@@ -353,7 +356,7 @@ export default function OrganizationOnboarding() {
                   )}
                   {suggestedTerritories.length > 0 && (
                     <div>
-                      <label className="text-sm font-medium mb-1 block">AI-Suggested Territories</label>
+                      <label className="text-sm font-medium mb-1 block">{t("uiOrganizationOnboarding.aiSuggestedTerritories")}</label>
                       <div className="flex flex-wrap gap-1.5">
                         {suggestedTerritories.map(t => <Badge key={t} variant="outline" className="text-xs"><MapPin className="h-3 w-3 mr-0.5" />{t}</Badge>)}
                       </div>
@@ -369,8 +372,8 @@ export default function OrganizationOnboarding() {
                   )}
 
                   <div className="flex justify-between mt-6">
-                    <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> Back</Button>
-                    <Button onClick={() => setStep("classify")}>Select Topics & Territories <ChevronRight className="h-4 w-4 ml-1" /></Button>
+                    <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> {t("uiOrganizationOnboarding.back")}</Button>
+                    <Button onClick={() => setStep("classify")}>{t("uiOrganizationOnboarding.selectTopicsTerritories")} <ChevronRight className="h-4 w-4 ml-1" /></Button>
                   </div>
                 </div>
               )}
@@ -380,14 +383,14 @@ export default function OrganizationOnboarding() {
           {/* STEP 4: Classification */}
           {step === "classify" && (
             <motion.div key="classify" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h1 className="font-display text-2xl font-bold mb-2">Topics & Territories</h1>
-              <p className="text-muted-foreground mb-6">Connect your organization to the platform taxonomy for discovery and matchmaking.</p>
+              <h1 className="font-display text-2xl font-bold mb-2">{t("uiOrganizationOnboarding.topicsTerritories")}</h1>
+              <p className="text-muted-foreground mb-6">{t("uiOrganizationOnboarding.connectYourOrganizationToThePlatform")}</p>
 
               <div className="space-y-6">
                 {/* Topics */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><Hash className="h-4 w-4" /> Topics ({selectedTopicIds.length} selected)</label>
-                  <Input value={topicSearch} onChange={e => setTopicSearch(e.target.value)} placeholder="Search topics..." className="mb-2" />
+                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><Hash className="h-4 w-4" /> {t("uiOrganizationOnboarding.topics")}{selectedTopicIds.length} selected)</label>
+                  <Input value={topicSearch} onChange={e => setTopicSearch(e.target.value)} placeholder={t("uiOrganizationOnboarding.searchTopics")} className="mb-2" />
                   <div className="max-h-48 overflow-y-auto rounded-lg border border-border p-2 space-y-1">
                     {filteredTopics.map((t: any) => (
                       <label key={t.id} className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted/50 cursor-pointer text-sm">
@@ -402,8 +405,8 @@ export default function OrganizationOnboarding() {
 
                 {/* Territories */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><MapPin className="h-4 w-4" /> Territories ({selectedTerritoryIds.length} selected)</label>
-                  <Input value={terrSearch} onChange={e => setTerrSearch(e.target.value)} placeholder="Search territories..." className="mb-2" />
+                  <label className="text-sm font-medium mb-2 block flex items-center gap-1"><MapPin className="h-4 w-4" /> {t("uiOrganizationOnboarding.territories")}{selectedTerritoryIds.length} selected)</label>
+                  <Input value={terrSearch} onChange={e => setTerrSearch(e.target.value)} placeholder={t("uiOrganizationOnboarding.searchTerritories")} className="mb-2" />
                   <div className="max-h-48 overflow-y-auto rounded-lg border border-border p-2 space-y-1">
                     {filteredTerritories.map((t: any) => (
                       <label key={t.id} className="flex items-center gap-2 py-1 px-2 rounded hover:bg-muted/50 cursor-pointer text-sm">
@@ -419,7 +422,7 @@ export default function OrganizationOnboarding() {
               </div>
 
               <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> Back</Button>
+                <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> {t("uiOrganizationOnboarding.back")}</Button>
                 <Button onClick={() => setStep("review")}>Review <ChevronRight className="h-4 w-4 ml-1" /></Button>
               </div>
             </motion.div>
@@ -429,9 +432,9 @@ export default function OrganizationOnboarding() {
           {step === "review" && (
             <motion.div key="review" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <h1 className="font-display text-2xl font-bold mb-2 flex items-center gap-2">
-                <Check className="h-6 w-6 text-primary" /> Review & Create
+                <Check className="h-6 w-6 text-primary" /> {t("uiOrganizationOnboarding.reviewCreate")}
               </h1>
-              <p className="text-muted-foreground mb-6">Everything looks good? Let's create your organization profile.</p>
+              <p className="text-muted-foreground mb-6">{t("uiOrganizationOnboarding.everythingLooksGoodLetSCreate")}</p>
 
               <div className="rounded-xl border border-border bg-card p-6 space-y-4">
                 <div className="flex items-center gap-4">
@@ -446,10 +449,10 @@ export default function OrganizationOnboarding() {
                   </div>
                 </div>
                 {mission && <div><span className="text-xs font-medium text-muted-foreground">Mission</span><p className="text-sm">{mission}</p></div>}
-                {description && <div><span className="text-xs font-medium text-muted-foreground">Description</span><p className="text-sm">{description}</p></div>}
+                {description && <div><span className="text-xs font-medium text-muted-foreground">{t("uiOrganizationOnboarding.description")}</span><p className="text-sm">{description}</p></div>}
                 {selectedTopicIds.length > 0 && (
                   <div>
-                    <span className="text-xs font-medium text-muted-foreground">Topics</span>
+                    <span className="text-xs font-medium text-muted-foreground">{t("uiOrganizationOnboarding.topics2")}</span>
                     <div className="flex flex-wrap gap-1 mt-1">{selectedTopicIds.map(id => {
                       const t = topics.find((t: any) => t.id === id);
                       return t ? <Badge key={id} variant="secondary" className="text-xs">{(t as any).name}</Badge> : null;
@@ -458,7 +461,7 @@ export default function OrganizationOnboarding() {
                 )}
                 {selectedTerritoryIds.length > 0 && (
                   <div>
-                    <span className="text-xs font-medium text-muted-foreground">Territories</span>
+                    <span className="text-xs font-medium text-muted-foreground">{t("uiOrganizationOnboarding.territories2")}</span>
                     <div className="flex flex-wrap gap-1 mt-1">{selectedTerritoryIds.map(id => {
                       const t = territories.find((t: any) => t.id === id);
                       return t ? <Badge key={id} variant="outline" className="text-xs"><MapPin className="h-3 w-3 mr-0.5" />{(t as any).name}</Badge> : null;
@@ -468,10 +471,10 @@ export default function OrganizationOnboarding() {
               </div>
 
               <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> Back</Button>
+                <Button variant="outline" onClick={goBack}><ChevronLeft className="h-4 w-4 mr-1" /> {t("uiOrganizationOnboarding.back")}</Button>
                 <Button onClick={handleSubmit} disabled={isSubmitting} className="gap-2">
                   {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Building2 className="h-4 w-4" />}
-                  Create Organization
+                  {t("uiOrganizationOnboarding.createOrganization")}
                 </Button>
               </div>
             </motion.div>

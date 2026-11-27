@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -96,6 +97,7 @@ function TerritoryChip({ territory }: { territory: RelatedTerritory }) {
 }
 
 function RelatedTerritoriesSection({ territoryId }: { territoryId: string }) {
+  const { t } = useTranslation();
   const { data, isLoading } = useTerritoryRelations(territoryId);
 
   if (isLoading || !data) return null;
@@ -107,7 +109,7 @@ function RelatedTerritoriesSection({ territoryId }: { territoryId: string }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
       <h3 className="font-display text-base font-semibold flex items-center gap-2">
-        <MapPin className="h-4 w-4 text-primary" /> Related Territories
+        <MapPin className="h-4 w-4 text-primary" /> {t("uiTerritoryOverviewTab.relatedTerritories")}
       </h3>
 
       {parent && (
@@ -124,7 +126,7 @@ function RelatedTerritoriesSection({ territoryId }: { territoryId: string }) {
       {children.length > 0 && (
         <div className="space-y-1.5">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-            <ChevronDown className="h-3 w-3" /> Sub-territories
+            <ChevronDown className="h-3 w-3" /> {t("uiTerritoryOverviewTab.subTerritories")}
             <span className="text-[10px] ml-0.5">({children.length})</span>
           </p>
           <div className="flex flex-wrap gap-2">

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +37,7 @@ export function QuestProposals({
   questId, questOwnerId, questStatus,
   missionBudgetMin, missionBudgetMax, paymentType,
 }: QuestProposalsProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -187,7 +189,7 @@ export function QuestProposals({
     await supabase.from("notifications").insert({
       user_id: questOwnerId,
       type: "QUEST_PROPOSAL_SUBMITTED",
-      title: "New proposal on your quest",
+      title: t("uiQuestProposals.newProposalOnYourQuest"),
       body: `${currentUser.name || "Someone"} submitted a proposal: "${propTitle.trim()}"`,
       related_entity_type: "QUEST",
       related_entity_id: questId,
@@ -196,7 +198,7 @@ export function QuestProposals({
 
     qc.invalidateQueries({ queryKey: ["quest-proposals", questId] });
     setPropOpen(false); setPropTitle(""); setPropDesc(""); setPropCredits(""); setPropCurrency("CREDITS"); setPropFiatAmount(""); setPropNeedId("");
-    toast({ title: "Contribution submitted! +3 XP" });
+    toast({ title: t("uiQuestProposals.contributionSubmitted3Xp") });
   };
 
   // ── Upvote toggle ─────────────────────────────────────
@@ -233,11 +235,11 @@ export function QuestProposals({
       return;
     }
     qc.invalidateQueries({ queryKey: ["quest", questId] });
-    if (decision === "reject") { toast({ title: "Proposal declined" }); return; }
+    if (decision === "reject") { toast({ title: t("uiQuestProposals.proposalDeclined") }); return; }
     const credits = Number((data as any)?.credits_granted ?? 0);
     const fiat = Number((data as any)?.fiat_to_follow ?? 0);
     toast({
-      title: "Proposal accepted",
+      title: t("uiQuestProposals.proposalAccepted"),
       description: [credits > 0 ? `${credits} $CTG transferred.` : "", fiat > 0 ? `€${fiat} to settle directly with the contributor.` : ""]
         .filter(Boolean).join(" ") || undefined,
     });
@@ -293,7 +295,7 @@ export function QuestProposals({
       await supabase.from("notifications").insert({
         user_id: questOwnerId,
         type: "QUEST_FUNDED_CREDITS",
-        title: "Quest funded!",
+        title: t("uiQuestProposals.questFunded"),
         body: `${currentUser.name || "Someone"} added ${amount} $CTG to your quest.`,
         related_entity_type: "QUEST",
         related_entity_id: questId,
@@ -326,7 +328,7 @@ export function QuestProposals({
       {/* ── Quest Needs ────────────────────────────────── */}
       <div className="rounded-xl border border-border bg-card p-5 space-y-3">
         <h3 className="font-display font-semibold flex items-center gap-2 text-sm">
-          <Lightbulb className="h-4 w-4 text-primary" /> What this quest needs
+          <Lightbulb className="h-4 w-4 text-primary" /> {t("uiQuestProposals.whatThisQuestNeeds")}
         </h3>
         <QuestNeedsManager questId={questId} questOwnerId={questOwnerId} />
       </div>
@@ -335,7 +337,7 @@ export function QuestProposals({
       {(campaigns as any[]).length > 0 ? (
         <div className="space-y-3">
           <h3 className="font-display font-semibold flex items-center gap-2">
-            <CurrencyIcon currency="coins" className="h-4 w-4" /> Funding Campaigns
+            <CurrencyIcon currency="coins" className="h-4 w-4" /> {t("uiQuestProposals.fundingCampaigns")}
           </h3>
           {(campaigns as any[]).map((campaign: any) => {
             const pct = campaign.goal_amount > 0 ? Math.min(100, Math.round((campaign.raised_amount / campaign.goal_amount) * 100)) : 0;
@@ -368,14 +370,14 @@ export function QuestProposals({
                       <Button size="sm" variant="outline"><Plus className="h-3.5 w-3.5 mr-1" /> Contribute</Button>
                     </DialogTrigger>
                     <DialogContent>
-                      <DialogHeader><DialogTitle>Contribute $CTG to "{campaign.title}"</DialogTitle></DialogHeader>
+                      <DialogHeader><DialogTitle>{t("uiQuestProposals.contributeCtgTo")}{campaign.title}"</DialogTitle></DialogHeader>
                       <div className="space-y-4 mt-2">
                         <div className="flex gap-2">
                           {[5, 10, 20, 50].map(v => (
                             <Button key={v} variant="outline" size="sm" onClick={() => setFundAmount(String(v))}>{v}</Button>
                           ))}
                         </div>
-                        <Input type="number" placeholder="Custom amount" value={fundAmount} onChange={e => setFundAmount(e.target.value)} min={1} />
+                        <Input type="number" placeholder={t("uiQuestProposals.customAmount")} value={fundAmount} onChange={e => setFundAmount(e.target.value)} min={1} />
                         <Button onClick={() => fundQuest(Number(fundAmount) || 0, campaign)} disabled={!fundAmount || Number(fundAmount) <= 0} className="w-full">
                           <CurrencyIcon currency="ctg" className="h-4 w-4 mr-1" /> Contribute {fundAmount || 0} $CTG
                         </Button>
@@ -384,7 +386,7 @@ export function QuestProposals({
                   </Dialog>
                 )}
                 {isActive && campaign.type === "FIAT" && (
-                  <p className="text-xs text-muted-foreground mt-2 italic">Fiat contributions are processed via Stripe checkout.</p>
+                  <p className="text-xs text-muted-foreground mt-2 italic">{t("uiQuestProposals.fiatContributionsAreProcessedViaStripe")}</p>
                 )}
               </div>
             );
@@ -395,37 +397,37 @@ export function QuestProposals({
       {/* ── Proposals list ────────────────────────────── */}
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold flex items-center gap-2">
-          <Send className="h-4 w-4" /> Contributions ({proposals.length})
+          <Send className="h-4 w-4" /> {t("uiQuestProposals.contributions")}{proposals.length})
         </h3>
         {canSubmitProposal && (
           <Dialog open={propOpen} onOpenChange={setPropOpen}>
             <DialogTrigger asChild>
-              <Button size="sm"><Plus className="h-3.5 w-3.5 mr-1" /> Submit Contribution</Button>
+              <Button size="sm"><Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestProposals.submitContribution")}</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Submit a Contribution</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>{t("uiQuestProposals.submitAContribution")}</DialogTitle></DialogHeader>
               <div className="space-y-4 mt-2">
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Title *</label>
-                  <Input value={propTitle} onChange={e => setPropTitle(e.target.value)} maxLength={120} placeholder="What you propose to do" />
+                  <label className="text-sm font-medium mb-1 block">{t("uiQuestProposals.title")}</label>
+                  <Input value={propTitle} onChange={e => setPropTitle(e.target.value)} maxLength={120} placeholder={t("uiQuestProposals.whatYouProposeToDo")} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Description</label>
-                  <Textarea value={propDesc} onChange={e => setPropDesc(e.target.value)} maxLength={1000} className="resize-none min-h-[80px]" placeholder="Explain your approach…" />
+                  <label className="text-sm font-medium mb-1 block">{t("uiQuestProposals.description")}</label>
+                  <Textarea value={propDesc} onChange={e => setPropDesc(e.target.value)} maxLength={1000} className="resize-none min-h-[80px]" placeholder={t("uiQuestProposals.explainYourApproach")} />
                 </div>
                 {questNeeds.length > 0 && (
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Linked Need</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiQuestProposals.linkedNeed")}</label>
                     <Select value={propNeedId} onValueChange={setPropNeedId}>
-                      <SelectTrigger><SelectValue placeholder="(optional) Select a need…" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("uiQuestProposals.optionalSelectANeed")} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="none">{t("uiQuestProposals.none")}</SelectItem>
                         {questNeeds.map((n: any) => (
                           <SelectItem key={n.id} value={n.id}>{n.title}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-muted-foreground mt-1">Link your contribution to a specific quest need</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t("uiQuestProposals.linkYourContributionToASpecific")}</p>
                   </div>
                 )}
                 <div>
@@ -441,20 +443,20 @@ export function QuestProposals({
                 </div>
                 {propCurrency !== "FIAT" && (
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Requested Credits</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiQuestProposals.requestedCredits")}</label>
                     <Input type="number" value={propCredits} onChange={e => setPropCredits(e.target.value)} min={0} placeholder="0" />
-                    <p className="text-xs text-muted-foreground mt-1">Credits from the quest pot</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t("uiQuestProposals.creditsFromTheQuestPot")}</p>
                   </div>
                 )}
                 {propCurrency !== "CREDITS" && (
                   <div>
-                    <label className="text-sm font-medium mb-1 block">Requested Amount (€)</label>
+                    <label className="text-sm font-medium mb-1 block">{t("uiQuestProposals.requestedAmount")}</label>
                     <Input type="number" value={propFiatAmount} onChange={e => setPropFiatAmount(e.target.value)} min={0} placeholder="0" />
-                    <p className="text-xs text-muted-foreground mt-1">Payment link will be activated upon admin approval</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t("uiQuestProposals.paymentLinkWillBeActivatedUpon")}</p>
                   </div>
                 )}
                 <Button onClick={submitProposal} disabled={!propTitle.trim()} className="w-full">
-                  <Send className="h-4 w-4 mr-1" /> Submit Contribution
+                  <Send className="h-4 w-4 mr-1" /> {t("uiQuestProposals.submitContribution")}
                 </Button>
               </div>
             </DialogContent>
@@ -462,7 +464,7 @@ export function QuestProposals({
         )}
       </div>
 
-      {sorted.length === 0 && <p className="text-muted-foreground text-sm">No proposals yet.</p>}
+      {sorted.length === 0 && <p className="text-muted-foreground text-sm">{t("uiQuestProposals.noProposalsYet")}</p>}
 
       {/* AI Evaluator – only visible to quest owner */}
       {isOwner && pendingProposals.length > 0 && (
@@ -503,7 +505,7 @@ export function QuestProposals({
                   <div className="flex items-center gap-3 mt-2 flex-wrap">
                     {proposal.requested_credits > 0 && (
                       <Badge variant="secondary" className="text-xs">
-                        <CurrencyIcon currency="credits" className="h-3 w-3 mr-1" /> {proposal.requested_credits} Credits
+                        <CurrencyIcon currency="credits" className="h-3 w-3 mr-1" /> {proposal.requested_credits} {t("uiQuestProposals.credits")}
                       </Badge>
                     )}
                     {(proposal.requested_fiat > 0) && (
@@ -523,14 +525,14 @@ export function QuestProposals({
                         size="sm"
                         className="h-7 text-xs text-primary"
                         onClick={() => {
-                          toast({ title: "Payment link", description: `Fiat payment of €${proposal.requested_fiat} has been validated by the quest admin.` });
+                          toast({ title: t("uiQuestProposals.paymentLink"), description: `Fiat payment of €${proposal.requested_fiat} has been validated by the quest admin.` });
                         }}
                       >
-                        <ExternalLink className="h-3 w-3 mr-1" /> Payment Link
+                        <ExternalLink className="h-3 w-3 mr-1" /> {t("uiQuestProposals.paymentLink2")}
                       </Button>
                     )}
                     {proposal.status === "PENDING" && proposal.requested_fiat > 0 && (
-                      <span className="text-[10px] text-muted-foreground italic">Payment link activates on approval</span>
+                      <span className="text-[10px] text-muted-foreground italic">{t("uiQuestProposals.paymentLinkActivatesOnApproval")}</span>
                     )}
                     <Button
                       variant={hasUpvoted ? "default" : "ghost"}
@@ -558,7 +560,7 @@ export function QuestProposals({
                       variant="outline"
                       className="h-8 text-emerald-600 hover:bg-emerald-500/10"
                       onClick={() => acceptProposal(proposal)}
-                      title="Accept proposal"
+                      title={t("uiQuestProposals.acceptProposal")}
                     >
                       <Check className="h-3.5 w-3.5" />
                     </Button>

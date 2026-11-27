@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,6 +68,7 @@ function TopicFollowers({ topicId }: { topicId: string }) {
 }
 
 function TopicEntityStats({ topicId }: { topicId: string }) {
+  const { t } = useTranslation();
   const { data } = useQuery({
     queryKey: ["topic-entity-stats", topicId],
     queryFn: async () => {
@@ -91,8 +93,8 @@ function TopicEntityStats({ topicId }: { topicId: string }) {
   if (!data) return null;
 
   const stats = [
-    { label: "Quests", value: data.quests },
-    { label: "Guilds", value: data.guilds },
+    { label: t("uiTopicOverviewTab.quests"), value: data.quests },
+    { label: t("uiTopicOverviewTab.guilds"), value: data.guilds },
     { label: "Organizations", value: data.companies },
     { label: "Services", value: data.services },
     { label: "Courses", value: data.courses },

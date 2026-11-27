@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Briefcase, MapPin, Building2, FileText, ExternalLink, Search, User, Trash2, Pencil } from "lucide-react";
@@ -20,9 +21,9 @@ import { useTranslation } from "react-i18next";
 import { translateTopicName } from "@/lib/entityLabels";
 
 const CONTRACT_OPTIONS = [
-  { value: "all", label: "All types" },
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
+  { value: "all", get label() { return i18n.t("uiJobsExplore.allTypes"); } },
+  { value: "full-time", get label() { return i18n.t("uiJobsExplore.fullTime"); } },
+  { value: "part-time", get label() { return i18n.t("uiJobsExplore.partTime"); } },
   { value: "contract", label: "Contract" },
   { value: "freelance", label: "Freelance" },
   { value: "internship", label: "Internship" },
@@ -30,8 +31,8 @@ const CONTRACT_OPTIONS = [
 ];
 
 const REMOTE_OPTIONS = [
-  { value: "all", label: "All policies" },
-  { value: "on-site", label: "On-site" },
+  { value: "all", get label() { return i18n.t("uiJobsExplore.allPolicies"); } },
+  { value: "on-site", get label() { return i18n.t("uiJobsExplore.onSite"); } },
   { value: "remote", label: "Remote" },
   { value: "hybrid", label: "Hybrid" },
 ];
@@ -86,13 +87,13 @@ export default function JobsExplore({ bare }: Props) {
   }, [jobs, search, contractFilter, remoteFilter, exploreFilters.topicIds, exploreFilters.territoryIds, exploreFilters.sortBy]);
 
   const handleDelete = async (jobId: string, companyId: string | null) => {
-    if (!window.confirm("Delete this job position?")) return;
+    if (!window.confirm(t("uiJobsExplore.deleteThisJobPosition"))) return;
     try {
       await deleteJob.mutateAsync({ id: jobId, companyId: companyId || "" });
       toast({ title: "Job deleted" });
     } catch (err: any) {
       console.error("Delete job error:", err);
-      toast({ title: "Error deleting job", description: err?.message, variant: "destructive" });
+      toast({ title: t("uiJobsExplore.errorDeletingJob"), description: err?.message, variant: "destructive" });
     }
   };
 
@@ -125,7 +126,7 @@ export default function JobsExplore({ bare }: Props) {
         <div className="relative flex-1 min-w-[180px] max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search jobs…"
+            placeholder={t("uiJobsExplore.searchJobs")}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="pl-9 h-9"
@@ -152,7 +153,7 @@ export default function JobsExplore({ bare }: Props) {
       {/* Results count */}
       <p className="text-xs text-muted-foreground">{filtered.length} position{filtered.length !== 1 ? "s" : ""} found</p>
 
-      {isLoading && <p className="text-muted-foreground text-sm">Loading…</p>}
+      {isLoading && <p className="text-muted-foreground text-sm">{t("uiJobsExplore.loading")}</p>}
 
       {/* Job cards */}
       <div className="grid gap-3 md:grid-cols-2">
@@ -271,12 +272,12 @@ export default function JobsExplore({ bare }: Props) {
                       className="flex items-center gap-1 text-primary hover:underline"
                       onClick={(e) => { e.stopPropagation(); window.open(job.document_url, "_blank", "noopener,noreferrer"); e.preventDefault(); }}
                     >
-                      <FileText className="h-3 w-3" /> View doc <ExternalLink className="h-2.5 w-2.5" />
+                      <FileText className="h-3 w-3" /> {t("uiJobsExplore.viewDoc")} <ExternalLink className="h-2.5 w-2.5" />
                     </a>
                   )}
                   {job.document_url && isGuest && (
                     <button onClick={handleDocClick} className="flex items-center gap-1 text-primary hover:underline cursor-pointer">
-                      <FileText className="h-3 w-3" /> View doc <ExternalLink className="h-2.5 w-2.5" />
+                      <FileText className="h-3 w-3" /> {t("uiJobsExplore.viewDoc")} <ExternalLink className="h-2.5 w-2.5" />
                     </button>
                   )}
                 </div>
@@ -289,7 +290,7 @@ export default function JobsExplore({ bare }: Props) {
       {filtered.length === 0 && !isLoading && (
         <div className="text-center py-12 text-muted-foreground">
           <Briefcase className="h-10 w-10 mx-auto mb-2 opacity-40" />
-          <p className="text-sm">No job positions match your filters.</p>
+          <p className="text-sm">{t("uiJobsExplore.noJobPositionsMatchYourFilters")}</p>
         </div>
       )}
 

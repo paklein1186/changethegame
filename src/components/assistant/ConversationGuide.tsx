@@ -182,6 +182,7 @@ function ChatBody({
   userEntities?: any;
   onHiddenContext?: (ctx: string) => void;
 }) {
+  const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [pathsExpanded, setPathsExpanded] = useState(true);
 
@@ -281,7 +282,7 @@ function ChatBody({
                         className="h-7 text-xs gap-1"
                         onClick={() => onConfirmActions(msg.id)}
                       >
-                        <Check className="h-3 w-3" /> Confirm
+                        <Check className="h-3 w-3" /> {t("uiConversationGuide.confirm")}
                       </Button>
                       <Button
                         size="sm"
@@ -289,7 +290,7 @@ function ChatBody({
                         className="h-7 text-xs gap-1"
                         onClick={() => onRejectActions(msg.id)}
                       >
-                        <X className="h-3 w-3" /> Skip
+                        <X className="h-3 w-3" /> {t("uiConversationGuide.skip")}
                       </Button>
                     </div>
                   </div>
@@ -305,7 +306,7 @@ function ChatBody({
                         className="text-[10px] cursor-pointer hover:bg-primary/10"
                         onClick={() => navigate(entityRoute(e.type, e.id))}
                       >
-                        ✨ New {entityLabel(e.type)}
+                        {t("uiConversationGuide.new")} {entityLabel(e.type)}
                       </Badge>
                     ))}
                   </div>
@@ -394,7 +395,7 @@ function ChatBody({
               send();
             }
           }}
-          placeholder={hasPending ? "Confirm actions above first, or type to skip…" : "Describe what you need… (Enter to send)"}
+          placeholder={hasPending ? t("uiConversationGuide.confirmActionsAboveFirstOrType") : t("uiConversationGuide.describeWhatYouNeedEnterTo")}
           className="min-h-[48px] max-h-32 text-sm resize-none flex-1"
           rows={1}
         />
@@ -413,7 +414,7 @@ function ChatBody({
               variant="ghost"
               onClick={onNewConversation}
               className="shrink-0 h-8 w-8"
-              title="New conversation"
+              title={t("uiConversationGuide.newConversation")}
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </Button>

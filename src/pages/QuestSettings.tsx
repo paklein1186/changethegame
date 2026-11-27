@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -53,11 +55,11 @@ import { QuestAccessSettings } from "@/components/quest/QuestAccessSettings";
 const ALL_TABS = [
   { key: "general", label: "General", icon: Pencil },
   { key: "affiliations", label: "Affiliations", icon: Link2 },
-  { key: "contributions", label: "Contributions", icon: PieChart },
+  { key: "contributions", get label() { return i18n.t("uiQuestSettings.contributions"); }, icon: PieChart },
   { key: "fundraising", label: "Fundraising", icon: PieChart },
   { key: "contract", label: "Contract", icon: FileText },
   { key: "exit", label: "Exit Protocol", icon: LogOut },
-  { key: "needs", label: "Needs", icon: Lightbulb },
+  { key: "needs", get label() { return i18n.t("uiQuestSettings.needs"); }, icon: Lightbulb },
   { key: "features", label: "Features", icon: Puzzle },
   { key: "access", label: "Access", icon: KeyRound },
   { key: "web", label: "Web Visibility", icon: Globe },
@@ -65,6 +67,7 @@ const ALL_TABS = [
 ];
 
 export default function QuestSettings() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const currentUser = useCurrentUser();
   const navigate = useNavigate();
@@ -85,14 +88,14 @@ export default function QuestSettings() {
   const { data: myAccess, isLoading: accessLoading } = useMyQuestAccess(id, currentUser.id);
 
   if (isLoading || accessLoading) return <PageShell><Loader2 className="h-6 w-6 animate-spin mx-auto mt-16" /></PageShell>;
-  if (!quest) return <PageShell><p>Quest not found.</p></PageShell>;
+  if (!quest) return <PageShell><p>{t("uiQuestSettings.questNotFound")}</p></PageShell>;
 
   const isOwner = currentUser.id === quest.created_by_user_id;
   const isGlobalAdmin = checkIsGlobalAdmin(currentUser.email);
 
   // Admins de la quête : créateur, co-admins, admins de sa guilde et des entités co-hôtes (règle de la base).
   if (!isOwner && !isGlobalAdmin && !myAccess?.is_admin) {
-    return <PageShell><p>You must be the owner of this quest to access settings.</p></PageShell>;
+    return <PageShell><p>{t("uiQuestSettings.youMustBeTheOwnerOf")}</p></PageShell>;
   }
 
   return <QuestSettingsInner questId={quest.id} quest={quest} />;
@@ -102,6 +105,7 @@ export default function QuestSettings() {
 
 
 function QuestSettingsInner({ questId, quest }: { questId: string; quest: any }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -266,15 +270,15 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
           relatedEntityId: questId,
         });
       }
-      toast({ title: "🎉 Quest completed!", description: "XP and rewards have been distributed to all participants." });
+      toast({ title: t("uiQuestSettings.questCompleted"), description: t("uiQuestSettings.xpAndRewardsHaveBeenDistributed") });
     }
 
     if (isBecomingCancelled && (quest as any).funding_type === "CREDITS" && (quest as any).escrow_credits > 0) {
       const { error: refundError } = await supabase.rpc("refund_quest_funding" as any, { _quest_id: questId });
       if (refundError) {
-        toast({ title: "Refund failed", description: refundError.message, variant: "destructive" });
+        toast({ title: t("uiQuestSettings.refundFailed"), description: refundError.message, variant: "destructive" });
       } else {
-        toast({ title: "Credits refunded" });
+        toast({ title: t("uiQuestSettings.creditsRefunded") });
       }
     }
 
@@ -282,7 +286,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
     qc.invalidateQueries({ queryKey: ["quest-settings", questId] });
     qc.invalidateQueries({ queryKey: ["quest-topics-edit", questId] });
     qc.invalidateQueries({ queryKey: ["quest-territories-edit", questId] });
-    toast({ title: "Quest updated" });
+    toast({ title: t("uiQuestSettings.questUpdated") });
   };
 
 
@@ -351,19 +355,19 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
     setCampaignDialogOpen(true);
   };
   const deleteCampaign = async (id: string) => {
-    if (!confirm("Delete this campaign?")) return;
+    if (!confirm(t("uiQuestSettings.deleteThisCampaign"))) return;
     await supabase.from("quest_campaigns" as any).delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["quest-campaigns", questId] });
     toast({ title: "Campaign deleted" });
   };
   const cancelCampaign = async (id: string) => {
-    if (!confirm("Cancel this campaign?")) return;
+    if (!confirm(t("uiQuestSettings.cancelThisCampaign"))) return;
     await supabase.from("quest_campaigns" as any).update({ status: "CANCELLED" }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["quest-campaigns", questId] });
-    toast({ title: "Campaign cancelled" });
+    toast({ title: t("uiQuestSettings.campaignCancelled") });
   };
   const dispatchCampaign = async (campaign: any) => {
-    if (!confirm("Dispatch funds from this campaign?")) return;
+    if (!confirm(t("uiQuestSettings.dispatchFundsFromThisCampaign"))) return;
     await supabase.from("quest_campaigns" as any).update({
       dispatched_at: new Date().toISOString(),
       dispatched_by: currentUser.id,
@@ -394,7 +398,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
     } as any).eq("id", questId);
     qc.invalidateQueries({ queryKey: ["quest", questId] });
     qc.invalidateQueries({ queryKey: ["quest-settings", questId] });
-    toast({ title: "Fundraising settings saved" });
+    toast({ title: t("uiQuestSettings.fundraisingSettingsSaved") });
   };
 
   const saveFeatures = async () => {
@@ -427,14 +431,14 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
     await supabase.from("quests").update({ features_config: newConfig } as any).eq("id", questId);
     qc.invalidateQueries({ queryKey: ["quest", questId] });
     qc.invalidateQueries({ queryKey: ["quest-settings", questId] });
-    toast({ title: "OCU settings saved" });
+    toast({ title: t("uiQuestSettings.ocuSettingsSaved") });
   };
 
   const addFundsToPool = async (currency: "coins" | "ctg") => {
     setAddingSaving(true);
     const amount = Number(currency === "coins" ? addCoinsAmount : addCtgAmount);
     if (!amount || amount <= 0) {
-      toast({ title: "Enter a valid amount", variant: "destructive" });
+      toast({ title: t("uiQuestSettings.enterAValidAmount"), variant: "destructive" });
       setAddingSaving(false);
       return;
     }
@@ -512,17 +516,17 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
   return (
     <PageShell>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/quests/${questId}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to quest</Link>
+        <Link to={`/quests/${questId}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiQuestSettings.backToQuest")}</Link>
       </Button>
 
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
           <div>
-            <h1 className="font-display text-2xl font-bold">Quest Settings</h1>
+            <h1 className="font-display text-2xl font-bold">{t("uiQuestSettings.questSettings")}</h1>
             <p className="text-sm text-muted-foreground">{quest.title}</p>
           </div>
           {isCancelled && (
-            <Badge variant="outline" className="ml-auto text-destructive border-destructive/30">Cancelled</Badge>
+            <Badge variant="outline" className="ml-auto text-destructive border-destructive/30">{t("uiQuestSettings.cancelled")}</Badge>
           )}
         </div>
 
@@ -552,10 +556,10 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
               {/* ── General ── */}
               {activeTab === "general" && (
                 <div className="space-y-5 max-w-lg">
-                  <div><label className="text-sm font-medium mb-1 block">Title</label><Input value={editTitle} onChange={e => setEditTitle(e.target.value)} maxLength={120} /></div>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.title")}</label><Input value={editTitle} onChange={e => setEditTitle(e.target.value)} maxLength={120} /></div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-medium">Description</label>
+                      <label className="text-sm font-medium">{t("uiQuestSettings.description")}</label>
                       <AIWriterButton
                         type="quest_story"
                         context={{ title: editTitle, status: editStatus, creditReward, creditBudget }}
@@ -566,25 +570,25 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                     <Textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} maxLength={2000} className="resize-none min-h-[120px]" />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> Link / Website URL</label>
+                    <label className="text-sm font-medium mb-1 flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" /> {t("uiQuestSettings.linkWebsiteUrl")}</label>
                     <Input value={editWebsiteUrl} onChange={e => setEditWebsiteUrl(e.target.value)} placeholder="https://…" type="url" />
-                    <p className="text-xs text-muted-foreground mt-1">Optional link displayed on the quest page</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t("uiQuestSettings.optionalLinkDisplayedOnTheQuest")}</p>
                   </div>
                   <ImageUpload label="Cover Image" currentImageUrl={editCoverImageUrl} onChange={setEditCoverImageUrl} onFocalPointChange={setEditCoverFocalY} focalPoint={editCoverFocalY} aspectRatio="16/9" />
-                  <div><label className="text-sm font-medium mb-1 block">Status</label>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.status")}</label>
                     <Select value={editStatus} onValueChange={v => setEditStatus(v as QuestStatus)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={QuestStatus.DRAFT}>Draft</SelectItem>
-                        <SelectItem value={QuestStatus.OPEN}>Open</SelectItem>
-                        <SelectItem value={QuestStatus.OPEN_FOR_PROPOSALS}>Open for Proposals</SelectItem>
-                        <SelectItem value={QuestStatus.ACTIVE}>Active</SelectItem>
-                        <SelectItem value={QuestStatus.COMPLETED}>Completed</SelectItem>
-                        <SelectItem value={QuestStatus.CANCELLED}>Cancelled</SelectItem>
+                        <SelectItem value={QuestStatus.DRAFT}>{t("uiQuestSettings.draft")}</SelectItem>
+                        <SelectItem value={QuestStatus.OPEN}>{t("uiQuestSettings.open")}</SelectItem>
+                        <SelectItem value={QuestStatus.OPEN_FOR_PROPOSALS}>{t("uiQuestSettings.openForProposals")}</SelectItem>
+                        <SelectItem value={QuestStatus.ACTIVE}>{t("uiQuestSettings.active")}</SelectItem>
+                        <SelectItem value={QuestStatus.COMPLETED}>{t("uiQuestSettings.completed")}</SelectItem>
+                        <SelectItem value={QuestStatus.CANCELLED}>{t("uiQuestSettings.cancelled")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div><label className="text-sm font-medium mb-1 block">Quest Nature</label>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiQuestSettings.questNature")}</label>
                     <Select value={editQuestNature} onValueChange={setEditQuestNature}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -599,11 +603,11 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   </div>
                   <div>
                     <label className="text-sm font-medium flex items-center gap-1.5 mb-1">
-                      <Hash className="h-3.5 w-3.5" /> Topics
+                      <Hash className="h-3.5 w-3.5" /> {t("uiQuestSettings.topics")}
                     </label>
                      <div className="flex items-center gap-2 mb-2">
-                      <Button variant="outline" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTopics((allTopicsList ?? []).map((t: any) => t.id))}>Select all</Button>
-                      <Button variant="ghost" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTopics([])} disabled={editTopics.length === 0}>Clear all</Button>
+                      <Button variant="outline" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTopics((allTopicsList ?? []).map((t: any) => t.id))}>{t("uiQuestSettings.selectAll")}</Button>
+                      <Button variant="ghost" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTopics([])} disabled={editTopics.length === 0}>{t("uiQuestSettings.clearAll")}</Button>
                       <span className="mx-1 text-muted-foreground text-xs">|</span>
                       {(["all", "topics", "houses"] as const).map(f => (
                         <Button
@@ -614,7 +618,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                           className="h-6 text-xs"
                           onClick={() => setTopicFilter(f)}
                         >
-                          {f === "all" ? "All" : f === "topics" ? "Topics" : "Houses"}
+                          {f === "all" ? t("uiQuestSettings.all") : f === "topics" ? t("uiQuestSettings.topics") : "Houses"}
                         </Button>
                       ))}
                     </div>
@@ -638,15 +642,15 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="text-sm font-medium flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5" /> Territories
+                        <MapPin className="h-3.5 w-3.5" /> {t("uiQuestSettings.territories")}
                       </label>
                       <Button size="sm" variant="outline" type="button" onClick={() => setShowTerritoryWizard(true)}>
-                        <MapPin className="h-3.5 w-3.5 mr-1" /> Create new territory
+                        <MapPin className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSettings.createNewTerritory")}
                       </Button>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Button variant="outline" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTerritories((allTerritoriesList ?? []).map((t: any) => t.id))}>Select all</Button>
-                      <Button variant="ghost" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTerritories([])} disabled={editTerritories.length === 0}>Clear all</Button>
+                      <Button variant="outline" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTerritories((allTerritoriesList ?? []).map((t: any) => t.id))}>{t("uiQuestSettings.selectAll")}</Button>
+                      <Button variant="ghost" size="sm" type="button" className="h-6 text-xs" onClick={() => setEditTerritories([])} disabled={editTerritories.length === 0}>{t("uiQuestSettings.clearAll")}</Button>
                       <span className="mx-1 text-muted-foreground text-xs">|</span>
                       {(["all", "location", "bioregion"] as const).map(f => (
                         <Button
@@ -657,7 +661,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                           className="h-6 text-xs"
                           onClick={() => setTerritoryFilter(f)}
                         >
-                          {f === "all" ? "All" : f === "location" ? "Locations" : "Bioregions"}
+                          {f === "all" ? t("uiQuestSettings.all") : f === "location" ? "Locations" : "Bioregions"}
                         </Button>
                       ))}
                     </div>
@@ -687,7 +691,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                       />
                     )}
                   </div>
-                  <Button onClick={saveGeneral} className="w-full">Save Changes</Button>
+                  <Button onClick={saveGeneral} className="w-full">{t("uiQuestSettings.saveChanges")}</Button>
                 </div>
               )}
 
@@ -710,14 +714,14 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                       <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">🟩</span>
-                          <span className="text-sm font-semibold">Coins Pool</span>
+                          <span className="text-sm font-semibold">{t("uiQuestSettings.coinsPool")}</span>
                         </div>
                         <p className="text-2xl font-bold">{coinsEscrow.toLocaleString()}</p>
                         <p className="text-xs text-muted-foreground">
-                          ≈ €{(coinsEscrow * coinsRate).toFixed(2)} in escrow
+                          ≈ €{(coinsEscrow * coinsRate).toFixed(2)} {t("uiQuestSettings.inEscrow")}
                         </p>
                         <Button size="sm" variant="outline" className="w-full" onClick={() => setAddCoinsOpen(true)}>
-                          <Plus className="h-3.5 w-3.5 mr-1" /> Add Coins
+                          <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSettings.addCoins")}
                         </Button>
                       </div>
 
@@ -729,23 +733,23 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                         </div>
                         <p className="text-2xl font-bold">{ctgEscrow.toLocaleString()}</p>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Snowflake className="h-3 w-3" /> Demurrage frozen in escrow
+                          <Snowflake className="h-3 w-3" /> {t("uiQuestSettings.demurrageFrozenInEscrow")}
                         </p>
                         <Button size="sm" variant="outline" className="w-full" onClick={() => setAddCtgOpen(true)}>
-                          <Plus className="h-3.5 w-3.5 mr-1" /> Add $CTG
+                          <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSettings.addCtg")}
                         </Button>
                       </div>
                     </div>
 
                     <p className="text-xs text-muted-foreground">
-                      To raise funds from others, use the <button onClick={() => setActiveTab("fundraising")} className="underline text-primary">Fundraising tab</button>.
+                      {t("uiQuestSettings.toRaiseFundsFromOthersUse")} <button onClick={() => setActiveTab("fundraising")} className="underline text-primary">{t("uiQuestSettings.fundraisingTab")}</button>.
                     </p>
                   </div>
 
                   {/* Section 2: OCU Module toggle */}
                   <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                     <h3 className="font-display font-semibold flex items-center gap-2">
-                      <Puzzle className="h-4 w-4 text-primary" /> Open Contributive Unit (OCU)
+                      <Puzzle className="h-4 w-4 text-primary" /> {t("uiQuestSettings.openContributiveUnitOcu")}
                     </h3>
 
                     <div className="flex items-center gap-3">
@@ -761,7 +765,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
 
                     {!ocuEnabled && (
                       <p className="text-sm text-muted-foreground">
-                        Enable OCU to track contributions, calculate each contributor's share, and govern distribution via a live pie.
+                        {t("uiQuestSettings.enableOcuToTrackContributionsCalculate")}
                       </p>
                     )}
 
@@ -770,7 +774,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                         <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 flex gap-2">
                           <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                           <p className="text-sm text-foreground">
-                            OCU active — contributors will log work, earn from the pool, and see their % share live.
+                            {t("uiQuestSettings.ocuActiveContributorsWillLogWork")}
                           </p>
                         </div>
 
@@ -780,13 +784,13 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                             type="number"
                             value={fmvRate}
                             onChange={(e) => setFmvRate(e.target.value)}
-                            placeholder="Inherits guild default"
+                            placeholder={t("uiQuestSettings.inheritsGuildDefault")}
                             className="max-w-xs"
                             min={0}
                             step={10}
                           />
                           <p className="text-xs text-muted-foreground mt-1">
-                            Override the FMV rate for this quest. Leave blank to use the guild default.
+                            {t("uiQuestSettings.overrideTheFmvRateForThis")}
                           </p>
                         </div>
 
@@ -801,7 +805,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                             </SelectContent>
                           </Select>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Peer approvals needed to verify a contribution.
+                            {t("uiQuestSettings.peerApprovalsNeededToVerifyA")}
                           </p>
                         </div>
 
@@ -815,16 +819,16 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                             min={7}
                           />
                           <p className="text-xs text-muted-foreground mt-1">
-                            Auto-flag contributors with no approved contribution after this many days.
+                            {t("uiQuestSettings.autoFlagContributorsWithNoApproved")}
                           </p>
                         </div>
 
                         <p className="text-xs text-muted-foreground border-t border-border pt-3">
-                          Contributors must have their log entries peer-reviewed before they count toward the pie.
+                          {t("uiQuestSettings.contributorsMustHaveTheirLogEntries")}
                         </p>
 
                         <Button size="sm" onClick={saveOCUSettings}>
-                          <Save className="h-4 w-4 mr-1" /> Save OCU Settings
+                          <Save className="h-4 w-4 mr-1" /> {t("uiQuestSettings.saveOcuSettings")}
                         </Button>
                       </div>
                     )}
@@ -838,19 +842,19 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                       </h3>
 
                       <div className="rounded-lg bg-muted/50 p-3 space-y-1 text-sm">
-                        <p><strong>Distributable envelope:</strong> {envelopeTotal.toLocaleString()} Coins</p>
+                        <p><strong>Distributable envelope:</strong> {envelopeTotal.toLocaleString()} {t("uiQuestSettings.coins")}</p>
                         <p className="text-xs text-muted-foreground">
-                          Total Coins pool minus external spending = distributable amount for OCU pie.
+                          {t("uiQuestSettings.totalCoinsPoolMinusExternalSpending")}
                         </p>
                       </div>
 
                       {(quest as any).pie_frozen_at ? (
                         <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3 text-sm">
                           <p className="font-medium text-amber-700 dark:text-amber-300">
-                            🔒 Pie frozen on {new Date((quest as any).pie_frozen_at).toLocaleDateString()}
+                            {t("uiQuestSettings.pieFrozenOn")} {new Date((quest as any).pie_frozen_at).toLocaleDateString()}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            Distribution is locked to the frozen snapshot.
+                            {t("uiQuestSettings.distributionIsLockedToTheFrozen")}
                           </p>
                         </div>
                       ) : (
@@ -859,7 +863,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                             size="sm"
                             variant="outline"
                             onClick={async () => {
-                              if (!confirm("Freeze the pie? This creates an immutable snapshot for final distribution.")) return;
+                              if (!confirm(t("uiQuestSettings.freezeThePieThisCreatesAn"))) return;
                               await supabase.from("quests").update({
                                 pie_frozen_at: new Date().toISOString(),
                               } as any).eq("id", questId);
@@ -896,7 +900,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                     ) : (
                       <div className="rounded-xl border border-border bg-card p-5">
                         <p className="text-sm text-muted-foreground">
-                          Exit protocol settings are managed at the guild level. Link this quest to a guild to configure exit rules.
+                          {t("uiQuestSettings.exitProtocolSettingsAreManagedAt")}
                         </p>
                       </div>
                     )
@@ -914,18 +918,18 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                     <h3 className="font-display font-semibold flex items-center gap-2">
                       <CurrencyIcon currency="coins" className="h-4 w-4" /> Direct Top-Up
                     </h3>
-                    <p className="text-sm text-muted-foreground">Add funds directly to the quest pool without a campaign.</p>
+                    <p className="text-sm text-muted-foreground">{t("uiQuestSettings.addFundsDirectlyToTheQuest")}</p>
                     <div className="flex flex-wrap gap-2">
                       <Button size="sm" variant="outline" onClick={() => setAddCoinsOpen(true)}>
-                        <Plus className="h-3.5 w-3.5 mr-1" /> Add 🟩 Coins
+                        <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSettings.addCoins2")}
                       </Button>
                       <Button size="sm" variant="outline" onClick={() => setAddCtgOpen(true)}>
-                        <Plus className="h-3.5 w-3.5 mr-1" /> Add 🌱 $CTG
+                        <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSettings.addCtg2")}
                       </Button>
                     </div>
                     <div className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground space-y-1">
-                      <p><strong>🟩 Coins in escrow:</strong> {coinsEscrow.toLocaleString()} (≈ €{(coinsEscrow * coinsRate).toFixed(2)})</p>
-                      <p><strong>🌱 $CTG in escrow:</strong> {ctgEscrow.toLocaleString()}</p>
+                      <p><strong>{t("uiQuestSettings.coinsInEscrow")}</strong> {coinsEscrow.toLocaleString()} (≈ €{(coinsEscrow * coinsRate).toFixed(2)})</p>
+                      <p><strong>{t("uiQuestSettings.ctgInEscrow")}</strong> {ctgEscrow.toLocaleString()}</p>
                     </div>
                   </div>
 
@@ -934,7 +938,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                     {/* Coins Campaigns */}
                     <CampaignSection
                       emoji="🟩"
-                      label="Coins"
+                      label={t("uiQuestSettings.coins")}
                       campaigns={campaigns.filter((c: any) => (c.campaign_currency || "coins") === "coins" || (c.type === "FIAT" && !c.campaign_currency))}
                       isLoading={campaignsLoading}
                       coinsRate={coinsRate}
@@ -967,10 +971,10 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                       <label htmlFor="settingsFundraising" className="text-sm font-medium">Allow community fundraising</label>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      When enabled, any logged-in user can contribute to active campaigns on this quest's detail page.
+                      {t("uiQuestSettings.whenEnabledAnyLoggedInUser")}
                     </p>
                     <Button size="sm" onClick={saveFundraising}>
-                      <Save className="h-4 w-4 mr-1" /> Save
+                      <Save className="h-4 w-4 mr-1" /> {t("uiQuestSettings.save")}
                     </Button>
                   </div>
                 </div>
@@ -982,11 +986,10 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                   <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                     <div>
                       <h3 className="font-display font-semibold flex items-center gap-2">
-                        <Lightbulb className="h-4 w-4 text-primary" /> Quest Needs
+                        <Lightbulb className="h-4 w-4 text-primary" /> {t("uiQuestSettings.questNeeds")}
                       </h3>
                       <p className="text-sm text-muted-foreground mt-1">
-                        List what this quest requires — skills, volunteers, tools, funding, partnerships…
-                        These will be displayed in the Contributions tab for visitors.
+                        {t("uiQuestSettings.listWhatThisQuestRequiresSkills")}
                       </p>
                     </div>
                     <QuestNeedsManager questId={questId} questOwnerId={quest.created_by_user_id} />
@@ -999,14 +1002,14 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                 <div className="space-y-5 max-w-lg">
                   <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                     <h3 className="font-display font-semibold flex items-center gap-2">
-                      <Puzzle className="h-4 w-4 text-primary" /> Quest Features
+                      <Puzzle className="h-4 w-4 text-primary" /> {t("uiQuestSettings.questFeatures")}
                     </h3>
-                    <p className="text-sm text-muted-foreground">Enable or disable tools for this quest.</p>
+                    <p className="text-sm text-muted-foreground">{t("uiQuestSettings.enableOrDisableToolsForThis")}</p>
                     <div className="space-y-3">
                       {[
-                        { key: "rituals", label: "Rituals", desc: "Recurring sessions with video calls and attendance", icon: Calendar },
-                        { key: "subtasks", label: "Subtasks", desc: "Break the quest into smaller assignable tasks", icon: ListChecks },
-                        { key: "discussion", label: "Discussion", desc: "Feed and comment thread for the quest", icon: MessageCircle },
+                        { key: "rituals", label: "Rituals", desc: t("uiQuestSettings.recurringSessionsWithVideoCallsAnd"), icon: Calendar },
+                        { key: "subtasks", label: t("uiQuestSettings.subtasks"), desc: t("uiQuestSettings.breakTheQuestIntoSmallerAssignable"), icon: ListChecks },
+                        { key: "discussion", label: "Discussion", desc: t("uiQuestSettings.feedAndCommentThreadForThe"), icon: MessageCircle },
                       ].map(({ key, label, desc, icon: Icon }) => (
                         <div key={key} className="flex items-center justify-between rounded-lg border border-border bg-card p-3">
                           <div className="flex items-center gap-3">
@@ -1020,7 +1023,7 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                         </div>
                       ))}
                     </div>
-                    <Button onClick={saveFeatures} size="sm"><Save className="h-4 w-4 mr-1" /> Save Features</Button>
+                    <Button onClick={saveFeatures} size="sm"><Save className="h-4 w-4 mr-1" /> {t("uiQuestSettings.saveFeatures")}</Button>
                   </div>
                 </div>
               )}
@@ -1051,43 +1054,43 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
                       <h3 className="font-display font-semibold flex items-center gap-2 text-destructive">
                         <AlertTriangle className="h-4 w-4" /> Danger Zone
                       </h3>
-                      <p className="text-sm text-muted-foreground">These actions are irreversible. Proceed with caution.</p>
+                      <p className="text-sm text-muted-foreground">{t("uiQuestSettings.theseActionsAreIrreversibleProceedWith")}</p>
                       <div className="flex flex-wrap gap-3">
                         <Button
                           variant="outline"
                           size="sm"
                           className="text-orange-600 border-orange-500/30 hover:bg-orange-500/10"
                           onClick={async () => {
-                            if (!confirm("Cancel this quest? Credit contributions will be refunded.")) return;
+                            if (!confirm(t("uiQuestSettings.cancelThisQuestCreditContributionsWill"))) return;
                             if ((quest as any).funding_type === "CREDITS" && (quest as any).escrow_credits > 0) {
                               await supabase.rpc("refund_quest_funding" as any, { _quest_id: quest.id });
                             }
                             await supabase.from("quests").update({ status: "CANCELLED" } as any).eq("id", quest.id);
                             qc.invalidateQueries({ queryKey: ["quest", questId] });
                             qc.invalidateQueries({ queryKey: ["quest-settings", questId] });
-                            toast({ title: "Quest cancelled" });
+                            toast({ title: t("uiQuestSettings.questCancelled") });
                           }}
                         >
-                          <Ban className="h-4 w-4 mr-1" /> Cancel Quest & Refund
+                          <Ban className="h-4 w-4 mr-1" /> {t("uiQuestSettings.cancelQuestRefund")}
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           className="text-destructive border-destructive/30 hover:bg-destructive/10"
                           onClick={async () => {
-                            if (!confirm("Are you sure you want to delete this quest?")) return;
+                            if (!confirm(t("uiQuestSettings.areYouSureYouWantTo"))) return;
                             await supabase.from("quests").update({ is_deleted: true, deleted_at: new Date().toISOString() } as any).eq("id", quest.id);
-                            toast({ title: "Quest deleted" });
+                            toast({ title: t("uiQuestSettings.questDeleted") });
                             navigate("/explore?tab=quests");
                           }}
                         >
-                          <Trash2 className="h-4 w-4 mr-1" /> Delete Quest
+                          <Trash2 className="h-4 w-4 mr-1" /> {t("uiQuestSettings.deleteQuest")}
                         </Button>
                       </div>
                     </div>
                   ) : (
                     <div className="rounded-xl border border-border bg-card p-5">
-                      <p className="text-sm text-muted-foreground">This quest has been cancelled. No further actions are available.</p>
+                      <p className="text-sm text-muted-foreground">{t("uiQuestSettings.thisQuestHasBeenCancelledNo")}</p>
                     </div>
                   )}
                 </div>
@@ -1112,32 +1115,32 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
       <Dialog open={addCoinsOpen} onOpenChange={setAddCoinsOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Coins to Quest Pool</DialogTitle>
-            <DialogDescription>Deduct Coins from your wallet and add to this quest's escrow.</DialogDescription>
+            <DialogTitle>{t("uiQuestSettings.addCoinsToQuestPool")}</DialogTitle>
+            <DialogDescription>{t("uiQuestSettings.deductCoinsFromYourWalletAnd")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Your balance: <strong>{((userProfile as any)?.coins_balance ?? 0).toLocaleString()}</strong> 🟩 Coins
+              {t("uiQuestSettings.yourBalance")} <strong>{((userProfile as any)?.coins_balance ?? 0).toLocaleString()}</strong> {t("uiQuestSettings.coins2")}
             </p>
             <Input
               type="number"
               min={1}
               value={addCoinsAmount}
               onChange={(e) => setAddCoinsAmount(e.target.value)}
-              placeholder="Amount"
+              placeholder={t("uiQuestSettings.amount")}
             />
             {Number(addCoinsAmount) > ((userProfile as any)?.coins_balance ?? 0) && (
-              <p className="text-xs text-destructive">Insufficient Coins balance.</p>
+              <p className="text-xs text-destructive">{t("uiQuestSettings.insufficientCoinsBalance")}</p>
             )}
             <p className="text-xs text-muted-foreground">
               ≈ €{(Number(addCoinsAmount || 0) * coinsRate).toFixed(2)}
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddCoinsOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setAddCoinsOpen(false)}>{t("uiQuestSettings.cancel")}</Button>
             <Button onClick={() => addFundsToPool("coins")} disabled={addingSaving || !addCoinsAmount}>
               {addingSaving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-              Add Coins
+              {t("uiQuestSettings.addCoins")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1147,32 +1150,32 @@ function QuestSettingsInner({ questId, quest }: { questId: string; quest: any })
       <Dialog open={addCtgOpen} onOpenChange={setAddCtgOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add $CTG to Quest Pool</DialogTitle>
-            <DialogDescription>$CTG is frozen from demurrage while held in quest escrow.</DialogDescription>
+            <DialogTitle>{t("uiQuestSettings.addCtgToQuestPool")}</DialogTitle>
+            <DialogDescription>{t("uiQuestSettings.ctgIsFrozenFromDemurrageWhile")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Your balance: <strong>{((userProfile as any)?.ctg_balance ?? 0).toLocaleString()}</strong> 🌱 $CTG
+              {t("uiQuestSettings.yourBalance")} <strong>{((userProfile as any)?.ctg_balance ?? 0).toLocaleString()}</strong> 🌱 $CTG
             </p>
             <Input
               type="number"
               min={1}
               value={addCtgAmount}
               onChange={(e) => setAddCtgAmount(e.target.value)}
-              placeholder="Amount"
+              placeholder={t("uiQuestSettings.amount")}
             />
             {Number(addCtgAmount) > ((userProfile as any)?.ctg_balance ?? 0) && (
               <p className="text-xs text-destructive">Insufficient $CTG balance.</p>
             )}
             <p className="text-xs text-muted-foreground">
-              $CTG is not fiat-backed — it represents contribution to the commons. Demurrage resumes once distributed.
+              {t("uiQuestSettings.ctgIsNotFiatBackedIt")}
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddCtgOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setAddCtgOpen(false)}>{t("uiQuestSettings.cancel")}</Button>
             <Button onClick={() => addFundsToPool("ctg")} disabled={addingSaving || !addCtgAmount}>
               {addingSaving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-              Add $CTG
+              {t("uiQuestSettings.addCtg")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1189,6 +1192,7 @@ function CampaignSection({
   onNew: () => void; onEdit: (c: any) => void; onDelete: (id: string) => void;
   onCancel: (id: string) => void; onDispatch: (c: any) => void;
 }) {
+  const { t } = useTranslation();
   const statusStyle = (s: string) => {
     if (s === "ACTIVE") return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30";
     if (s === "COMPLETED") return "bg-primary/10 text-primary border-primary/30";
@@ -1203,14 +1207,14 @@ function CampaignSection({
           <span className="text-lg">{emoji}</span> {label} Campaigns
         </h3>
         <Button size="sm" variant="outline" onClick={onNew}>
-          <Plus className="h-3.5 w-3.5 mr-1" /> New
+          <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSettings.new")}
         </Button>
       </div>
 
       {isLoading ? (
         <Loader2 className="h-5 w-5 animate-spin mx-auto" />
       ) : campaigns.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-4">No {label} campaigns yet.</p>
+        <p className="text-sm text-muted-foreground text-center py-4">{t("uiQuestSettings.no")} {label} {t("uiQuestSettings.campaignsYet")}</p>
       ) : (
         <div className="space-y-2">
           {campaigns.map((c: any) => {

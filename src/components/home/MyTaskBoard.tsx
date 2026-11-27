@@ -586,7 +586,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
       title: newTitle.trim(),
       status: "TODO",
     } as any).select("id").single();
-    if (error) { toast({ title: "Failed to add task", variant: "destructive" }); }
+    if (error) { toast({ title: t("uiMyTaskBoard.failedToAddTask"), variant: "destructive" }); }
     else {
       setNewTitle("");
       // Track newly added task so it appears first
@@ -688,9 +688,9 @@ export function MyTaskBoard({ userId }: { userId: string }) {
       setShowConfetti(true);
       const key = `${task.source}-${task.id}`;
       toast({
-        title: "Task completed ✓",
+        title: t("uiMyTaskBoard.taskCompleted"),
         description: task.source === "subtask"
-          ? ((task as any).guildName ? `Contribution logged in ${(task as any).guildName}` : "Contribution logged to quest")
+          ? ((task as any).guildName ? `Contribution logged in ${(task as any).guildName}` : t("uiMyTaskBoard.contributionLoggedToQuest"))
           : task.title,
         action: (
           <ToastAction
@@ -745,10 +745,10 @@ export function MyTaskBoard({ userId }: { userId: string }) {
         qc.invalidateQueries({ queryKey: ["my-participant-quests-home", userId] });
       }
       qc.invalidateQueries({ queryKey: ["user-work-items", userId] });
-      toast({ title: "Task deleted" });
+      toast({ title: t("uiMyTaskBoard.taskDeleted") });
     } catch (err: any) {
       console.error("Delete task error:", err);
-      toast({ title: "Failed to delete task", description: err?.message || "Unknown error", variant: "destructive" });
+      toast({ title: t("uiMyTaskBoard.failedToDeleteTask"), description: err?.message || t("uiMyTaskBoard.unknownError"), variant: "destructive" });
     }
   };
 
@@ -865,7 +865,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
 
       const { error } = await supabase.from("quests").update(updatePayload).eq("id", existingQuestId);
       if (error) {
-        toast({ title: "Failed to reattach quest", variant: "destructive" });
+        toast({ title: t("uiMyTaskBoard.failedToReattachQuest"), variant: "destructive" });
         setConverting(false);
         return;
       }
@@ -887,7 +887,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
       setConverting(false);
       setUnitPickerOpen(false);
       setPendingConvertTask(null);
-      toast({ title: "Quest reattached!" });
+      toast({ title: t("uiMyTaskBoard.questReattached") });
       navigate(`/quests/${existingQuestId}`);
       return;
     }
@@ -920,7 +920,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
       .select("id")
       .single();
     if (error) {
-      toast({ title: "Failed to create quest", variant: "destructive" });
+      toast({ title: t("uiMyTaskBoard.failedToCreateQuest"), variant: "destructive" });
       setConverting(false);
       return;
     }
@@ -966,7 +966,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
         user_id: userId,
         quest_id: questId,
         contribution_type: "other",
-        title: "Quest created from personal task",
+        title: t("uiMyTaskBoard.questCreatedFromPersonalTask"),
         task_type: "coordination",
         base_units: 1,
         weight_factor: 1.0,
@@ -981,7 +981,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
     setConverting(false);
     setUnitPickerOpen(false);
     setPendingConvertTask(null);
-    toast({ title: "Task converted to quest!" });
+    toast({ title: t("uiMyTaskBoard.taskConvertedToQuest") });
     navigate(`/quests/${questId}`);
   };
 
@@ -994,7 +994,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
       status: "BACKLOG",
       order_index: 0,
     } as any).select("id").single();
-    if (error) { toast({ title: "Failed to create subtask", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiMyTaskBoard.failedToCreateSubtask"), variant: "destructive" }); return; }
     // Create work item for new subtask
     if (data) {
       await supabase.from("user_work_items" as any).insert({
@@ -1010,7 +1010,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
     qc.invalidateQueries({ queryKey: ["personal-tasks", userId] });
     qc.invalidateQueries({ queryKey: ["my-subtasks-home", userId] });
     qc.invalidateQueries({ queryKey: ["user-work-items", userId] });
-    toast({ title: "Task attached as subtask!" });
+    toast({ title: t("uiMyTaskBoard.taskAttachedAsSubtask") });
   };
 
   // All quests for subtask picker
@@ -1065,10 +1065,10 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="all">{t("uiMyTaskBoard.all")}</SelectItem>
               <SelectItem value="personal">Personal</SelectItem>
-              <SelectItem value="quest">Quests</SelectItem>
-              <SelectItem value="subtask">Subtasks</SelectItem>
+              <SelectItem value="quest">{t("uiMyTaskBoard.quests")}</SelectItem>
+              <SelectItem value="subtask">{t("uiMyTaskBoard.subtasks")}</SelectItem>
             </SelectContent>
           </Select>
           <Tooltip>
@@ -1080,10 +1080,10 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                 onClick={() => setSortBy(sortBy === "status" ? "priority" : sortBy === "priority" ? "recent" : "status")}
               >
                 <ArrowDownUp className="h-3.5 w-3.5" />
-                <span>{sortBy === "status" ? "Status" : sortBy === "priority" ? "Priority" : "Recent"}</span>
+                <span>{sortBy === "status" ? t("uiMyTaskBoard.status") : sortBy === "priority" ? "Priority" : "Recent"}</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Sort tasks by status, priority, or date</TooltipContent>
+            <TooltipContent>{t("uiMyTaskBoard.sortTasksByStatusPriorityOr")}</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -1093,7 +1093,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
-            placeholder="Search tasks…"
+            placeholder={t("uiMyTaskBoard.searchTasks")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 text-sm pl-8 pr-8"
@@ -1115,7 +1115,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
           onCheckedChange={(checked) => setHideBacklog(!checked)}
         />
         <label htmlFor="show-backlog" className="text-xs text-muted-foreground cursor-pointer select-none">
-          Show backlog tasks
+          {t("uiMyTaskBoard.showBacklogTasks")}
         </label>
       </div>
 
@@ -1160,14 +1160,14 @@ export function MyTaskBoard({ userId }: { userId: string }) {
       {/* Quick add */}
       <div className="flex gap-2">
         <Input
-          placeholder="Add a task…"
+          placeholder={t("uiMyTaskBoard.addATask")}
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addTask()}
           className="h-9 text-sm"
         />
         <Button size="sm" onClick={addTask} disabled={!newTitle.trim() || adding} className="h-9 gap-1">
-          <Plus className="h-3.5 w-3.5" /> Add
+          <Plus className="h-3.5 w-3.5" /> {t("uiMyTaskBoard.add")}
         </Button>
       </div>
 
@@ -1178,7 +1178,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
         </div>
       ) : filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-6">
-          No active tasks. Add one above or create a quest!
+          {t("uiMyTaskBoard.noActiveTasksAddOneAbove")}
         </p>
       ) : (
         <>
@@ -1197,14 +1197,14 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                       </span>
                     </TooltipTrigger>
                     <TooltipContent side="top" className="text-xs">
-                      Mark as today's focus — resets at 9am
+                      {t("uiMyTaskBoard.markAsTodaySFocusResets")}
                     </TooltipContent>
                   </Tooltip>
                 </th>
                 <th className="w-7 sm:w-8 px-1 py-1.5 sm:py-2"></th>
-                <th className="text-left px-1.5 sm:px-3 py-1.5 sm:py-2 font-medium">Task</th>
+                <th className="text-left px-1.5 sm:px-3 py-1.5 sm:py-2 font-medium">{t("uiMyTaskBoard.task")}</th>
                 <th className="text-left px-2 sm:px-3 py-1.5 sm:py-2 font-medium hidden sm:table-cell">Source</th>
-                <th className="text-left px-1.5 md:px-3 py-1.5 sm:py-2 font-medium w-[36px] md:w-[130px]"><span className="hidden md:inline">Status</span></th>
+                <th className="text-left px-1.5 md:px-3 py-1.5 sm:py-2 font-medium w-[36px] md:w-[130px]"><span className="hidden md:inline">{t("uiMyTaskBoard.status")}</span></th>
                 <th className="w-7 sm:w-10 px-1 sm:px-3 py-1.5 sm:py-2"></th>
               </tr>
             </thead>
@@ -1212,10 +1212,10 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               {(() => {
                 let lastGroup = "";
                 const STATUS_GROUP_LABELS: Record<string, { icon: string; label: string }> = {
-                  IN_PROGRESS: { icon: "●", label: "In Progress" },
-                  TODO: { icon: "○", label: "To Do" },
+                  IN_PROGRESS: { icon: "●", label: t("uiMyTaskBoard.inProgress") },
+                  TODO: { icon: "○", label: t("uiMyTaskBoard.toDo") },
                   BACKLOG: { icon: "·", label: "Backlog" },
-                  DONE: { icon: "✓", label: "Done" },
+                  DONE: { icon: "✓", label: t("uiMyTaskBoard.done") },
                 };
                 return paginated.flatMap((task) => {
                 const key = `${task.source}-${task.id}`;
@@ -1297,15 +1297,15 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                         <button
                           onClick={() => startEditing(task)}
                           className="opacity-0 group-hover:opacity-60 hover:!opacity-100 transition-opacity shrink-0"
-                          title="Edit title"
+                          title={t("uiMyTaskBoard.editTitle")}
                         >
                           <Pencil className="h-3 w-3" />
                         </button>
                         {task.convertedToQuestId && (
-                          <Badge variant="outline" className="ml-1 sm:ml-2 text-[9px] sm:text-[10px]">→ Quest</Badge>
+                          <Badge variant="outline" className="ml-1 sm:ml-2 text-[9px] sm:text-[10px]">{t("uiMyTaskBoard.quest")}</Badge>
                         )}
                         {task.convertedToSubtaskId && (
-                          <Badge variant="outline" className="ml-1 sm:ml-2 text-[9px] sm:text-[10px]">→ Subtask</Badge>
+                          <Badge variant="outline" className="ml-1 sm:ml-2 text-[9px] sm:text-[10px]">{t("uiMyTaskBoard.subtask")}</Badge>
                         )}
                       </div>
                     )}
@@ -1373,9 +1373,9 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="BACKLOG"><span className="flex items-center gap-1.5"><Circle className="h-3 w-3" /> Backlog</span></SelectItem>
-                        <SelectItem value="TODO"><span className="flex items-center gap-1.5"><CircleDot className="h-3 w-3" /> To do next</span></SelectItem>
-                        <SelectItem value="IN_PROGRESS"><span className="flex items-center gap-1.5"><Timer className="h-3 w-3" /> In progress</span></SelectItem>
-                        <SelectItem value="DONE"><span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3" /> Done</span></SelectItem>
+                        <SelectItem value="TODO"><span className="flex items-center gap-1.5"><CircleDot className="h-3 w-3" /> {t("uiMyTaskBoard.toDoNext")}</span></SelectItem>
+                        <SelectItem value="IN_PROGRESS"><span className="flex items-center gap-1.5"><Timer className="h-3 w-3" /> {t("uiMyTaskBoard.inProgress2")}</span></SelectItem>
+                        <SelectItem value="DONE"><span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3" /> {t("uiMyTaskBoard.done")}</span></SelectItem>
                       </SelectContent>
                     </Select>
                   </td>
@@ -1387,7 +1387,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7"
-                            title="Convert to Quest"
+                            title={t("uiMyTaskBoard.convertToQuest")}
                             onClick={() => openUnitPicker(task)}
                           >
                             <Rocket className="h-3.5 w-3.5 text-primary/60" />
@@ -1397,7 +1397,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                               variant="ghost"
                               size="icon"
                               className="h-7 w-7 sm:opacity-0 sm:group-hover:opacity-100"
-                              title="Attach to Quest"
+                              title={t("uiMyTaskBoard.attachToQuest")}
                               onClick={() => { setQuestPickerTask(task); setQuestPickerOpen(true); setQuestPickerSearch(""); }}
                             >
                               <ListChecks className="h-3.5 w-3.5" />
@@ -1523,14 +1523,14 @@ export function MyTaskBoard({ userId }: { userId: string }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Rocket className="h-5 w-5 text-primary" />
-              Convert to Quest
+              {t("uiMyTaskBoard.convertToQuest")}
             </DialogTitle>
             <DialogDescription>
               {convertStep === "unit"
-                ? "Choose which entity to attach this quest to, or create it as a personal quest."
+                ? t("uiMyTaskBoard.chooseWhichEntityToAttachThis")
                 : convertStep === "tags"
-                ? "Select topics and territories for this quest."
-                : "Configure the budget and value distribution for this quest."}
+                ? t("uiMyTaskBoard.selectTopicsAndTerritoriesForThis")
+                : t("uiMyTaskBoard.configureTheBudgetAndValueDistribution")}
             </DialogDescription>
           </DialogHeader>
 
@@ -1545,14 +1545,14 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                   <User className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">Personal Quest</p>
-                  <p className="text-xs text-muted-foreground">Not attached to any entity</p>
+                  <p className="text-sm font-medium">{t("uiMyTaskBoard.personalQuest")}</p>
+                  <p className="text-xs text-muted-foreground">{t("uiMyTaskBoard.notAttachedToAnyEntity")}</p>
                 </div>
               </button>
 
               {userUnits.length > 0 && (
                 <div className="pt-1">
-                  <p className="text-xs font-medium text-muted-foreground px-1 pb-1.5">Your entities</p>
+                  <p className="text-xs font-medium text-muted-foreground px-1 pb-1.5">{t("uiMyTaskBoard.yourEntities")}</p>
                   {userUnits.map((unit) => (
                     <button
                       key={unit.id}
@@ -1570,7 +1570,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{unit.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {unit.type === "GUILD" ? "Guild" : "Organisation"}
+                          {unit.type === "GUILD" ? t("uiMyTaskBoard.guild") : "Organisation"}
                         </p>
                       </div>
                     </button>
@@ -1585,10 +1585,10 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium flex items-center gap-1.5">
-                    <Hash className="h-3.5 w-3.5" /> Topics
+                    <Hash className="h-3.5 w-3.5" /> {t("uiMyTaskBoard.topics")}
                   </label>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics((allTopics ?? []).map((t: any) => t.id))}>Select all</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics((allTopics ?? []).map((t: any) => t.id))}>{t("uiMyTaskBoard.selectAll")}</Button>
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTopics([])}>Clear</Button>
                   </div>
                 </div>
@@ -1608,10 +1608,10 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5" /> Territories
+                    <MapPin className="h-3.5 w-3.5" /> {t("uiMyTaskBoard.territories")}
                   </label>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories((allTerritories ?? []).map((t: any) => t.id))}>Select all</Button>
+                    <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories((allTerritories ?? []).map((t: any) => t.id))}>{t("uiMyTaskBoard.selectAll")}</Button>
                     <Button variant="ghost" size="sm" className="h-5 px-1.5 text-[10px] text-muted-foreground" onClick={() => setConvertTerritories([])}>Clear</Button>
                   </div>
                 </div>
@@ -1630,10 +1630,10 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => setConvertStep("unit")} className="flex-1">
-                  <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Back
+                  <ChevronLeft className="h-3.5 w-3.5 mr-1" /> {t("uiMyTaskBoard.back")}
                 </Button>
                 <Button size="sm" onClick={() => setConvertStep("budget")} className="flex-1">
-                  Next →
+                  {t("uiMyTaskBoard.next")}
                 </Button>
               </div>
             </div>
@@ -1643,11 +1643,11 @@ export function MyTaskBoard({ userId }: { userId: string }) {
             <div className="space-y-4 py-2">
               <h3 className="text-sm font-semibold flex items-center gap-2">
                 <Scale className="h-4 w-4 text-primary" />
-                Budget & Value Split
+                {t("uiMyTaskBoard.budgetValueSplit")}
               </h3>
 
               <div className="space-y-1.5">
-                <Label className="text-xs">Budget 🌱 $CTG</Label>
+                <Label className="text-xs">{t("uiMyTaskBoard.budgetCtg")}</Label>
                 <Input
                   type="number"
                   min={0}
@@ -1661,33 +1661,33 @@ export function MyTaskBoard({ userId }: { userId: string }) {
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs">Guild share</Label>
+                    <Label className="text-xs">{t("uiMyTaskBoard.guildShare")}</Label>
                     <span className="text-xs font-medium text-muted-foreground">{convertGuildPercent}%</span>
                   </div>
                   <Slider min={0} max={30} step={1} value={[convertGuildPercent]} onValueChange={([v]) => setConvertGuildPercent(v)} />
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs">Territory share</Label>
+                    <Label className="text-xs">{t("uiMyTaskBoard.territoryShare")}</Label>
                     <span className="text-xs font-medium text-muted-foreground">{convertTerritoryPercent}%</span>
                   </div>
                   <Slider min={0} max={20} step={1} value={[convertTerritoryPercent]} onValueChange={([v]) => setConvertTerritoryPercent(v)} />
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label className="text-xs">Commons share</Label>
+                    <Label className="text-xs">{t("uiMyTaskBoard.commonsShare")}</Label>
                     <span className="text-xs font-medium text-muted-foreground">{convertCtgPercent}%</span>
                   </div>
                   <Slider min={0} max={15} step={1} value={[convertCtgPercent]} onValueChange={([v]) => setConvertCtgPercent(v)} />
                 </div>
                 <p className="text-sm font-bold text-emerald-600">
-                  Contributor share: {100 - convertGuildPercent - convertTerritoryPercent - convertCtgPercent}%
+                  {t("uiMyTaskBoard.contributorShare")} {100 - convertGuildPercent - convertTerritoryPercent - convertCtgPercent}%
                 </p>
               </div>
 
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={() => setConvertStep("tags")} className="flex-1">
-                  <ChevronLeft className="h-3.5 w-3.5 mr-1" /> Back
+                  <ChevronLeft className="h-3.5 w-3.5 mr-1" /> {t("uiMyTaskBoard.back")}
                 </Button>
                 <Button
                   variant="ghost"
@@ -1702,11 +1702,11 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                   disabled={converting}
                   className="text-xs text-muted-foreground"
                 >
-                  Skip
+                  {t("uiMyTaskBoard.skip")}
                 </Button>
                 <Button size="sm" onClick={finalizeConvertToQuest} disabled={converting} className="flex-1">
                   {converting ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Rocket className="h-3.5 w-3.5 mr-1" />}
-                  Create Quest
+                  {t("uiMyTaskBoard.createQuest")}
                 </Button>
               </div>
             </div>
@@ -1715,7 +1715,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
           {converting && (
             <div className="flex items-center justify-center py-2">
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground mr-2" />
-              <span className="text-sm text-muted-foreground">Creating quest…</span>
+              <span className="text-sm text-muted-foreground">{t("uiMyTaskBoard.creatingQuest")}</span>
             </div>
           )}
         </DialogContent>
@@ -1726,16 +1726,16 @@ export function MyTaskBoard({ userId }: { userId: string }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ListChecks className="h-5 w-5 text-primary" />
-              Attach to Quest
+              {t("uiMyTaskBoard.attachToQuest")}
             </DialogTitle>
             <DialogDescription>
-              Choose a quest to attach "{questPickerTask?.title}" as a subtask.
+              {t("uiMyTaskBoard.chooseAQuestToAttach")}{questPickerTask?.title}{t("uiMyTaskBoard.asASubtask")}
             </DialogDescription>
           </DialogHeader>
           <div className="relative mb-2">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search quests…"
+              placeholder={t("uiMyTaskBoard.searchQuests")}
               value={questPickerSearch}
               onChange={(e) => setQuestPickerSearch(e.target.value)}
               className="h-8 text-sm pl-8"
@@ -1764,7 +1764,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                 ))}
             </div>
             {allQuestsForPicker.filter((q) => !questPickerSearch.trim() || q.title.toLowerCase().includes(questPickerSearch.toLowerCase())).length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-6">No quests match your search.</p>
+              <p className="text-sm text-muted-foreground text-center py-6">{t("uiMyTaskBoard.noQuestsMatchYourSearch")}</p>
             )}
           </div>
         </DialogContent>
@@ -1772,13 +1772,13 @@ export function MyTaskBoard({ userId }: { userId: string }) {
       <AlertDialog open={!!taskToDelete} onOpenChange={(open) => !open && setTaskToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this task?</AlertDialogTitle>
+            <AlertDialogTitle>{t("uiMyTaskBoard.deleteThisTask")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. "{taskToDelete?.title}" will be permanently removed.
+              {t("uiMyTaskBoard.thisActionCannotBeUndone")}{taskToDelete?.title}{t("uiMyTaskBoard.willBePermanentlyRemoved")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("uiMyTaskBoard.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
@@ -1788,7 +1788,7 @@ export function MyTaskBoard({ userId }: { userId: string }) {
                 }
               }}
             >
-              Delete
+              {t("uiMyTaskBoard.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

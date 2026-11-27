@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuestValuePie, type ValuePieEntry } from "@/hooks/useValuePie";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +22,10 @@ interface Props {
 }
 
 export function ValuePieChart({ questId }: Props) {
+  const { t } = useTranslation();
   const { data: entries = [], isLoading } = useQuestValuePie(questId);
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading value pie…</p>;
+  if (isLoading) return <p className="text-sm text-muted-foreground">{t("uiValuePieChart.loadingValuePie")}</p>;
   if (entries.length === 0) return null;
 
   const totalTokens = entries.reduce((s, e) => s + e.coins_awarded, 0);
@@ -77,7 +79,7 @@ export function ValuePieChart({ questId }: Props) {
             <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[10px] text-muted-foreground font-medium border-b border-border pb-1">
               <span>Contributor</span>
               <span className="text-right">Units</span>
-              <span className="text-right">Share</span>
+              <span className="text-right">{t("uiValuePieChart.share")}</span>
               <span className="text-right">🟡 $CTG</span>
             </div>
             {entries.map((e, i) => (

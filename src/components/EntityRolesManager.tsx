@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Plus, Trash2, Tag, Pencil, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ interface EntityRolesManagerProps {
 }
 
 export function EntityRolesManager({ entityType, entityId, members }: EntityRolesManagerProps) {
+  const { t } = useTranslation();
   const {
     roles, ensureSourceRole, addRole, updateRole, deleteRole,
     assignRole, removeRoleAssignment, getRolesForUser,
@@ -62,7 +64,7 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
       {/* Role definitions */}
       <div>
         <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <Tag className="h-4 w-4" /> Custom Roles
+          <Tag className="h-4 w-4" /> {t("uiEntityRolesManager.customRoles")}
         </h3>
         <div className="space-y-2">
           {roles.map((role) => (
@@ -108,12 +110,12 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
           <Input
             value={newRoleName}
             onChange={(e) => setNewRoleName(e.target.value)}
-            placeholder="New role name…"
+            placeholder={t("uiEntityRolesManager.newRoleName")}
             className="h-8 text-sm flex-1"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           />
           <Button size="sm" variant="outline" onClick={handleAdd} disabled={!newRoleName.trim()} className="h-8">
-            <Plus className="h-3.5 w-3.5 mr-1" /> Add
+            <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiEntityRolesManager.add")}
           </Button>
         </div>
 
@@ -133,9 +135,9 @@ export function EntityRolesManager({ entityType, entityId, members }: EntityRole
 
       {/* Assign roles to members */}
       <div>
-        <h3 className="text-sm font-semibold mb-3">Assign Roles to Members</h3>
+        <h3 className="text-sm font-semibold mb-3">{t("uiEntityRolesManager.assignRolesToMembers")}</h3>
         {members.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No members yet.</p>
+          <p className="text-sm text-muted-foreground">{t("uiEntityRolesManager.noMembersYet")}</p>
         ) : (
           <div className="space-y-3">
             {members.map((m) => {

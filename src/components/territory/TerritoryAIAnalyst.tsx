@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -16,16 +18,17 @@ interface Props {
 }
 
 const AI_ACTIONS = [
-  { key: "summarize", label: "Summarize this territory", icon: Brain, prompt: "Provide a comprehensive summary of this territory based on all available memory and data." },
+  { key: "summarize", get label() { return i18n.t("uiTerritoryAIAnalyst.summarizeThisTerritory"); }, icon: Brain, prompt: "Provide a comprehensive summary of this territory based on all available memory and data." },
   { key: "strengths", label: "Strengths & weaknesses", icon: Shield, prompt: "Analyze the strengths and weaknesses of this territory based on all available intelligence." },
   { key: "opportunities", label: "Strategic opportunities", icon: Sparkles, prompt: "Identify strategic opportunities for growth, collaboration, and impact in this territory." },
   { key: "missing", label: "Highlight missing info", icon: SearchIcon, prompt: "Identify gaps in the territory's knowledge base — what information is missing and should be gathered?" },
   { key: "resilience", label: "Resilience analysis", icon: TrendingUp, prompt: "Generate a resilience analysis covering economic, social, and environmental dimensions." },
-  { key: "quests", label: "Suggest quests", icon: Compass, prompt: "Suggest concrete quests/missions that could be launched based on territorial context and needs." },
+  { key: "quests", get label() { return i18n.t("uiTerritoryAIAnalyst.suggestQuests"); }, icon: Compass, prompt: "Suggest concrete quests/missions that could be launched based on territorial context and needs." },
   { key: "risks", label: "Risk assessment", icon: AlertTriangle, prompt: "Assess current and emerging risks for this territory across multiple dimensions." },
 ] as const;
 
 export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
   const [activeAction, setActiveAction] = useState<string | null>(null);
@@ -52,7 +55,7 @@ export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
         setResponse(JSON.stringify(data, null, 2));
       }
     } catch (e: any) {
-      toast({ title: "AI error", description: e.message, variant: "destructive" });
+      toast({ title: t("uiTerritoryAIAnalyst.aiError"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -62,10 +65,10 @@ export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
     <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-4 h-fit lg:sticky lg:top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
       <div className="flex items-center gap-2">
         <Brain className="h-5 w-5 text-primary" />
-        <h3 className="font-display font-semibold text-sm">AI Territory Analyst</h3>
+        <h3 className="font-display font-semibold text-sm">{t("uiTerritoryAIAnalyst.aiTerritoryAnalyst")}</h3>
       </div>
       <p className="text-xs text-muted-foreground">
-        Ask the AI to analyze {territoryName} using all available memory and data.
+        {t("uiTerritoryAIAnalyst.askTheAiToAnalyze")} {territoryName} {t("uiTerritoryAIAnalyst.usingAllAvailableMemoryAndData")}
       </p>
 
       <div className="space-y-1.5">
@@ -101,7 +104,7 @@ export function TerritoryAIAnalyst({ territoryId, territoryName }: Props) {
               </div>
             </ScrollArea>
             <p className="text-[10px] text-muted-foreground mt-2">
-              Based on territory memory entries and contextual data.
+              {t("uiTerritoryAIAnalyst.basedOnTerritoryMemoryEntriesAnd")}
             </p>
             <div className="flex justify-end mt-1">
               <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => activeAction && runAction(activeAction, AI_ACTIONS.find(a => a.key === activeAction)!.prompt)}>

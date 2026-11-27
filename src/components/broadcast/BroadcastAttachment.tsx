@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Paperclip, X, FileText, Loader2 } from "lucide-react";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function BroadcastAttachment({ attachment, onAttach, disabled }: Props) {
+  const { t } = useTranslation();
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -21,14 +23,14 @@ export function BroadcastAttachment({ attachment, onAttach, disabled }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > MAX_FILE_SIZE) {
-      toast({ title: "File too large", description: "Max 25 MB per attachment.", variant: "destructive" });
+      toast({ title: t("uiBroadcastAttachment.fileTooLarge"), description: "Max 25 MB per attachment.", variant: "destructive" });
       return;
     }
     setUploading(true);
     const safeName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
     const { error } = await supabase.storage.from("broadcast-attachments").upload(safeName, file);
     if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      toast({ title: t("uiBroadcastAttachment.uploadFailed"), description: error.message, variant: "destructive" });
       setUploading(false);
       return;
     }
@@ -73,7 +75,7 @@ export function BroadcastAttachment({ attachment, onAttach, disabled }: Props) {
           onClick={() => inputRef.current?.click()}
         >
           {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Paperclip className="h-3.5 w-3.5" />}
-          {uploading ? "Uploading…" : "Attach file"}
+          {uploading ? "Uploading…" : t("uiBroadcastAttachment.attachFile")}
         </Button>
       )}
     </div>

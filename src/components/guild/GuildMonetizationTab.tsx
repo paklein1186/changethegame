@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
 
   // Fetch guild settings
@@ -86,7 +88,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Settings updated");
+      toast.success(t("uiGuildMonetizationTab.settingsUpdated"));
       qc.invalidateQueries({ queryKey: ["guild-monetization", guildId] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -102,14 +104,14 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
           <CardContent className="p-4 text-center">
             <CurrencyIcon currency="credits" className="h-5 w-5 mx-auto mb-1" />
             <p className="text-2xl font-bold text-primary">{revenueData?.total?.toFixed(0) || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Credits earned (last 30 days)</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildMonetizationTab.creditsEarnedLast30Days")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
             <Bot className="h-5 w-5 mx-auto mb-1 text-primary" />
             <p className="text-2xl font-bold">{revenueData?.topAgents?.length || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Active Agents</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiGuildMonetizationTab.activeAgents")}</p>
           </CardContent>
         </Card>
         <Card>
@@ -156,7 +158,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label htmlFor="crawl-toggle" className="text-sm cursor-pointer">Allow Agents to Crawl Guild Pages</Label>
+              <Label htmlFor="crawl-toggle" className="text-sm cursor-pointer">{t("uiGuildMonetizationTab.allowAgentsToCrawlGuildPages")}</Label>
               <Switch
                 id="crawl-toggle"
                 checked={guild?.allow_agent_crawling ?? false}
@@ -165,7 +167,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="sub-toggle" className="text-sm cursor-pointer">Allow Agents to Access Private Materials</Label>
+              <Label htmlFor="sub-toggle" className="text-sm cursor-pointer">{t("uiGuildMonetizationTab.allowAgentsToAccessPrivateMaterials")}</Label>
               <Switch
                 id="sub-toggle"
                 checked={guild?.allow_agent_subscription ?? false}
@@ -175,7 +177,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
 
             <div>
               <Label className="text-sm">Value Factor</Label>
-              <p className="text-[10px] text-muted-foreground mb-1">Higher = agent actions on your content cost more → you earn more</p>
+              <p className="text-[10px] text-muted-foreground mb-1">{t("uiGuildMonetizationTab.higherAgentActionsOnYourContent")}</p>
               <Select
                 value={String(guild?.value_factor || 1.0)}
                 onValueChange={(v) => updateSettings.mutate({ value_factor: Number(v) })}
@@ -195,7 +197,7 @@ export function GuildMonetizationTab({ guildId, guildName, isAdmin }: Props) {
             <div className="text-xs text-muted-foreground border-t border-border pt-3 space-y-1">
               <p>• Max 100 pages/day/agent</p>
               <p>• Restricted content trust threshold: ≥60</p>
-              <p>• Revenue split: 70% guild / 20% platform / 10% commons</p>
+              <p>{t("uiGuildMonetizationTab.revenueSplit70Guild20Platform")}</p>
             </div>
           </CardContent>
         </Card>

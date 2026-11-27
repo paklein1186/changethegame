@@ -115,9 +115,9 @@ export default function CompanyDetail() {
   const trName = (companyTr.name?.isTranslated ? companyTr.name.text : null) ?? company?.name;
   const trDesc = (companyTr.description?.isTranslated ? companyTr.description.text : null) ?? company?.description;
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!company) return <PageShell><p>Traditional Organization not found.</p></PageShell>;
-  if (company.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>This traditional organization has been removed.</p></PageShell>;
+  if (isLoading) return <PageShell><p>{t("uiCompanyDetail.loading")}</p></PageShell>;
+  if (!company) return <PageShell><p>{t("uiCompanyDetail.traditionalOrganizationNotFound")}</p></PageShell>;
+  if (company.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>{t("uiCompanyDetail.thisTraditionalOrganizationHasBeenRemoved")}</p></PageShell>;
 
   const members = membersData || [];
   const quests = companyQuests || [];
@@ -143,7 +143,7 @@ export default function CompanyDetail() {
       online_location_type: svcLocationType, is_active: true,
       image_url: svcImageUrl || null, is_draft: svcDraft,
     } as any);
-    if (error) { toast({ title: "Failed to create service", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiCompanyDetail.failedToCreateService"), variant: "destructive" }); return; }
     notifyEntityFollowersAndMembers({
       entityType: "COMPANY", entityId: company.id, entityName: company.name,
       actorUserId: currentUser.id, notifType: "FOLLOWED_ENTITY_NEW_SERVICE",
@@ -177,7 +177,7 @@ export default function CompanyDetail() {
     <PageShell>
       <GuestOnboardingAssistant open={authPromptOpen} onOpenChange={setAuthPromptOpen} actionLabel={authPromptAction} />
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.back")}
       </Button>
 
       {company.banner_url && (
@@ -202,13 +202,13 @@ export default function CompanyDetail() {
               <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => {
                 if (!isLoggedIn) { setAuthPromptAction("follow this organization"); setAuthPromptOpen(true); return; }
                 toggleFollow();
-              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? "Unfollow" : "Follow"}</Button>
+              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? "Unfollow" : t("uiCompanyDetail.follow")}</Button>
               {!isMember && (
                 isLoggedIn ? (
                   <EntityJoinButton entityType="company" entityId={company.id} joinPolicy="APPROVAL_REQUIRED" applicationQuestions={[]} currentUserId={currentUser.id} onJoined={() => { qc.invalidateQueries({ queryKey: ["company", id] }); qc.invalidateQueries({ queryKey: ["company-members-profiles", id] }); }} />
                 ) : (
                   <Button size="sm" onClick={() => { setAuthPromptAction("join this organization"); setAuthPromptOpen(true); }}>
-                    <Users className="h-4 w-4 mr-1" /> Join
+                    <Users className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.join")}
                   </Button>
                 )
               )}
@@ -216,8 +216,8 @@ export default function CompanyDetail() {
               {isLoggedIn && <GiveTrustButton targetNodeType={TrustNodeType.PARTNER_ENTITY} targetNodeId={company.id} targetName={company.name} />}
               {isAdmin && (
                 <>
-                  <Button size="sm" variant="outline" onClick={openEdit}><Pencil className="h-4 w-4 mr-1" /> Edit</Button>
-                  <Button size="sm" variant="outline" asChild><Link to={`/companies/${company.id}/settings`}><Settings className="h-4 w-4 mr-1" /> Settings</Link></Button>
+                  <Button size="sm" variant="outline" onClick={openEdit}><Pencil className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.edit")}</Button>
+                  <Button size="sm" variant="outline" asChild><Link to={`/companies/${company.id}/settings`}><Settings className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.settings")}</Link></Button>
                 </>
               )}
             </div>
@@ -233,15 +233,15 @@ export default function CompanyDetail() {
         {/* Edit dialog */}
         <Dialog open={editOpen} onOpenChange={setEditOpen}>
           <DialogContent>
-            <DialogHeader><DialogTitle>Edit Traditional Organization</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t("uiCompanyDetail.editTraditionalOrganization")}</DialogTitle></DialogHeader>
             <div className="space-y-4 mt-2">
-              <div><label className="text-sm font-medium mb-1 block">Name</label><Input value={editName} onChange={e => setEditName(e.target.value)} maxLength={80} /></div>
-              <div><label className="text-sm font-medium mb-1 block">Description</label><Textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
+              <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.name")}</label><Input value={editName} onChange={e => setEditName(e.target.value)} maxLength={80} /></div>
+              <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.description")}</label><Textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
               <ImageUpload label="Logo" currentImageUrl={editLogoUrl} onChange={setEditLogoUrl} aspectRatio="1/1" description="Square logo" />
               <ImageUpload label="Banner" currentImageUrl={editBannerUrl} onChange={setEditBannerUrl} aspectRatio="16/9" />
               <div><label className="text-sm font-medium mb-1 block">Sector</label><Input value={editSector} onChange={e => setEditSector(e.target.value)} maxLength={50} /></div>
               <div><label className="text-sm font-medium mb-1 block">Website URL</label><Input value={editWebsite} onChange={e => setEditWebsite(e.target.value)} placeholder="https://…" /></div>
-              <Button onClick={saveEdit} className="w-full">Save Changes</Button>
+              <Button onClick={saveEdit} className="w-full">{t("uiCompanyDetail.saveChanges")}</Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -249,9 +249,9 @@ export default function CompanyDetail() {
 
       <Tabs value={activeCompanyTab} onValueChange={(v) => { if (!isLoggedIn && v !== "overview" && v !== "quests") { setAuthPromptAction("explore this organization"); setAuthPromptOpen(true); return; } setActiveCompanyTab(v); }}>
         <TabsList>
-          <TabsTrigger value="overview"><Building2 className="h-4 w-4 mr-1" /> Overview</TabsTrigger>
-          <TabsTrigger value="members"><Users className="h-4 w-4 mr-1" /> Members ({members.length})</TabsTrigger>
-          <TabsTrigger value="quests"><Compass className="h-4 w-4 mr-1" /> Quests ({quests.length})</TabsTrigger>
+          <TabsTrigger value="overview"><Building2 className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.overview")}</TabsTrigger>
+          <TabsTrigger value="members"><Users className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.members")}{members.length})</TabsTrigger>
+          <TabsTrigger value="quests"><Compass className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.quests")}{quests.length})</TabsTrigger>
           <TabsTrigger value="services"><Briefcase className="h-4 w-4 mr-1" /> Services ({services.length})</TabsTrigger>
           <TabsTrigger value="jobs"><Briefcase className="h-4 w-4 mr-1" /> Jobs ({(companyJobs ?? []).length})</TabsTrigger>
           <TabsTrigger value="partnerships"><Handshake className="h-4 w-4 mr-1" /> Partners</TabsTrigger>
@@ -264,7 +264,7 @@ export default function CompanyDetail() {
         <TabsContent value="overview" className="mt-6 space-y-6">
           {company.description && (
             <div>
-              <h3 className="font-display font-semibold mb-2">About</h3>
+              <h3 className="font-display font-semibold mb-2">{t("uiCompanyDetail.about")}</h3>
               <div className="rounded-xl border border-border bg-card/50 p-4">
                 <GuestContentGate blur previewText={trDesc || ""} previewSentences={3}>
                   <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">{trDesc}</p>
@@ -275,7 +275,7 @@ export default function CompanyDetail() {
 
           {/* Unit details */}
           <div>
-            <h3 className="font-display font-semibold mb-2">Details</h3>
+            <h3 className="font-display font-semibold mb-2">{t("uiCompanyDetail.details")}</h3>
             <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Membership policy</span>
@@ -328,8 +328,8 @@ export default function CompanyDetail() {
 
           <div className="grid gap-4 md:grid-cols-4">
             <EntityFollowersCount entityId={company.id} entityType="COMPANY" />
-            <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{members.length}</p><p className="text-sm text-muted-foreground">Members</p></div>
-            <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{quests.length}</p><p className="text-sm text-muted-foreground">Quests</p></div>
+            <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{members.length}</p><p className="text-sm text-muted-foreground">{t("uiCompanyDetail.members2")}</p></div>
+            <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{quests.length}</p><p className="text-sm text-muted-foreground">{t("uiCompanyDetail.quests2")}</p></div>
             <div className="rounded-lg border border-border bg-card p-4 text-center"><p className="text-2xl font-bold text-primary">{services.length}</p><p className="text-sm text-muted-foreground">Services</p></div>
           </div>
           <PartnersBlock entityType="COMPANY" entityId={company.id} />
@@ -363,7 +363,7 @@ export default function CompanyDetail() {
               </Link>
             ))}
           </div>
-          {members.length === 0 && <p className="text-muted-foreground">No members yet.</p>}
+          {members.length === 0 && <p className="text-muted-foreground">{t("uiCompanyDetail.noMembersYet")}</p>}
         </TabsContent>
 
         {/* Quests */}
@@ -371,12 +371,12 @@ export default function CompanyDetail() {
           <PendingAffiliationRequests entityType="COMPANY" entityId={company.id} isAdmin={isAdmin} />
           {isAdmin && (
             <Button size="sm" className="mb-3" asChild>
-              <Link to={`/companies/${company.id}/quests/new`}><Plus className="h-4 w-4 mr-1" /> Create quest for this organization</Link>
+              <Link to={`/companies/${company.id}/quests/new`}><Plus className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.createQuestForThisOrganization")}</Link>
             </Button>
           )}
           {!isLoggedIn && quests.some((q: any) => q.pinned_at) && (
             <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-300">
-              ⭐ Showing featured quests only. <button className="underline font-medium" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>Sign up</button> to see them all.
+              {t("uiCompanyDetail.showingFeaturedQuestsOnly")} <button className="underline font-medium" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>{t("uiCompanyDetail.signUp")}</button> {t("uiCompanyDetail.toSeeThemAll")}
             </div>
           )}
           <EntityQuestsFilters quests={isLoggedIn ? quests : quests.filter((q: any) => q.pinned_at)}>
@@ -384,8 +384,8 @@ export default function CompanyDetail() {
               <>
                 {filtered.length === 0 && (
                   isLoggedIn
-                    ? <p className="text-muted-foreground">No quests match filters.</p>
-                    : <p className="text-sm text-muted-foreground text-center py-6">No featured quests yet. <button className="underline" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>Sign up</button> to see all quests.</p>
+                    ? <p className="text-muted-foreground">{t("uiCompanyDetail.noQuestsMatchFilters")}</p>
+                    : <p className="text-sm text-muted-foreground text-center py-6">{t("uiCompanyDetail.noFeaturedQuestsYet")} <button className="underline" onClick={() => { setAuthPromptAction("explore all quests"); setAuthPromptOpen(true); }}>{t("uiCompanyDetail.signUp")}</button> {t("uiCompanyDetail.toSeeAllQuests")}</p>
                 )}
                 <div className={viewMode === "grid" ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-3" : "space-y-3"}>
                   {filtered.map((quest: any) => (
@@ -419,12 +419,12 @@ export default function CompanyDetail() {
         <TabsContent value="services" className="mt-6 space-y-3">
           {isAdmin && (
             <Dialog open={svcOpen} onOpenChange={setSvcOpen}>
-              <DialogTrigger asChild><Button size="sm" className="mb-3"><Plus className="h-4 w-4 mr-1" /> Create organization service</Button></DialogTrigger>
+              <DialogTrigger asChild><Button size="sm" className="mb-3"><Plus className="h-4 w-4 mr-1" /> {t("uiCompanyDetail.createOrganizationService")}</Button></DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>Create Organization Service</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>{t("uiCompanyDetail.createOrganizationService2")}</DialogTitle></DialogHeader>
                 <div className="space-y-4 mt-2">
-                  <div><label className="text-sm font-medium mb-1 block">Title</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder="e.g. Consulting Session" maxLength={120} /></div>
-                  <div><label className="text-sm font-medium mb-1 block">Description</label><Textarea value={svcDesc} onChange={e => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.title")}</label><Input value={svcTitle} onChange={e => setSvcTitle(e.target.value)} placeholder="e.g. Consulting Session" maxLength={120} /></div>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiCompanyDetail.description")}</label><Textarea value={svcDesc} onChange={e => setSvcDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
                   <ImageUpload label="Image (optional)" currentImageUrl={svcImageUrl} onChange={setSvcImageUrl} aspectRatio="16/9" />
                   <div className="grid grid-cols-2 gap-3">
                     <div><label className="text-sm font-medium mb-1 block">Duration (min)</label><Input type="number" value={svcDuration} onChange={e => setSvcDuration(e.target.value)} min={15} max={480} /></div>
@@ -441,8 +441,8 @@ export default function CompanyDetail() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex items-center justify-between"><label className="text-sm font-medium">Save as draft</label><Switch checked={svcDraft} onCheckedChange={setSvcDraft} /></div>
-                  <Button onClick={createService} disabled={!svcTitle.trim()} className="w-full">Create</Button>
+                  <div className="flex items-center justify-between"><label className="text-sm font-medium">{t("uiCompanyDetail.saveAsDraft")}</label><Switch checked={svcDraft} onCheckedChange={setSvcDraft} /></div>
+                  <Button onClick={createService} disabled={!svcTitle.trim()} className="w-full">{t("uiCompanyDetail.create")}</Button>
                 </div>
               </DialogContent>
             </Dialog>

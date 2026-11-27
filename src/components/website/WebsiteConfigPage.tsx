@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,7 @@ interface WebsiteConfigPageProps {
 }
 
 export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const currentUser = useCurrentUser();
 
@@ -157,7 +159,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["website", ownerType, ownerId] });
       queryClient.invalidateQueries({ queryKey: ["website-pages"] });
-      toast.success(website ? "Website saved" : "Website created with default pages");
+      toast.success(website ? "Website saved" : t("uiWebsiteConfigPage.websiteCreatedWithDefaultPages"));
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -169,7 +171,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
       const { error } = await supabase.from("website_pages").insert({
         website_id: website.id,
         slug: `page-${count + 1}`,
-        title: `New Page`,
+        title: t("uiWebsiteConfigPage.newPage"),
         page_type: "custom",
         sort_order: count,
       });
@@ -195,7 +197,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
     },
   });
 
-  if (isLoading) return <div className="p-4 text-muted-foreground">Loading…</div>;
+  if (isLoading) return <div className="p-4 text-muted-foreground">{t("uiWebsiteConfigPage.loading")}</div>;
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -208,7 +210,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
             {form.isPublished ? (
               <span className="text-primary flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> Published</span>
             ) : (
-              <span className="text-muted-foreground flex items-center gap-1"><EyeOff className="h-3.5 w-3.5" /> Draft</span>
+              <span className="text-muted-foreground flex items-center gap-1"><EyeOff className="h-3.5 w-3.5" /> {t("uiWebsiteConfigPage.draft")}</span>
             )}
           </div>
         )}
@@ -220,8 +222,8 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label>Title</Label>
-              <Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="My Website" />
+              <Label>{t("uiWebsiteConfigPage.title")}</Label>
+              <Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder={t("uiWebsiteConfigPage.myWebsite")} />
             </div>
             <div className="space-y-1.5">
               <Label>Slug (URL path)</Label>
@@ -233,7 +235,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
             <Input value={form.subtitle} onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))} />
           </div>
           <div className="space-y-1.5">
-            <Label>Description</Label>
+            <Label>{t("uiWebsiteConfigPage.description")}</Label>
             <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} />
           </div>
 
@@ -276,15 +278,15 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
 
           <div className="flex items-center gap-3">
             <Switch checked={form.isPublished} onCheckedChange={(v) => setForm((f) => ({ ...f, isPublished: v }))} />
-            <Label>Publish website (make public API available)</Label>
+            <Label>{t("uiWebsiteConfigPage.publishWebsiteMakePublicApiAvailable")}</Label>
           </div>
 
           <Button onClick={() => upsertWebsite.mutate()} disabled={!form.title || !form.slug || upsertWebsite.isPending}>
-            {upsertWebsite.isPending ? "Saving…" : website ? "Save Changes" : "Create Website"}
+            {upsertWebsite.isPending ? "Saving…" : website ? t("uiWebsiteConfigPage.saveChanges") : t("uiWebsiteConfigPage.createWebsite")}
           </Button>
           {!website && (
             <p className="text-xs text-muted-foreground">
-              Creating will scaffold default pages based on the {ownerType === "user" ? "individual" : ownerType} template.
+              {t("uiWebsiteConfigPage.creatingWillScaffoldDefaultPagesBased")} {ownerType === "user" ? "individual" : ownerType} template.
             </p>
           )}
         </CardContent>
@@ -297,13 +299,13 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">Pages</CardTitle>
               <Button variant="outline" size="sm" onClick={() => addPage.mutate()}>
-                <Plus className="h-3.5 w-3.5 mr-1" /> Add Page
+                <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiWebsiteConfigPage.addPage")}
               </Button>
             </div>
           </CardHeader>
           <CardContent>
             {(!pages || pages.length === 0) && (
-              <p className="text-sm text-muted-foreground">No pages yet. Add one to get started.</p>
+              <p className="text-sm text-muted-foreground">{t("uiWebsiteConfigPage.noPagesYetAddOneTo")}</p>
             )}
             <Tabs defaultValue={(pages || [])[0]?.id} className="w-full">
               {(pages || []).length > 0 && (
@@ -320,7 +322,7 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm font-medium">{p.title}</span>
                     <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deletePage.mutate(p.id)}>
-                      <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove
+                      <Trash2 className="h-3.5 w-3.5 mr-1" /> {t("uiWebsiteConfigPage.remove")}
                     </Button>
                   </div>
                   <WebsitePageEditor page={p} websiteId={website.id} ownerType={ownerType} ownerId={ownerId} />
@@ -334,17 +336,17 @@ export function WebsiteConfigPage({ ownerType, ownerId }: WebsiteConfigPageProps
       {/* API Info */}
       {website?.is_published && (
         <Card>
-          <CardHeader><CardTitle className="text-base">Public API</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t("uiWebsiteConfigPage.publicApi")}</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <p className="text-muted-foreground">Use these endpoints to fetch your website data from any front-end:</p>
+            <p className="text-muted-foreground">{t("uiWebsiteConfigPage.useTheseEndpointsToFetchYour")}</p>
             <code className="block bg-muted p-2 rounded text-xs break-all">
-              GET /functions/v1/public-website/{website.slug}
+              {t("uiWebsiteConfigPage.getFunctionsV1PublicWebsite")}{website.slug}
             </code>
             <code className="block bg-muted p-2 rounded text-xs break-all">
-              GET /functions/v1/public-website/{website.slug}/full
+              {t("uiWebsiteConfigPage.getFunctionsV1PublicWebsite")}{website.slug}/full
             </code>
             <code className="block bg-muted p-2 rounded text-xs break-all">
-              GET /functions/v1/public-website/{website.slug}/pages/{"<pageSlug>"}/resolved
+              {t("uiWebsiteConfigPage.getFunctionsV1PublicWebsite")}{website.slug}/pages/{"<pageSlug>"}/resolved
             </code>
           </CardContent>
         </Card>

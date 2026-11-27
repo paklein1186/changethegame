@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Star } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +25,7 @@ export function QuestStarButton({
   className,
   disabled,
 }: QuestStarButtonProps) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -58,9 +60,9 @@ export function QuestStarButton({
     },
     onError: (e: any) => {
       toast({
-        title: "Couldn't update star",
+        title: t("uiQuestStarButton.couldnTUpdateStar"),
         description: e?.message?.includes("max 5") || e?.message?.includes("at most 5") || e?.message?.includes("limit reached")
-          ? "You can highlight at most 5 quests."
+          ? t("uiQuestStarButton.youCanHighlightAtMost5")
           : e?.message || "Try again",
         variant: "destructive",
       });
@@ -76,7 +78,7 @@ export function QuestStarButton({
         if (!disabled) mutation.mutate();
       }}
       disabled={disabled || mutation.isPending}
-      title={pinned ? "Unstar (highlighted)" : "Star to highlight (max 5)"}
+      title={pinned ? "Unstar (highlighted)" : t("uiQuestStarButton.starToHighlightMax5")}
       className={cn(
         "inline-flex items-center justify-center h-7 w-7 rounded-md hover:bg-accent transition-colors shrink-0",
         className

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -25,23 +26,25 @@ import {
 } from "@/components/ui/dialog";
 
 export default function GuildEdit() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const guild = getGuildById(id!);
   const currentUser = useCurrentUser();
 
-  if (!guild) return <PageShell><p>Guild not found.</p></PageShell>;
+  if (!guild) return <PageShell><p>{t("uiGuildEdit.guildNotFound")}</p></PageShell>;
 
   const currentMembership = guildMembers.find(
     (gm) => gm.guildId === guild.id && gm.userId === currentUser.id
   );
   if (currentMembership?.role !== GuildMemberRole.ADMIN) {
-    return <PageShell><p>You must be an admin of this guild to edit it.</p></PageShell>;
+    return <PageShell><p>{t("uiGuildEdit.youMustBeAnAdminOf")}</p></PageShell>;
   }
 
   return <GuildEditForm guildId={guild.id} />;
 }
 
 function GuildEditForm({ guildId }: { guildId: string }) {
+  const { t } = useTranslation();
   const guild = getGuildById(guildId)!;
   const currentUser = useCurrentUser();
   const { toast } = useToast();
@@ -104,7 +107,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
       guildTerritories.push({ id: `gtr-${Date.now()}-${i}`, guildId, territoryId });
     });
 
-    toast({ title: "Guild updated!" });
+    toast({ title: t("uiGuildEdit.guildUpdated") });
     navigate(`/guilds/${guildId}`);
   };
 
@@ -112,7 +115,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
     if (!inviteUserId) return;
     const already = guildMembers.some((gm) => gm.guildId === guildId && gm.userId === inviteUserId);
     if (already) {
-      toast({ title: "Already a member", variant: "destructive" });
+      toast({ title: t("uiGuildEdit.alreadyAMember"), variant: "destructive" });
       return;
     }
     const newMember = {
@@ -126,7 +129,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
     setMembers((prev) => [...prev, { ...newMember, user: getUserById(inviteUserId) }]);
     setInviteUserId("");
     setInviteOpen(false);
-    toast({ title: "Member added!" });
+    toast({ title: t("uiGuildEdit.memberAdded") });
   };
 
   const toggleMemberRole = (memberId: string) => {
@@ -143,7 +146,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
     const idx = guildMembers.indexOf(gm);
     if (idx !== -1) guildMembers.splice(idx, 1);
     setMembers(getMembersForGuild(guildId));
-    toast({ title: "Member removed" });
+    toast({ title: t("uiGuildEdit.memberRemoved") });
   };
 
   const nonMembers = users.filter(
@@ -153,11 +156,11 @@ function GuildEditForm({ guildId }: { guildId: string }) {
   return (
     <PageShell>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/guilds/${guildId}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to guild</Link>
+        <Link to={`/guilds/${guildId}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiGuildEdit.backToGuild")}</Link>
       </Button>
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-2xl font-bold mb-2">Edit Guild</h1>
+        <h1 className="font-display text-2xl font-bold mb-2">{t("uiGuildEdit.editGuild")}</h1>
 
         <div className="flex items-center gap-2 mb-6">
           {guild.isApproved ? (
@@ -171,7 +174,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
           {/* Left: Guild info */}
           <div className="space-y-5">
             <div>
-              <label className="text-sm font-medium mb-1 block">Name</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEdit.name")}</label>
               <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} />
             </div>
 
@@ -192,7 +195,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
             />
 
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiGuildEdit.description")}</label>
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} className="resize-none min-h-[120px]" />
             </div>
             <div>
@@ -200,7 +203,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
               <Select value={type} onValueChange={(v) => setType(v as GuildType)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={GuildType.GUILD}>Guild</SelectItem>
+                  <SelectItem value={GuildType.GUILD}>{t("uiGuildEdit.guild")}</SelectItem>
                   <SelectItem value={GuildType.NETWORK}>Network</SelectItem>
                   <SelectItem value={GuildType.COLLECTIVE}>Collective</SelectItem>
                 </SelectContent>
@@ -209,10 +212,10 @@ function GuildEditForm({ guildId }: { guildId: string }) {
 
             {/* Topics */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Topics (Houses)</label>
+              <label className="text-sm font-medium mb-2 block">{t("uiGuildEdit.topicsHouses")}</label>
               <div className="flex items-center gap-2 mb-2">
-                <Button variant="outline" size="sm" onClick={() => setSelectedTopics(topics.map((t) => t.id))}>Select all</Button>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>Clear all</Button>
+                <Button variant="outline" size="sm" onClick={() => setSelectedTopics(topics.map((t) => t.id))}>{t("uiGuildEdit.selectAll")}</Button>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedTopics([])} disabled={selectedTopics.length === 0}>{t("uiGuildEdit.clearAll")}</Button>
               </div>
               <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-card max-h-48 overflow-y-auto">
                 {topics.map((t) => (
@@ -227,10 +230,10 @@ function GuildEditForm({ guildId }: { guildId: string }) {
 
             {/* Territories */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Territories</label>
+              <label className="text-sm font-medium mb-2 block">{t("uiGuildEdit.territories")}</label>
               <div className="flex items-center gap-2 mb-2">
-                <Button variant="outline" size="sm" onClick={() => setSelectedTerritories(territories.map((t) => t.id))}>Select all</Button>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedTerritories([])} disabled={selectedTerritories.length === 0}>Clear all</Button>
+                <Button variant="outline" size="sm" onClick={() => setSelectedTerritories(territories.map((t) => t.id))}>{t("uiGuildEdit.selectAll")}</Button>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedTerritories([])} disabled={selectedTerritories.length === 0}>{t("uiGuildEdit.clearAll")}</Button>
               </div>
               <div className="flex flex-wrap gap-2 p-3 rounded-lg border border-border bg-card">
                 {territories.map((t) => (
@@ -244,30 +247,30 @@ function GuildEditForm({ guildId }: { guildId: string }) {
             </div>
 
             <Button onClick={handleSave} className="w-full">
-              <Save className="h-4 w-4 mr-2" /> Save changes
+              <Save className="h-4 w-4 mr-2" /> {t("uiGuildEdit.saveChanges")}
             </Button>
           </div>
 
           {/* Right: Members management */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display text-lg font-semibold">Members ({members.length})</h2>
+              <h2 className="font-display text-lg font-semibold">{t("uiGuildEdit.members")}{members.length})</h2>
               <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" variant="outline"><UserPlus className="h-4 w-4 mr-1" /> Add member</Button>
+                  <Button size="sm" variant="outline"><UserPlus className="h-4 w-4 mr-1" /> {t("uiGuildEdit.addMember")}</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-xl overflow-visible">
-                  <DialogHeader><DialogTitle>Add Member</DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle>{t("uiGuildEdit.addMember2")}</DialogTitle></DialogHeader>
                   <div className="space-y-4 mt-2">
                     <Select value={inviteUserId} onValueChange={setInviteUserId}>
-                      <SelectTrigger><SelectValue placeholder="Select a user" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t("uiGuildEdit.selectAUser")} /></SelectTrigger>
                       <SelectContent>
                         {nonMembers.map((u) => (
                           <SelectItem key={u.id} value={u.id}>{u.name} ({u.email})</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <Button onClick={inviteMember} disabled={!inviteUserId} className="w-full">Add to guild</Button>
+                    <Button onClick={inviteMember} disabled={!inviteUserId} className="w-full">{t("uiGuildEdit.addToGuild")}</Button>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -289,7 +292,7 @@ function GuildEditForm({ guildId }: { guildId: string }) {
                       variant="ghost"
                       className="h-8 text-xs"
                       onClick={() => toggleMemberRole(m.id)}
-                      title={m.role === GuildMemberRole.ADMIN ? "Demote to member" : "Promote to admin"}
+                      title={m.role === GuildMemberRole.ADMIN ? t("uiGuildEdit.demoteToMember") : t("uiGuildEdit.promoteToAdmin")}
                     >
                       {m.role === GuildMemberRole.ADMIN ? "Demote" : "Promote"}
                     </Button>

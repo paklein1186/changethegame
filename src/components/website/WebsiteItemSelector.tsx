@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function WebsiteItemSelector({ itemType, ownerType, ownerId, selectedIds, onChange }: Props) {
+  const { t } = useTranslation();
   const { data: items, isLoading } = useQuery({
     queryKey: ["website-items", itemType, ownerType, ownerId],
     queryFn: async () => {
@@ -45,13 +47,13 @@ export function WebsiteItemSelector({ itemType, ownerType, ownerId, selectedIds,
     }
   };
 
-  if (isLoading) return <p className="text-xs text-muted-foreground">Loading items…</p>;
+  if (isLoading) return <p className="text-xs text-muted-foreground">{t("uiWebsiteItemSelector.loadingItems")}</p>;
 
   return (
     <div className="space-y-1.5 max-h-48 overflow-y-auto p-2 bg-muted/50 rounded-md">
-      <Label className="text-xs font-medium">Select {itemType}s</Label>
+      <Label className="text-xs font-medium">{t("uiWebsiteItemSelector.select")} {itemType}s</Label>
       {(!items || items.length === 0) && (
-        <p className="text-xs text-muted-foreground">No {itemType}s found.</p>
+        <p className="text-xs text-muted-foreground">{t("uiWebsiteItemSelector.no")} {itemType}s found.</p>
       )}
       {(items || []).map((item: any) => (
         <label key={item.id} className="flex items-center gap-2 text-sm cursor-pointer py-0.5">

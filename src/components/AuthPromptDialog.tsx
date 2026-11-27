@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { LogIn, UserPlus, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ export function AuthPromptDialog({
   actionLabel = "perform this action",
   onSignupClick,
 }: Props) {
+  const { t } = useTranslation();
   const location = useLocation();
   const redirectParam = `?redirect=${encodeURIComponent(location.pathname + location.search)}`;
 
@@ -39,18 +41,18 @@ export function AuthPromptDialog({
           <div className="mx-auto mb-2">
             <Lock className="h-10 w-10 text-primary opacity-70" />
           </div>
-          <DialogTitle className="text-center">Sign in to continue</DialogTitle>
+          <DialogTitle className="text-center">{t("uiAuthPromptDialog.signInToContinue")}</DialogTitle>
           <DialogDescription className="text-center">
-            You need an account to {actionLabel}. Sign up for free or log in to get started.
+            {t("uiAuthPromptDialog.youNeedAnAccountTo")} {actionLabel}{t("uiAuthPromptDialog.signUpForFreeOrLog")}
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-3 mt-2">
           <Button size="lg" onClick={handleSignup}>
-            <UserPlus className="h-4 w-4 mr-2" /> Create a free account
+            <UserPlus className="h-4 w-4 mr-2" /> {t("uiAuthPromptDialog.createAFreeAccount")}
           </Button>
           <Button variant="outline" asChild size="lg">
             <Link to={`/login${redirectParam}`}>
-              <LogIn className="h-4 w-4 mr-2" /> Log in
+              <LogIn className="h-4 w-4 mr-2" /> {t("uiAuthPromptDialog.logIn")}
             </Link>
           </Button>
         </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -56,6 +57,7 @@ function useEventAccess(eventId: string | undefined) {
 export { useEventAccess };
 
 export default function EventEdit() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { session } = useAuth();
@@ -84,15 +86,15 @@ export default function EventEdit() {
     }
   }, [event]);
 
-  if (isLoading) return <PageShell><p>Loading…</p></PageShell>;
-  if (!event) return <PageShell><p>Event not found.</p></PageShell>;
+  if (isLoading) return <PageShell><p>{t("uiEventEdit.loading")}</p></PageShell>;
+  if (!event) return <PageShell><p>{t("uiEventEdit.eventNotFound")}</p></PageShell>;
   if (!canManage) {
     return (
       <PageShell>
         <div className="text-center py-16">
           <h2 className="text-xl font-bold mb-2">Access Denied</h2>
-          <p className="text-muted-foreground mb-4">You don't have permission to edit this event.</p>
-          <Button asChild><Link to={`/events/${id}`}>Back to Event</Link></Button>
+          <p className="text-muted-foreground mb-4">{t("uiEventEdit.youDonTHavePermissionTo")}</p>
+          <Button asChild><Link to={`/events/${id}`}>{t("uiEventEdit.backToEvent")}</Link></Button>
         </div>
       </PageShell>
     );
@@ -103,8 +105,8 @@ export default function EventEdit() {
   const readOnly = isCancelled || isCompleted;
 
   const handleSave = async () => {
-    if (!title.trim()) { toast.error("Title is required"); return; }
-    if (!startAt) { toast.error("Start date is required"); return; }
+    if (!title.trim()) { toast.error(t("uiEventEdit.titleIsRequired")); return; }
+    if (!startAt) { toast.error(t("uiEventEdit.startDateIsRequired")); return; }
 
     setSaving(true);
     const { error } = await supabase
@@ -123,47 +125,47 @@ export default function EventEdit() {
     setSaving(false);
 
     if (error) { toast.error("Failed to save: " + error.message); return; }
-    toast.success("Event updated");
+    toast.success(t("uiEventEdit.eventUpdated"));
     navigate(`/events/${id}`);
   };
 
   return (
     <PageShell>
       <Button variant="ghost" size="sm" asChild className="mb-4">
-        <Link to={`/events/${id}`}><ArrowLeft className="h-4 w-4 mr-1" /> Back to Event</Link>
+        <Link to={`/events/${id}`}><ArrowLeft className="h-4 w-4 mr-1" /> {t("uiEventEdit.backToEvent")}</Link>
       </Button>
 
       <div className="max-w-2xl space-y-6">
         <div className="flex items-center gap-3">
-          <h1 className="font-display text-2xl font-bold">Edit Event</h1>
-          {isCancelled && <Badge variant="destructive">Cancelled</Badge>}
-          {isCompleted && <Badge variant="secondary">Completed</Badge>}
+          <h1 className="font-display text-2xl font-bold">{t("uiEventEdit.editEvent")}</h1>
+          {isCancelled && <Badge variant="destructive">{t("uiEventEdit.cancelled")}</Badge>}
+          {isCompleted && <Badge variant="secondary">{t("uiEventEdit.completed")}</Badge>}
         </div>
 
         {readOnly && (
           <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-            This event is {isCancelled ? "cancelled" : "completed"}. Some fields cannot be changed.
+            {t("uiEventEdit.thisEventIs")} {isCancelled ? "cancelled" : "completed"}{t("uiEventEdit.someFieldsCannotBeChanged")}
           </div>
         )}
 
         <div className="space-y-4">
           <div>
-            <Label>Title</Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} disabled={readOnly} placeholder="Event title" />
+            <Label>{t("uiEventEdit.title")}</Label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} disabled={readOnly} placeholder={t("uiEventEdit.eventTitle")} />
           </div>
 
           <div>
-            <Label>Description</Label>
-            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} disabled={readOnly} placeholder="Describe the event…" className="min-h-[120px]" />
+            <Label>{t("uiEventEdit.description")}</Label>
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} disabled={readOnly} placeholder={t("uiEventEdit.describeTheEvent")} className="min-h-[120px]" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Start date & time</Label>
+              <Label>{t("uiEventEdit.startDateTime")}</Label>
               <Input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} disabled={readOnly} />
             </div>
             <div>
-              <Label>End date & time</Label>
+              <Label>{t("uiEventEdit.endDateTime")}</Label>
               <Input type="datetime-local" value={endAt} onChange={(e) => setEndAt(e.target.value)} disabled={readOnly} />
             </div>
           </div>
@@ -188,7 +190,7 @@ export default function EventEdit() {
 
           <div>
             <Label>Location / Address</Label>
-            <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} disabled={readOnly} placeholder="Venue address or instructions" />
+            <Input value={locationText} onChange={(e) => setLocationText(e.target.value)} disabled={readOnly} placeholder={t("uiEventEdit.venueAddressOrInstructions")} />
           </div>
 
           <div>
@@ -199,9 +201,9 @@ export default function EventEdit() {
 
         <div className="flex gap-3 pt-4 border-t border-border">
           <Button onClick={handleSave} disabled={saving || readOnly}>
-            <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : "Save Changes"}
+            <Save className="h-4 w-4 mr-1" /> {saving ? "Saving…" : t("uiEventEdit.saveChanges")}
           </Button>
-          <Button variant="ghost" asChild><Link to={`/events/${id}`}>Cancel</Link></Button>
+          <Button variant="ghost" asChild><Link to={`/events/${id}`}>{t("uiEventEdit.cancel")}</Link></Button>
         </div>
       </div>
     </PageShell>

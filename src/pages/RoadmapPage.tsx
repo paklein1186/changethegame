@@ -25,8 +25,8 @@ export default function RoadmapPage() {
         ]} />
       </ContentSection>
 
-      <ContentSection title="Community Proposals">
-        <p>Features shaped by community feedback are prioritized in our development cycle. Share your ideas through the governance tools in your guild or via the contact page.</p>
+      <ContentSection title={t("uiRoadmapPage.communityProposals")}>
+        <p>{t("uiRoadmapPage.featuresShapedByCommunityFeedbackAre")}</p>
       </ContentSection>
     </ContentPageShell>
   );

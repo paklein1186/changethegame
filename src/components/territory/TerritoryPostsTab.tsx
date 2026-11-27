@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "@/components/feed/PostCard";
@@ -13,6 +14,7 @@ interface TerritoryPostsTabProps {
 }
 
 export function TerritoryPostsTab({ territoryId, territoryName }: TerritoryPostsTabProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { user: authUser } = useAuth();
 
@@ -82,8 +84,8 @@ export function TerritoryPostsTab({ territoryId, territoryName }: TerritoryPosts
       {posts.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No posts about {territoryName} yet</p>
-          <p className="text-xs mt-1">Be the first to share something!</p>
+          <p className="text-sm">{t("uiTerritoryPostsTab.noPostsAbout")} {territoryName} yet</p>
+          <p className="text-xs mt-1">{t("uiTerritoryPostsTab.beTheFirstToShareSomething")}</p>
         </div>
       ) : (
         <div className="space-y-3">
