@@ -92,6 +92,8 @@ Toujours par `guild-quest-sync`, clé du site seule, sur une quête reliée au p
 - `proposals` : propositions d'aide en attente, lues en direct pour le référent (nom et identifiant de profil, jamais
   d'e-mail ; le site ne les enregistre pas, il ne garde qu'un compteur).
 - `proposal_decide` `{ proposal_id, decision: "accept" | "reject", auteur? }` : accepte ou refuse, et prévient la
-  personne. Une proposition qui demande des crédits ou des euros s'accepte ici, sur ChangeTheGame (`409 needs_ctg`).
+  personne. Une proposition qui demande des crédits ou des euros peut aussi être acceptée depuis le site : **rien
+  n'est versé automatiquement**, la contrepartie se suit au cas par cas avec l'équipe (la personne en est prévenue ;
+  `contrepartie_a_suivre`).
 
 Un besoin peut naître des deux côtés ; c'est le site qui fusionne (la dernière modification l'emporte).

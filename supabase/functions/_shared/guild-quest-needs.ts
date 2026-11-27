@@ -1,8 +1,9 @@
 // Besoins et propositions d'aide d'une quête reliée à un projet du site Trois-Tiers (palier 2, B4).
 // Décisions de Trois-Tiers (28/11) : un besoin peut naître des deux côtés (la dernière modification l'emporte, la
 // fusion est faite par le site) ; le site ne recopie des propositions qu'un compteur, il lit la liste en direct pour
-// le référent ; accepter depuis le site = accepter ici, sauf si la proposition demande des crédits ou des euros
-// (à accepter sur ChangeTheGame, où le versement se fait).
+// le référent ; accepter depuis le site = accepter ici. Une proposition qui demande des crédits ou des euros peut aussi
+// être acceptée depuis le site (décision du 28/11) : rien n'est versé automatiquement, la contrepartie se suit au cas
+// par cas avec l'équipe, et la personne en est prévenue.
 import { linkedQuest, SOURCE, SyncError } from "./guild-quest-sync.ts";
 
 type Row = Record<string, any>;
@@ -126,7 +127,7 @@ export async function listProposals(admin: any, guildId: string, projetId: strin
       nom: p.proposer_type === "USER" ? (noms.get(p.proposer_id) ?? null) : null,
       profil_id: p.proposer_type === "USER" ? p.proposer_id : null,
       demande_credits: Number(p.requested_credits ?? 0), demande_euros: Number(p.requested_fiat ?? 0), cree_le: p.created_at,
-      acceptable_depuis_le_site: !(Number(p.requested_credits ?? 0) > 0 || Number(p.requested_fiat ?? 0) > 0),
+      contrepartie_a_suivre: Number(p.requested_credits ?? 0) > 0 || Number(p.requested_fiat ?? 0) > 0,
     })),
   };
 }
@@ -140,19 +141,20 @@ export async function decideProposal(admin: any, guildId: string, projetId: stri
     .eq("id", proposalId).maybeSingle();
   if (!p || p.quest_id !== questId) throw new SyncError("not_found", "proposition inconnue sur cette quête", 404);
   if (p.status !== "PENDING") throw new SyncError("already_decided", "proposition déjà traitée", 409);
-  if (decision === "accept" && (Number(p.requested_credits ?? 0) > 0 || Number(p.requested_fiat ?? 0) > 0)) {
-    throw new SyncError("needs_ctg", "proposition avec crédits ou euros : à accepter sur ChangeTheGame", 409);
-  }
+  const credits = Number(p.requested_credits ?? 0);
+  const euros = Number(p.requested_fiat ?? 0);
+  const contrepartie = [credits > 0 ? `${credits} crédits` : "", euros > 0 ? `${euros} €` : ""].filter(Boolean).join(" et ");
   const statut = decision === "accept" ? "ACCEPTED" : "REJECTED";
   await admin.from("quest_proposals").update({ status: statut, updated_at: new Date().toISOString() }).eq("id", p.id).eq("status", "PENDING");
   if (p.proposer_type === "USER" && UUID.test(String(p.proposer_id))) {
     await admin.from("notifications").insert({
       user_id: p.proposer_id, type: decision === "accept" ? "QUEST_PROPOSAL_ACCEPTED" : "QUEST_PROPOSAL_REJECTED",
       title: decision === "accept" ? "Proposition acceptée" : "Proposition non retenue",
-      body: `« ${p.title} » ${decision === "accept" ? "a été acceptée par l'équipe du projet (Trois-Tiers)" : "n'a pas été retenue cette fois-ci"}.`,
+      body: `« ${p.title} » ${decision === "accept" ? "a été acceptée par l'équipe du projet (Trois-Tiers)" : "n'a pas été retenue cette fois-ci"}.`
+        + (decision === "accept" && contrepartie ? ` La contrepartie demandée (${contrepartie}) sera vue au cas par cas avec l'équipe : rien n'a été versé automatiquement.` : ""),
       related_entity_type: "QUEST", related_entity_id: questId, deep_link_url: `/quests/${questId}`,
     });
   }
   const par = await membre(admin, guildId, auteur);
-  return { quest_id: q.id, proposal_id: p.id, statut, par };
+  return { quest_id: q.id, proposal_id: p.id, statut, par, contrepartie_a_suivre: decision === "accept" && Boolean(contrepartie) };
 }
