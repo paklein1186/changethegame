@@ -1409,6 +1409,12 @@ ACTION CARD RULES:
 - Maximum 5 action cards per response
 - First card must be completable in under 2 minutes
 - Every card needs a button_label — no informational-only cards
+- tool_call must be the exact name of one of your tools (never an invented name), with real ids in tool_params
+  taken from tool results. What the button does: navigate_to, accept_quest and join_guild run at once;
+  offer_help_on_need (need_id from find_needs, plus your draft title, message and terms) opens the offer form
+  pre-filled, for the user to review and send; any other tool brings the card back to you to act on.
+- xp_reward only for a card that changes something (join, accept, offer help, complete a step): it is granted
+  only once that really happened. 0 for cards that only show, explain or navigate.
 - If the user needs to do something before an action, insert a prerequisite
   card and lock the dependent one
 - For overwhelmed users, return only 1-2 cards
@@ -1702,13 +1708,118 @@ async function getSessionGreeting(userId: string, sb: any): Promise<{
 }
 
 // =====================================================================
+// Action cards: saved with an id, run on the server, marked done only when something really happened
+// =====================================================================
+const TOOL_NAMES = new Set(TOOLS.map((t: any) => t.function.name));
+// Tools that change something for the user. A card counts as done only if one of them succeeded.
+const WRITE_TOOLS = new Set(["accept_quest", "join_guild", "offer_help_on_need", "create_subtasks", "complete_subtask", "capture_vision", "advance_path_step"]);
+// Tools a card button runs directly, without going back to the model.
+const DIRECT_CARD_TOOLS = new Set(["accept_quest", "join_guild", "navigate_to", "complete_subtask", "advance_path_step"]);
+// A card can never award XP itself through these, and its reward is capped.
+const CARD_FORBIDDEN_TOOLS = new Set(["award_xp", "show_notification"]);
+const MAX_CARD_XP = 50;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function cardTool(c: any): string | null {
+  const t = c?.tool_call || c?.toolCall || null;
+  return t && TOOL_NAMES.has(t) && !CARD_FORBIDDEN_TOOLS.has(t) ? t : null;
+}
+
+/** Saves the model's cards (invalid tool names dropped, enums sanitised) and returns them for the client, with their ids. */
+async function saveActionCards(sb: any, conversationId: string, userId: string, cards: any[]): Promise<any[]> {
+  const list = (Array.isArray(cards) ? cards : []).filter((c: any) => c && c.title).slice(0, 5);
+  if (!list.length) return [];
+  const rows = list.map((c: any, i: number) => {
+    const tool = cardTool(c);
+    return {
+      conversation_id: conversationId,
+      user_id: userId,
+      type: ["instant", "quick_input", "guided_flow", "locked", "background", "delegation"].includes(c.type) ? c.type : "instant",
+      title: String(c.title).slice(0, 200),
+      subtitle: c.subtitle || null,
+      description: c.description || null,
+      status: c.status === "locked" ? "locked" : "ready",
+      button_label: c.button_label || c.buttonLabel || "Do this",
+      tool_call: tool,
+      tool_params: tool ? (c.tool_params || c.toolParams || null) : null,
+      xp_reward: Math.min(Math.max(parseInt(c.xp_reward ?? c.xpReward) || 0, 0), MAX_CARD_XP),
+      trust_reward: Math.max(parseInt(c.trust_reward ?? c.trustReward) || 0, 0),
+      estimated_minutes: parseInt(c.estimated_minutes ?? c.effortMinutes) || null,
+      unlock_condition: c.unlock_condition || c.unlockCondition || null,
+      priority: ["primary", "secondary", "optional"].includes(c.priority) ? c.priority : "secondary",
+      sort_order: i,
+    };
+  });
+  const { data, error } = await sb.from("action_cards").insert(rows).select("id, sort_order");
+  if (error) console.error("action_cards insert error", error);
+  const idByOrder = new Map((data ?? []).map((r: any) => [r.sort_order, r.id]));
+  return rows.map((r: any, i: number) => ({
+    id: idByOrder.get(i) ?? null,
+    title: r.title,
+    subtitle: r.subtitle ?? undefined,
+    description: r.description ?? undefined,
+    buttonLabel: r.button_label,
+    effortMinutes: r.estimated_minutes ?? undefined,
+    xpReward: r.xp_reward,
+    trustReward: r.trust_reward,
+    priority: r.priority,
+    status: r.status,
+    unlockCondition: r.unlock_condition ?? undefined,
+    toolCall: r.tool_call ?? undefined,
+    toolParams: r.tool_params ?? undefined,
+  }));
+}
+
+/**
+ * Closes a card run. Only "done" (a write tool succeeded) marks the card completed and grants its XP, once.
+ * "opened" (a screen or form was opened for the user), "answered" (Pi replied, nothing changed) and "failed" leave it ready.
+ */
+async function finishCard(sb: any, card: any, userId: string, outcome: "done" | "opened" | "answered" | "failed") {
+  let xpAwarded = 0;
+  if (card?.id) {
+    if (outcome === "done") {
+      const { data: closed } = await sb.from("action_cards")
+        .update({ status: "completed", completed_at: new Date().toISOString() })
+        .eq("id", card.id).eq("user_id", userId).neq("status", "completed")
+        .select("id");
+      const xp = Math.min(Math.max(parseInt(card.xp_reward) || 0, 0), MAX_CARD_XP);
+      if (closed?.length && xp > 0) {
+        const { data: p } = await sb.from("profiles").select("xp").eq("user_id", userId).maybeSingle();
+        await sb.from("profiles").update({ xp: (p?.xp || 0) + xp }).eq("user_id", userId);
+        xpAwarded = xp;
+      }
+    } else if (outcome === "failed") {
+      await sb.from("action_cards").update({ status: "failed" }).eq("id", card.id).eq("user_id", userId).neq("status", "completed");
+    }
+  }
+  return { outcome, xpAwarded };
+}
+
+/** Message for a card run directly (no model), in the user's language. */
+function directCardMessage(tool: string, result: any, fr: boolean): string {
+  if (result?.error) {
+    const dup = /duplicate|already|unique/i.test(String(result.error));
+    if (dup) return fr ? "C'est déjà le cas : rien n'a changé." : "That was already the case: nothing changed.";
+    return fr ? `Je n'ai pas pu le faire : ${result.error}` : `I couldn't do it: ${result.error}`;
+  }
+  switch (tool) {
+    case "accept_quest":
+      return fr ? `C'est fait : tu participes maintenant à [la quête](/quests/${result.quest_id}).` : `Done: you now take part in [the quest](/quests/${result.quest_id}).`;
+    case "join_guild":
+      return fr ? `Demande envoyée à [la guilde](/guilds/${result.guild_id}) : elle attend la validation d'un admin.` : `Request sent to [the guild](/guilds/${result.guild_id}): it is waiting for an admin to approve it.`;
+    default:
+      return fr ? "C'est fait." : "Done.";
+  }
+}
+
+// =====================================================================
 // Main handler
 // =====================================================================
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { message, conversationId: incomingConvId, actionCardId, greeting: isGreetingRequest, contextType, contextId, language } = await req.json();
+    let { message, conversationId: incomingConvId, actionCardId, greeting: isGreetingRequest, contextType, contextId, language } = await req.json();
     console.log("[pi-cognitive] req contextType=", contextType, "contextId=", contextId, "greeting=", isGreetingRequest);
     if (!message && !isGreetingRequest) return jsonRes({ error: "message is required" }, 400);
 
@@ -1996,21 +2107,8 @@ serve(async (req) => {
       } catch {}
       responseText = sanitizeAiText(responseText);
 
-      // Save greeting as Pi message
-      const normalizedCards = actionCards.map((c: any) => ({
-        title: c.title,
-        subtitle: c.subtitle,
-        description: c.description,
-        buttonLabel: c.button_label || c.buttonLabel || "Do this",
-        effortMinutes: c.estimated_minutes || c.effortMinutes,
-        xpReward: c.xp_reward || c.xpReward || 0,
-        trustReward: c.trust_reward || c.trustReward || 0,
-        priority: c.priority || "secondary",
-        status: c.status || "ready",
-        unlockCondition: c.unlock_condition || c.unlockCondition,
-        toolCall: c.tool_call || c.toolCall,
-        toolParams: c.tool_params || c.toolParams,
-      }));
+      // Save the cards first (they get their ids), then the greeting as Pi message
+      const normalizedCards = await saveActionCards(sb, conv.id, userId, actionCards);
 
       await sb.from("pi_messages").insert({
         conversation_id: conv.id,
@@ -2021,29 +2119,6 @@ serve(async (req) => {
           greetingType: greeting.type,
         },
       });
-
-      // Save action cards to DB
-      if (actionCards.length > 0) {
-        const cardRows = actionCards.map((c: any, i: number) => ({
-          conversation_id: conv.id,
-          user_id: userId,
-          type: c.type || "instant",
-          title: c.title,
-          subtitle: c.subtitle || null,
-          description: c.description || null,
-          status: c.status || "ready",
-          button_label: c.button_label || c.buttonLabel || "Do this",
-          tool_call: c.tool_call || c.toolCall || null,
-          tool_params: c.tool_params || c.toolParams || null,
-          xp_reward: c.xp_reward || c.xpReward || 0,
-          trust_reward: c.trust_reward || c.trustReward || 0,
-          estimated_minutes: c.estimated_minutes || c.effortMinutes || null,
-          unlock_condition: c.unlock_condition || c.unlockCondition || null,
-          priority: c.priority || "secondary",
-          sort_order: i,
-        }));
-        await sb.from("action_cards").insert(cardRows);
-      }
 
       return jsonRes({
         message: responseText,
@@ -2071,11 +2146,90 @@ serve(async (req) => {
       conversationId = conv.id;
     }
 
+    // A click on an action card: run it here and tell the client what really happened.
+    // Cards saved by this function are read back from the database (tool, params and XP cannot be forged);
+    // older clients still send "EXECUTE_ACTION: {tool, params}", run the same way but without XP.
+    const fr = String(language ?? "").startsWith("fr");
+    let shownMessage = message;
+    let cardRun: any = null;
+    if (actionCardId || String(message ?? "").startsWith("EXECUTE_ACTION:")) {
+      let card: any = null;
+      if (actionCardId) {
+        if (!UUID_RE.test(String(actionCardId))) return jsonRes({ error: "Invalid action" }, 400);
+        const { data } = await sb.from("action_cards").select("*").eq("id", actionCardId).eq("user_id", userId).maybeSingle();
+        if (!data) return jsonRes({ error: "Action not found" }, 404);
+        card = data;
+      } else {
+        let p: any = {};
+        try { p = JSON.parse(String(message).slice("EXECUTE_ACTION:".length)); } catch {}
+        card = { id: null, title: p.title || p.tool || "Action", description: p.description || null, tool_call: p.tool, tool_params: p.params, xp_reward: 0, status: "ready" };
+      }
+      shownMessage = `▶ ${card.title}`;
+      if (card.status === "completed") {
+        return jsonRes({ message: fr ? "C'est déjà fait." : "This is already done.", conversationId, cardResult: { outcome: "done", xpAwarded: 0 } });
+      }
+      const tool = cardTool(card);
+      const params = card.tool_params && typeof card.tool_params === "object" ? card.tool_params : {};
+      const saveExchange = async (reply: string, meta?: any) => {
+        await sb.from("pi_messages").insert({ conversation_id: conversationId, role: "user", content: shownMessage });
+        await sb.from("pi_messages").insert({ conversation_id: conversationId, role: "pi", content: reply, metadata: meta });
+      };
+
+      // Offering help sends something to other people: open the offer form, pre-filled, for the user to review and send.
+      if (tool === "offer_help_on_need" && UUID_RE.test(String(params.need_id ?? ""))) {
+        const { data: need } = await sb.from("quest_needs").select("id, title, status").eq("id", params.need_id).maybeSingle();
+        if (need && ["OPEN", "ACTIVE", "IN_PROGRESS"].includes(String(need.status ?? "OPEN").toUpperCase())) {
+          const reply = fr
+            ? `J'ouvre le formulaire pour proposer ton aide sur « ${need.title} ». Relis-le, ajuste-le, puis envoie-le : la personne qui a posé le besoin, le porteur de la quête et les admins de sa guilde seront prévenus.`
+            : `Opening the form to offer your help on "${need.title}". Review it, adjust it, then send it: whoever posted the need, the quest holder and the guild admins will be notified.`;
+          await saveExchange(reply);
+          return jsonRes({
+            message: reply,
+            conversationId,
+            actions: [{
+              action: "navigate",
+              screen: `/explore?tab=needs&scope=all&offer=${need.id}`,
+              draft: {
+                key: `pi-offer-draft:${need.id}`,
+                value: { title: params.title ?? null, message: params.message ?? null, terms: params.terms ?? null, amount: params.amount ?? null },
+              },
+            }],
+            cardResult: await finishCard(sb, card, userId, "opened"),
+          });
+        }
+      }
+
+      if (tool && DIRECT_CARD_TOOLS.has(tool)) {
+        const result = await executeToolCall(tool, params, userId, sb, authHeader, { type: contextType, id: contextId, language });
+        await sb.from("pi_tool_logs").insert({ conversation_id: conversationId, tool_name: tool, params, result });
+        const isNav = result?.action === "navigate";
+        const dup = result?.error && /duplicate|already|unique/i.test(String(result.error));
+        const outcome = isNav ? "opened" : result?.error ? (dup ? "answered" : "failed") : WRITE_TOOLS.has(tool) ? "done" : "answered";
+        const reply = isNav ? "" : directCardMessage(tool, result, fr);
+        if (reply) await saveExchange(reply, { toolCalls: [{ tool, result }] });
+        return jsonRes({
+          message: reply || null,
+          conversationId,
+          actions: result?.action ? [result] : [],
+          cardResult: await finishCard(sb, card, userId, outcome),
+        });
+      }
+
+      // Anything else: the model acts on the card with its tools; the result decides whether it is done.
+      cardRun = card;
+      message = [
+        `The user clicked your action card "${card.title}"${card.description ? ` (${card.description})` : ""}.`,
+        tool ? `Suggested tool: ${tool} with ${JSON.stringify(params)}.` : "",
+        "Do what the card says now, with your tools. If it needs the user's input or explicit agreement (for instance before offer_help_on_need), ask for it in one short message.",
+        "Never say that something was done, sent or changed unless a tool call in this turn succeeded.",
+      ].filter(Boolean).join("\n");
+    }
+
     // Save user message
     await sb.from("pi_messages").insert({
       conversation_id: conversationId,
       role: "user",
-      content: message,
+      content: shownMessage,
     });
 
     // Assemble context + history
@@ -2222,44 +2376,8 @@ serve(async (req) => {
       );
     }
 
-    // Save action cards to DB
-    if (actionCards.length > 0) {
-      const cardRows = actionCards.map((c: any, i: number) => ({
-        conversation_id: conversationId,
-        user_id: userId,
-        type: c.type || "instant",
-        title: c.title,
-        subtitle: c.subtitle || null,
-        description: c.description || null,
-        status: c.status || "ready",
-        button_label: c.button_label || c.buttonLabel || "Do this",
-        tool_call: c.tool_call || c.toolCall || null,
-        tool_params: c.tool_params || c.toolParams || null,
-        xp_reward: c.xp_reward || c.xpReward || 0,
-        trust_reward: c.trust_reward || c.trustReward || 0,
-        estimated_minutes: c.estimated_minutes || c.effortMinutes || null,
-        unlock_condition: c.unlock_condition || c.unlockCondition || null,
-        priority: c.priority || "secondary",
-        sort_order: i,
-      }));
-      await sb.from("action_cards").insert(cardRows);
-    }
-
-    // Normalize action cards for frontend (support both naming conventions)
-    const normalizedCards = actionCards.map((c: any) => ({
-      title: c.title,
-      subtitle: c.subtitle,
-      description: c.description,
-      buttonLabel: c.button_label || c.buttonLabel || "Do this",
-      effortMinutes: c.estimated_minutes || c.effortMinutes,
-      xpReward: c.xp_reward || c.xpReward || 0,
-      trustReward: c.trust_reward || c.trustReward || 0,
-      priority: c.priority || "secondary",
-      status: c.status || "ready",
-      unlockCondition: c.unlock_condition || c.unlockCondition,
-      toolCall: c.tool_call || c.toolCall,
-      toolParams: c.tool_params || c.toolParams,
-    }));
+    // Save action cards (they get their ids) for the frontend
+    const normalizedCards = await saveActionCards(sb, conversationId, userId, actionCards);
 
     // Save Pi's response
     await sb.from("pi_messages").insert({
@@ -2277,8 +2395,15 @@ serve(async (req) => {
     // Update conversation
     await sb.from("pi_conversations").update({
       updated_at: new Date().toISOString(),
-      title: message.slice(0, 60),
+      title: String(shownMessage).slice(0, 60),
     }).eq("id", conversationId);
+
+    let cardResult: any = undefined;
+    if (cardRun) {
+      const did = toolResults.some((r: any) => WRITE_TOOLS.has(r.tool) && r.result && !r.result.error);
+      const opened = actions.some((a: any) => a.action === "navigate");
+      cardResult = await finishCard(sb, cardRun, userId, did ? "done" : opened ? "opened" : "answered");
+    }
 
     return jsonRes({
       message: responseText,
@@ -2288,6 +2413,7 @@ serve(async (req) => {
       scene,
       nextPrompt,
       emotion,
+      cardResult,
       pathInfo: profile?.current_path
         ? { path: profile.current_path, step: profile.path_step || 1, totalSteps: 6 }
         : null,

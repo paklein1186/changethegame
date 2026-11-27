@@ -2393,6 +2393,7 @@
     "undo": "Annuler",
     "actionsUndone": "Actions annulées.",
     "errorRetry": "Désolé, une erreur s'est produite. Réessayez.",
+    "actionFailed": "L'action n'a pas abouti. Réessayez.",
     "openPi": "Ouvrir Pi, votre guide IA",
     "piTitle": "Pi — votre guide IA",
     "skippedAlternatives": "Pas de problème ! Voici d'autres options :",
@@ -4809,6 +4810,7 @@
     }
   },
   "needsExplore": {
+    "offerNotFound": "Ce besoin n'existe plus ou n'est plus ouvert.",
     "intro": "Ce dont les quêtes et leurs guildes ont besoin pour avancer : compétences, lieux, matériel, financement, bénévoles… Par défaut, ceux qui correspondent à ce que vous savez faire.",
     "scopeLabel": "Quels besoins afficher",
     "scope": {

@@ -17,6 +17,8 @@ import { PiActionCard, XpToast } from "@/components/pi/PiActionCard";
 import { toast } from "sonner";
 
 type SuggestedAction = {
+  /** Id of the saved card: the server runs it from the database. Older cards have none. */
+  id?: string | null;
   title: string;
   subtitle?: string;
   description?: string;
@@ -200,6 +202,10 @@ export function PiChat({ className }: PiChatProps) {
   const processActions = (actions: any[]) => {
     for (const action of actions) {
       if (action.action === "navigate" && action.screen) {
+        // A form opened by Pi can carry a draft for the user to review (e.g. an offer of help).
+        if (action.draft?.key) {
+          try { sessionStorage.setItem(action.draft.key, JSON.stringify(action.draft.value ?? {})); } catch { /* ignore */ }
+        }
         closePiPanel();
         navigate(action.screen);
       }
@@ -286,30 +292,30 @@ export function PiChat({ className }: PiChatProps) {
     }
   };
 
-  // Execute an action card
-  const executeAction = async (msgId: string, actionIndex: number) => {
-    const msg = messages.find((m) => m.id === msgId);
-    const action = msg?.suggestedActions?.[actionIndex];
-    if (!action || !action.toolCall) return;
-
-    // Update action status to in_progress
+  // Execute an action card. The server says what really happened: only "done" crosses the card out and grants XP.
+  const setActionStatus = (msgId: string, actionIndex: number, status: SuggestedAction["status"]) =>
     setMessages((prev) =>
       prev.map((m) =>
         m.id === msgId
-          ? {
-              ...m,
-              suggestedActions: m.suggestedActions?.map((a, i) =>
-                i === actionIndex ? { ...a, status: "in_progress" as const } : a
-              ),
-            }
+          ? { ...m, suggestedActions: m.suggestedActions?.map((a, i) => (i === actionIndex ? { ...a, status } : a)) }
           : m
       )
     );
 
+  const executeAction = async (msgId: string, actionIndex: number) => {
+    const msg = messages.find((m) => m.id === msgId);
+    const action = msg?.suggestedActions?.[actionIndex];
+    if (!action || action.status !== "ready") return;
+
+    setActionStatus(msgId, actionIndex, "in_progress");
+
     try {
       const { data, error } = await supabase.functions.invoke("pi-cognitive", {
         body: {
-          message: `EXECUTE_ACTION: ${JSON.stringify({ tool: action.toolCall, params: action.toolParams })}`,
+          message: action.id
+            ? `▶ ${action.title}`
+            : `EXECUTE_ACTION: ${JSON.stringify({ tool: action.toolCall, params: action.toolParams, title: action.title, description: action.description })}`,
+          actionCardId: action.id || undefined,
           conversationId,
           contextType,
           contextId,
@@ -319,54 +325,31 @@ export function PiChat({ className }: PiChatProps) {
 
       if (error) throw error;
 
-      // Update action status to completed
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === msgId
-            ? {
-                ...m,
-                suggestedActions: m.suggestedActions?.map((a, i) =>
-                  i === actionIndex ? { ...a, status: "completed" as const } : a
-                ),
-              }
-            : m
-        )
-      );
+      const outcome: string = data?.cardResult?.outcome ?? "answered";
+      setActionStatus(msgId, actionIndex, outcome === "done" ? "completed" : "ready");
 
-      // Show XP toast
-      if (action.xpReward && action.xpReward > 0) {
-        setXpToast(action.xpReward);
-      }
+      const xp = Number(data?.cardResult?.xpAwarded ?? 0);
+      if (xp > 0) setXpToast(xp);
 
-      // Process any returned actions
-      if (data?.actions?.length) processActions(data.actions);
-
-      // Add confirmation message if Pi responded
       if (data?.message) {
         const confirmMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: "assistant",
           text: data.message,
+          suggestedActions: data.suggestedActions?.length
+            ? data.suggestedActions.map((a: any) => ({ ...a, status: a.status || "ready" }))
+            : undefined,
           nextPrompt: data.nextPrompt,
         };
         setMessages((prev) => [...prev, confirmMsg]);
       }
+
+      // Navigation last: it closes the panel.
+      if (data?.actions?.length) processActions(data.actions);
     } catch (e: any) {
       console.error("Action execution error:", e);
-      // Revert to ready state
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === msgId
-            ? {
-                ...m,
-                suggestedActions: m.suggestedActions?.map((a, i) =>
-                  i === actionIndex ? { ...a, status: "ready" as const } : a
-                ),
-              }
-            : m
-        )
-      );
-      toast.error("Action failed. Please try again.");
+      setActionStatus(msgId, actionIndex, "ready");
+      toast.error(t("pi.actionFailed"));
     }
   };
 

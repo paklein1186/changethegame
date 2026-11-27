@@ -86,6 +86,38 @@ export function NeedsExplore() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
+  // ?offer=<need id> (from Pi or a shared link): open the offer form for that need, then drop the parameter.
+  const offerParam = params.get("offer") ?? "";
+  useEffect(() => {
+    if (!offerParam || isGuest) return;
+    let cancelled = false;
+    (async () => {
+      const { data: need } = await (supabase as any).from("quest_needs")
+        .select("id, title, description, category, created_at, quest_id, quests(title, created_by_user_id, guild_id)")
+        .eq("id", offerParam).maybeSingle();
+      const { data: pending } = await (supabase as any).from("quest_proposals")
+        .select("id").eq("need_id", offerParam).eq("proposer_type", "USER").eq("proposer_id", currentUser.id)
+        .eq("status", "PENDING").limit(1);
+      if (cancelled) return;
+      const next = new URLSearchParams(params);
+      next.delete("offer");
+      setParams(next, { replace: true });
+      if (!need) {
+        toast.error(t("needsExplore.offerNotFound"));
+        return;
+      }
+      setOfferFor({
+        need_id: need.id, title: need.title, description: need.description, category: need.category ?? "GENERAL",
+        created_at: need.created_at, quest_id: need.quest_id, quest_title: need.quests?.title ?? "",
+        owner_id: need.quests?.created_by_user_id ?? "", owner_name: null, guild_id: need.quests?.guild_id ?? null,
+        guild_name: null, guild_logo: null, territory_names: null, match_score: null, match_label: null,
+        match_owner_type: null, match_owner_name: null, is_mine: false, my_proposal_pending: !!pending?.length, total_count: 0,
+      });
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offerParam, isGuest, currentUser.id]);
+
   const { data: territories = [] } = useQuery({
     queryKey: ["explore-needs-territories"],
     queryFn: async (): Promise<TerritoryRow[]> => {
@@ -328,10 +360,18 @@ function OfferHelpDialog({ need, onClose, onSent }: { need: NeedRow | null; onCl
 
   useEffect(() => {
     if (!need) return;
-    setTitle(t("needsExplore.offerDefaultTitle", { need: need.title }).slice(0, 160));
-    setMessage("");
-    setTerms("free");
-    setAmount("");
+    // A draft prepared by Pi, if any: used once, then forgotten.
+    let draft: { title?: string | null; message?: string | null; terms?: string | null; amount?: number | null } = {};
+    try {
+      const key = `pi-offer-draft:${need.need_id}`;
+      draft = JSON.parse(sessionStorage.getItem(key) ?? "{}") ?? {};
+      sessionStorage.removeItem(key);
+    } catch { /* ignore */ }
+    const draftTerms = ["free", "CREDITS", "FIAT"].includes(draft.terms ?? "") ? (draft.terms as "free" | "CREDITS" | "FIAT") : "free";
+    setTitle((draft.title || t("needsExplore.offerDefaultTitle", { need: need.title })).slice(0, 160));
+    setMessage((draft.message ?? "").slice(0, 2000));
+    setTerms(draftTerms);
+    setAmount(draftTerms !== "free" && Number(draft.amount) > 0 ? String(draft.amount) : "");
   }, [need, t]);
 
   const send = async () => {

@@ -2407,6 +2407,7 @@
     "undo": "Undo",
     "actionsUndone": "Actions undone.",
     "errorRetry": "Sorry, an error occurred. Please try again.",
+    "actionFailed": "The action didn't go through. Please try again.",
     "openPi": "Open Pi, your AI guide",
     "piTitle": "Pi — your AI guide",
     "skippedAlternatives": "No problem! Here are some other options:",
@@ -4823,6 +4824,7 @@
     }
   },
   "needsExplore": {
+    "offerNotFound": "This need no longer exists or is no longer open.",
     "intro": "What quests and their guilds need to move forward: skills, places, equipment, funding, volunteers… By default, the ones that match what you can do.",
     "scopeLabel": "Which needs to show",
     "scope": {
