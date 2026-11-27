@@ -91,9 +91,13 @@ Toujours par `guild-quest-sync`, clé du site seule, sur une quête reliée au p
   Un besoin retiré sur le site est fermé (`CLOSED`), jamais effacé. Lien : `quest_need_external_links`.
 - `proposals` : propositions d'aide en attente, lues en direct pour le référent (nom et identifiant de profil, jamais
   d'e-mail ; le site ne les enregistre pas, il ne garde qu'un compteur).
-- `proposal_decide` `{ proposal_id, decision: "accept" | "reject", auteur? }` : accepte ou refuse, et prévient la
-  personne. Une proposition qui demande des crédits ou des euros peut aussi être acceptée depuis le site : **rien
-  n'est versé automatiquement**, la contrepartie se suit au cas par cas avec l'équipe (la personne en est prévenue ;
-  `contrepartie_a_suivre`).
+- `proposal_decide` `{ proposal_id, decision: "accept" | "reject", auteur? }` : accepte ou refuse par la fonction de
+  la base `decide_quest_proposal`, **la même que l'écran de la quête** : statut, crédits demandés versés (QUEST_REWARD),
+  XP et notification d'un bloc. Les euros demandés ne sont pas versés par la plateforme : la personne est prévenue
+  qu'ils se règlent directement avec l'équipe.
+
+`decide_quest_proposal` corrige aussi l'écran de la quête, qui versait les crédits avec un type refusé par la base
+(« EARNED_ACTION ») : la proposition passait acceptée sans versement. Peuvent décider : la personne qui a créé la
+quête, un·e admin de la guilde hôte, un·e admin de la plateforme, ou le serveur (clé service_role).
 
 Un besoin peut naître des deux côtés ; c'est le site qui fusionne (la dernière modification l'emporte).

@@ -1,9 +1,8 @@
 // Besoins et propositions d'aide d'une quête reliée à un projet du site Trois-Tiers (palier 2, B4).
 // Décisions de Trois-Tiers (28/11) : un besoin peut naître des deux côtés (la dernière modification l'emporte, la
 // fusion est faite par le site) ; le site ne recopie des propositions qu'un compteur, il lit la liste en direct pour
-// le référent ; accepter depuis le site = accepter ici. Une proposition qui demande des crédits ou des euros peut aussi
-// être acceptée depuis le site (décision du 28/11) : rien n'est versé automatiquement, la contrepartie se suit au cas
-// par cas avec l'équipe, et la personne en est prévenue.
+// le référent ; accepter depuis le site = accepter ici, par la même fonction de la base que l'écran de la quête
+// (decide_quest_proposal : statut, crédits demandés, XP et notification d'un bloc ; euros réglés à part).
 import { linkedQuest, SOURCE, SyncError } from "./guild-quest-sync.ts";
 
 type Row = Record<string, any>;
@@ -127,34 +126,26 @@ export async function listProposals(admin: any, guildId: string, projetId: strin
       nom: p.proposer_type === "USER" ? (noms.get(p.proposer_id) ?? null) : null,
       profil_id: p.proposer_type === "USER" ? p.proposer_id : null,
       demande_credits: Number(p.requested_credits ?? 0), demande_euros: Number(p.requested_fiat ?? 0), cree_le: p.created_at,
-      contrepartie_a_suivre: Number(p.requested_credits ?? 0) > 0 || Number(p.requested_fiat ?? 0) > 0,
     })),
   };
 }
 
-/** Accepter ou refuser une proposition en attente ; la personne est prévenue. */
+/** Accepter ou refuser une proposition en attente, par la fonction partagée de la base (même effet que sur l'écran). */
 export async function decideProposal(admin: any, guildId: string, projetId: string, questId: string,
   proposalId: string, decision: unknown, auteur?: unknown) {
   const q = await questOf(admin, guildId, projetId, questId);
   if (decision !== "accept" && decision !== "reject") throw new SyncError("invalid_decision", "accept ou reject attendu");
-  const { data: p } = await admin.from("quest_proposals").select("id, quest_id, status, proposer_type, proposer_id, title, requested_credits, requested_fiat")
-    .eq("id", proposalId).maybeSingle();
+  const { data: p } = await admin.from("quest_proposals").select("id, quest_id, status").eq("id", proposalId).maybeSingle();
   if (!p || p.quest_id !== questId) throw new SyncError("not_found", "proposition inconnue sur cette quête", 404);
   if (p.status !== "PENDING") throw new SyncError("already_decided", "proposition déjà traitée", 409);
-  const credits = Number(p.requested_credits ?? 0);
-  const euros = Number(p.requested_fiat ?? 0);
-  const contrepartie = [credits > 0 ? `${credits} crédits` : "", euros > 0 ? `${euros} €` : ""].filter(Boolean).join(" et ");
-  const statut = decision === "accept" ? "ACCEPTED" : "REJECTED";
-  await admin.from("quest_proposals").update({ status: statut, updated_at: new Date().toISOString() }).eq("id", p.id).eq("status", "PENDING");
-  if (p.proposer_type === "USER" && UUID.test(String(p.proposer_id))) {
-    await admin.from("notifications").insert({
-      user_id: p.proposer_id, type: decision === "accept" ? "QUEST_PROPOSAL_ACCEPTED" : "QUEST_PROPOSAL_REJECTED",
-      title: decision === "accept" ? "Proposition acceptée" : "Proposition non retenue",
-      body: `« ${p.title} » ${decision === "accept" ? "a été acceptée par l'équipe du projet (Trois-Tiers)" : "n'a pas été retenue cette fois-ci"}.`
-        + (decision === "accept" && contrepartie ? ` La contrepartie demandée (${contrepartie}) sera vue au cas par cas avec l'équipe : rien n'a été versé automatiquement.` : ""),
-      related_entity_type: "QUEST", related_entity_id: questId, deep_link_url: `/quests/${questId}`,
-    });
-  }
   const par = await membre(admin, guildId, auteur);
-  return { quest_id: q.id, proposal_id: p.id, statut, par, contrepartie_a_suivre: decision === "accept" && Boolean(contrepartie) };
+  const { data, error } = await admin.rpc("decide_quest_proposal", { p_proposal_id: proposalId, p_decision: decision, p_actor: par });
+  if (error) {
+    if (error.code === "P0001") throw new SyncError("already_decided", "proposition déjà traitée", 409);
+    throw new SyncError("db", error.message ?? "decision failed", 500);
+  }
+  return {
+    quest_id: q.id, proposal_id: proposalId, statut: data?.status, par,
+    credits_verses: Number(data?.credits_granted ?? 0), euros_a_regler: Number(data?.fiat_to_follow ?? 0),
+  };
 }

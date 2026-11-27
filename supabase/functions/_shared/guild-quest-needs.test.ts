@@ -56,20 +56,25 @@ Deno.test("besoins : refus hors quête reliée, besoin d'une autre quête, caté
   assertEquals(a.tables.quest_needs.find((n: any) => n.title === "Volé ?")!.created_by_user_id, "createur");
 });
 
-Deno.test("propositions : lues en direct, nom sans e-mail ; toutes acceptables, contrepartie à suivre sans versement ; une seule fois", async () => {
-  const a = base();
+Deno.test("propositions : lues en direct, nom sans e-mail ; décision par la fonction partagée de la base, une seule fois", async () => {
+  const a: any = base();
+  const appels: any[] = [];
+  a.rpc = async (nom: string, args: any) => {
+    appels.push([nom, args]);
+    const p = a.tables.quest_proposals.find((x: any) => x.id === args.p_proposal_id);
+    p.status = args.p_decision === "accept" ? "ACCEPTED" : "REJECTED";
+    return { data: { status: p.status, credits_granted: args.p_decision === "accept" ? p.requested_credits : 0, fiat_to_follow: 0 }, error: null };
+  };
   const l = await listProposals(a, G, P, Q);
   assertEquals(l.propositions.length, 2);
   assertEquals(l.propositions[0].nom, "Camille");
   assert(!JSON.stringify(l).includes("camille@ex.org"));
-  assertEquals(l.propositions.map((p: any) => p.contrepartie_a_suivre), [false, true]);
-  const r = await decideProposal(a, G, P, Q, "11111111-0000-0000-0000-000000000001", "accept", U);
-  assertEquals([r.statut, r.par, r.contrepartie_a_suivre], ["ACCEPTED", U, false]);
-  assertEquals(a.tables.notifications[0].user_id, AUTRE);
-  await assertRejects(() => decideProposal(a, G, P, Q, "11111111-0000-0000-0000-000000000001", "reject", U));
-  const r2 = await decideProposal(a, G, P, Q, "11111111-0000-0000-0000-000000000002", "accept", U);
-  assertEquals([r2.statut, r2.contrepartie_a_suivre], ["ACCEPTED", true]);
-  assert(a.tables.notifications[1].body.includes("50 crédits"));
-  assert(a.tables.notifications[1].body.includes("rien n'a été versé"));
+  const r = await decideProposal(a, G, P, Q, "11111111-0000-0000-0000-000000000002", "accept", U);
+  assertEquals([r.statut, r.par, r.credits_verses], ["ACCEPTED", U, 50]);
+  assertEquals(appels[0], ["decide_quest_proposal", { p_proposal_id: "11111111-0000-0000-0000-000000000002", p_decision: "accept", p_actor: U }]);
+  await assertRejects(() => decideProposal(a, G, P, Q, "11111111-0000-0000-0000-000000000002", "reject", U));
+  // Auteur hors guilde : la base agit sans personne (pas d'XP au nom de quelqu'un d'extérieur).
+  assertEquals((await decideProposal(a, G, P, Q, "11111111-0000-0000-0000-000000000001", "reject", AUTRE)).par, null);
+  await assertRejects(() => decideProposal(a, G, P, Q, "11111111-0000-0000-0000-000000000003", "accept", U));
   assertEquals((await listNeeds(a, G, P, Q)).besoins[0].propositions_en_attente, 0);
 });
