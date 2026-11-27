@@ -4377,6 +4377,8 @@
     }
   },
   "questActivity": {
+    "needsSection": "Needs and opportunities",
+    "addNeed": "Add a need",
     "overview": "Overview",
     "updates": "Updates",
     "discussion": "Discussion",

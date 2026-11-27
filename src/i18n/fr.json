@@ -4363,6 +4363,8 @@
     }
   },
   "questActivity": {
+    "needsSection": "Besoins et opportunités",
+    "addNeed": "Ajouter un besoin",
     "overview": "Vue d'ensemble",
     "updates": "Mises à jour",
     "discussion": "Discussion",

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Users, Heart, Building2, UserPlus, Lightbulb, Loader2, Mail, Sparkles, RefreshCw, Trophy, Link2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +51,7 @@ export function QuestExploreTab({
   translatedSummary,
   isSummaryTranslated,
 }: QuestExploreTabProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -208,7 +210,7 @@ export function QuestExploreTab({
           <AccordionTrigger className="hover:no-underline">
             <div className="flex items-center gap-3">
               <Lightbulb className="h-5 w-5 text-primary" />
-              <span className="font-display font-semibold">Opportunities</span>
+              <span className="font-display font-semibold">{t("questActivity.needsSection")}</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>

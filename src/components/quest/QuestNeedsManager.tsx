@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,6 +57,7 @@ interface QuestNeedsManagerProps {
 export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: QuestNeedsManagerProps) {
   const currentUser = useCurrentUser();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const qc = useQueryClient();
 
   const isOwner = currentUser.id === questOwnerId;
@@ -161,7 +163,7 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
       {!readOnly && canEdit && (
         <div className="flex justify-end">
           <Button size="sm" variant="default" onClick={openCreate}>
-            <Plus className="h-3.5 w-3.5 mr-1" /> Add Opportunity
+            <Plus className="h-3.5 w-3.5 mr-1" /> {t("questActivity.addNeed")}
           </Button>
         </div>
       )}
@@ -270,7 +272,7 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
             <Button onClick={saveNeed} disabled={saving || !form.title.trim()}>
               {saving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-              {editingId ? "Update" : "Add Opportunity"}
+              {editingId ? "Update" : t("questActivity.addNeed")}
             </Button>
           </DialogFooter>
         </DialogContent>
