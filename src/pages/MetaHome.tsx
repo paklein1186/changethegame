@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, Sprout, Landmark, HandHelping, Building2, Compass, ShieldCheck } from "lucide-react";
 import logoImg from "@/assets/logo.png";
+import heroCollective from "@/assets/home-collective.png.asset.json";
 
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -149,6 +150,21 @@ export default function MetaHome() {
                   </motion.div>
                 ))}
             </div>
+
+            {/* Même illustration que /home/territoire et /home/initiative */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.7 }}
+              className="mt-12 max-w-5xl mx-auto"
+            >
+              <img
+                src={heroCollective.url}
+                alt={m("title")}
+                loading="lazy"
+                className="w-full rounded-2xl border border-border shadow-lg"
+              />
+            </motion.div>
 
             <div className="mt-12">
               <LandingStatBar />
