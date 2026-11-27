@@ -302,6 +302,13 @@
       "when": 1795809310176,
       "tag": "0042_guild_activity_fix",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1795809623026,
+      "tag": "0043_guild_activity_more_sections",
+      "breakpoints": true
     }
   ]
 }

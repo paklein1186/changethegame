@@ -12553,6 +12553,15 @@ export type Database = {
         }
         Returns: Json
       }
+      guild_activity_base: {
+        Args: {
+          p_cap?: number
+          p_guild_id: string
+          p_since: string
+          p_until?: string
+        }
+        Returns: Json
+      }
       guild_audience_allows: {
         Args: {
           p_audience: string
