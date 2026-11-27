@@ -11919,6 +11919,10 @@ export type Database = {
         Args: { _quest_id: string }
         Returns: undefined
       }
+      decide_quest_proposal: {
+        Args: { p_actor?: string; p_decision: string; p_proposal_id: string }
+        Returns: Json
+      }
       decision_poll_allows: {
         Args: { p_action: string; p_poll_id: string; p_user_id: string }
         Returns: boolean
