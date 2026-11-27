@@ -88,7 +88,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   const [place, setPlace] = useState("all");
   const [expanded, setExpanded] = useState(false);
 
-  const queryKey = ["opportunities", guildId ?? null, questId ? "all" : scope];
+  const queryKey = ["opportunities", currentUser.id ?? null, guildId ?? null, questId ? "all" : scope];
   const { data = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {

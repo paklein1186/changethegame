@@ -41,6 +41,7 @@ import UserProfile from "./pages/UserProfile";
 import ProfileEdit from "./pages/ProfileEdit";
 import NotificationsCenter from "./pages/NotificationsCenter";
 import { lazy, Suspense, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "./components/AdminLayout";
 
 const AdminOverview = lazy(() => import("./pages/admin/AdminOverview"));
@@ -176,6 +177,27 @@ const DemoFeveMatchmaker = lazy(() => import("./pages/DemoFeveMatchmaker"));
 
 const queryClient = new QueryClient();
 
+/**
+ * When the signed-in account changes (sign-out, sign-in as someone else, in this tab or another one),
+ * drop every cached query: many keys do not carry the user id, and a list cached for the previous
+ * account would otherwise be shown to the next one until it goes stale. Token refreshes keep the cache.
+ */
+function ResetCacheOnAccountChange(): null {
+  useEffect(() => {
+    let lastUserId: string | null | undefined;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const userId = session?.user?.id ?? null;
+      if (lastUserId !== undefined && userId !== lastUserId) {
+        // Outside the auth callback, as Supabase recommends.
+        setTimeout(() => { void queryClient.resetQueries(); }, 0);
+      }
+      lastUserId = userId;
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+  return null;
+}
+
 function ScrollToTop(): null {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -186,6 +208,7 @@ function ScrollToTop(): null {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <ResetCacheOnAccountChange />
     <ThemeProvider attribute="class" defaultTheme="system" storageKey="ctg-theme" enableSystem>
     <TooltipProvider>
       <AuthProvider>
