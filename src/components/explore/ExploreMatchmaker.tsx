@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { MessageSquare, Sparkles, UserPlus, Users, X } from "lucide-react";
+import { MessageSquare, UserPlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { OpportunitiesPanel } from "@/components/opportunities/OpportunitiesPanel";
 import { MatchmakerPanel } from "@/components/MatchmakerPanel";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Target = { kind: "me" } | { kind: "guild"; id: string; name: string } | { kind: "quest"; id: string; name: string };
 type Person = { user_id: string; name: string | null; avatar_url?: string | null };
@@ -41,27 +42,39 @@ export function ExploreMatchmaker({ userId }: { userId: string }) {
     },
   });
 
-  const chip = (active: boolean) =>
-    cn("rounded-full border px-3 py-1 text-xs transition-colors truncate max-w-[14rem]",
-      active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-muted-foreground hover:text-foreground");
-  const isActive = (k: Target["kind"], id?: string) => target.kind === k && (k === "me" || (target as any).id === id);
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-medium text-muted-foreground mr-1">{t("matchmakerHub.target")}</span>
-          <button className={chip(isActive("me"))} onClick={() => setTarget({ kind: "me" })}>{t("matchmakerHub.me")}</button>
-          {targets?.guilds.map((g) => (
-            <button key={g.id} className={chip(isActive("guild", g.id))} onClick={() => setTarget({ kind: "guild", ...g })} title={`${t("matchmakerHub.guild")} · ${g.name}`}>
-              <Users className="inline h-3 w-3 mr-1 -mt-0.5" />{g.name}
-            </button>
-          ))}
-          {targets?.quests.map((q) => (
-            <button key={q.id} className={chip(isActive("quest", q.id))} onClick={() => setTarget({ kind: "quest", ...q })} title={`${t("matchmakerHub.quest")} · ${q.name}`}>
-              <Sparkles className="inline h-3 w-3 mr-1 -mt-0.5" />{q.name}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground">{t("matchmakerHub.target")}</span>
+          <div className="inline-flex rounded-lg border border-border bg-background p-0.5" role="tablist">
+            {(["me", "guild", "quest"] as const).map((k) => (
+              <button key={k} role="tab" aria-selected={target.kind === k}
+                disabled={k === "guild" ? !targets?.guilds.length : k === "quest" ? !targets?.quests.length : false}
+                onClick={() => {
+                  if (k === "me") setTarget({ kind: "me" });
+                  else { const first = (k === "guild" ? targets?.guilds : targets?.quests)?.[0]; if (first) setTarget({ kind: k, ...first }); }
+                }}
+                className={cn("px-3 py-1 text-xs rounded-md transition-colors disabled:opacity-40", target.kind === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+                {t(`matchmakerHub.${k}`)}
+              </button>
+            ))}
+          </div>
+          {target.kind !== "me" && (
+            <Select value={target.id} onValueChange={(id) => {
+              const list = target.kind === "guild" ? targets?.guilds : targets?.quests;
+              const item = list?.find((x) => x.id === id);
+              if (item) setTarget({ kind: target.kind, ...item } as Target);
+            }}>
+              <SelectTrigger className="h-8 w-64 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent className="max-h-80">
+                {(target.kind === "guild" ? targets?.guilds : targets?.quests)?.map((x) => (
+                  <SelectItem key={x.id} value={x.id} className="text-xs">{x.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
         <Button size="sm" variant="outline" onClick={() => setIntroOpen(true)}>
           <UserPlus className="h-4 w-4 mr-1.5" /> {t("matchmakerHub.intro")}
