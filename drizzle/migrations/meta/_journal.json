@@ -323,6 +323,13 @@
       "when": 1795813049823,
       "tag": "0045_guild_source_role_code",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1795813607133,
+      "tag": "0046_guild_levels_cap_3",
+      "breakpoints": true
     }
   ]
 }

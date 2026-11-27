@@ -18,7 +18,7 @@ interface PlanRow { id: string; code: string; label: string; level: number | nul
 
 /**
  * Modèle de la guilde : un admin choisit comment la configurer (ouverte, membranes, coopérative,
- * personnalisée), puis règle le niveau (N1 à N5) que donne chaque rôle et chaque formule.
+ * personnalisée), puis règle le niveau (N1 à N3 ; N4 et N5 sont réservés à l’équipe de la quête et aux admins) que donne chaque rôle et chaque formule.
  * Appliquer un modèle crée ce qui manque et règle les niveaux ; rien n'est supprimé ni retiré.
  */
 export function GuildConfigModelPanel({ guild }: { guild: any }) {
@@ -89,7 +89,7 @@ export function GuildConfigModelPanel({ guild }: { guild: any }) {
       <SelectTrigger className="h-8 w-28" aria-label={t("guildModel.levelFor", { name: label })}><SelectValue /></SelectTrigger>
       <SelectContent>
         <SelectItem value={NONE}>{t("guildModel.noLevel")}</SelectItem>
-        {[1, 2, 3, 4, 5].map((n) => <SelectItem key={n} value={String(n)}>N{n}</SelectItem>)}
+        {[1, 2, 3].map((n) => <SelectItem key={n} value={String(n)}>N{n}</SelectItem>)}
       </SelectContent>
     </Select>
   );
