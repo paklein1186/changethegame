@@ -15,6 +15,9 @@ export type GuildMembershipRow = {
   current_period_end?: string | null;
   cancel_at_period_end?: boolean | null;
   last_payment_at?: string | null;
+  /** Cotisation en euros : renseignés pour le payeur seulement. */
+  stripe_customer_id?: string | null;
+  payer_user_id?: string | null;
 };
 
 type GuildLike = {

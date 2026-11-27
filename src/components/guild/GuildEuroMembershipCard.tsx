@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, CreditCard, CalendarClock, Check, ExternalLink } from "lucide-react";
+import { Loader2, CreditCard, CalendarClock, Check, ExternalLink, Settings2, AlertTriangle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,7 +46,23 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
   const [busy, setBusy] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [portalBusy, setPortalBusy] = useState(false);
+  const [highlight, setHighlight] = useState(false);
   const confirmed = useRef(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Lien « Gérer ma cotisation » de l'e-mail de rappel (?cotisation=gerer) : on amène la carte à l'écran.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("cotisation") !== "gerer") return;
+    setHighlight(true);
+    cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    params.delete("cotisation");
+    const rest = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${rest ? `?${rest}` : ""}`);
+    const t = window.setTimeout(() => setHighlight(false), 4000);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const { data: plans = [] } = useQuery({
     queryKey: ["guild-membership-plans", guild.id],
@@ -101,6 +117,9 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
 
   const end = membership?.current_period_end ?? membership?.membership_expires_at;
   const active = membership?.role === "member" && membership?.status === "active" && (!end || new Date(end) > new Date());
+  // Seul le payeur a un client Stripe ; un bénéficiaire de code n'a rien à gérer.
+  const isPayer = !!membership?.stripe_customer_id && membership?.payer_user_id === session?.user?.id;
+  const pastDue = isPayer && membership?.role === "member" && membership?.status === "past_due";
   const needsApproval = guild.requires_application_before_payment || guild.join_policy === "APPROVAL_REQUIRED";
   const isCreator = guild.created_by_user_id === session?.user?.id;
   const blocked = needsApproval && application?.status !== "APPROVED" && !isCreator;
@@ -126,6 +145,32 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
     }
     openCheckout(url);
   };
+
+  const openPortal = async () => {
+    setPortalBusy(true);
+    const { data, error } = await supabase.functions.invoke("guild-euro-portal", {
+      body: { guild_id: guild.id, return_url: window.location.href.split("?")[0] },
+    });
+    const url = (data as any)?.url;
+    if (error || !url) {
+      setPortalBusy(false);
+      toast({
+        title: "Impossible d'ouvrir la gestion de la cotisation",
+        description: (data as any)?.error ?? "Réessayez dans un instant, ou contactez la guilde.",
+        variant: "destructive",
+      });
+      return;
+    }
+    openCheckout(url);
+    setPortalBusy(false);
+  };
+
+  const manageButton = (
+    <Button size="sm" variant="outline" className="w-full gap-1.5" onClick={openPortal} disabled={portalBusy}>
+      {portalBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Settings2 className="h-3.5 w-3.5" />}
+      Gérer ma cotisation
+    </Button>
+  );
 
   /**
    * Stripe refuse de s'afficher dans une iframe (aperçus Lovable, intégrations) :
@@ -172,18 +217,35 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
   );
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+    <div ref={cardRef} className={`rounded-lg border bg-card p-4 space-y-3 transition-shadow ${highlight ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
       <div className="flex items-center justify-between gap-2">
         <h3 className="font-semibold flex items-center gap-2"><CreditCard className="h-4 w-4" /> Cotisation</h3>
         {active && <Badge>Adhérent</Badge>}
       </div>
 
       {active ? (
-        <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-          <CalendarClock className="h-4 w-4" />
-          {end ? `Adhésion active jusqu'au ${new Date(end).toLocaleDateString("fr-BE")}.` : "Adhésion active."}
-          {membership?.cancel_at_period_end ? " Le renouvellement est arrêté." : ""}
-        </p>
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground flex items-start gap-1.5">
+            <CalendarClock className="h-4 w-4 mt-0.5 shrink-0" />
+            <span>
+              {!end
+                ? "Adhésion active."
+                : isPayer && !membership?.cancel_at_period_end
+                  ? `Adhésion active, renouvelée automatiquement le ${new Date(end).toLocaleDateString("fr-BE")}. Un rappel vous est envoyé par e-mail une semaine avant.`
+                  : `Adhésion active jusqu'au ${new Date(end).toLocaleDateString("fr-BE")}.`}
+              {membership?.cancel_at_period_end ? " Le renouvellement est arrêté." : ""}
+            </span>
+          </p>
+          {isPayer && manageButton}
+        </div>
+      ) : pastDue ? (
+        <div className="space-y-2">
+          <p className="text-sm flex items-start gap-1.5 text-destructive">
+            <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
+            <span>Le renouvellement de votre cotisation n'a pas pu être prélevé. Mettez à jour votre moyen de paiement : le prélèvement sera retenté automatiquement.</span>
+          </p>
+          {manageButton}
+        </div>
       ) : !session ? (
         <Button size="sm" className="w-full" onClick={() => navigate("/login")}>Se connecter pour adhérer</Button>
       ) : blocked ? (
@@ -244,7 +306,7 @@ export function GuildEuroMembershipCard({ guild }: { guild: any }) {
               La page de paiement ne s'est pas ouverte ? L'ouvrir ici <ExternalLink className="h-3 w-3" />
             </a>
           )}
-          <p className="text-[11px] text-muted-foreground">Paiement sécurisé par Stripe, renouvelé automatiquement ; vous pouvez l'arrêter à tout moment.</p>
+          <p className="text-[11px] text-muted-foreground">Paiement sécurisé par Stripe, renouvelé automatiquement avec le même moyen de paiement. Rappel par e-mail une semaine avant chaque renouvellement ; vous pouvez l'arrêter à tout moment.</p>
         </div>
       )}
 
