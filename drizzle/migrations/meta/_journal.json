@@ -134,6 +134,13 @@
       "when": 1795768247663,
       "tag": "0018_needs_visibility_fix",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795784541776,
+      "tag": "0019_demo_feve_security_registry",
+      "breakpoints": true
     }
   ]
 }

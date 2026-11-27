@@ -115,6 +115,7 @@
     "npm:vitest@^3.2.4": "3.2.7_@types+node@22.20.5_jsdom@20.0.3",
     "npm:y-protocols@^1.0.7": "1.0.7_yjs@13.6.33",
     "npm:yjs@^13.6.29": "13.6.33",
+    "npm:zod@3.23.8": "3.23.8",
     "npm:zod@^3.25.76": "3.25.76"
   },
   "jsr": {
@@ -971,7 +972,7 @@
         "esbuild@0.27.7",
         "jose",
         "vite",
-        "zod"
+        "zod@3.25.76"
       ],
       "bin": true
     },
@@ -1005,7 +1006,7 @@
         "json-schema-typed",
         "pkce-challenge",
         "raw-body",
-        "zod",
+        "zod@3.25.76",
         "zod-to-json-schema"
       ]
     },
@@ -6213,8 +6214,11 @@
     "zod-to-json-schema@3.25.2_zod@3.25.76": {
       "integrity": "sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==",
       "dependencies": [
-        "zod"
+        "zod@3.25.76"
       ]
+    },
+    "zod@3.23.8": {
+      "integrity": "sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g=="
     },
     "zod@3.25.76": {
       "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="

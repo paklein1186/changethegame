@@ -3368,6 +3368,30 @@ export type Database = {
           },
         ]
       }
+      demo_seed_registry: {
+        Row: {
+          created_at: string
+          id: string
+          row_id: string
+          seed_key: string
+          table_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          row_id: string
+          seed_key?: string
+          table_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          row_id?: string
+          seed_key?: string
+          table_name?: string
+        }
+        Relationships: []
+      }
       demurrage_log: {
         Row: {
           balance_after: number
@@ -11739,6 +11763,11 @@ export type Database = {
         Args: { p_action: string; p_poll_id: string; p_user_id: string }
         Returns: boolean
       }
+      demo_feve_row_visible: {
+        Args: { p_row_id: string; p_table_name: string }
+        Returns: boolean
+      }
+      demo_feve_snapshot: { Args: never; Returns: Json }
       distribute_commons_pulse: {
         Args: { p_triggered_by?: string }
         Returns: Json
@@ -11771,6 +11800,40 @@ export type Database = {
         Returns: Json
       }
       explore_needs: {
+        Args: {
+          p_category?: string
+          p_limit?: number
+          p_offset?: number
+          p_query?: string
+          p_scope?: string
+          p_territory_id?: string
+        }
+        Returns: {
+          category: string
+          created_at: string
+          description: string
+          guild_id: string
+          guild_logo: string
+          guild_name: string
+          is_mine: boolean
+          match_label: string
+          match_owner_name: string
+          match_owner_type: string
+          match_score: number
+          my_proposal_pending: boolean
+          need_id: string
+          owner_id: string
+          owner_name: string
+          quest_cover: string
+          quest_id: string
+          quest_title: string
+          status: string
+          territory_names: string[]
+          title: string
+          total_count: number
+        }[]
+      }
+      explore_needs_before_demo_feve: {
         Args: {
           p_category?: string
           p_limit?: number
@@ -11982,6 +12045,40 @@ export type Database = {
           updated_at: string
         }[]
       }
+      get_opportunities_before_demo_feve: {
+        Args: { p_guild_id?: string; p_limit?: number; p_scope?: string }
+        Returns: {
+          can_mark_done: boolean
+          capability_id: string
+          capability_label: string
+          capability_service_title: string
+          capability_service_url: string
+          capability_status: string
+          direction: string
+          done: boolean
+          helper_avatar: string
+          helper_id: string
+          helper_name: string
+          helper_type: string
+          match_id: string
+          my_verdict: string
+          need_category: string
+          need_kind: string
+          need_label: string
+          outcome_id: string
+          quest_id: string
+          quest_title: string
+          reason_en: string
+          reason_fr: string
+          request_sent: boolean
+          score: number
+          territory_ids: string[]
+          territory_names: string[]
+          topic_ids: string[]
+          trust_given: boolean
+          updated_at: string
+        }[]
+      }
       get_profile_emails: {
         Args: { _user_ids: string[] }
         Returns: {
@@ -12119,6 +12216,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_demo_feve_viewer: { Args: never; Returns: boolean }
       is_guild_admin: {
         Args: { _guild_id: string; _user_id: string }
         Returns: boolean
@@ -12156,6 +12254,21 @@ export type Database = {
         Returns: string
       }
       match_capabilities: {
+        Args: { p_count?: number; p_embedding: string }
+        Returns: {
+          category: string
+          confidence: number
+          description: string
+          evidence: Json
+          id: string
+          label: string
+          owner_id: string
+          owner_type: string
+          similarity: number
+          status: string
+        }[]
+      }
+      match_capabilities_before_demo_feve: {
         Args: { p_count?: number; p_embedding: string }
         Returns: {
           category: string
