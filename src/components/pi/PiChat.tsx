@@ -179,14 +179,16 @@ export function PiChat({ className }: PiChatProps) {
     })();
   }, [session?.user?.id, isChatActive, hasGreeted, activeConversationId, prefillPrompt]);
 
-  // Auto-scroll
+  // Auto-scroll. scrollRef is the ScrollArea frame, which never scrolls: the element that does is its
+  // Radix viewport inside. Wait two frames so new messages and action cards are laid out first.
   const scrollToBottom = useCallback(() => {
-    requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const viewport = scrollRef.current?.querySelector<HTMLElement>("[data-radix-scroll-area-viewport]");
+      viewport?.scrollTo({ top: viewport.scrollHeight, behavior: "smooth" });
+    }));
   }, []);
 
-  useEffect(() => { scrollToBottom(); }, [messages, isChatActive, scrollToBottom]);
+  useEffect(() => { scrollToBottom(); }, [messages, isChatActive, isLoading, scrollToBottom]);
   useEffect(() => { autoResize(); }, [input, autoResize]);
 
   // Handle prefill prompt
