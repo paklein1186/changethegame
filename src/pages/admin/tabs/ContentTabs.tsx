@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 /**
  * ContentTabs — ALL data from real Supabase database, zero mocks.
  */
@@ -36,6 +38,7 @@ import { useTableSort } from "@/hooks/useTableSort";
 
 // ─── Users & Roles Tab (Superadmin) ─────────────────────────
 export function UsersRolesTab() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { isSuperAdmin } = useUserRoles(currentUser.id);
   const { setXpManual } = useXP();
@@ -70,26 +73,26 @@ export function UsersRolesTab() {
 
   const handleToggleRole = async (targetUserId: string, role: "admin" | "superadmin", currentlyHas: boolean) => {
     const { error } = await setUserRole(targetUserId, role, !currentlyHas);
-    if (error) { toast({ title: "Error", description: error, variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiContentTabs.error"), description: error, variant: "destructive" }); return; }
     toast({ title: currentlyHas ? `${role} removed` : `${role} granted` });
     qc.invalidateQueries({ queryKey: ["admin-all-user-roles"] });
     qc.invalidateQueries({ queryKey: ["user-roles"] });
   };
 
   const startEdit = (p: typeof profiles[0]) => { setEditingId(p.user_id); setEditXp(p.xp); setEditCI(p.contribution_index); };
-  const saveEdit = (userId: string) => { setXpManual(userId, editXp, editCI); setEditingId(null); toast({ title: "XP / CI updated" }); qc.invalidateQueries({ queryKey: ["admin-all-profiles"] }); };
+  const saveEdit = (userId: string) => { setXpManual(userId, editXp, editCI); setEditingId(null); toast({ title: t("uiContentTabs.xpCiUpdated") }); qc.invalidateQueries({ queryKey: ["admin-all-profiles"] }); };
 
   return (
     <div className="rounded-xl border border-border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Name</SortableTableHead>
+            <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.name")}</SortableTableHead>
             <SortableTableHead sortKey="email" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Email</SortableTableHead>
-            <SortableTableHead sortKey="role" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Role</SortableTableHead>
+            <SortableTableHead sortKey="role" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.role")}</SortableTableHead>
             <SortableTableHead sortKey="xp" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">XP</SortableTableHead>
             <SortableTableHead sortKey="contribution_index" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">CI</SortableTableHead>
-            <TableHead>Admin</TableHead>
+            <TableHead>{t("uiContentTabs.admin")}</TableHead>
             <TableHead>Superadmin</TableHead>
             <TableHead className="w-[80px]"></TableHead>
           </TableRow>
@@ -116,19 +119,19 @@ export function UsersRolesTab() {
                       <AlertDialogTrigger asChild><Switch checked={isTargetAdmin} /></AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>{isTargetAdmin ? "Remove Admin" : "Grant Admin"}</AlertDialogTitle>
+                          <AlertDialogTitle>{isTargetAdmin ? t("uiContentTabs.removeAdmin") : t("uiContentTabs.grantAdmin")}</AlertDialogTitle>
                           <AlertDialogDescription>
                             {isTargetAdmin ? `Remove admin access from ${p.name}?${isTargetSuperadmin ? " This will also remove their superadmin status." : ""}` : `Grant admin access to ${p.name}?`}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleToggleRole(p.user_id, "admin", isTargetAdmin)}>Confirm</AlertDialogAction>
+                          <AlertDialogCancel>{t("uiContentTabs.cancel")}</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleToggleRole(p.user_id, "admin", isTargetAdmin)}>{t("uiContentTabs.confirm")}</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
                   ) : (
-                    <Badge variant={isTargetAdmin ? "default" : "secondary"} className="text-xs">{isTargetAdmin ? "Yes" : "No"}</Badge>
+                    <Badge variant={isTargetAdmin ? "default" : "secondary"} className="text-xs">{isTargetAdmin ? "Yes" : t("uiContentTabs.no")}</Badge>
                   )}
                 </TableCell>
                 <TableCell>
@@ -137,19 +140,19 @@ export function UsersRolesTab() {
                       <AlertDialogTrigger asChild><Switch checked={isTargetSuperadmin} /></AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>{isTargetSuperadmin ? "Remove Superadmin" : "Grant Superadmin"}</AlertDialogTitle>
+                          <AlertDialogTitle>{isTargetSuperadmin ? t("uiContentTabs.removeSuperadmin") : "Grant Superadmin"}</AlertDialogTitle>
                           <AlertDialogDescription>
                             {isTargetSuperadmin ? `Remove superadmin from ${p.name}?` : `Grant superadmin to ${p.name}? Admin will also be granted.`}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleToggleRole(p.user_id, "superadmin", isTargetSuperadmin)}>Confirm</AlertDialogAction>
+                          <AlertDialogCancel>{t("uiContentTabs.cancel")}</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleToggleRole(p.user_id, "superadmin", isTargetSuperadmin)}>{t("uiContentTabs.confirm")}</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
                   ) : (
-                    <Badge variant={isTargetSuperadmin ? "default" : "secondary"} className="text-xs">{isTargetSuperadmin ? "Yes" : isSelf && isSuperAdmin ? "You" : "No"}</Badge>
+                    <Badge variant={isTargetSuperadmin ? "default" : "secondary"} className="text-xs">{isTargetSuperadmin ? "Yes" : isSelf && isSuperAdmin ? t("uiContentTabs.you") : t("uiContentTabs.no")}</Badge>
                   )}
                 </TableCell>
                 <TableCell>
@@ -165,7 +168,7 @@ export function UsersRolesTab() {
               </TableRow>
             );
           })}
-          {profiles.length === 0 && <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">No users found.</TableCell></TableRow>}
+          {profiles.length === 0 && <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noUsersFound")}</TableCell></TableRow>}
         </TableBody>
       </Table>
     </div>
@@ -174,6 +177,7 @@ export function UsersRolesTab() {
 
 // ─── Guilds Tab ─────────────────────────────────────────────
 export function GuildsTab() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -234,7 +238,7 @@ export function GuildsTab() {
   const toggleApproved = async (id: string, current: boolean) => {
     await supabase.from("guilds").update({ is_approved: !current }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-guilds"] });
-    toast({ title: current ? "Guild unapproved" : "Guild approved" });
+    toast({ title: current ? t("uiContentTabs.guildUnapproved") : t("uiContentTabs.guildApproved") });
   };
 
   if (isLoading) return <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
@@ -244,11 +248,11 @@ export function GuildsTab() {
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Name</SortableTableHead>
+            <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.name")}</SortableTableHead>
             <SortableTableHead sortKey="type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Type</SortableTableHead>
-            <SortableTableHead sortKey="_creator" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Created By</SortableTableHead>
-            <SortableTableHead sortKey="_members" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Members</SortableTableHead>
-            <SortableTableHead sortKey="_quests" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Quests</SortableTableHead>
+            <SortableTableHead sortKey="_creator" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.createdBy")}</SortableTableHead>
+            <SortableTableHead sortKey="_members" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.members")}</SortableTableHead>
+            <SortableTableHead sortKey="_quests" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.quests")}</SortableTableHead>
             <TableHead>Approved</TableHead>
           </TableRow>
         </TableHeader>
@@ -268,7 +272,7 @@ export function GuildsTab() {
               <TableCell><Switch checked={guild.is_approved} onCheckedChange={() => toggleApproved(guild.id, guild.is_approved)} /></TableCell>
             </TableRow>
           ))}
-          {guilds.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">No guilds yet.</TableCell></TableRow>}
+          {guilds.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noGuildsYet")}</TableCell></TableRow>}
         </TableBody>
       </Table>
     </div>
@@ -277,6 +281,7 @@ export function GuildsTab() {
 
 // ─── Quests Tab ─────────────────────────────────────────────
 export function QuestsTab() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [statusFilter, setStatusFilter] = useState("all");
@@ -315,7 +320,7 @@ export function QuestsTab() {
   const toggleFeatured = async (id: string, current: boolean) => {
     await supabase.from("quests").update({ is_featured: !current }).eq("id", id);
     qc.invalidateQueries({ queryKey: ["admin-quests"] });
-    toast({ title: current ? "Quest unfeatured" : "Quest featured" });
+    toast({ title: current ? t("uiContentTabs.questUnfeatured") : t("uiContentTabs.questFeatured") });
   };
 
   if (isLoading) return <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
@@ -324,13 +329,13 @@ export function QuestsTab() {
     <div className="space-y-4">
       <div className="flex flex-wrap gap-3">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[140px]"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-[140px]"><SelectValue placeholder={t("uiContentTabs.status")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="OPEN">Open</SelectItem>
-            <SelectItem value="ACTIVE">Active</SelectItem>
-            <SelectItem value="COMPLETED">Completed</SelectItem>
-            <SelectItem value="CANCELLED">Cancelled</SelectItem>
+            <SelectItem value="all">{t("uiContentTabs.allStatuses")}</SelectItem>
+            <SelectItem value="OPEN">{t("uiContentTabs.open")}</SelectItem>
+            <SelectItem value="ACTIVE">{t("uiContentTabs.active")}</SelectItem>
+            <SelectItem value="COMPLETED">{t("uiContentTabs.completed")}</SelectItem>
+            <SelectItem value="CANCELLED">{t("uiContentTabs.cancelled")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -338,11 +343,11 @@ export function QuestsTab() {
         <Table>
           <TableHeader>
             <TableRow>
-              <SortableTableHead sortKey="title" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Title</SortableTableHead>
-              <SortableTableHead sortKey="_guild" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Guild</SortableTableHead>
-              <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Status</SortableTableHead>
+              <SortableTableHead sortKey="title" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.title")}</SortableTableHead>
+              <SortableTableHead sortKey="_guild" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.guild")}</SortableTableHead>
+              <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.status")}</SortableTableHead>
               <SortableTableHead sortKey="monetization_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Monetization</SortableTableHead>
-              <SortableTableHead sortKey="reward_xp" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Reward XP</SortableTableHead>
+              <SortableTableHead sortKey="reward_xp" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.rewardXp")}</SortableTableHead>
               <TableHead>Featured</TableHead>
             </TableRow>
           </TableHeader>
@@ -357,7 +362,7 @@ export function QuestsTab() {
                 <TableCell><Switch checked={quest.is_featured} onCheckedChange={() => toggleFeatured(quest.id, quest.is_featured)} /></TableCell>
               </TableRow>
             ))}
-            {sorted.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">No quests match filters.</TableCell></TableRow>}
+            {sorted.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noQuestsMatchFilters")}</TableCell></TableRow>}
           </TableBody>
         </Table>
       </div>
@@ -367,6 +372,7 @@ export function QuestsTab() {
 
 // ─── Plans & XP Tab ─────────────────────────────────────────
 export function PlansXpTab() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -393,19 +399,19 @@ export function PlansXpTab() {
           <span className="text-amber-500 text-lg">⚠️</span>
           <div>
             <p className="text-sm font-semibold text-foreground">Alpha Phase</p>
-            <p className="text-sm text-muted-foreground">Platform credit plans are provisional and subject to change. Final pricing and quotas will be confirmed before public launch.</p>
+            <p className="text-sm text-muted-foreground">{t("uiContentTabs.platformCreditPlansAreProvisionalAnd")}</p>
           </div>
         </div>
         <div className="rounded-xl border border-border overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Name</SortableTableHead>
+                <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.name")}</SortableTableHead>
                 <SortableTableHead sortKey="code" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Code</SortableTableHead>
                 <SortableTableHead sortKey="monthly_price_amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">€/mo</SortableTableHead>
-                <SortableTableHead sortKey="free_quests_per_week" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Quests/wk</SortableTableHead>
-                <SortableTableHead sortKey="xp_multiplier" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">XP×</SortableTableHead>
-                <SortableTableHead sortKey="is_public" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Public</SortableTableHead>
+                <SortableTableHead sortKey="free_quests_per_week" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.questsWk")}</SortableTableHead>
+                <SortableTableHead sortKey="xp_multiplier" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.xp")}</SortableTableHead>
+                <SortableTableHead sortKey="is_public" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.public")}</SortableTableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -416,10 +422,10 @@ export function PlansXpTab() {
                   <TableCell className="text-right">{plan.monthly_price_amount ?? 0}</TableCell>
                   <TableCell className="text-right">{plan.free_quests_per_week === -1 ? "∞" : plan.free_quests_per_week ?? "—"}</TableCell>
                   <TableCell className="text-right">{plan.xp_multiplier ?? 1}×</TableCell>
-                  <TableCell>{plan.is_public ? <Badge variant="secondary" className="text-xs">Public</Badge> : <Badge variant="outline" className="text-xs">Internal</Badge>}</TableCell>
+                  <TableCell>{plan.is_public ? <Badge variant="secondary" className="text-xs">{t("uiContentTabs.public")}</Badge> : <Badge variant="outline" className="text-xs">Internal</Badge>}</TableCell>
                 </TableRow>
               ))}
-              {plans.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">No plans configured.</TableCell></TableRow>}
+              {plans.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noPlansConfigured")}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>
@@ -430,6 +436,7 @@ export function PlansXpTab() {
 
 // ─── Houses & Territories Tab ───────────────────────────────
 export function HousesTerritoriesTab() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [newTopicName, setNewTopicName] = useState("");
@@ -460,11 +467,11 @@ export function HousesTerritoriesTab() {
     const trimmed = editingTerritoryName.trim();
     if (!trimmed) return;
     const { error } = await supabase.from("territories").update({ name: trimmed }).eq("id", id);
-    if (error) { toast({ title: "Failed to rename territory", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiContentTabs.failedToRenameTerritory"), variant: "destructive" }); return; }
     setEditingTerritoryId(null);
     setEditingTerritoryName("");
     qc.invalidateQueries({ queryKey: ["admin-territories"] });
-    toast({ title: "Territory renamed" });
+    toast({ title: t("uiContentTabs.territoryRenamed") });
   };
 
   const addTopic = async () => {
@@ -473,22 +480,22 @@ export function HousesTerritoriesTab() {
     await supabase.from("topics").insert({ name: newTopicName.trim(), slug });
     setNewTopicName("");
     qc.invalidateQueries({ queryKey: ["admin-topics"] });
-    toast({ title: "Topic created" });
+    toast({ title: t("uiContentTabs.topicCreated") });
   };
 
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Hash className="h-5 w-5" /> Topics (Houses)</h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Hash className="h-5 w-5" /> {t("uiContentTabs.topicsHouses")}</h3>
         <div className="flex gap-2 mb-3">
-          <Input placeholder="New topic name…" value={newTopicName} onChange={(e) => setNewTopicName(e.target.value)} className="max-w-xs" />
-          <Button size="sm" onClick={addTopic} disabled={!newTopicName.trim()}><Plus className="h-4 w-4 mr-1" /> Add</Button>
+          <Input placeholder={t("uiContentTabs.newTopicName")} value={newTopicName} onChange={(e) => setNewTopicName(e.target.value)} className="max-w-xs" />
+          <Button size="sm" onClick={addTopic} disabled={!newTopicName.trim()}><Plus className="h-4 w-4 mr-1" /> {t("uiContentTabs.add")}</Button>
         </div>
         <div className="rounded-xl border border-border overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableTableHead sortKey="name" currentKey={topicSort.sort.key} direction={topicSort.sort.direction} onSort={topicSort.toggle}>Name</SortableTableHead>
+                <SortableTableHead sortKey="name" currentKey={topicSort.sort.key} direction={topicSort.sort.direction} onSort={topicSort.toggle}>{t("uiContentTabs.name")}</SortableTableHead>
                 <SortableTableHead sortKey="slug" currentKey={topicSort.sort.key} direction={topicSort.sort.direction} onSort={topicSort.toggle}>Slug</SortableTableHead>
               </TableRow>
             </TableHeader>
@@ -499,16 +506,16 @@ export function HousesTerritoriesTab() {
                   <TableCell><code className="text-xs text-muted-foreground">{topic.slug}</code></TableCell>
                 </TableRow>
               ))}
-              {topics.length === 0 && <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-8">No topics yet.</TableCell></TableRow>}
+              {topics.length === 0 && <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noTopicsYet")}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>
       </div>
       <Separator />
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><MapPin className="h-5 w-5" /> Territories</h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><MapPin className="h-5 w-5" /> {t("uiContentTabs.territories")}</h3>
         <div className="flex gap-2 mb-3">
-          <Button size="sm" onClick={() => setShowTerritoryWizard(true)}><Plus className="h-4 w-4 mr-1" /> Add Territory</Button>
+          <Button size="sm" onClick={() => setShowTerritoryWizard(true)}><Plus className="h-4 w-4 mr-1" /> {t("uiContentTabs.addTerritory")}</Button>
         </div>
         {showTerritoryWizard && (
           <TerritoryCreateWizard open={showTerritoryWizard} onClose={() => setShowTerritoryWizard(false)} />
@@ -517,8 +524,8 @@ export function HousesTerritoriesTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableTableHead sortKey="name" currentKey={territorySort.sort.key} direction={territorySort.sort.direction} onSort={territorySort.toggle}>Name</SortableTableHead>
-                <SortableTableHead sortKey="level" currentKey={territorySort.sort.key} direction={territorySort.sort.direction} onSort={territorySort.toggle}>Level</SortableTableHead>
+                <SortableTableHead sortKey="name" currentKey={territorySort.sort.key} direction={territorySort.sort.direction} onSort={territorySort.toggle}>{t("uiContentTabs.name")}</SortableTableHead>
+                <SortableTableHead sortKey="level" currentKey={territorySort.sort.key} direction={territorySort.sort.direction} onSort={territorySort.toggle}>{t("uiContentTabs.level")}</SortableTableHead>
                 <TableHead className="w-24 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -549,7 +556,7 @@ export function HousesTerritoriesTab() {
                   </TableCell>
                 </TableRow>
               ))}
-              {territories.length === 0 && <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">No territories yet.</TableCell></TableRow>}
+              {territories.length === 0 && <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noTerritoriesYet")}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>
@@ -560,6 +567,7 @@ export function HousesTerritoriesTab() {
 
 // ─── Governance Tab ─────────────────────────────────────────
 export function GovernanceTab() {
+  const { t } = useTranslation();
   const { data: polls = [], isLoading } = useQuery({
     queryKey: ["admin-decision-polls"],
     queryFn: async () => {
@@ -580,7 +588,7 @@ export function GovernanceTab() {
     <div className="space-y-4">
       <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Star className="h-5 w-5" /> Decisions & Polls</h3>
       {polls.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No decisions or polls yet.</p>
+        <p className="text-sm text-muted-foreground">{t("uiContentTabs.noDecisionsOrPollsYet")}</p>
       ) : (
         <div className="rounded-xl border border-border overflow-hidden">
           <Table>
@@ -588,7 +596,7 @@ export function GovernanceTab() {
               <TableRow>
                 <SortableTableHead sortKey="question" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Question</SortableTableHead>
                 <SortableTableHead sortKey="decision_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Type</SortableTableHead>
-                <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Status</SortableTableHead>
+                <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.status")}</SortableTableHead>
                 <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Created</SortableTableHead>
               </TableRow>
             </TableHeader>
@@ -611,6 +619,7 @@ export function GovernanceTab() {
 
 // ─── Services Section ───────────────────────────────────────
 export function ServicesSection() {
+  const { t } = useTranslation();
   const { data: services = [], isLoading } = useQuery({
     queryKey: ["admin-services"],
     queryFn: async () => {
@@ -667,11 +676,11 @@ export function ServicesSection() {
       <Table>
         <TableHeader>
           <TableRow>
-            <SortableTableHead sortKey="title" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Title</SortableTableHead>
+            <SortableTableHead sortKey="title" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.title")}</SortableTableHead>
             <SortableTableHead sortKey="_provider" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Provider</SortableTableHead>
             <SortableTableHead sortKey="price_amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Price</SortableTableHead>
             <SortableTableHead sortKey="_bookings" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Bookings</SortableTableHead>
-            <SortableTableHead sortKey="is_active" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Active</SortableTableHead>
+            <SortableTableHead sortKey="is_active" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.active")}</SortableTableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -681,10 +690,10 @@ export function ServicesSection() {
               <TableCell className="text-sm text-muted-foreground">{svc._provider}</TableCell>
               <TableCell className="text-right">{svc.price_amount != null ? `${svc.price_amount} ${svc.price_currency}` : "Free"}</TableCell>
               <TableCell className="text-right">{svc._bookings}</TableCell>
-              <TableCell><Badge variant={svc.is_active ? "default" : "secondary"} className="text-xs">{svc.is_active ? "Active" : "Inactive"}</Badge></TableCell>
+              <TableCell><Badge variant={svc.is_active ? "default" : "secondary"} className="text-xs">{svc.is_active ? t("uiContentTabs.active") : "Inactive"}</Badge></TableCell>
             </TableRow>
           ))}
-          {services.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No services yet.</TableCell></TableRow>}
+          {services.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noServicesYet")}</TableCell></TableRow>}
         </TableBody>
       </Table>
     </div>
@@ -693,6 +702,7 @@ export function ServicesSection() {
 
 // ─── Bookings Section ───────────────────────────────────────
 export function BookingsSection() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [statusFilter, setStatusFilter] = useState("all");
@@ -760,13 +770,13 @@ export function BookingsSection() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px]"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-[160px]"><SelectValue placeholder={t("uiContentTabs.status")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="PENDING">Pending</SelectItem>
+            <SelectItem value="all">{t("uiContentTabs.allStatuses")}</SelectItem>
+            <SelectItem value="PENDING">{t("uiContentTabs.pending")}</SelectItem>
             <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-            <SelectItem value="CANCELLED">Cancelled</SelectItem>
-            <SelectItem value="COMPLETED">Completed</SelectItem>
+            <SelectItem value="CANCELLED">{t("uiContentTabs.cancelled")}</SelectItem>
+            <SelectItem value="COMPLETED">{t("uiContentTabs.completed")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -777,9 +787,9 @@ export function BookingsSection() {
               <SortableTableHead sortKey="_service" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Service</SortableTableHead>
               <SortableTableHead sortKey="_requester" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Requester</SortableTableHead>
               <SortableTableHead sortKey="_provider" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Provider</SortableTableHead>
-              <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Status</SortableTableHead>
+              <SortableTableHead sortKey="status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiContentTabs.status")}</SortableTableHead>
               <SortableTableHead sortKey="payment_status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Payment</SortableTableHead>
-              <SortableTableHead sortKey="amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Amount</SortableTableHead>
+              <SortableTableHead sortKey="amount" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">{t("uiContentTabs.amount")}</SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -792,10 +802,10 @@ export function BookingsSection() {
                   <Select value={b.status} onValueChange={(v) => updateStatus(b.id, v)}>
                     <SelectTrigger className="h-7 w-[130px] text-xs"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="PENDING">Pending</SelectItem>
+                      <SelectItem value="PENDING">{t("uiContentTabs.pending")}</SelectItem>
                       <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                      <SelectItem value="COMPLETED">Completed</SelectItem>
+                      <SelectItem value="CANCELLED">{t("uiContentTabs.cancelled")}</SelectItem>
+                      <SelectItem value="COMPLETED">{t("uiContentTabs.completed")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </TableCell>
@@ -803,7 +813,7 @@ export function BookingsSection() {
                 <TableCell className="text-right text-sm">{b.amount != null ? `${b.amount} ${b.currency}` : "—"}</TableCell>
               </TableRow>
             ))}
-            {sorted.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">No bookings match filter.</TableCell></TableRow>}
+            {sorted.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noBookingsMatchFilter")}</TableCell></TableRow>}
           </TableBody>
         </Table>
       </div>
@@ -813,6 +823,7 @@ export function BookingsSection() {
 
 // ─── Moderation Tab ─────────────────────────────────────────
 export function ModerationTab() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [statusFilter, setStatusFilter] = useState("all");
@@ -910,10 +921,10 @@ export function ModerationTab() {
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Flag className="h-5 w-5" /> Reports ({reports.length})</h3>
         <div className="flex flex-wrap gap-3 mb-4">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px] h-9"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectTrigger className="w-[160px] h-9"><SelectValue placeholder={t("uiContentTabs.status")} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="OPEN">Open</SelectItem>
+              <SelectItem value="all">{t("uiContentTabs.allStatuses2")}</SelectItem>
+              <SelectItem value="OPEN">{t("uiContentTabs.open")}</SelectItem>
               <SelectItem value="REVIEWED">Reviewed</SelectItem>
               <SelectItem value="RESOLVED">Resolved</SelectItem>
               <SelectItem value="DISMISSED">Dismissed</SelectItem>
@@ -923,7 +934,7 @@ export function ModerationTab() {
         {loadingReports ? (
           <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : filteredReports.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No reports matching filters.</p>
+          <p className="text-sm text-muted-foreground">{t("uiContentTabs.noReportsMatchingFilters")}</p>
         ) : (
           <div className="rounded-xl border border-border overflow-hidden">
             <Table>
@@ -932,8 +943,8 @@ export function ModerationTab() {
                   <SortableTableHead sortKey="_reporter" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Reporter</SortableTableHead>
                   <SortableTableHead sortKey="target_type" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Type</SortableTableHead>
                   <SortableTableHead sortKey="reason" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Reason</SortableTableHead>
-                  <SortableTableHead sortKey="status" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Status</SortableTableHead>
-                  <SortableTableHead sortKey="created_at" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>Date</SortableTableHead>
+                  <SortableTableHead sortKey="status" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>{t("uiContentTabs.status")}</SortableTableHead>
+                  <SortableTableHead sortKey="created_at" currentKey={reportSort.sort.key} direction={reportSort.sort.direction} onSort={reportSort.toggle}>{t("uiContentTabs.date")}</SortableTableHead>
                   <TableHead className="w-[240px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -947,7 +958,7 @@ export function ModerationTab() {
                     <TableCell className="text-sm text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex gap-1 flex-wrap">
-                        {targetLink(r) !== "#" && <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" asChild><Link to={targetLink(r)}><ExternalLink className="h-3 w-3 mr-1" /> View</Link></Button>}
+                        {targetLink(r) !== "#" && <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" asChild><Link to={targetLink(r)}><ExternalLink className="h-3 w-3 mr-1" /> {t("uiContentTabs.view")}</Link></Button>}
                         {r.status === "OPEN" && (
                           <>
                             <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => updateReportStatus(r.id, "REVIEWED")}><Eye className="h-3 w-3 mr-1" /> Reviewed</Button>
@@ -969,7 +980,7 @@ export function ModerationTab() {
 
       {/* All comments */}
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><MessageSquare className="h-5 w-5" /> All Comments</h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><MessageSquare className="h-5 w-5" /> {t("uiContentTabs.allComments")}</h3>
         {loadingComments ? (
           <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : (
@@ -998,7 +1009,7 @@ export function ModerationTab() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {comments.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No comments yet.</TableCell></TableRow>}
+                {comments.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">{t("uiContentTabs.noCommentsYet")}</TableCell></TableRow>}
               </TableBody>
             </Table>
           </div>
@@ -1010,6 +1021,7 @@ export function ModerationTab() {
 
 // ─── Notifications Monitoring Tab ───────────────────────────
 export function NotificationsMonitoringTab() {
+  const { t } = useTranslation();
   const { toast } = useToast();
 
   const { data: notifStats, isLoading } = useQuery({
@@ -1058,11 +1070,11 @@ export function NotificationsMonitoringTab() {
         </div>
       </div>
       <div>
-        <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><BarChart3 className="h-5 w-5" /> Volume by Type (7 days)</h3>
+        <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><BarChart3 className="h-5 w-5" /> {t("uiContentTabs.volumeByType7Days")}</h3>
         {isLoading ? (
           <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : notifStats?.byType.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No notifications sent in the last 7 days.</p>
+          <p className="text-sm text-muted-foreground">{t("uiContentTabs.noNotificationsSentInTheLast")}</p>
         ) : (
           <div className="rounded-xl border border-border overflow-hidden">
             <Table>
@@ -1085,16 +1097,16 @@ export function NotificationsMonitoringTab() {
         )}
       </div>
       <div>
-        <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><Settings className="h-5 w-5" /> Admin Tools</h3>
+        <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2"><Settings className="h-5 w-5" /> {t("uiContentTabs.adminTools")}</h3>
         <div className="space-y-4">
           <div className="rounded-xl border border-border bg-card p-4">
             <h4 className="text-sm font-semibold mb-2">Test Push Notification</h4>
             <div className="flex gap-2">
               <Select value={testUserId} onValueChange={setTestUserId}>
-                <SelectTrigger className="w-[200px]"><SelectValue placeholder="Select user" /></SelectTrigger>
+                <SelectTrigger className="w-[200px]"><SelectValue placeholder={t("uiContentTabs.selectUser")} /></SelectTrigger>
                 <SelectContent>{users.map((u) => (<SelectItem key={u.user_id} value={u.user_id}>{u.name}</SelectItem>))}</SelectContent>
               </Select>
-              <Button size="sm" variant="outline" disabled={!testUserId} onClick={() => toast({ title: "Test push sent" })}><Send className="h-4 w-4 mr-1" /> Send test push</Button>
+              <Button size="sm" variant="outline" disabled={!testUserId} onClick={() => toast({ title: "Test push sent" })}><Send className="h-4 w-4 mr-1" /> {t("uiContentTabs.sendTestPush")}</Button>
             </div>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
@@ -1116,14 +1128,15 @@ interface EmailTemplate {
 }
 
 const DEFAULT_EMAIL_TEMPLATES: EmailTemplate[] = [
-  { id: "welcome", name: "Welcome Email", description: "Sent when a new user signs up.", enabled: true, subject: "Welcome to the platform!", introText: "We're excited to have you join our community." },
-  { id: "digest_daily", name: "Daily Digest", description: "Summary of recent activity.", enabled: true, subject: "Your daily digest", introText: "Here's what happened today." },
+  { id: "welcome", name: "Welcome Email", get description() { return i18n.t("uiContentTabs.sentWhenANewUserSigns"); }, enabled: true, subject: "Welcome to the platform!", introText: "We're excited to have you join our community." },
+  { id: "digest_daily", name: "Daily Digest", get description() { return i18n.t("uiContentTabs.summaryOfRecentActivity"); }, enabled: true, subject: "Your daily digest", introText: "Here's what happened today." },
   { id: "digest_weekly", name: "Weekly Summary", description: "Weekly recap email.", enabled: true, subject: "Your weekly summary", introText: "Here's your week in review." },
-  { id: "booking_confirmed", name: "Booking Confirmed", description: "Sent when booking is confirmed.", enabled: true, subject: "Your booking is confirmed!", introText: "Your session has been confirmed." },
-  { id: "quest_update", name: "Quest Update", description: "Sent when a quest you follow is updated.", enabled: true, subject: "Quest update", introText: "A quest you're following has been updated." },
+  { id: "booking_confirmed", name: "Booking Confirmed", get description() { return i18n.t("uiContentTabs.sentWhenBookingIsConfirmed"); }, enabled: true, subject: "Your booking is confirmed!", introText: "Your session has been confirmed." },
+  { id: "quest_update", name: "Quest Update", get description() { return i18n.t("uiContentTabs.sentWhenAQuestYouFollow"); }, enabled: true, subject: "Quest update", introText: "A quest you're following has been updated." },
 ];
 
 export function EmailsDigestsTab() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [templates, setTemplates] = useState<EmailTemplate[]>(DEFAULT_EMAIL_TEMPLATES);
   const [editId, setEditId] = useState<string | null>(null);
@@ -1142,7 +1155,7 @@ export function EmailsDigestsTab() {
   return (
     <div className="space-y-6">
       <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Mail className="h-5 w-5" /> Email Templates & Digests</h3>
-      <p className="text-sm text-muted-foreground">Manage email templates sent to users. Toggle to enable/disable.</p>
+      <p className="text-sm text-muted-foreground">{t("uiContentTabs.manageEmailTemplatesSentToUsers")}</p>
       <div className="rounded-xl border border-border overflow-hidden">
         <Table>
           <TableHeader>

@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -6,7 +8,7 @@ import { XP_EVENT_TYPES } from "@/lib/xpCreditsConfig";
 
 export const MEMORY_CATEGORIES = [
   { value: "ECONOMY", label: "Economy", icon: "💰" },
-  { value: "EVENTS", label: "Events", icon: "📅" },
+  { value: "EVENTS", get label() { return i18n.t("uiUseTerritoryMemory.events"); }, icon: "📅" },
   { value: "HISTORY", label: "History", icon: "📜" },
   { value: "SOCIOLOGY", label: "Sociology", icon: "👥" },
   { value: "BUSINESS", label: "Business", icon: "🏢" },
@@ -127,6 +129,7 @@ export function useTerritoryContributors(territoryId: string | undefined) {
 }
 
 export function useAddTerritoryMemory() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
   const { grantXp } = useXpCredits();
@@ -167,12 +170,13 @@ export function useAddTerritoryMemory() {
       }
     },
     onError: (e: any) => {
-      toast({ title: "Failed to add memory", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryMemory.failedToAddMemory"), description: e.message, variant: "destructive" });
     },
   });
 }
 
 export function useUpdateTerritoryMemory() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -189,12 +193,13 @@ export function useUpdateTerritoryMemory() {
       toast({ title: "Memory entry updated" });
     },
     onError: (e: any) => {
-      toast({ title: "Failed to update", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryMemory.failedToUpdate"), description: e.message, variant: "destructive" });
     },
   });
 }
 
 export function useDeleteTerritoryMemory() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -212,12 +217,13 @@ export function useDeleteTerritoryMemory() {
       toast({ title: "Memory entry deleted" });
     },
     onError: (e: any) => {
-      toast({ title: "Failed to delete", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryMemory.failedToDelete"), description: e.message, variant: "destructive" });
     },
   });
 }
 
 export function useGenerateTerritorySummary() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -233,10 +239,10 @@ export function useGenerateTerritorySummary() {
     onSuccess: (_, territoryId) => {
       qc.invalidateQueries({ queryKey: ["territory-summary", territoryId] });
       qc.invalidateQueries({ queryKey: ["territory-memory", territoryId] });
-      toast({ title: "Territory synthesis generated" });
+      toast({ title: t("uiUseTerritoryMemory.territorySynthesisGenerated") });
     },
     onError: (e: any) => {
-      toast({ title: "Failed to generate synthesis", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryMemory.failedToGenerateSynthesis"), description: e.message, variant: "destructive" });
     },
   });
 }

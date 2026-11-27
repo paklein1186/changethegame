@@ -7,21 +7,21 @@ export default function RoadmapPage() {
     <ContentPageShell title={t("pages.roadmap.title")} subtitle={t("pages.roadmap.subtitle")}>
       <ContentSection title="Upcoming Features">
         <ContentList items={[
-          "Enhanced territory intelligence dashboards",
-          "Advanced guild governance tools",
-          "Public API for integrations",
-          "Mobile-optimized experience improvements",
-          "Cross-platform AI matchmaking upgrades",
+          t("uiRoadmapPage.enhancedTerritoryIntelligenceDashboards"),
+          t("uiRoadmapPage.advancedGuildGovernanceTools"),
+          t("uiRoadmapPage.publicApiForIntegrations"),
+          t("uiRoadmapPage.mobileOptimizedExperienceImprovements"),
+          t("uiRoadmapPage.crossPlatformAiMatchmakingUpgrades"),
         ]} />
       </ContentSection>
 
       <ContentSection title="Recent Updates">
         <ContentList items={[
-          "Network hub with relational ecosystem view",
-          "AI matchmaker integration across all units",
-          "Course creation and enrollment system",
-          "Quest proposals and funding workflows",
-          "Persona-based UI personalization",
+          t("uiRoadmapPage.networkHubWithRelationalEcosystemView"),
+          t("uiRoadmapPage.aiMatchmakerIntegrationAcrossAllUnits"),
+          t("uiRoadmapPage.courseCreationAndEnrollmentSystem"),
+          t("uiRoadmapPage.questProposalsAndFundingWorkflows"),
+          t("uiRoadmapPage.personaBasedUiPersonalization"),
         ]} />
       </ContentSection>
 

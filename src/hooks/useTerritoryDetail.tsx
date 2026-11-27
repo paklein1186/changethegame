@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -107,6 +108,7 @@ export function useExcerptUserUpvotes(territoryId: string | undefined, userId: s
 }
 
 export function useToggleExcerptUpvote() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
   const { grantXp } = useXpCredits();
@@ -138,12 +140,13 @@ export function useToggleExcerptUpvote() {
       qc.invalidateQueries({ queryKey: ["territory-excerpt-upvotes-user"] });
     },
     onError: (e: any) => {
-      toast({ title: "Failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryDetail.failed"), description: e.message, variant: "destructive" });
     },
   });
 }
 
 export function useCreateExcerpt() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
   const { grantXp } = useXpCredits();
@@ -168,7 +171,7 @@ export function useCreateExcerpt() {
     },
     onSuccess: async (data, vars) => {
       qc.invalidateQueries({ queryKey: ["territory-excerpts", vars.territory_id] });
-      toast({ title: "Excerpt saved to Library" });
+      toast({ title: t("uiUseTerritoryDetail.excerptSavedToLibrary") });
       try {
         await grantXp(vars.created_by_user_id, {
           type: XP_EVENT_TYPES.TERRITORY_EXCERPT_CREATED as any,
@@ -179,7 +182,7 @@ export function useCreateExcerpt() {
       }
     },
     onError: (e: any) => {
-      toast({ title: "Failed to save excerpt", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryDetail.failedToSaveExcerpt"), description: e.message, variant: "destructive" });
     },
   });
 }
@@ -187,6 +190,7 @@ export function useCreateExcerpt() {
 /* ───── Delete Excerpt (soft) ───── */
 
 export function useDeleteExcerpt() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -203,7 +207,7 @@ export function useDeleteExcerpt() {
       toast({ title: "Excerpt removed" });
     },
     onError: (e: any) => {
-      toast({ title: "Failed to delete", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryDetail.failedToDelete"), description: e.message, variant: "destructive" });
     },
   });
 }
@@ -211,6 +215,7 @@ export function useDeleteExcerpt() {
 /* ───── Report Excerpt ───── */
 
 export function useReportExcerpt() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -245,7 +250,7 @@ export function useReportExcerpt() {
       toast({ title: "Report submitted", description: "Admins have been notified." });
     },
     onError: (e: any) => {
-      toast({ title: "Failed to report", description: e.message, variant: "destructive" });
+      toast({ title: t("uiUseTerritoryDetail.failedToReport"), description: e.message, variant: "destructive" });
     },
   });
 }

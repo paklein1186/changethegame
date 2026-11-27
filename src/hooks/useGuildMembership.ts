@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -67,6 +68,7 @@ export function canAccessGuildVoting(
 }
 
 export function useGuildMembership(guildId: string | undefined) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const userId = session?.user?.id;
   const { toast } = useToast();
@@ -120,17 +122,17 @@ export function useGuildMembership(guildId: string | undefined) {
   const joinAsGuest = useCallback(async () => {
     if (!userId || !guildId) return;
     if (membership) {
-      toast({ title: "You're already part of this guild." });
+      toast({ title: t("uiUseGuildMembership.youReAlreadyPartOfThis") });
       return;
     }
     const { error } = await supabase
       .from("user_guild_memberships" as any)
       .insert({ user_id: userId, guild_id: guildId, role: "guest", status: "active" });
     if (error) {
-      toast({ title: "Failed to join", variant: "destructive" });
+      toast({ title: t("uiUseGuildMembership.failedToJoin"), variant: "destructive" });
       return;
     }
-    toast({ title: "You joined this guild as a guest." });
+    toast({ title: t("uiUseGuildMembership.youJoinedThisGuildAsA") });
     refresh();
   }, [userId, guildId, membership, toast, refresh]);
 
@@ -144,7 +146,7 @@ export function useGuildMembership(guildId: string | undefined) {
     const errMsg = (data as any)?.error || (error as any)?.message;
     if (error || (data as any)?.error) {
       toast({
-        title: "Payment could not be completed",
+        title: t("uiUseGuildMembership.paymentCouldNotBeCompleted"),
         description: errMsg ?? "Please try again.",
         variant: "destructive",
       });
@@ -168,14 +170,14 @@ export function useGuildMembership(guildId: string | undefined) {
         .update({ cancel_at_period_end: cancel })
         .eq("id", membership.id);
       if (error) {
-        toast({ title: "Could not update renewal", variant: "destructive" });
+        toast({ title: t("uiUseGuildMembership.couldNotUpdateRenewal"), variant: "destructive" });
         return;
       }
       toast({
         title: cancel ? "Renewal stopped" : "Renewal reactivated",
         description: cancel
-          ? "Your membership stays active until the end of the current period."
-          : "Your membership will renew automatically again.",
+          ? t("uiUseGuildMembership.yourMembershipStaysActiveUntilThe")
+          : t("uiUseGuildMembership.yourMembershipWillRenewAutomaticallyAgain"),
       });
       refresh();
     },

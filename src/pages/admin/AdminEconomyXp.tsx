@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Star, Loader2, TrendingUp, Users, BarChart3, Settings2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,7 @@ import { GOVERNANCE_RIGHTS } from "@/lib/governanceConfig";
 import { useTableSort } from "@/hooks/useTableSort";
 
 export default function AdminEconomyXp() {
+  const { t } = useTranslation();
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ["admin-xp-transactions"],
     queryFn: async () => {
@@ -71,14 +73,14 @@ export default function AdminEconomyXp() {
   return (
     <div className="space-y-6">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-        <Star className="h-6 w-6 text-primary" /> XP & Regenerative Collaboration Ladder
+        <Star className="h-6 w-6 text-primary" /> {t("uiAdminEconomyXp.xpRegenerativeCollaborationLadder")}
       </h2>
 
       <Tabs defaultValue="distribution">
         <TabsList>
           <TabsTrigger value="distribution" className="gap-1.5"><BarChart3 className="h-3.5 w-3.5" /> Distribution</TabsTrigger>
           <TabsTrigger value="transactions" className="gap-1.5"><TrendingUp className="h-3.5 w-3.5" /> Transactions</TabsTrigger>
-          <TabsTrigger value="levels" className="gap-1.5"><Settings2 className="h-3.5 w-3.5" /> Level Config</TabsTrigger>
+          <TabsTrigger value="levels" className="gap-1.5"><Settings2 className="h-3.5 w-3.5" /> {t("uiAdminEconomyXp.levelConfig")}</TabsTrigger>
           <TabsTrigger value="governance" className="gap-1.5"><Users className="h-3.5 w-3.5" /> Governance</TabsTrigger>
         </TabsList>
 
@@ -93,20 +95,20 @@ export default function AdminEconomyXp() {
                 </CardContent></Card>
                 <Card><CardContent className="pt-4">
                   <p className="text-2xl font-bold">{distributionStats.totalXp.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">Total XP Distributed</p>
+                  <p className="text-xs text-muted-foreground">{t("uiAdminEconomyXp.totalXpDistributed")}</p>
                 </CardContent></Card>
                 <Card><CardContent className="pt-4">
                   <p className="text-2xl font-bold">{distributionStats.avgXp}</p>
-                  <p className="text-xs text-muted-foreground">Average XP</p>
+                  <p className="text-xs text-muted-foreground">{t("uiAdminEconomyXp.averageXp")}</p>
                 </CardContent></Card>
                 <Card><CardContent className="pt-4">
                   <p className="text-2xl font-bold">{distributionStats.maxXp.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">Highest XP</p>
+                  <p className="text-xs text-muted-foreground">{t("uiAdminEconomyXp.highestXp")}</p>
                 </CardContent></Card>
               </div>
 
               <Card>
-                <CardHeader><CardTitle className="text-sm">Level Distribution</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-sm">{t("uiAdminEconomyXp.levelDistribution")}</CardTitle></CardHeader>
                 <CardContent className="space-y-2">
                   {XP_LEVEL_THRESHOLDS.map(({ level, minXp }) => {
                     const count = distributionStats.levelCounts[level] || 0;
@@ -131,7 +133,7 @@ export default function AdminEconomyXp() {
 
         {/* ─── Transactions ─── */}
         <TabsContent value="transactions" className="space-y-4 mt-4">
-          <h3 className="font-semibold text-lg mb-2">Recent XP Transactions</h3>
+          <h3 className="font-semibold text-lg mb-2">{t("uiAdminEconomyXp.recentXpTransactions")}</h3>
           {isLoading ? <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div> : (
             <div className="rounded-xl border border-border overflow-hidden">
               <Table>
@@ -140,7 +142,7 @@ export default function AdminEconomyXp() {
                     <SortableTableHead sortKey="userName" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>User</SortableTableHead>
                     <SortableTableHead sortKey="type" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>Type</SortableTableHead>
                     <SortableTableHead sortKey="amount_xp" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle} className="text-right">XP</SortableTableHead>
-                    <SortableTableHead sortKey="created_at" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>Date</SortableTableHead>
+                    <SortableTableHead sortKey="created_at" currentKey={txSort.sort.key} direction={txSort.sort.direction} onSort={txSort.toggle}>{t("uiAdminEconomyXp.date")}</SortableTableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -152,20 +154,20 @@ export default function AdminEconomyXp() {
                       <TableCell className="text-sm text-muted-foreground">{new Date(t.created_at).toLocaleDateString()}</TableCell>
                     </TableRow>
                   ))}
-                  {transactions.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">No XP transactions yet.</TableCell></TableRow>}
+                  {transactions.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">{t("uiAdminEconomyXp.noXpTransactionsYet")}</TableCell></TableRow>}
                 </TableBody>
               </Table>
             </div>
           )}
 
           <h3 className="font-semibold text-lg mb-2">Recent Achievements</h3>
-          {achievements.length === 0 ? <p className="text-sm text-muted-foreground">No achievements unlocked yet.</p> : (
+          {achievements.length === 0 ? <p className="text-sm text-muted-foreground">{t("uiAdminEconomyXp.noAchievementsUnlockedYet")}</p> : (
             <div className="rounded-xl border border-border overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <SortableTableHead sortKey="title" currentKey={achievementSort.sort.key} direction={achievementSort.sort.direction} onSort={achievementSort.toggle}>Title</SortableTableHead>
-                    <SortableTableHead sortKey="created_at" currentKey={achievementSort.sort.key} direction={achievementSort.sort.direction} onSort={achievementSort.toggle}>Date</SortableTableHead>
+                    <SortableTableHead sortKey="title" currentKey={achievementSort.sort.key} direction={achievementSort.sort.direction} onSort={achievementSort.toggle}>{t("uiAdminEconomyXp.title")}</SortableTableHead>
+                    <SortableTableHead sortKey="created_at" currentKey={achievementSort.sort.key} direction={achievementSort.sort.direction} onSort={achievementSort.toggle}>{t("uiAdminEconomyXp.date")}</SortableTableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -190,9 +192,9 @@ export default function AdminEconomyXp() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Level</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead className="text-right">Min XP</TableHead>
+                      <TableHead>{t("uiAdminEconomyXp.level")}</TableHead>
+                      <TableHead>{t("uiAdminEconomyXp.name")}</TableHead>
+                      <TableHead className="text-right">{t("uiAdminEconomyXp.minXp")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -207,7 +209,7 @@ export default function AdminEconomyXp() {
                 </Table>
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                Thresholds are defined in <code className="text-[10px] bg-muted px-1 py-0.5 rounded">src/lib/xpCreditsConfig.ts</code> and the database function <code className="text-[10px] bg-muted px-1 py-0.5 rounded">grant_user_xp</code>. Both must be updated together.
+                {t("uiAdminEconomyXp.thresholdsAreDefinedIn")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">src/lib/xpCreditsConfig.ts</code> {t("uiAdminEconomyXp.andTheDatabaseFunction")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">grant_user_xp</code>{t("uiAdminEconomyXp.bothMustBeUpdatedTogether")}
               </p>
             </CardContent>
           </Card>
@@ -216,13 +218,13 @@ export default function AdminEconomyXp() {
         {/* ─── Governance Rights Reference ─── */}
         <TabsContent value="governance" className="space-y-4 mt-4">
           <Card>
-            <CardHeader><CardTitle className="text-sm">Governance Rights by Level</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm">{t("uiAdminEconomyXp.governanceRightsByLevel")}</CardTitle></CardHeader>
             <CardContent>
               <div className="rounded-xl border border-border overflow-hidden max-h-[50vh] overflow-y-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <SortableTableHead sortKey="minLevel" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>Level</SortableTableHead>
+                      <SortableTableHead sortKey="minLevel" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>{t("uiAdminEconomyXp.level")}</SortableTableHead>
                       <SortableTableHead sortKey="label" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>Right</SortableTableHead>
                       <SortableTableHead sortKey="sphere" currentKey={govSort.sort.key} direction={govSort.sort.direction} onSort={govSort.toggle}>Sphere</SortableTableHead>
                     </TableRow>
@@ -244,7 +246,7 @@ export default function AdminEconomyXp() {
                 </Table>
               </div>
               <p className="text-xs text-muted-foreground mt-3">
-                Governance rights are defined in <code className="text-[10px] bg-muted px-1 py-0.5 rounded">src/lib/governanceConfig.ts</code>. SuperAdmin can customize these per deployment.
+                {t("uiAdminEconomyXp.governanceRightsAreDefinedIn")} <code className="text-[10px] bg-muted px-1 py-0.5 rounded">src/lib/governanceConfig.ts</code>. SuperAdmin can customize these per deployment.
               </p>
             </CardContent>
           </Card>

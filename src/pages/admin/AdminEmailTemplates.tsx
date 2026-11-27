@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -139,6 +140,7 @@ function TemplateEditor({
   design: typeof DEFAULT_DESIGN;
   onSaved: () => void;
 }) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const qc = useQueryClient();
   const [subject, setSubject] = useState(template.subject);
@@ -167,7 +169,7 @@ function TemplateEditor({
       qc.invalidateQueries({ queryKey: ["admin-email-templates"] });
       onSaved();
     },
-    onError: () => toast.error("Failed to save template"),
+    onError: () => toast.error(t("uiAdminEmailTemplates.failedToSaveTemplate")),
   });
 
   const previewTemplate: EmailTemplate = {
@@ -196,11 +198,11 @@ function TemplateEditor({
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? <EyeOff className="h-3.5 w-3.5 mr-1" /> : <Eye className="h-3.5 w-3.5 mr-1" />}
-            {showPreview ? "Edit" : "Preview"}
+            {showPreview ? t("uiAdminEmailTemplates.edit") : "Preview"}
           </Button>
           <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
             {save.isPending ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Save className="h-3.5 w-3.5 mr-1" />}
-            Save
+            {t("uiAdminEmailTemplates.save")}
           </Button>
         </div>
       </div>
@@ -243,13 +245,13 @@ function TemplateEditor({
           <div className="space-y-1.5">
             <label className="text-xs font-medium">Body HTML</label>
             <p className="text-xs text-muted-foreground">
-              Write HTML directly. Use <code className="bg-muted px-1 rounded text-[10px]">{"{{variable}}"}</code> for dynamic values.
+              Write HTML directly. Use <code className="bg-muted px-1 rounded text-[10px]">{"{{variable}}"}</code> {t("uiAdminEmailTemplates.forDynamicValues")}
             </p>
             <Textarea
               value={bodyHtml}
               onChange={(e) => setBodyHtml(e.target.value)}
               className="font-mono text-xs min-h-[240px] resize-y"
-              placeholder="<p>Your email body...</p>"
+              placeholder={t("uiAdminEmailTemplates.pYourEmailBodyP")}
             />
           </div>
 
@@ -258,7 +260,7 @@ function TemplateEditor({
               <label className="text-xs font-medium flex items-center gap-1">
                 <Link2 className="h-3 w-3" /> CTA Button Label
               </label>
-              <Input value={ctaLabel} onChange={(e) => setCtaLabel(e.target.value)} placeholder="e.g. Get started" />
+              <Input value={ctaLabel} onChange={(e) => setCtaLabel(e.target.value)} placeholder={t("uiAdminEmailTemplates.eGGetStarted")} />
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium">CTA Button URL</label>
@@ -273,6 +275,7 @@ function TemplateEditor({
 
 // ─── Main Page ────────────────────────────────────────────────
 export default function AdminEmailTemplates() {
+  const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [design, setDesign] = useState(DEFAULT_DESIGN);
   const [showDesign, setShowDesign] = useState(false);
@@ -300,12 +303,12 @@ export default function AdminEmailTemplates() {
             <Mail className="h-6 w-6 text-primary" /> Email Templates
           </h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Edit the content, CTA links, and design of all platform emails.
+            {t("uiAdminEmailTemplates.editTheContentCtaLinksAnd")}
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={() => setShowDesign(!showDesign)}>
           <Palette className="h-3.5 w-3.5 mr-1" />
-          {showDesign ? "Hide" : "Design"} Settings
+          {showDesign ? "Hide" : "Design"} {t("uiAdminEmailTemplates.settings")}
         </Button>
       </div>
 
@@ -357,7 +360,7 @@ export default function AdminEmailTemplates() {
               onSaved={() => {}}
             />
           ) : (
-            <p className="text-muted-foreground text-sm py-8 text-center">Select a template to edit.</p>
+            <p className="text-muted-foreground text-sm py-8 text-center">{t("uiAdminEmailTemplates.selectATemplateToEdit")}</p>
           )}
         </div>
       </div>

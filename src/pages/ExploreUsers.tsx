@@ -366,7 +366,7 @@ export default function ExploreUsers({ bare }: { bare?: boolean }) {
 
       {!isLoggedIn && (
         <PublicExploreCTA
-          message="You're seeing a preview. Log in to view full profiles and connect with people."
+          message={t("uiExploreUsers.youReSeeingAPreviewLog")}
           compact
         />
       )}

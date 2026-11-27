@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useCallback, useMemo } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import type { OnboardingProgress } from "@/types/models";
@@ -5,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
 export function useOnboardingProgress() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const userId = currentUser.id;
 
@@ -65,14 +67,14 @@ export function useOnboardingProgress() {
   // The wizard already handles: profile (photo/bio/headline/location), languages, and topics/houses
   const steps = useMemo(
     () => [
-      { key: "joinedGuild" as const, label: "Join a Guild", description: "Find your community (+30 XP)", link: "/explore?tab=guilds" },
-      { key: "followedQuests" as const, label: "Create your first Quest", description: "Launch a project (+50 Platform Credits)", link: "/quests/new" },
-      { key: "createdService" as const, label: "Publish a Service", description: "Offer your skills (+15 XP)", link: "/services/new" },
-      { key: "joinedPod" as const, label: "Collaborate in a Pod", description: "Join or create a pod (+20 XP)", link: "/explore?tab=pods" },
-      { key: "contributedTerritory" as const, label: "Contribute to a Territory", description: "Add a memory entry (+40 XP)", link: "/explore/territories" },
-      { key: "attendedEvent" as const, label: "Attend an Event", description: "Register for a guild event (+20 Platform Credits)", link: "/calendar" },
-      { key: "bookedSession" as const, label: "Book a Session", description: "Connect with someone", link: "/explore?tab=services" },
-      { key: "enrichedProfile" as const, label: "Enrich your profile with AI", description: "Let Pulse analyze your resume or LinkedIn (+25 XP)", link: "/profile/enrich" },
+      { key: "joinedGuild" as const, label: t("uiUseOnboardingProgress.joinAGuild"), description: t("uiUseOnboardingProgress.findYourCommunity30Xp"), link: "/explore?tab=guilds" },
+      { key: "followedQuests" as const, label: t("uiUseOnboardingProgress.createYourFirstQuest"), description: t("uiUseOnboardingProgress.launchAProject50PlatformCredits"), link: "/quests/new" },
+      { key: "createdService" as const, label: t("uiUseOnboardingProgress.publishAService"), description: t("uiUseOnboardingProgress.offerYourSkills15Xp"), link: "/services/new" },
+      { key: "joinedPod" as const, label: t("uiUseOnboardingProgress.collaborateInAPod"), description: t("uiUseOnboardingProgress.joinOrCreateAPod20"), link: "/explore?tab=pods" },
+      { key: "contributedTerritory" as const, label: t("uiUseOnboardingProgress.contributeToATerritory"), description: t("uiUseOnboardingProgress.addAMemoryEntry40Xp"), link: "/explore/territories" },
+      { key: "attendedEvent" as const, label: t("uiUseOnboardingProgress.attendAnEvent"), description: t("uiUseOnboardingProgress.registerForAGuildEvent20"), link: "/calendar" },
+      { key: "bookedSession" as const, label: t("uiUseOnboardingProgress.bookASession"), description: t("uiUseOnboardingProgress.connectWithSomeone"), link: "/explore?tab=services" },
+      { key: "enrichedProfile" as const, label: t("uiUseOnboardingProgress.enrichYourProfileWithAi"), description: t("uiUseOnboardingProgress.letPulseAnalyzeYourResumeOr"), link: "/profile/enrich" },
     ],
     [],
   );

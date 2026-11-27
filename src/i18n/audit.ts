@@ -8,7 +8,7 @@ import ts from "typescript";
 import fs from "node:fs";
 import path from "node:path";
 
-const ATTRS = new Set(["placeholder", "title", "aria-label", "alt", "label", "description", "emptyText", "tooltip", "helperText", "confirmText", "cancelText", "subtitle", "buttonLabel"]);
+const ATTRS = new Set(["message", "placeholder", "title", "aria-label", "alt", "label", "description", "emptyText", "tooltip", "helperText", "confirmText", "cancelText", "subtitle", "buttonLabel"]);
 const PROPS = new Set(["title", "description", "label", "placeholder", "message", "text", "buttonLabel", "confirmLabel", "cancelLabel", "emptyText", "subtitle", "tooltip", "hint", "desc"]);
 const NOTIFY = /^(toast(\.(success|error|info|warning|message))?|alert|confirm|window\.confirm)$/;
 
@@ -78,6 +78,7 @@ export function scanFile(file: string, root: string): { findings: Finding[]; key
     else if (ts.isPropertyAssignment(n) && PROPS.has(n.name.getText(sf)) && isStr(n.initializer) && looksEnglish(n.initializer.text)) hit(n, "propriété " + n.name.getText(sf), n.initializer.text);
     else if (ts.isCallExpression(n) && NOTIFY.test(n.expression.getText(sf)) && isStr(n.arguments[0]) && looksEnglish(n.arguments[0].text)) hit(n, n.expression.getText(sf), n.arguments[0].text);
     else if (isStr(n) && looksEnglish(n.text) && inUiBranch(n)) hit(n, "condition", n.text);
+    else if (isStr(n) && looksEnglish(n.text) && ts.isArrayLiteralExpression(n.parent) && n.parent.parent && ts.isJsxExpression(n.parent.parent) && ts.isJsxAttribute(n.parent.parent.parent)) hit(n, "liste", n.text);
     ts.forEachChild(n, visit);
   };
   visit(sf);

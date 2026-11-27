@@ -7,7 +7,7 @@ export default function GuildsInfoPage() {
     <ContentPageShell title={t("pages.guildsInfo.title")} subtitle={t("pages.guildsInfo.subtitle")}>
       <ContentSection title={t("uiGuildsInfoPage.whatAreGuilds")}>
         <p>{t("uiGuildsInfoPage.guildsAreLivingCommunitiesThatGather")}</p>
-        <ContentList items={["Collaborate on quests", "Share resources", "Organize events", "Use collaboration tools (kanban, docs, AI agent)", "Apply or invite members"]} />
+        <ContentList items={[t("uiGuildsInfoPage.collaborateOnQuests"), t("uiGuildsInfoPage.shareResources"), t("uiGuildsInfoPage.organizeEvents"), t("uiGuildsInfoPage.useCollaborationToolsKanbanDocsAi"), t("uiGuildsInfoPage.applyOrInviteMembers")]} />
       </ContentSection>
 
       <ContentCTA links={[

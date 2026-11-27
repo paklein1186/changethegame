@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { attachEmails } from "@/lib/profileEmails";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function AdminCommunityUsers() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { toast } = useToast();
@@ -54,7 +56,7 @@ export default function AdminCommunityUsers() {
       toast({ title: `User "${userName}" deleted successfully` });
       qc.invalidateQueries({ queryKey: ["admin-community-users"] });
     } catch (e: any) {
-      toast({ title: "Failed to delete user", description: e.message, variant: "destructive" });
+      toast({ title: t("uiAdminCommunityUsers.failedToDeleteUser"), description: e.message, variant: "destructive" });
     } finally {
       setDeletingId(null);
     }
@@ -66,7 +68,7 @@ export default function AdminCommunityUsers() {
         <Users className="h-6 w-6 text-primary" /> Users
       </h2>
       <Input
-        placeholder="Search by name or email…"
+        placeholder={t("uiAdminCommunityUsers.searchByNameOrEmail")}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="max-w-sm"
@@ -75,9 +77,9 @@ export default function AdminCommunityUsers() {
         <Table>
           <TableHeader>
             <TableRow>
-              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Name</SortableTableHead>
+              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityUsers.name")}</SortableTableHead>
               <SortableTableHead sortKey="email" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Email</SortableTableHead>
-              <SortableTableHead sortKey="role" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Role</SortableTableHead>
+              <SortableTableHead sortKey="role" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityUsers.role")}</SortableTableHead>
               <SortableTableHead sortKey="xp" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">XP</SortableTableHead>
               <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Joined</SortableTableHead>
               <th className="h-12 px-4 w-20"></th>
@@ -117,18 +119,18 @@ export default function AdminCommunityUsers() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete user permanently?</AlertDialogTitle>
+                          <AlertDialogTitle>{t("uiAdminCommunityUsers.deleteUserPermanently")}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This will remove <strong>{p.name || p.email}</strong> from the authentication system and database. Their email will become available for re-registration. This action cannot be undone.
+                            {t("uiAdminCommunityUsers.thisWillRemove")} <strong>{p.name || p.email}</strong> {t("uiAdminCommunityUsers.fromTheAuthenticationSystemAndDatabase")}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>{t("uiAdminCommunityUsers.cancel")}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDeleteUser(p.user_id, p.name || p.email || "User")}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            Delete permanently
+                            {t("uiAdminCommunityUsers.deletePermanently")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -140,7 +142,7 @@ export default function AdminCommunityUsers() {
             {sorted.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                  No users found.
+                  {t("uiAdminCommunityUsers.noUsersFound")}
                 </TableCell>
               </TableRow>
             )}

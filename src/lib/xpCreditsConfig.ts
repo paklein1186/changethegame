@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 // ─── XP Event Types & Rewards ────────────────────────────────
 // All XP amounts are centralized here for easy tuning.
 
@@ -283,7 +284,7 @@ export const PLAN_MIGRATION_MAP: Record<string, string> = {
 // ─── Share Classes ──────────────────────────────────────────
 export const SHARE_CLASSES = {
   A: { label: "Guardian", description: "Core builders — strategic governance" },
-  B: { label: "Steward", description: "Active contributors — community governance" },
+  B: { label: "Steward", get description() { return i18n.t("uiXpCreditsConfig.activeContributorsCommunityGovernance"); } },
   C: { label: "Strategic Partner", description: "Strategic partners — institutional alignment" },
 } as const;
 
@@ -294,7 +295,7 @@ export const TREASURY_ALLOCATION = {
   REINVESTMENT: { percent: 40, label: "Reinvestment Reserve" },
   SHAREHOLDERS: { percent: 30, label: "Shareholder Distribution" },
   ECOSYSTEM: { percent: 20, label: "Ecosystem Treasury" },
-  SOLIDARITY: { percent: 10, label: "Solidarity & New Territories" },
+  SOLIDARITY: { percent: 10, get label() { return i18n.t("uiXpCreditsConfig.solidarityNewTerritories"); } },
 } as const;
 
 // ─── Cross-Territory XP Bonus ───────────────────────────────
@@ -303,10 +304,10 @@ export const CROSS_TERRITORY_XP_BONUS = 0.10; // +10%
 
 // ─── Governance XP Tiers ────────────────────────────────────
 export const GOVERNANCE_XP_TIERS = [
-  { levels: "1–4", label: "Participate", minLevel: 1, description: "Explore the ecosystem, join guilds, attend events." },
-  { levels: "5–8", label: "Comment & Vote", minLevel: 5, description: "Engage in governance discussions and cast votes on proposals." },
-  { levels: "9–12", label: "Propose", minLevel: 9, description: "Submit governance proposals and lead initiatives." },
-  { levels: "13–15", label: "Steward Council", minLevel: 13, description: "Eligible for steward council roles and strategic decisions." },
+  { levels: "1–4", label: "Participate", minLevel: 1, get description() { return i18n.t("uiXpCreditsConfig.exploreTheEcosystemJoinGuildsAttend"); } },
+  { levels: "5–8", label: "Comment & Vote", minLevel: 5, get description() { return i18n.t("uiXpCreditsConfig.engageInGovernanceDiscussionsAndCast"); } },
+  { levels: "9–12", label: "Propose", minLevel: 9, get description() { return i18n.t("uiXpCreditsConfig.submitGovernanceProposalsAndLeadInitiatives"); } },
+  { levels: "13–15", label: "Steward Council", minLevel: 13, get description() { return i18n.t("uiXpCreditsConfig.eligibleForStewardCouncilRolesAnd"); } },
 ] as const;
 
 // ─── Grace Period ───────────────────────────────────────────

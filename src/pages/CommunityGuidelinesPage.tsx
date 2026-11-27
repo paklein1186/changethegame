@@ -7,13 +7,13 @@ export default function CommunityGuidelinesPage() {
     <ContentPageShell title={t("pages.community.title")} subtitle={t("pages.community.subtitle")}>
       <ContentSection title={t("uiCommunityGuidelinesPage.ourStandards")}>
         <ContentList items={[
-          "Respect and kindness in all interactions",
-          "Zero tolerance for harassment or discrimination",
-          "Constructive collaboration over conflict",
-          "Inclusive language that welcomes everyone",
-          "Respect for territories and local communities",
-          "Appropriate use of AI agents",
-          "Use reporting tools when needed — moderation is active",
+          t("uiCommunityGuidelinesPage.respectAndKindnessInAllInteractions"),
+          t("uiCommunityGuidelinesPage.zeroToleranceForHarassmentOrDiscrimination"),
+          t("uiCommunityGuidelinesPage.constructiveCollaborationOverConflict"),
+          t("uiCommunityGuidelinesPage.inclusiveLanguageThatWelcomesEveryone"),
+          t("uiCommunityGuidelinesPage.respectForTerritoriesAndLocalCommunities"),
+          t("uiCommunityGuidelinesPage.appropriateUseOfAiAgents"),
+          t("uiCommunityGuidelinesPage.useReportingToolsWhenNeededModeration"),
         ]} />
       </ContentSection>
     </ContentPageShell>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 
 export function AdminBountiesTab() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
@@ -41,7 +43,7 @@ export function AdminBountiesTab() {
 
   const handleCreate = async () => {
     if (!form.title || !form.action_type || !form.ends_at) {
-      toast.error("Title, action type, and end date are required");
+      toast.error(t("uiAdminBountiesTab.titleActionTypeAndEndDate"));
       return;
     }
     setCreating(true);
@@ -85,14 +87,14 @@ export function AdminBountiesTab() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Plus className="h-4 w-4" /> Create Bounty
+            <Plus className="h-4 w-4" /> {t("uiAdminBountiesTab.createBounty")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Title *</Label>
-              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Document a Natural System" />
+              <Label className="text-xs">{t("uiAdminBountiesTab.title")}</Label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={t("uiAdminBountiesTab.eGDocumentANaturalSystem")} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Action Type *</Label>
@@ -100,7 +102,7 @@ export function AdminBountiesTab() {
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Description</Label>
+            <Label className="text-xs">{t("uiAdminBountiesTab.description")}</Label>
             <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} placeholder="What should contributors do?" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -113,17 +115,17 @@ export function AdminBountiesTab() {
               <Input type="number" value={form.total_slots} onChange={(e) => setForm({ ...form, total_slots: Number(e.target.value) })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Starts At</Label>
+              <Label className="text-xs">{t("uiAdminBountiesTab.startsAt")}</Label>
               <Input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Ends At *</Label>
+              <Label className="text-xs">{t("uiAdminBountiesTab.endsAt")}</Label>
               <Input type="datetime-local" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} />
             </div>
           </div>
           <Button onClick={handleCreate} disabled={creating} className="gap-1.5">
             {creating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Pin className="h-3.5 w-3.5" />}
-            Create Bounty
+            {t("uiAdminBountiesTab.createBounty")}
           </Button>
         </CardContent>
       </Card>
@@ -131,24 +133,24 @@ export function AdminBountiesTab() {
       {/* Existing bounties */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">All Bounties ({bounties.length})</CardTitle>
+          <CardTitle className="text-base">{t("uiAdminBountiesTab.allBounties")}{bounties.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin" /></div>
           ) : bounties.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">No bounties created yet.</p>
+            <p className="text-sm text-muted-foreground text-center py-4">{t("uiAdminBountiesTab.noBountiesCreatedYet")}</p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Title</TableHead>
+                    <TableHead>{t("uiAdminBountiesTab.title2")}</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead className="text-right">Reward</TableHead>
                     <TableHead className="text-right">Claims</TableHead>
                     <TableHead>Ends</TableHead>
-                    <TableHead>Active</TableHead>
+                    <TableHead>{t("uiAdminBountiesTab.active")}</TableHead>
                     <TableHead />
                   </TableRow>
                 </TableHeader>

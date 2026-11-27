@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +8,7 @@ import { toast } from "sonner";
 import { useNotifications } from "@/hooks/useNotifications";
 
 export function useFollow(targetType: FollowTargetType, targetId: string) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const qc = useQueryClient();
   const { notifyNewFollower } = useNotifications();
@@ -51,7 +53,7 @@ export function useFollow(targetType: FollowTargetType, targetId: string) {
     },
     onError: (_err, _vars, context) => {
       qc.setQueryData(queryKey, context?.prev);
-      toast.error("Failed to follow");
+      toast.error(t("uiUseFollow.failedToFollow"));
     },
     onSuccess: () => {
       toast.success("Following!");
@@ -86,7 +88,7 @@ export function useFollow(targetType: FollowTargetType, targetId: string) {
     },
     onError: (_err, _vars, context) => {
       qc.setQueryData(queryKey, context?.prev);
-      toast.error("Failed to unfollow");
+      toast.error(t("uiUseFollow.failedToUnfollow"));
     },
     onSuccess: () => {
       toast.success("Unfollowed");
@@ -100,7 +102,7 @@ export function useFollow(targetType: FollowTargetType, targetId: string) {
 
   const toggle = useCallback(() => {
     if (!userId) {
-      toast.error("Please log in to follow");
+      toast.error(t("uiUseFollow.pleaseLogInToFollow"));
       return;
     }
     if (isFollowing) {

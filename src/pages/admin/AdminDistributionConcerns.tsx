@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +13,7 @@ import {
 import { AlertTriangle, CheckCircle2, X, Eye, Loader2 } from "lucide-react";
 
 export default function AdminDistributionConcerns() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -94,25 +96,25 @@ export default function AdminDistributionConcerns() {
           <AlertTriangle className="h-6 w-6 text-amber-500" /> Distribution Concerns
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Confidential reports from contributors about distribution fairness.
+          {t("uiAdminDistributionConcerns.confidentialReportsFromContributorsAboutDistribution")}
         </p>
       </div>
 
       {isLoading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin" /></div>
       ) : reports.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">No distribution concerns reported.</div>
+        <div className="text-center py-12 text-muted-foreground">{t("uiAdminDistributionConcerns.noDistributionConcernsReported")}</div>
       ) : (
         <div className="rounded-xl border border-border overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-muted/50 border-b border-border">
-                <th className="text-left p-3 font-medium">Quest</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.quest")}</th>
                 <th className="text-left p-3 font-medium">Reporter</th>
                 <th className="text-left p-3 font-medium">Severity</th>
                 <th className="text-left p-3 font-medium">Currency</th>
-                <th className="text-left p-3 font-medium">Date</th>
-                <th className="text-left p-3 font-medium">Status</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.date")}</th>
+                <th className="text-left p-3 font-medium">{t("uiAdminDistributionConcerns.status")}</th>
                 <th className="text-right p-3 font-medium">Actions</th>
               </tr>
             </thead>
@@ -171,13 +173,13 @@ export default function AdminDistributionConcerns() {
           {reports.map((r: any) => (
             <details key={`detail-${r.id}`} className="border-t border-border">
               <summary className="px-3 py-2 text-xs text-muted-foreground cursor-pointer hover:bg-muted/30">
-                View reason — {r.id.slice(0, 8)}
+                {t("uiAdminDistributionConcerns.viewReason")} {r.id.slice(0, 8)}
               </summary>
               <div className="px-3 pb-3 text-sm">
                 <p className="whitespace-pre-line">{r.reason}</p>
                 {r.superadmin_note && (
                   <div className="mt-2 rounded bg-muted/50 p-2 text-xs">
-                    <strong>Admin note:</strong> {r.superadmin_note}
+                    <strong>{t("uiAdminDistributionConcerns.adminNote")}</strong> {r.superadmin_note}
                   </div>
                 )}
               </div>
@@ -191,7 +193,7 @@ export default function AdminDistributionConcerns() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Resolve Concern</DialogTitle>
-            <DialogDescription>Add an internal note (not visible to the reporter).</DialogDescription>
+            <DialogDescription>{t("uiAdminDistributionConcerns.addAnInternalNoteNotVisible")}</DialogDescription>
           </DialogHeader>
           <Textarea
             value={resolveNote}
@@ -200,7 +202,7 @@ export default function AdminDistributionConcerns() {
             rows={3}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setResolveOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setResolveOpen(false)}>{t("uiAdminDistributionConcerns.cancel")}</Button>
             <Button onClick={() => resolveId && updateStatus(resolveId, "resolved")} disabled={processing}>
               {processing && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
               Resolve

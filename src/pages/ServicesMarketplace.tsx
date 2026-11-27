@@ -77,7 +77,7 @@ export default function ServicesMarketplace({ bare }: { bare?: boolean }) {
 
       {!isLoggedIn && (
         <PublicExploreCTA
-          message="Service details and booking are available to logged-in users. Here's a preview of what's available."
+          message={t("uiServicesMarketplace.serviceDetailsAndBookingAreAvailable")}
           className="mb-6"
         />
       )}

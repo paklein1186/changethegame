@@ -7,7 +7,7 @@ export default function CreateCompanyInfoPage() {
     <ContentPageShell title={t("pages.createCompany.title")} subtitle={t("pages.createCompany.subtitle")}>
       <ContentSection title="What Traditional Organizations Manage">
         <p>{t("uiCreateCompanyInfoPage.aTraditionalOrganizationRefersToA")}</p>
-        <ContentList items={["Organization quests", "Organization services", "Members and roles", "Bookings", "Governance"]} />
+        <ContentList items={[t("uiCreateCompanyInfoPage.organizationQuests"), t("uiCreateCompanyInfoPage.organizationServices"), t("uiCreateCompanyInfoPage.membersAndRoles"), t("uiCreateCompanyInfoPage.bookings"), t("uiCreateCompanyInfoPage.governance")]} />
       </ContentSection>
 
       <ContentCTA links={[{ label: t("uiCreateCompanyInfoPage.createATraditionalOrganization"), href: "/me/companies" }]} />

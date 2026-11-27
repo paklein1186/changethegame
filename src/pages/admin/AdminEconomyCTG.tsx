@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import {
   Sprout, RefreshCw, Wallet, TrendingUp, Globe, Users,
@@ -27,6 +28,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 /* ─── Sub-tab: Vue Globale ─── */
 function CTGOverviewTab() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -103,10 +105,10 @@ function CTGOverviewTab() {
   };
 
   const stats = [
-    { label: "$CTG in circulation", value: metrics?.totalCirculation ?? 0, icon: Wallet, color: "text-emerald-600" },
+    { label: t("uiAdminEconomyCTG.ctgInCirculation"), value: metrics?.totalCirculation ?? 0, icon: Wallet, color: "text-emerald-600" },
     { label: "Total emitted", value: metrics?.totalEmitted ?? 0, icon: TrendingUp, color: "text-blue-600" },
     { label: "Commons Wallet", value: metrics?.commonsBalance ?? 0, icon: Globe, color: "text-amber-600" },
-    { label: "Active wallets", value: metrics?.activeWallets ?? 0, icon: Users, color: "text-violet-600", isCount: true },
+    { label: t("uiAdminEconomyCTG.activeWallets"), value: metrics?.activeWallets ?? 0, icon: Users, color: "text-violet-600", isCount: true },
     { label: "Exchange rate", value: metrics?.exchangeRate ?? 0, icon: ArrowLeftRight, color: "text-cyan-600", suffix: " credits/$CTG" },
     { label: "Exchange volume 30d", value: metrics?.exchangeVolume ?? 0, icon: BarChart3, color: "text-rose-600" },
   ];
@@ -114,7 +116,7 @@ function CTGOverviewTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Overview</h3>
+        <h3 className="text-lg font-semibold">{t("uiAdminEconomyCTG.overview")}</h3>
         <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
           <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
           Refresh
@@ -175,6 +177,7 @@ function CTGOverviewTab() {
 
 /* ─── Sub-tab: Taux de Change ─── */
 function CTGExchangeRatesTab() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [newRate, setNewRate] = useState("");
@@ -257,7 +260,7 @@ function CTGExchangeRatesTab() {
       queryClient.invalidateQueries({ queryKey: ["admin-ctg-rate-history"] });
       queryClient.invalidateQueries({ queryKey: ["admin-ctg-metrics"] });
     } catch (e: any) {
-      toast.error(e.message ?? "Error updating the rate");
+      toast.error(e.message ?? t("uiAdminEconomyCTG.errorUpdatingTheRate"));
     } finally {
       setSubmitting(false);
     }
@@ -273,10 +276,10 @@ function CTGExchangeRatesTab() {
           <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
           <div>
              <p className="text-sm font-medium text-yellow-800 dark:text-yellow-400">
-              No rate adjustment for {daysSinceLastChange} days
+              {t("uiAdminEconomyCTG.noRateAdjustmentFor")} {daysSinceLastChange} days
             </p>
             <p className="text-xs text-yellow-700/80 dark:text-yellow-500/80 mt-0.5">
-              Consider reviewing the economic relevance of the current exchange rate.
+              {t("uiAdminEconomyCTG.considerReviewingTheEconomicRelevanceOf")}
             </p>
           </div>
         </div>
@@ -315,13 +318,13 @@ function CTGExchangeRatesTab() {
       {/* New rate form */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Set a new rate</CardTitle>
-          <CardDescription>The new rate will apply immediately to all exchanges.</CardDescription>
+          <CardTitle className="text-base">{t("uiAdminEconomyCTG.setANewRate")}</CardTitle>
+          <CardDescription>{t("uiAdminEconomyCTG.theNewRateWillApplyImmediately")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="new-rate">New rate (credits per $CTG)</Label>
+              <Label htmlFor="new-rate">{t("uiAdminEconomyCTG.newRateCreditsPerCtg")}</Label>
               <Input
                 id="new-rate"
                 type="number"
@@ -333,15 +336,15 @@ function CTGExchangeRatesTab() {
                 onChange={(e) => setNewRate(e.target.value)}
               />
               {newRate && !isValidRate && (
-                <p className="text-xs text-destructive">Value between 1 and 1000, no decimals.</p>
+                <p className="text-xs text-destructive">{t("uiAdminEconomyCTG.valueBetween1And1000No")}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="rate-reason">Reason for change *</Label>
+              <Label htmlFor="rate-reason">{t("uiAdminEconomyCTG.reasonForChange")}</Label>
               <Textarea
                 id="rate-reason"
                 maxLength={500}
-                placeholder="Justify the rate change..."
+                placeholder={t("uiAdminEconomyCTG.justifyTheRateChange")}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 className="resize-none h-20"
@@ -352,7 +355,7 @@ function CTGExchangeRatesTab() {
 
           {isValidRate && (
             <div className="rounded-md bg-muted/60 p-3 text-sm space-y-1">
-              <p className="font-medium">Preview with this rate:</p>
+              <p className="font-medium">{t("uiAdminEconomyCTG.previewWithThisRate")}</p>
               <p>100 $CTG = <strong>{(100 * rateNum).toLocaleString("en-US")}</strong> credits</p>
               <p>1,000 $CTG = <strong>{(1000 * rateNum).toLocaleString("en-US")}</strong> credits</p>
             </div>
@@ -361,20 +364,19 @@ function CTGExchangeRatesTab() {
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button disabled={!canSubmit || submitting}>
-                {submitting ? "Applying..." : "Apply new rate"}
+                {submitting ? "Applying..." : t("uiAdminEconomyCTG.applyNewRate")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Confirm rate change</AlertDialogTitle>
+                <AlertDialogTitle>{t("uiAdminEconomyCTG.confirmRateChange")}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure? The rate <strong>1 $CTG = {rateNum} credits</strong> will apply immediately
-                  to all exchanges on the platform.
+                  {t("uiAdminEconomyCTG.areYouSureTheRate")} <strong>1 $CTG = {rateNum} credits</strong> {t("uiAdminEconomyCTG.willApplyImmediatelyToAllExchanges")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleSubmit}>Confirm</AlertDialogAction>
+                <AlertDialogCancel>{t("uiAdminEconomyCTG.cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmit}>{t("uiAdminEconomyCTG.confirm")}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -390,11 +392,11 @@ function CTGExchangeRatesTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                 <TableHead>Date</TableHead>
+                 <TableHead>{t("uiAdminEconomyCTG.date")}</TableHead>
                 <TableHead className="text-right">Rate</TableHead>
-                <TableHead>Set by</TableHead>
+                <TableHead>{t("uiAdminEconomyCTG.setBy")}</TableHead>
                 <TableHead>Reason</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("uiAdminEconomyCTG.status")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -411,7 +413,7 @@ function CTGExchangeRatesTab() {
                   <TableCell>
                      {r.active ? (
                       <Badge variant="default" className="gap-1">
-                        <Check className="h-3 w-3" /> Active
+                        <Check className="h-3 w-3" /> {t("uiAdminEconomyCTG.active")}
                       </Badge>
                     ) : (
                       <Badge variant="secondary">Archived</Badge>
@@ -422,7 +424,7 @@ function CTGExchangeRatesTab() {
               {(history?.rows ?? []).length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                    No rate history.
+                    {t("uiAdminEconomyCTG.noRateHistory")}
                   </TableCell>
                 </TableRow>
               )}
@@ -455,6 +457,7 @@ import { AdminHarvestTab } from "@/components/admin/AdminHarvestTab";
 
 /* ─── Main Page ─── */
 export default function AdminEconomyCTG() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -462,12 +465,12 @@ export default function AdminEconomyCTG() {
         <h2 className="font-display text-2xl font-bold">$CTG Token</h2>
       </div>
       <p className="text-sm text-muted-foreground max-w-xl">
-        $CTG token administration: global metrics, exchange rates, user wallets, emission rules, bounties, and harvest windows.
+        {t("uiAdminEconomyCTG.ctgTokenAdministrationGlobalMetricsExchange")}
       </p>
 
       <Tabs defaultValue="overview">
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="overview">{t("uiAdminEconomyCTG.overview")}</TabsTrigger>
           <TabsTrigger value="rates">Exchange Rates</TabsTrigger>
           <TabsTrigger value="wallets">User Wallets</TabsTrigger>
           <TabsTrigger value="rules">Emission Rules</TabsTrigger>

@@ -135,7 +135,7 @@ export default function GuildsList({ bare, hideFilters, externalFilters, externa
 
           {!isLoggedIn && (
             <PublicExploreCTA
-              message="This is a preview of the guilds in our ecosystem. Log in or create an account to see full details and join."
+              message={t("uiGuildsList.thisIsAPreviewOfThe")}
               className="mb-6"
             />
           )}

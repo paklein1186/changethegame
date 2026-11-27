@@ -5,34 +5,34 @@ export default function SupportPage() {
   const { t } = useTranslation();
   return (
     <ContentPageShell title={t("pages.support.title")} subtitle={t("pages.support.subtitle")}>
-      <ContentSection title="Quickstart Guides">
+      <ContentSection title={t("uiSupportPage.quickstartGuides")}>
         <ContentList items={[
-          "How to create your profile",
-          "How to launch a quest",
-          "How to join a guild",
-          "How to offer a service",
-          "How to use AI agents",
+          t("uiSupportPage.howToCreateYourProfile"),
+          t("uiSupportPage.howToLaunchAQuest"),
+          t("uiSupportPage.howToJoinAGuild"),
+          t("uiSupportPage.howToOfferAService"),
+          t("uiSupportPage.howToUseAiAgents"),
         ]} />
       </ContentSection>
 
       <ContentSection title={t("uiSupportPage.inDepthGuides")}>
         <ContentList items={[
-          "XP, credits & contribution index",
-          "Pods and collaboration tools",
-          "Guild governance",
-          "Territory activation",
-          "Courses & learning modules",
-          "How AI works and where data goes",
+          t("uiSupportPage.xpCreditsContributionIndex"),
+          t("uiSupportPage.podsAndCollaborationTools"),
+          t("uiSupportPage.guildGovernance"),
+          t("uiSupportPage.territoryActivation"),
+          t("uiSupportPage.coursesLearningModules"),
+          t("uiSupportPage.howAiWorksAndWhereData"),
         ]} />
       </ContentSection>
 
-      <ContentSection title="Troubleshooting">
+      <ContentSection title={t("uiSupportPage.troubleshooting")}>
         <ContentList items={[
-          "I can't create a quest",
-          "My guild doesn't display properly",
-          "My company isn't attached",
-          "Bookings don't open",
-          "Notifications don't appear",
+          t("uiSupportPage.iCanTCreateAQuest"),
+          t("uiSupportPage.myGuildDoesnTDisplayProperly"),
+          t("uiSupportPage.myCompanyIsnTAttached"),
+          t("uiSupportPage.bookingsDonTOpen"),
+          t("uiSupportPage.notificationsDonTAppear"),
         ]} />
       </ContentSection>
 

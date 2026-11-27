@@ -7,7 +7,7 @@ export default function CreateGuildInfoPage() {
     <ContentPageShell title={t("pages.createGuild.title")} subtitle={t("pages.createGuild.subtitle")}>
       <ContentSection title={t("uiCreateGuildInfoPage.whatGuildsOffer")}>
         <p>{t("uiCreateGuildInfoPage.guildsOrCollectivesAreCollaborativeGroups")}</p>
-        <ContentList items={["Quests", "Collaboration tools", "Events", "Services", "Members and roles", "An AI agent for coordination"]} />
+        <ContentList items={[t("uiCreateGuildInfoPage.quests"), t("uiCreateGuildInfoPage.collaborationTools"), t("uiCreateGuildInfoPage.events"), t("uiCreateGuildInfoPage.services"), t("uiCreateGuildInfoPage.membersAndRoles"), t("uiCreateGuildInfoPage.anAiAgentForCoordination")]} />
       </ContentSection>
 
       <ContentSection title="Membership">

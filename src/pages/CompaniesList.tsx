@@ -60,7 +60,7 @@ export default function CompaniesList({ bare, hideFilters, externalFilters }: { 
 
           {!isLoggedIn && (
             <PublicExploreCTA
-              message="This is a preview of organizations in the ecosystem. Log in to see full details."
+              message={t("uiCompaniesList.thisIsAPreviewOfOrganizations")}
               className="mb-6"
             />
           )}

@@ -158,7 +158,7 @@ export default function QuestsMarketplace({ bare, statusFilter: externalStatusFi
 
       {!isLoggedIn && (
         <PublicExploreCTA
-          message="To see quest details, descriptions, and participate, please log in or create an account."
+          message={t("uiQuestsMarketplace.toSeeQuestDetailsDescriptionsAnd")}
           className="mb-6"
         />
       )}

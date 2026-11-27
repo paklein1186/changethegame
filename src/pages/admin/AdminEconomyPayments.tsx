@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Zap, Loader2, RefreshCcw } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTableSort } from "@/hooks/useTableSort";
 
 export default function AdminEconomyPayments() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [reconciling, setReconciling] = useState(false);
 
@@ -35,12 +37,12 @@ export default function AdminEconomyPayments() {
       if (error) throw error;
       const granted = data?.reconciled?.filter((r: any) => r.status === "granted") ?? [];
       if (granted.length > 0) {
-        toast({ title: "Credits reconciled", description: `${granted.length} payment(s) had missing credits — now granted.` });
+        toast({ title: t("uiAdminEconomyPayments.creditsReconciled"), description: `${granted.length} payment(s) had missing credits — now granted.` });
       } else {
-        toast({ title: "All good", description: "No missing credits found. All payments are accounted for." });
+        toast({ title: t("uiAdminEconomyPayments.allGood"), description: t("uiAdminEconomyPayments.noMissingCreditsFoundAllPayments") });
       }
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiAdminEconomyPayments.error"), description: err.message, variant: "destructive" });
     } finally {
       setReconciling(false);
     }
@@ -58,12 +60,12 @@ export default function AdminEconomyPayments() {
         </h2>
         <Button variant="outline" size="sm" onClick={handleReconcile} disabled={reconciling}>
           {reconciling ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <RefreshCcw className="h-4 w-4 mr-1" />}
-          Reconcile Stripe Credits
+          {t("uiAdminEconomyPayments.reconcileStripeCredits")}
         </Button>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="text-xs text-muted-foreground">Class A Shares</p>
+          <p className="text-xs text-muted-foreground">{t("uiAdminEconomyPayments.classAShares")}</p>
           <p className="text-2xl font-bold text-primary">{totalA}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
@@ -84,7 +86,7 @@ export default function AdminEconomyPayments() {
                 <SortableTableHead sortKey="share_class" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Class</SortableTableHead>
                 <SortableTableHead sortKey="number_of_shares" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Shares</SortableTableHead>
                 <SortableTableHead sortKey="total_paid" currentKey={sort.key} direction={sort.direction} onSort={toggle} className="text-right">Total Paid</SortableTableHead>
-                <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Date</SortableTableHead>
+                <SortableTableHead sortKey="created_at" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminEconomyPayments.date")}</SortableTableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -97,7 +99,7 @@ export default function AdminEconomyPayments() {
                   <TableCell className="text-sm text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</TableCell>
                 </TableRow>
               ))}
-              {shareholdings.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No share purchases yet.</TableCell></TableRow>}
+              {shareholdings.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">{t("uiAdminEconomyPayments.noSharePurchasesYet")}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>

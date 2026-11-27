@@ -7,7 +7,7 @@ export default function CoursesInfoPage() {
     <ContentPageShell title={t("pages.coursesInfo.title")} subtitle={t("pages.coursesInfo.subtitle")}>
       <ContentSection title="What Courses Include">
         <p>{t("uiCoursesInfoPage.coursesAllowUsersAndGuildsTo")}</p>
-        <ContentList items={["Lessons", "Videos", "Files", "Exercises", "Discussions"]} />
+        <ContentList items={[t("uiCoursesInfoPage.lessons"), t("uiCoursesInfoPage.videos"), t("uiCoursesInfoPage.files"), t("uiCoursesInfoPage.exercises"), t("uiCoursesInfoPage.discussions")]} />
       </ContentSection>
 
       <ContentSection title="Pricing">

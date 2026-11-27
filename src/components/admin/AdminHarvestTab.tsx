@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 
 export function AdminHarvestTab() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
@@ -46,7 +48,7 @@ export function AdminHarvestTab() {
 
   const handleCreate = async () => {
     if (!form.label || !form.ends_at) {
-      toast.error("Label and end date are required");
+      toast.error(t("uiAdminHarvestTab.labelAndEndDateAreRequired"));
       return;
     }
     setCreating(true);
@@ -97,7 +99,7 @@ export function AdminHarvestTab() {
             <span className="text-2xl">🌾</span>
             <div>
               <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
-                Harvest in progress · {activeWindow.multiplier}× boost
+                {t("uiAdminHarvestTab.harvestInProgress")} {activeWindow.multiplier}× boost
               </p>
               <p className="text-xs text-emerald-600 dark:text-emerald-400">
                 {activeWindow.label} — ends {format(new Date(activeWindow.ends_at), "PPP p")}
@@ -105,13 +107,13 @@ export function AdminHarvestTab() {
             </div>
           </div>
           <Badge className="bg-emerald-200 text-emerald-800 dark:bg-emerald-800 dark:text-emerald-200 text-xs">
-            All $CTG emissions ×{activeWindow.multiplier}
+            {t("uiAdminHarvestTab.allCtgEmissions")}{activeWindow.multiplier}
           </Badge>
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-muted/50 p-4 flex items-center gap-3">
           <span className="text-2xl opacity-40">🌾</span>
-          <p className="text-sm text-muted-foreground">No active harvest window — $CTG emissions at standard rate</p>
+          <p className="text-sm text-muted-foreground">{t("uiAdminHarvestTab.noActiveHarvestWindowCtgEmissions")}</p>
         </div>
       )}
 
@@ -119,7 +121,7 @@ export function AdminHarvestTab() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Plus className="h-4 w-4" /> Create Harvest Window
+            <Plus className="h-4 w-4" /> {t("uiAdminHarvestTab.createHarvestWindow")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -139,23 +141,23 @@ export function AdminHarvestTab() {
                 className="mt-2"
               />
               <p className="text-[11px] text-muted-foreground">
-                {form.multiplier}× means contributors earn {Math.round((form.multiplier - 1) * 100)}% more 🌱 $CTG during this window
+                {form.multiplier}× means contributors earn {Math.round((form.multiplier - 1) * 100)}{t("uiAdminHarvestTab.moreCtgDuringThisWindow")}
               </p>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Starts At</Label>
+              <Label className="text-xs">{t("uiAdminHarvestTab.startsAt")}</Label>
               <Input type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Ends At *</Label>
+              <Label className="text-xs">{t("uiAdminHarvestTab.endsAt")}</Label>
               <Input type="datetime-local" value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} />
             </div>
           </div>
           <Button onClick={handleCreate} disabled={creating} className="gap-1.5">
             {creating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sprout className="h-3.5 w-3.5" />}
-            Create Window
+            {t("uiAdminHarvestTab.createWindow")}
           </Button>
         </CardContent>
       </Card>
@@ -163,23 +165,23 @@ export function AdminHarvestTab() {
       {/* Windows table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">All Harvest Windows ({windows.length})</CardTitle>
+          <CardTitle className="text-base">{t("uiAdminHarvestTab.allHarvestWindows")}{windows.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin" /></div>
           ) : windows.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">No harvest windows created yet.</p>
+            <p className="text-sm text-muted-foreground text-center py-4">{t("uiAdminHarvestTab.noHarvestWindowsCreatedYet")}</p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
+                    <TableHead>{t("uiAdminHarvestTab.name")}</TableHead>
                     <TableHead className="text-right">Multiplier</TableHead>
-                    <TableHead>Start</TableHead>
+                    <TableHead>{t("uiAdminHarvestTab.start")}</TableHead>
                     <TableHead>End</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>{t("uiAdminHarvestTab.status")}</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>

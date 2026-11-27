@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 export interface PathConfig {
   id: string;
   name: string;
@@ -12,7 +13,7 @@ export const PATHS: PathConfig[] = [
     id: "explorer",
     name: "The Explorer",
     icon: "🌱",
-    description: "Discover CTG, build your profile, find your territory and guild",
+    get description() { return i18n.t("uiPaths.discoverCtgBuildYourProfileFind"); },
     forWho: "New to the platform",
     steps: 6,
   },
@@ -20,7 +21,7 @@ export const PATHS: PathConfig[] = [
     id: "mapper",
     name: "The Mapper",
     icon: "🗺️",
-    description: "Document your territory, monitor natural systems, map the land",
+    get description() { return i18n.t("uiPaths.documentYourTerritoryMonitorNaturalSystems"); },
     forWho: "You care about a specific place",
     steps: 6,
   },
@@ -28,7 +29,7 @@ export const PATHS: PathConfig[] = [
     id: "builder",
     name: "The Builder",
     icon: "🏗️",
-    description: "Create or strengthen guilds, collaborate on shared missions",
+    get description() { return i18n.t("uiPaths.createOrStrengthenGuildsCollaborateOn"); },
     forWho: "You want to build community",
     steps: 6,
   },
@@ -36,7 +37,7 @@ export const PATHS: PathConfig[] = [
     id: "quester",
     name: "The Quester",
     icon: "⚔️",
-    description: "Take action, complete missions, earn XP through tangible impact",
+    get description() { return i18n.t("uiPaths.takeActionCompleteMissionsEarnXp"); },
     forWho: "You want to DO things",
     steps: 6,
   },
@@ -44,7 +45,7 @@ export const PATHS: PathConfig[] = [
     id: "weaver",
     name: "The Weaver",
     icon: "🕸️",
-    description: "Understand and shape the economic flows, OVN, and value networks",
+    get description() { return i18n.t("uiPaths.understandAndShapeTheEconomicFlows"); },
     forWho: "You think in systems and value",
     steps: 6,
   },
@@ -52,7 +53,7 @@ export const PATHS: PathConfig[] = [
     id: "steward",
     name: "The Steward",
     icon: "🌳",
-    description: "Lead with service, govern with consent, mentor others",
+    get description() { return i18n.t("uiPaths.leadWithServiceGovernWithConsent"); },
     forWho: "You want to lead and guide",
     steps: 6,
   },

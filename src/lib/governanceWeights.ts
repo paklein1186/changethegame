@@ -1,21 +1,22 @@
+import i18n from "@/i18n/config";
 import { supabase } from "@/integrations/supabase/client";
 
 export const GOVERNANCE_MODELS = {
   "1h1v": {
     label: "1 Human, 1 Vote",
-    description: "Equal — every member has one vote regardless of contribution.",
+    get description() { return i18n.t("uiGovernanceWeights.equalEveryMemberHasOneVote"); },
   },
   soft_log: {
     label: "Soft Logarithmic",
-    description: "Logarithmic (soft) — contributions influence votes but are compressed.",
+    get description() { return i18n.t("uiGovernanceWeights.logarithmicSoftContributionsInfluenceVotesBut"); },
   },
   strong_log: {
     label: "Logarithmic (strong)",
-    description: "Logarithmic (strong) — contributions have more influence, still capped.",
+    get description() { return i18n.t("uiGovernanceWeights.logarithmicStrongContributionsHaveMoreInfluence"); },
   },
   pure_pct: {
     label: "Proportional",
-    description: "Proportional — voting power directly mirrors contribution percentage.",
+    get description() { return i18n.t("uiGovernanceWeights.proportionalVotingPowerDirectlyMirrorsContribution"); },
   },
 } as const;
 

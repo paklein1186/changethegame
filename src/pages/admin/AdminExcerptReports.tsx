@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Flag, CheckCircle, XCircle, Trash2, ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export default function AdminExcerptReports() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -54,7 +56,7 @@ export default function AdminExcerptReports() {
       qc.invalidateQueries({ queryKey: ["admin-excerpt-reports"] });
       toast({ title: action === "DELETE" ? "Excerpt deleted" : `Report ${action.toLowerCase()}` });
     } catch (e: any) {
-      toast({ title: "Error", description: e.message, variant: "destructive" });
+      toast({ title: t("uiAdminExcerptReports.error"), description: e.message, variant: "destructive" });
     }
   };
 
@@ -68,10 +70,10 @@ export default function AdminExcerptReports() {
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-36 h-8 text-xs"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="PENDING">Pending</SelectItem>
+            <SelectItem value="PENDING">{t("uiAdminExcerptReports.pending")}</SelectItem>
             <SelectItem value="REVIEWED">Reviewed</SelectItem>
             <SelectItem value="DISMISSED">Dismissed</SelectItem>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">{t("uiAdminExcerptReports.all")}</SelectItem>
           </SelectContent>
         </Select>
         <span className="text-xs text-muted-foreground">{reports.length} report(s)</span>
@@ -80,7 +82,7 @@ export default function AdminExcerptReports() {
       {isLoading && <div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading...</div>}
 
       {!isLoading && reports.length === 0 && (
-        <p className="text-sm text-muted-foreground py-8 text-center">No reports found.</p>
+        <p className="text-sm text-muted-foreground py-8 text-center">{t("uiAdminExcerptReports.noReportsFound")}</p>
       )}
 
       <div className="space-y-2">
@@ -93,6 +95,7 @@ export default function AdminExcerptReports() {
 }
 
 function ReportCard({ report, onAction }: { report: any; onAction: (action: "REVIEWED" | "DISMISSED" | "DELETE") => void }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const excerpt = report.starred_excerpts;
   const excerptTitle = excerpt?.title || (excerpt?.excerpt_text?.slice(0, 60) + "…");
@@ -111,7 +114,7 @@ function ReportCard({ report, onAction }: { report: any; onAction: (action: "REV
       </div>
 
       <div className="flex items-center gap-2 pl-5">
-        <span className="text-[10px] text-muted-foreground">Reported by</span>
+        <span className="text-[10px] text-muted-foreground">{t("uiAdminExcerptReports.reportedBy")}</span>
         <Avatar className="h-4 w-4">
           <AvatarImage src={report.reporterProfile?.avatar_url || undefined} />
           <AvatarFallback className="text-[8px]">{report.reporterProfile?.name?.charAt(0) || "?"}</AvatarFallback>
@@ -140,7 +143,7 @@ function ReportCard({ report, onAction }: { report: any; onAction: (action: "REV
           </Button>
           {!excerpt?.is_deleted && (
             <Button size="sm" variant="destructive" className="h-7 text-xs" onClick={() => onAction("DELETE")}>
-              <Trash2 className="h-3 w-3 mr-1" /> Delete excerpt
+              <Trash2 className="h-3 w-3 mr-1" /> {t("uiAdminExcerptReports.deleteExcerpt")}
             </Button>
           )}
         </div>

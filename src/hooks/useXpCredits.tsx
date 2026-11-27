@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -32,6 +33,7 @@ interface CreditParams {
 }
 
 export function useXpCredits() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { session } = useAuth();
 
@@ -90,7 +92,7 @@ export function useXpCredits() {
           body: `You received ${params.amount} credits. ${params.source ?? ""}`.trim(),
           deep_link_url: "/me?tab=wallet",
         });
-        toast({ title: `+${params.amount} Credits`, description: params.source ?? "Credits earned" });
+        toast({ title: `+${params.amount} Credits`, description: params.source ?? t("uiUseXpCredits.creditsEarned") });
       }
     },
     [toast]
@@ -112,8 +114,8 @@ export function useXpCredits() {
       if (error) {
         if (error.message?.includes("Insufficient credits")) {
           toast({
-            title: "Not enough Credits",
-            description: `You don't have enough credits for this action.`,
+            title: t("uiUseXpCredits.notEnoughCredits"),
+            description: t("uiUseXpCredits.youDonTHaveEnoughCredits"),
             variant: "destructive",
           });
         } else {
@@ -122,7 +124,7 @@ export function useXpCredits() {
         return false;
       }
 
-      toast({ title: `−${cost} Credits`, description: params.source ?? "Credits spent" });
+      toast({ title: `−${cost} Credits`, description: params.source ?? t("uiUseXpCredits.creditsSpent") });
       return true;
     },
     [toast]

@@ -267,7 +267,7 @@ export default function AdminStewardship() {
       setAssignUserId("");
       setAssignTerritoryId("");
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiAdminStewardship.error"), description: err.message, variant: "destructive" });
     } finally {
       setAssigning(false);
     }
@@ -300,7 +300,7 @@ export default function AdminStewardship() {
       }
       toast({ title: t("adminStewardship.toast.monthlyRewardsGranted"), description: t("adminStewardship.toast.monthlyRewardsGrantedDesc", { count }) });
     } catch (err: any) {
-      toast({ title: "Error", description: err.message, variant: "destructive" });
+      toast({ title: t("uiAdminStewardship.error"), description: err.message, variant: "destructive" });
     } finally {
       setGrantingRewards(false);
     }

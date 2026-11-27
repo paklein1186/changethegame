@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -10,6 +11,7 @@ export type RateLimitAction = "comment" | "direct_message" | "quest_creation" | 
  * checkRateLimit returns true if allowed, false if rate-limited.
  */
 export function useRateLimit() {
+  const { t } = useTranslation();
   const [isChecking, setIsChecking] = useState(false);
 
   const checkRateLimit = async (action: RateLimitAction): Promise<boolean> => {
@@ -25,7 +27,7 @@ export function useRateLimit() {
       if (res.error || res.data?.allowed === false) {
         toast({
           title: "Slow down",
-          description: res.data?.message ?? "You're doing too much too fast. Please slow down.",
+          description: res.data?.message ?? t("uiUseRateLimit.youReDoingTooMuchToo"),
           variant: "destructive",
         });
         return false;

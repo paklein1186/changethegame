@@ -253,7 +253,7 @@ function OverviewPeople({ people }: { people: any[] }) {
     <div>
       <SectionHeader icon={Users} title={t("uiNetworkHub.peopleInYourOrbit")} count={people.length} seeMoreTo="/network?tab=people" />
       {top.length === 0 ? (
-        <EmptyState icon={Users} message="Join guilds, organizations or quests to build your network." cta="Explore guilds" to="/explore?tab=entities" />
+        <EmptyState icon={Users} message={t("uiNetworkHub.joinGuildsOrganizationsOrQuestsTo")} cta="Explore guilds" to="/explore?tab=entities" />
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {top.map((p, i) => <PersonCard key={p.user_id} person={p} index={i} isFollowed={followedIds.has(p.user_id)} />)}
@@ -286,7 +286,7 @@ function OverviewCompanies({ memberships }: { memberships: any[] }) {
     <div>
       <SectionHeader icon={Building2} title={t("uiNetworkHub.traditionalOrganizationsInYourOrbit")} count={memberships.length} seeMoreTo="/network?tab=entities" />
       {top.length === 0 ? (
-        <EmptyState icon={Building2} message="No traditional organizations linked to your account." cta="Create one" to="/me/companies" />
+        <EmptyState icon={Building2} message={t("uiNetworkHub.noTraditionalOrganizationsLinkedToYour")} cta="Create one" to="/me/companies" />
       ) : (
         <div className="grid gap-3 md:grid-cols-2">
           {top.map((m, i) => <CompanyCard key={m.companyId} membership={m} index={i} />)}
@@ -302,7 +302,7 @@ function OverviewTerritories({ territories, topics, activity }: { territories: a
     <div>
       <SectionHeader icon={MapPin} title={t("uiNetworkHub.territoriesAroundYou")} seeMoreTo="/network?tab=territories" />
       {territories.length === 0 && topics.length === 0 ? (
-        <EmptyState icon={MapPin} message="Add territories and topics in your profile settings." cta="Edit profile" to="/profile/edit" />
+        <EmptyState icon={MapPin} message={t("uiNetworkHub.addTerritoriesAndTopicsInYour")} cta="Edit profile" to="/profile/edit" />
       ) : (
         <div className="space-y-3">
           {territories.length > 0 && (
@@ -379,7 +379,7 @@ function PeopleTab({ people, loading }: { people: any[]; loading: boolean }) {
           </Suspense>
         )
       ) : sorted.length === 0 ? (
-        <EmptyState icon={Users} message="Join guilds, organizations or quests to build your network." cta="Explore" to="/explore" />
+        <EmptyState icon={Users} message={t("uiNetworkHub.joinGuildsOrganizationsOrQuestsTo")} cta="Explore" to="/explore" />
       ) : (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {sorted.map((p, i) => <PersonCard key={p.user_id} person={p} index={i} isFollowed={followedIds.has(p.user_id)} />)}
@@ -457,7 +457,7 @@ function CompaniesTab({ memberships, loading }: { memberships: any[]; loading: b
       )}
 
       {memberships.length === 0 && (
-        <EmptyState icon={Building2} message="No traditional organizations linked to your account." cta="Create one" to="/me/companies" />
+        <EmptyState icon={Building2} message={t("uiNetworkHub.noTraditionalOrganizationsLinkedToYour")} cta="Create one" to="/me/companies" />
       )}
 
       <div className="flex gap-2 pt-2">
@@ -511,7 +511,7 @@ function TerritoriesTab({ territories, topics, activity, loadingT, loadingH }: {
       <div>
         <SectionHeader icon={MapPin} title={t("uiNetworkHub.yourTerritories")} count={territories.length} />
         {territories.length === 0 ? (
-          <EmptyState icon={MapPin} message="Add territories in your profile settings." cta="Edit profile" to="/profile/edit" />
+          <EmptyState icon={MapPin} message={t("uiNetworkHub.addTerritoriesInYourProfileSettings")} cta="Edit profile" to="/profile/edit" />
         ) : (
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {territories.map((t: any, i: number) => {
@@ -527,15 +527,15 @@ function TerritoriesTab({ territories, topics, activity, loadingT, loadingH }: {
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div className="rounded-lg bg-muted/50 p-2">
                       <p className="text-lg font-bold text-primary">{a.guilds}</p>
-                      <p className="text-[10px] text-muted-foreground">Guilds</p>
+                      <p className="text-[10px] text-muted-foreground">{i18n.t("uiNetworkHub.statGuilds")}</p>
                     </div>
                     <div className="rounded-lg bg-muted/50 p-2">
                       <p className="text-lg font-bold text-primary">{a.companies}</p>
-                      <p className="text-[10px] text-muted-foreground">Companies</p>
+                      <p className="text-[10px] text-muted-foreground">{i18n.t("uiNetworkHub.statCompanies")}</p>
                     </div>
                     <div className="rounded-lg bg-muted/50 p-2">
                       <p className="text-lg font-bold text-primary">{a.quests}</p>
-                      <p className="text-[10px] text-muted-foreground">Quests</p>
+                      <p className="text-[10px] text-muted-foreground">{i18n.t("uiNetworkHub.statQuests")}</p>
                     </div>
                   </div>
                 </motion.div>

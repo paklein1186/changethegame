@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useTranslation } from "react-i18next";
 import { useState, useMemo, useCallback } from "react";
 import { useExploreGridDensity } from "@/pages/ExploreHub";
@@ -403,7 +404,7 @@ export default function ExploreHouses({ bare }: Props) {
                           <h3 className="font-display font-semibold text-base truncate group-hover:text-primary transition-colors">{label}</h3>
                           <p className="text-xs text-muted-foreground flex items-center gap-1">
                             {isHouse ? <Sparkles className="h-3 w-3" /> : <Hash className="h-3 w-3" />}
-                            {isHouse ? "House" : "Topic"}
+                            {isHouse ? i18n.t("uiExploreHouses.kindHouse") : i18n.t("uiExploreHouses.kindTopic")}
                           </p>
                        </div>
                      </div>

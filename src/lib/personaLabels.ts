@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 /**
  * Persona-adaptive label system.
  * Returns different labels depending on the user's persona type.
@@ -419,12 +420,12 @@ export function getMuseForTopics(topicNames: string[]): HouseOfArt | null {
 
 // ── Creative onboarding options ──────────────────────────────
 export const CREATIVE_INTENTION_OPTIONS = [
-  { key: "make", label: "I want to make something new", icon: "🎨", desc: "Bring an idea into the world" },
-  { key: "write", label: "I want to write / compose / explore ideas", icon: "✍️", desc: "Words, music, concepts" },
-  { key: "experiment", label: "I want to experiment and see what happens", icon: "🧪", desc: "Play, explore, discover" },
-  { key: "collab", label: "I want to create with others", icon: "🤝", desc: "Collaborative creativity" },
-  { key: "inspire", label: "I'm looking for inspiration", icon: "✨", desc: "Feed the creative fire" },
-  { key: "unsure", label: "I'm not sure yet, guide me", icon: "🧭", desc: "Let's figure it out together" },
+  { key: "make", get label() { return i18n.t("uiPersonaLabels.iWantToMakeSomethingNew"); }, icon: "🎨", get desc() { return i18n.t("uiPersonaLabels.bringAnIdeaIntoTheWorld"); } },
+  { key: "write", get label() { return i18n.t("uiPersonaLabels.iWantToWriteComposeExplore"); }, icon: "✍️", desc: "Words, music, concepts" },
+  { key: "experiment", get label() { return i18n.t("uiPersonaLabels.iWantToExperimentAndSee"); }, icon: "🧪", desc: "Play, explore, discover" },
+  { key: "collab", get label() { return i18n.t("uiPersonaLabels.iWantToCreateWithOthers"); }, icon: "🤝", desc: "Collaborative creativity" },
+  { key: "inspire", get label() { return i18n.t("uiPersonaLabels.iMLookingForInspiration"); }, icon: "✨", get desc() { return i18n.t("uiPersonaLabels.feedTheCreativeFire"); } },
+  { key: "unsure", get label() { return i18n.t("uiPersonaLabels.iMNotSureYetGuide"); }, icon: "🧭", desc: "Let's figure it out together" },
 ];
 
 export const CREATIVE_BIO_SUGGESTIONS = [
@@ -435,8 +436,8 @@ export const CREATIVE_BIO_SUGGESTIONS = [
 
 /** Available world/lexicon modes for the toggle */
 export const LEXICON_MODES: { value: LexiconMode; label: string; description: string }[] = [
-  { value: "IMPACT", label: "Impact World", description: "Guilds, Missions, Services, XP" },
+  { value: "IMPACT", label: "Impact World", get description() { return i18n.t("uiPersonaLabels.guildsMissionsServicesXp"); } },
   { value: "CREATIVE", label: "Creative World", description: "Circles, Creations, Skill Sessions, Resonance" },
-  { value: "HYBRID", label: "Hybrid World", description: "Guilds, Quests, Services, XP" },
-  { value: "NEUTRAL", label: "Neutral Mode", description: "Guilds, Quests, Services, XP" },
+  { value: "HYBRID", label: "Hybrid World", get description() { return i18n.t("uiPersonaLabels.guildsQuestsServicesXp"); } },
+  { value: "NEUTRAL", label: "Neutral Mode", get description() { return i18n.t("uiPersonaLabels.guildsQuestsServicesXp"); } },
 ];

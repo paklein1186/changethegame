@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { ServerCrash, RefreshCw, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -76,12 +77,12 @@ export class ErrorBoundary extends Component<Props, State> {
               <ServerCrash className="h-8 w-8 text-destructive" />
             </div>
             <h2 className="mb-2 text-2xl font-bold font-display">
-              {authFailure ? "Your session has expired" : "Something went wrong"}
+              {authFailure ? i18n.t("uiErrorBoundary.sessionExpired") : i18n.t("uiErrorBoundary.somethingWentWrong")}
             </h2>
             <p className="mb-2 text-muted-foreground">
               {authFailure
-                ? "You need to sign in again to keep using the site."
-                : "An unexpected error occurred. You can try refreshing this section."}
+                ? i18n.t("uiErrorBoundary.signInAgainToContinue")
+                : i18n.t("uiErrorBoundary.unexpectedErrorRetry")}
             </p>
             {this.state.error && (
               <p className="mb-4 text-xs text-muted-foreground/60 font-mono break-all">
@@ -92,16 +93,16 @@ export class ErrorBoundary extends Component<Props, State> {
               {authFailure ? (
                 <Button variant="default" onClick={this.handleSignInAgain}>
                   <LogIn className="mr-2 h-4 w-4" />
-                  Sign in again
+                  {i18n.t("uiErrorBoundary.signInAgain")}
                 </Button>
               ) : (
                 <Button variant="outline" onClick={this.handleRetry}>
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Retry
+                  {i18n.t("uiErrorBoundary.retry")}
                 </Button>
               )}
               <Button variant={authFailure ? "outline" : "default"} onClick={() => window.location.assign("/")}>
-                Back to Home
+                {i18n.t("uiErrorBoundary.backToHome")}
               </Button>
             </div>
           </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { attachEmails } from "@/lib/profileEmails";
 import { useState, useMemo, useCallback } from "react";
 import {
@@ -74,6 +75,7 @@ function downloadCsv(rows: WalletRow[]) {
 
 /* ─── Main component ─── */
 export function CTGUserWalletsTab() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<WalletFilter>("all");
@@ -188,7 +190,7 @@ export function CTGUserWalletsTab() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name or email..."
+            placeholder={t("uiCTGUserWalletsTab.searchByNameOrEmail")}
             className="pl-9"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
@@ -201,9 +203,9 @@ export function CTGUserWalletsTab() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All wallets</SelectItem>
+              <SelectItem value="all">{t("uiCTGUserWalletsTab.allWallets")}</SelectItem>
               <SelectItem value="positive">Balance &gt; 0</SelectItem>
-              <SelectItem value="active_month">Active this month</SelectItem>
+              <SelectItem value="active_month">{t("uiCTGUserWalletsTab.activeThisMonth")}</SelectItem>
               <SelectItem value="negative">Negative balance ⚠️</SelectItem>
             </SelectContent>
           </Select>
@@ -240,14 +242,14 @@ export function CTGUserWalletsTab() {
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                    Loading…
+                    {t("uiCTGUserWalletsTab.loading")}
                   </TableCell>
                 </TableRow>
               )}
               {!isLoading && pageRows.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                    No wallets found.
+                    {t("uiCTGUserWalletsTab.noWalletsFound")}
                   </TableCell>
                 </TableRow>
               )}
@@ -363,6 +365,7 @@ function WalletDetailDialog({
   open: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [txPage, setTxPage] = useState(0);
 
   const { data: txData } = useQuery({
@@ -404,7 +407,7 @@ function WalletDetailDialog({
           </DialogTitle>
           <DialogDescription className="flex items-center gap-1 text-xs">
             <Calendar className="h-3 w-3" />
-            Member since {format(new Date(wallet.created_at), "dd MMM yyyy", { locale: enUS })}
+            {t("uiCTGUserWalletsTab.memberSince")} {format(new Date(wallet.created_at), "dd MMM yyyy", { locale: enUS })}
           </DialogDescription>
         </DialogHeader>
 
@@ -430,9 +433,9 @@ function WalletDetailDialog({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
+                <TableHead>{t("uiCTGUserWalletsTab.date")}</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-right">{t("uiCTGUserWalletsTab.amount")}</TableHead>
                 <TableHead className="hidden sm:table-cell">Note</TableHead>
                 <TableHead className="text-right">Balance after</TableHead>
               </TableRow>
@@ -460,7 +463,7 @@ function WalletDetailDialog({
               {(txData?.rows ?? []).length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
-                    No transactions.
+                    {t("uiCTGUserWalletsTab.noTransactions")}
                   </TableCell>
                 </TableRow>
               )}
@@ -499,6 +502,7 @@ function WalletAdjustDialog({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [action, setAction] = useState<"grant" | "deduct">("grant");
   const [amount, setAmount] = useState("");
@@ -540,7 +544,7 @@ function WalletAdjustDialog({
       onSuccess();
       handleClose();
     } catch (e: any) {
-      toast.error(e.message ?? "Error during adjustment");
+      toast.error(e.message ?? t("uiCTGUserWalletsTab.errorDuringAdjustment"));
     } finally {
       setSubmitting(false);
     }
@@ -561,7 +565,7 @@ function WalletAdjustDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <SlidersHorizontal className="h-5 w-5" />
-            Adjust balance of {wallet.name}
+            {t("uiCTGUserWalletsTab.adjustBalanceOf")} {wallet.name}
           </DialogTitle>
           <DialogDescription>
             Current balance: <strong>{wallet.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })} $CTG</strong>
@@ -583,7 +587,7 @@ function WalletAdjustDialog({
 
           {/* Amount */}
           <div className="space-y-1.5">
-            <Label>Amount</Label>
+            <Label>{t("uiCTGUserWalletsTab.amount")}</Label>
             <Input
               type="number"
               min={0.01}
@@ -599,7 +603,7 @@ function WalletAdjustDialog({
             <Label>Reason (10–500 characters) *</Label>
             <Textarea
               maxLength={500}
-              placeholder="Justify the adjustment..."
+              placeholder={t("uiCTGUserWalletsTab.justifyTheAdjustment")}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="resize-none h-20"
@@ -612,9 +616,8 @@ function WalletAdjustDialog({
             <div className="flex items-start gap-2 rounded-md bg-yellow-50/60 dark:bg-yellow-900/10 border border-yellow-500/30 p-3">
               <AlertTriangle className="h-4 w-4 text-yellow-600 shrink-0 mt-0.5" />
               <p className="text-xs text-yellow-800 dark:text-yellow-400">
-                Balance will be reduced to 0 $CTG (partial deduction of{" "}
-                <strong>{effectiveDeduction.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong> $CTG
-                instead of {amtNum.toLocaleString("en-US", { minimumFractionDigits: 2 })}).
+                {t("uiCTGUserWalletsTab.balanceWillBeReducedTo0")}{" "}
+                <strong>{effectiveDeduction.toLocaleString("en-US", { minimumFractionDigits: 2 })}</strong> {t("uiCTGUserWalletsTab.ctgInsteadOf")} {amtNum.toLocaleString("en-US", { minimumFractionDigits: 2 })}).
               </p>
             </div>
           )}
@@ -623,7 +626,7 @@ function WalletAdjustDialog({
           {isValidAmt && (
             <div className="rounded-md bg-muted/50 p-3">
               <p className="text-sm">
-                New balance after operation:{" "}
+                {t("uiCTGUserWalletsTab.newBalanceAfterOperation")}{" "}
                 <strong>{newBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })} $CTG</strong>
               </p>
             </div>
@@ -633,12 +636,12 @@ function WalletAdjustDialog({
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button className="w-full" disabled={!canSubmit || submitting}>
-                {submitting ? "Processing..." : "Confirm adjustment"}
+                {submitting ? "Processing..." : t("uiCTGUserWalletsTab.confirmAdjustment")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Confirm adjustment</AlertDialogTitle>
+                <AlertDialogTitle>{t("uiCTGUserWalletsTab.confirmAdjustment")}</AlertDialogTitle>
                 <AlertDialogDescription>
                   {action === "grant"
                     ? `Grant ${amtNum} $CTG to ${wallet.name}. New balance: ${newBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })} $CTG.`
@@ -646,8 +649,8 @@ function WalletAdjustDialog({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleSubmit}>Confirm</AlertDialogAction>
+                <AlertDialogCancel>{t("uiCTGUserWalletsTab.cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmit}>{t("uiCTGUserWalletsTab.confirm")}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

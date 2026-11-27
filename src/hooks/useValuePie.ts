@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -89,6 +90,7 @@ export type TaskType = (typeof DEFAULT_TASK_TYPES)[number] | string;
 
 // ── Calculate & distribute the value pie ─────────────────────
 export function useValuePieActions() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -115,12 +117,12 @@ export function useValuePieActions() {
         .eq("quest_id", params.questId);
 
       if (cErr) {
-        toast({ title: "Failed to fetch contributions", variant: "destructive" });
+        toast({ title: t("uiUseValuePie.failedToFetchContributions"), variant: "destructive" });
         return null;
       }
 
       if (!contributions || contributions.length === 0) {
-        toast({ title: "No contributions to distribute", variant: "destructive" });
+        toast({ title: t("uiUseValuePie.noContributionsToDistribute"), variant: "destructive" });
         return null;
       }
 
@@ -133,7 +135,7 @@ export function useValuePieActions() {
 
       const totalWeighted = Array.from(byContributor.values()).reduce((s, v) => s + v, 0);
       if (totalWeighted === 0) {
-        toast({ title: "Total weighted units is zero", variant: "destructive" });
+        toast({ title: t("uiUseValuePie.totalWeightedUnitsIsZero"), variant: "destructive" });
         return null;
       }
 
@@ -155,7 +157,7 @@ export function useValuePieActions() {
         .from("quest_value_pie_log" as any)
         .insert(pieEntries as any);
       if (insertErr) {
-        toast({ title: "Failed to save value pie", description: insertErr.message, variant: "destructive" });
+        toast({ title: t("uiUseValuePie.failedToSaveValuePie"), description: insertErr.message, variant: "destructive" });
         return null;
       }
 

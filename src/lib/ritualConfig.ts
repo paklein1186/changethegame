@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 // ─── Ritual Session Type Configuration ────────────────────────
 // Cultural grammar for Guild collective synchronization.
 
@@ -13,16 +14,16 @@ export const RITUAL_SESSION_TYPES = {
     facilitatorBonus: 0,
     governanceImpact: "low",
     defaultProgram: [
-      { title: "Open arrival", minutes: 10, role: null as null },
-      { title: "2-min personal check-in", minutes: 15, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.openArrival"); }, minutes: 10, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.2MinPersonalCheckIn"); }, minutes: 15, role: null as null },
       { title: "Free conversation", minutes: 30, role: null as null },
-      { title: "Emergent topic clusters", minutes: 15, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.emergentTopicClusters"); }, minutes: 15, role: null as null },
       { title: "Light closing round", minutes: 5, role: null as null },
     ],
   },
   EMOTIONAL_CHECKIN: {
     label: "Pulse Circle",
-    subtitle: "Emotional Check-In",
+    get subtitle() { return i18n.t("uiRitualConfig.emotionalCheckIn"); },
     icon: "Heart",
     description: "Surface tensions before they become structural.",
     bestFor: "High-growth phases, conflict periods, collective transitions.",
@@ -39,10 +40,10 @@ export const RITUAL_SESSION_TYPES = {
     ],
   },
   GUILD_ASSEMBLY: {
-    label: "Open Council",
-    subtitle: "Guild Assembly",
+    get label() { return i18n.t("uiRitualConfig.openCouncil"); },
+    get subtitle() { return i18n.t("uiRitualConfig.guildAssembly"); },
     icon: "Landmark",
-    description: "Collective governance and decision-making.",
+    get description() { return i18n.t("uiRitualConfig.collectiveGovernanceAndDecisionMaking"); },
     bestFor: "Monthly or quarterly governance cycles.",
     defaultDuration: 105,
     defaultXp: 10,
@@ -50,10 +51,10 @@ export const RITUAL_SESSION_TYPES = {
     governanceImpact: "high",
     defaultProgram: [
       { title: "Metrics review", minutes: 15, role: "admin" },
-      { title: "Quest updates", minutes: 20, role: null as null },
-      { title: "Proposal presentations", minutes: 25, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.questUpdates"); }, minutes: 20, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.proposalPresentations"); }, minutes: 25, role: null as null },
       { title: "Decision block", minutes: 25, role: "admin" },
-      { title: "Assignment of responsibilities", minutes: 15, role: "admin" },
+      { get title() { return i18n.t("uiRitualConfig.assignmentOfResponsibilities"); }, minutes: 15, role: "admin" },
       { title: "Closing alignment", minutes: 5, role: null as null },
     ],
   },
@@ -61,7 +62,7 @@ export const RITUAL_SESSION_TYPES = {
     label: "Strategic Deep Dive",
     subtitle: "Mastermind Session",
     icon: "Brain",
-    description: "Support a member or project through collective intelligence.",
+    get description() { return i18n.t("uiRitualConfig.supportAMemberOrProjectThrough"); },
     bestFor: "Entrepreneurs, territory leads, complex dilemmas.",
     defaultDuration: 90,
     defaultXp: 8,
@@ -90,7 +91,7 @@ export const RITUAL_SESSION_TYPES = {
       { title: "Input presentation", minutes: 30, role: "teacher" },
       { title: "Application breakout", minutes: 20, role: null as null },
       { title: "Collective reflection", minutes: 15, role: null as null },
-      { title: "Next-step commitments", minutes: 10, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.nextStepCommitments"); }, minutes: 10, role: null as null },
     ],
   },
   SPRINT_ALIGNMENT: {
@@ -107,7 +108,7 @@ export const RITUAL_SESSION_TYPES = {
       { title: "Objective reminder", minutes: 5, role: "admin" },
       { title: "Quick updates (2 min/person)", minutes: 25, role: null as null },
       { title: "Blockers surfaced", minutes: 10, role: null as null },
-      { title: "Next week commitments", minutes: 10, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.nextWeekCommitments"); }, minutes: 10, role: null as null },
     ],
   },
   CONFLICT_RESOLUTION: {
@@ -125,7 +126,7 @@ export const RITUAL_SESSION_TYPES = {
       { title: "Structured speaking turns", minutes: 30, role: "facilitator" },
       { title: "Acknowledgment phase", minutes: 15, role: null as null },
       { title: "Commitment phase", minutes: 15, role: null as null },
-      { title: "Follow-up date", minutes: 10, role: "facilitator" },
+      { get title() { return i18n.t("uiRitualConfig.followUpDate"); }, minutes: 10, role: "facilitator" },
     ],
   },
   VISIONARY_SESSION: {
@@ -148,9 +149,9 @@ export const RITUAL_SESSION_TYPES = {
   },
   CROSS_GUILD_FEDERATION: {
     label: "Bridge Assembly",
-    subtitle: "Cross-Guild Federation",
+    get subtitle() { return i18n.t("uiRitualConfig.crossGuildFederation"); },
     icon: "Network",
-    description: "Align multiple guilds.",
+    get description() { return i18n.t("uiRitualConfig.alignMultipleGuilds"); },
     bestFor: "Territorial scaling, multi-guild coordination.",
     defaultDuration: 90,
     defaultXp: 12,
@@ -158,7 +159,7 @@ export const RITUAL_SESSION_TYPES = {
     governanceImpact: "high",
     defaultProgram: [
       { title: "Shared metrics", minutes: 15, role: "admin" },
-      { title: "Cross-quest mapping", minutes: 20, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.crossQuestMapping"); }, minutes: 20, role: null as null },
       { title: "Federation decisions", minutes: 30, role: null as null },
       { title: "Resource pooling discussion", minutes: 20, role: null as null },
       { title: "Closing", minutes: 5, role: null as null },
@@ -177,7 +178,7 @@ export const RITUAL_SESSION_TYPES = {
     defaultProgram: [
       { title: "Storytelling", minutes: 15, role: null as null },
       { title: "Acknowledgments", minutes: 15, role: "admin" },
-      { title: "Highlight quests", minutes: 15, role: null as null },
+      { get title() { return i18n.t("uiRitualConfig.highlightQuests"); }, minutes: 15, role: null as null },
       { title: "Gratitude round", minutes: 15, role: null as null },
     ],
   },
@@ -188,18 +189,18 @@ export type RitualSessionTypeKey = keyof typeof RITUAL_SESSION_TYPES;
 export const RITUAL_FREQUENCIES = {
   WEEKLY: { label: "Weekly", description: "Every week" },
   BIWEEKLY: { label: "Biweekly", description: "Every two weeks" },
-  MONTHLY: { label: "Monthly", description: "Once a month" },
+  MONTHLY: { label: "Monthly", get description() { return i18n.t("uiRitualConfig.onceAMonth"); } },
   QUARTERLY: { label: "Quarterly", description: "Every three months" },
   CUSTOM: { label: "Custom", description: "Custom recurrence" },
 } as const;
 
 export const RITUAL_ACCESS_TYPES = {
-  PUBLIC: { label: "Public", description: "Visible and joinable by anyone" },
-  MEMBERS: { label: "Guild Members", description: "Only guild members" },
-  ROLES: { label: "Specific Roles", description: "Members with specific roles" },
-  XP_THRESHOLD: { label: "XP Threshold", description: "Minimum XP level required" },
-  SHARE_CLASS: { label: "Shareholding Class", description: "Specific share class required" },
-  INVITE_ONLY: { label: "Invitation Only", description: "By invitation only" },
+  PUBLIC: { get label() { return i18n.t("uiRitualConfig.public"); }, get description() { return i18n.t("uiRitualConfig.visibleAndJoinableByAnyone"); } },
+  MEMBERS: { get label() { return i18n.t("uiRitualConfig.guildMembers"); }, get description() { return i18n.t("uiRitualConfig.onlyGuildMembers"); } },
+  ROLES: { get label() { return i18n.t("uiRitualConfig.specificRoles"); }, get description() { return i18n.t("uiRitualConfig.membersWithSpecificRoles"); } },
+  XP_THRESHOLD: { get label() { return i18n.t("uiRitualConfig.xpThreshold"); }, get description() { return i18n.t("uiRitualConfig.minimumXpLevelRequired"); } },
+  SHARE_CLASS: { label: "Shareholding Class", get description() { return i18n.t("uiRitualConfig.specificShareClassRequired"); } },
+  INVITE_ONLY: { label: "Invitation Only", get description() { return i18n.t("uiRitualConfig.byInvitationOnly"); } },
 } as const;
 
 export const GOVERNANCE_IMPACT_COLORS: Record<string, string> = {

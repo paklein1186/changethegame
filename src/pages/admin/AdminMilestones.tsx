@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -36,6 +37,7 @@ interface MilestoneStats {
 }
 
 export default function AdminMilestones() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -127,7 +129,7 @@ export default function AdminMilestones() {
             <Trophy className="h-6 w-6 text-primary" /> Milestones Manager
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage milestone definitions, rewards, and view completion rates.
+            {t("uiAdminMilestones.manageMilestoneDefinitionsRewardsAndView")}
           </p>
         </div>
         <Badge variant="secondary" className="text-xs gap-1.5">
@@ -140,7 +142,7 @@ export default function AdminMilestones() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-10"></TableHead>
-              <TableHead>Title</TableHead>
+              <TableHead>{t("uiAdminMilestones.title")}</TableHead>
               <TableHead>Code</TableHead>
               <TableHead>Reward</TableHead>
               <TableHead>Persona</TableHead>
@@ -185,9 +187,9 @@ export default function AdminMilestones() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="XP">XP</SelectItem>
-                            <SelectItem value="CREDITS">Credits</SelectItem>
+                            <SelectItem value="CREDITS">{t("uiAdminMilestones.credits")}</SelectItem>
                             <SelectItem value="BADGE">Badge</SelectItem>
-                            <SelectItem value="NONE">None</SelectItem>
+                            <SelectItem value="NONE">{t("uiAdminMilestones.none")}</SelectItem>
                           </SelectContent>
                         </Select>
                         <Input

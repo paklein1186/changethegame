@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 /**
  * DeepAnalyticsSection — Time-series charts, retention, revenue breakdown,
  * feed engagement, and week-over-week growth trends. All data from real DB.
@@ -269,6 +270,7 @@ function useGrowthTrends() {
 // ─── Component ───────────────────────────────────────────
 
 export function DeepAnalyticsSection() {
+  const { t } = useTranslation();
   const { data: signupData, isLoading: loadingSignups } = useSignupTimeSeries();
   const { data: revenueData, isLoading: loadingRevenue } = useRevenueTimeSeries();
   const { data: breakdown, isLoading: loadingBreakdown } = useRevenueBreakdown();
@@ -289,7 +291,7 @@ export function DeepAnalyticsSection() {
       {/* ── Signups Over Time ── */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4">
-          <Users className="h-5 w-5" /> Signups Over Time (90d) <LiveLabel />
+          <Users className="h-5 w-5" /> {t("uiDeepAnalyticsSection.signupsOverTime90d")} <LiveLabel />
         </h3>
         {loadingSignups ? <ChartLoader /> : (
           <div className="rounded-xl border border-border bg-card p-4">
@@ -312,7 +314,7 @@ export function DeepAnalyticsSection() {
       {/* ── Revenue Over Time ── */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4">
-          <DollarSign className="h-5 w-5" /> Revenue Over Time (90d) <LiveLabel />
+          <DollarSign className="h-5 w-5" /> {t("uiDeepAnalyticsSection.revenueOverTime90d")} <LiveLabel />
         </h3>
         {loadingRevenue ? <ChartLoader /> : (
           <div className="rounded-xl border border-border bg-card p-4">
@@ -339,7 +341,7 @@ export function DeepAnalyticsSection() {
       {/* ── Revenue Breakdown (Pie) ── */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4">
-          <DollarSign className="h-5 w-5" /> Revenue Breakdown (All Time) <LiveLabel />
+          <DollarSign className="h-5 w-5" /> {t("uiDeepAnalyticsSection.revenueBreakdownAllTime")} <LiveLabel />
         </h3>
         {loadingBreakdown ? <ChartLoader /> : (
           <div className="grid md:grid-cols-2 gap-4">
@@ -366,7 +368,7 @@ export function DeepAnalyticsSection() {
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-12">No revenue data yet.</p>
+                <p className="text-sm text-muted-foreground text-center py-12">{t("uiDeepAnalyticsSection.noRevenueDataYet")}</p>
               )}
             </div>
             <div className="space-y-3">
@@ -375,7 +377,7 @@ export function DeepAnalyticsSection() {
                 <p className="text-3xl font-bold text-primary">€{breakdown?.grandTotal ?? 0}</p>
               </div>
               <div className="rounded-xl border border-border bg-card p-4">
-                <p className="text-xs text-muted-foreground">Active Subscriptions</p>
+                <p className="text-xs text-muted-foreground">{t("uiDeepAnalyticsSection.activeSubscriptions")}</p>
                 <p className="text-3xl font-bold text-primary">{breakdown?.activeSubscriptions ?? 0}</p>
               </div>
               {breakdown?.breakdown.map((b, i) => (
@@ -420,7 +422,7 @@ export function DeepAnalyticsSection() {
       {/* ── User Retention / Cohort ── */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4">
-          <Users className="h-5 w-5" /> User Retention by Cohort (6 months) <LiveLabel />
+          <Users className="h-5 w-5" /> {t("uiDeepAnalyticsSection.userRetentionByCohort6Months")} <LiveLabel />
         </h3>
         {loadingRetention ? <ChartLoader /> : (
           <div className="rounded-xl border border-border bg-card p-4">
@@ -437,7 +439,7 @@ export function DeepAnalyticsSection() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-sm text-muted-foreground text-center py-12">Not enough data for retention analysis yet.</p>
+              <p className="text-sm text-muted-foreground text-center py-12">{t("uiDeepAnalyticsSection.notEnoughDataForRetentionAnalysis")}</p>
             )}
             {retentionData && retentionData.length > 0 && (
               <div className="flex flex-wrap gap-3 mt-4">
@@ -469,7 +471,7 @@ export function DeepAnalyticsSection() {
                 <div className="flex items-end gap-3">
                   <div>
                     <p className="text-2xl font-bold text-primary">{g.thisWeek}</p>
-                    <p className="text-[10px] text-muted-foreground">this week</p>
+                    <p className="text-[10px] text-muted-foreground">{t("uiDeepAnalyticsSection.thisWeek")}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg text-muted-foreground">{g.lastWeek}</p>

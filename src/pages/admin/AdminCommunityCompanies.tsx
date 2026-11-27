@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Building2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
@@ -5,6 +6,7 @@ import { useAllCompanies } from "@/hooks/useEntityQueries";
 import { useTableSort } from "@/hooks/useTableSort";
 
 export default function AdminCommunityCompanies() {
+  const { t } = useTranslation();
   const { data: allCompanies = [], isLoading } = useAllCompanies();
   const { sorted, sort, toggle } = useTableSort(allCompanies);
 
@@ -17,7 +19,7 @@ export default function AdminCommunityCompanies() {
         <Table>
           <TableHeader>
             <TableRow>
-              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Name</SortableTableHead>
+              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityCompanies.name")}</SortableTableHead>
               <SortableTableHead sortKey="sector" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Sector</SortableTableHead>
               <SortableTableHead sortKey="size" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Size</SortableTableHead>
             </TableRow>
@@ -31,7 +33,7 @@ export default function AdminCommunityCompanies() {
               </TableRow>
             ))}
             {!isLoading && allCompanies.length === 0 && (
-              <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">No traditional organizations.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">{t("uiAdminCommunityCompanies.noTraditionalOrganizations")}</TableCell></TableRow>
             )}
           </TableBody>
         </Table>

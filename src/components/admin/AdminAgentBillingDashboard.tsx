@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/PageShell";
@@ -52,6 +53,7 @@ function useAllUsageAggregated() {
 }
 
 export default function AdminAgentBillingDashboard() {
+  const { t } = useTranslation();
   const { data: billings, isLoading: blLoading } = useAllAgentBilling();
   const { data: agg, isLoading: aggLoading } = useAllUsageAggregated();
   const { data: actionTypes } = useMonetizedActionTypes();
@@ -76,7 +78,7 @@ export default function AdminAgentBillingDashboard() {
           <p className="text-2xl font-bold">{agg?.totalActions ?? 0}</p>
         </Card>
         <Card className="p-4">
-          <div className="text-sm text-muted-foreground mb-1">Active Agents</div>
+          <div className="text-sm text-muted-foreground mb-1">{t("uiAdminAgentBillingDashboard.activeAgents")}</div>
           <p className="text-2xl font-bold">{billings?.filter((b: any) => b.is_active).length ?? 0}</p>
         </Card>
       </div>
@@ -98,7 +100,7 @@ export default function AdminAgentBillingDashboard() {
                     <th className="text-left py-2">Plan</th>
                     <th className="text-right py-2">Limit</th>
                     <th className="text-right py-2">Month Spend</th>
-                    <th className="text-center py-2">Status</th>
+                    <th className="text-center py-2">{t("uiAdminAgentBillingDashboard.status")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -112,7 +114,7 @@ export default function AdminAgentBillingDashboard() {
                       </td>
                       <td className="text-center py-1.5">
                         <Badge variant={b.is_active ? "default" : "destructive"} className="text-[10px]">
-                          {b.is_active ? "Active" : "Paused"}
+                          {b.is_active ? t("uiAdminAgentBillingDashboard.active") : "Paused"}
                         </Badge>
                       </td>
                     </tr>
@@ -153,7 +155,7 @@ export default function AdminAgentBillingDashboard() {
             {(plans || []).map((p: any) => (
               <Card key={p.id} className="p-4">
                 <h4 className="font-semibold mb-1">{p.label}</h4>
-                <p className="text-2xl font-bold text-primary">{p.monthly_price} <span className="text-sm font-normal text-muted-foreground">credits/mo</span></p>
+                <p className="text-2xl font-bold text-primary">{p.monthly_price} <span className="text-sm font-normal text-muted-foreground">{t("uiAdminAgentBillingDashboard.creditsMo")}</span></p>
                 <div className="mt-3 space-y-1">
                   {Object.entries(p.quota_json || {}).map(([k, v]: [string, any]) => (
                     <div key={k} className="flex justify-between text-xs">

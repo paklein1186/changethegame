@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Hash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,6 +8,7 @@ import { useTableSort } from "@/hooks/useTableSort";
 import { useMemo } from "react";
 
 export default function AdminCommunityPods() {
+  const { t } = useTranslation();
   const { data: allPods = [], isLoading } = usePods();
 
   const enriched = useMemo(() => allPods.map(pod => ({
@@ -26,9 +28,9 @@ export default function AdminCommunityPods() {
         <Table>
           <TableHeader>
             <TableRow>
-              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Name</SortableTableHead>
+              <SortableTableHead sortKey="name" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityPods.name")}</SortableTableHead>
               <SortableTableHead sortKey="_type" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Type</SortableTableHead>
-              <SortableTableHead sortKey="_status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>Status</SortableTableHead>
+              <SortableTableHead sortKey="_status" currentKey={sort.key} direction={sort.direction} onSort={toggle}>{t("uiAdminCommunityPods.status")}</SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -46,7 +48,7 @@ export default function AdminCommunityPods() {
               </TableRow>
             ))}
             {!isLoading && allPods.length === 0 && (
-              <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">No pods.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">{t("uiAdminCommunityPods.noPods")}</TableCell></TableRow>
             )}
           </TableBody>
         </Table>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 
 export function TreasuryDashboard() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const qc = useQueryClient();
   const [pulsing, setPulsing] = useState(false);
@@ -100,8 +102,8 @@ export function TreasuryDashboard() {
             <>
               <StatCard icon={getCurrencyConfig("coins").icon} label="GMV (30d)" value={`€${(econStats?.gmv ?? 0).toLocaleString()}`} color="text-primary" />
               <StatCard icon={TrendingUp} label="Commission Rev." value={`€${(econStats?.commissionRevenue ?? 0).toLocaleString()}`} color="text-emerald-500" />
-              <StatCard icon={Users} label="Active Holders" value={String(econStats?.activeHolders ?? 0)} color="text-blue-500" />
-              <StatCard icon={Zap} label="Platform Credit Velocity" value={`${econStats?.velocity ?? 0}%`} color="text-amber-500" />
+              <StatCard icon={Users} label={t("uiTreasuryDashboard.activeHolders")} value={String(econStats?.activeHolders ?? 0)} color="text-blue-500" />
+              <StatCard icon={Zap} label={t("uiTreasuryDashboard.platformCreditVelocity")} value={`${econStats?.velocity ?? 0}%`} color="text-amber-500" />
             </>
           )}
         </div>
@@ -110,16 +112,16 @@ export function TreasuryDashboard() {
       {/* Credit Circulation */}
       <div>
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3">
-          <Recycle className="h-5 w-5 text-blue-500" /> 🔷 Platform Credit Circulation (30d)
+          <Recycle className="h-5 w-5 text-blue-500" /> {t("uiTreasuryDashboard.platformCreditCirculation30d")}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {isLoading ? (
             Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-lg" />)
           ) : (
             <>
-              <StatCard icon={getCurrencyConfig("credits").icon} label="Platform Credits Minted" value={String(econStats?.creditsMinted ?? 0)} color="text-emerald-500" />
-              <StatCard icon={getCurrencyConfig("credits").icon} label="Platform Credits Spent" value={String(econStats?.creditsSpent ?? 0)} color="text-orange-500" />
-              <StatCard icon={Recycle} label="Platform Credits Faded" value={String(econStats?.monthlyFaded ?? 0)} color="text-rose-500" />
+              <StatCard icon={getCurrencyConfig("credits").icon} label={t("uiTreasuryDashboard.platformCreditsMinted")} value={String(econStats?.creditsMinted ?? 0)} color="text-emerald-500" />
+              <StatCard icon={getCurrencyConfig("credits").icon} label={t("uiTreasuryDashboard.platformCreditsSpent")} value={String(econStats?.creditsSpent ?? 0)} color="text-orange-500" />
+              <StatCard icon={Recycle} label={t("uiTreasuryDashboard.platformCreditsFaded")} value={String(econStats?.monthlyFaded ?? 0)} color="text-rose-500" />
             </>
           )}
         </div>
@@ -134,11 +136,11 @@ export function TreasuryDashboard() {
           <CardContent className="p-6 text-center">
             <p className="text-xs text-muted-foreground mb-1">Total Treasury Balance</p>
             <p className="text-3xl font-bold">{loadingSettings ? "…" : treasuryBalance.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">Platform Credits (from demurrage redistribution)</p>
+            <p className="text-xs text-muted-foreground mt-1">{t("uiTreasuryDashboard.platformCreditsFromDemurrageRedistribution")}</p>
           </CardContent>
         </Card>
 
-        <h4 className="text-sm font-semibold mb-2">Allocation Model (applied to surplus)</h4>
+        <h4 className="text-sm font-semibold mb-2">{t("uiTreasuryDashboard.allocationModelAppliedToSurplus")}</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {allocationItems.map((item) => (
             <Card key={item.label} className="border-border/50">
@@ -208,6 +210,7 @@ function StatCard({ icon: Icon, label, value, color }: { icon: React.ElementType
 }
 
 function CommonsWalletAdmin({ userId, pulsing, setPulsing, qc }: { userId?: string; pulsing: boolean; setPulsing: (v: boolean) => void; qc: any }) {
+  const { t } = useTranslation();
   const { data: commons } = useQuery({
     queryKey: ["ctg-commons-wallet-admin"],
     queryFn: async () => {
@@ -270,7 +273,7 @@ function CommonsWalletAdmin({ userId, pulsing, setPulsing, qc }: { userId?: stri
               {pulsing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
               Trigger Commons Pulse
             </Button>
-            <p className="text-[10px] text-muted-foreground">Distribute pool to recent contributors</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiTreasuryDashboard.distributePoolToRecentContributors")}</p>
           </CardContent>
         </Card>
       </div>
@@ -280,7 +283,7 @@ function CommonsWalletAdmin({ userId, pulsing, setPulsing, qc }: { userId?: stri
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/50">
-                <th className="text-left p-3 font-medium">Date</th>
+                <th className="text-left p-3 font-medium">{t("uiTreasuryDashboard.date")}</th>
                 <th className="text-right p-3 font-medium">Distributed</th>
                 <th className="text-right p-3 font-medium">Recipients</th>
               </tr>

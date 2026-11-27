@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +21,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function AdminFeatureSuggestions() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [filterPersona, setFilterPersona] = useState<string>("ALL");
@@ -72,7 +74,7 @@ export default function AdminFeatureSuggestions() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All statuses</SelectItem>
+              <SelectItem value="ALL">{t("uiAdminFeatureSuggestions.allStatuses")}</SelectItem>
               {STATUS_OPTIONS.map((s) => (
                 <SelectItem key={s} value={s}>{s}</SelectItem>
               ))}
@@ -83,7 +85,7 @@ export default function AdminFeatureSuggestions() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All personas</SelectItem>
+              <SelectItem value="ALL">{t("uiAdminFeatureSuggestions.allPersonas")}</SelectItem>
               <SelectItem value="IMPACT">Impact</SelectItem>
               <SelectItem value="CREATIVE">Creative</SelectItem>
               <SelectItem value="HYBRID">Hybrid</SelectItem>
@@ -98,9 +100,9 @@ export default function AdminFeatureSuggestions() {
       </p>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground py-8 text-center">Loading…</p>
+        <p className="text-sm text-muted-foreground py-8 text-center">{t("uiAdminFeatureSuggestions.loading")}</p>
       ) : suggestions.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-8 text-center">No suggestions yet.</p>
+        <p className="text-sm text-muted-foreground py-8 text-center">{t("uiAdminFeatureSuggestions.noSuggestionsYet")}</p>
       ) : (
         <div className="space-y-3">
           {suggestions.map((s: any) => (
@@ -140,7 +142,7 @@ export default function AdminFeatureSuggestions() {
                   <Textarea
                     value={editComment}
                     onChange={(e) => setEditComment(e.target.value)}
-                    placeholder="Admin comment…"
+                    placeholder={t("uiAdminFeatureSuggestions.adminComment")}
                     className="min-h-[40px] text-xs"
                   />
                   <Input
@@ -169,7 +171,7 @@ export default function AdminFeatureSuggestions() {
                       </Button>
                     ))}
                     <Button variant="ghost" size="sm" className="text-[10px] h-7" onClick={() => setEditingId(null)}>
-                      Cancel
+                      {t("uiAdminFeatureSuggestions.cancel")}
                     </Button>
                   </div>
                 </div>

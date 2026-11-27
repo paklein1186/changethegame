@@ -7,7 +7,7 @@ export default function CompaniesInfoPage() {
     <ContentPageShell title={t("pages.companiesInfo.title")} subtitle={t("pages.companiesInfo.subtitle")}>
       <ContentSection title={t("uiCompaniesInfoPage.traditionalOrganizationsInChangethegame")}>
         <p>{t("uiCompaniesInfoPage.traditionalOrganizationsRepresentTheProfessionalWorld")}</p>
-        <ContentList items={["Attach yourself to an organization", "Create or join organization quests", "Offer services as an organization", "Build teams and pods"]} />
+        <ContentList items={[t("uiCompaniesInfoPage.attachYourselfToAnOrganization"), t("uiCompaniesInfoPage.createOrJoinOrganizationQuests"), t("uiCompaniesInfoPage.offerServicesAsAnOrganization"), t("uiCompaniesInfoPage.buildTeamsAndPods")]} />
       </ContentSection>
 
       <ContentCTA links={[

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo, useEffect } from "react";
 import {
   Save, RotateCcw, Sprout, Globe, ChevronLeft, ChevronRight,
@@ -71,6 +72,7 @@ interface EditState {
 }
 
 export function CTGEmissionRulesTab() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [edits, setEdits] = useState<Record<string, EditState>>({});
   const [saving, setSaving] = useState(false);
@@ -203,18 +205,18 @@ export function CTGEmissionRulesTab() {
             <AlertDialogTrigger asChild>
               <Button variant="outline" size="sm" disabled={resetting}>
                 <RotateCcw className="h-4 w-4 mr-1.5" />
-                Reset to defaults
+                {t("uiCTGEmissionRulesTab.resetToDefaults")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Reset rules?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  All emission rules will be restored to their initial values. This action is irreversible.
+                  {t("uiCTGEmissionRulesTab.allEmissionRulesWillBeRestored")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t("uiCTGEmissionRulesTab.cancel")}</AlertDialogCancel>
                 <AlertDialogAction onClick={handleReset}>Reset</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -232,17 +234,17 @@ export function CTGEmissionRulesTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Contribution type</TableHead>
+                <TableHead>{t("uiCTGEmissionRulesTab.contributionType")}</TableHead>
                 <TableHead className="text-right w-[130px]">$CTG emitted</TableHead>
-                <TableHead className="text-right w-[130px]">Commons share %</TableHead>
-                <TableHead className="w-[80px] text-center">Active</TableHead>
+                <TableHead className="text-right w-[130px]">{t("uiCTGEmissionRulesTab.commonsShare")}</TableHead>
+                <TableHead className="w-[80px] text-center">{t("uiCTGEmissionRulesTab.active")}</TableHead>
                 <TableHead className="hidden sm:table-cell">Modified</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">Loading…</TableCell>
+                  <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">{t("uiCTGEmissionRulesTab.loading")}</TableCell>
                 </TableRow>
               )}
               {(rules ?? []).map((r) => {
@@ -316,11 +318,10 @@ export function CTGEmissionRulesTab() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              With the current rules, completing a full quest (1 quest + 5 subtasks)
-              would yield:{" "}
-              <strong className="text-foreground">{impact.contributorAmount} $CTG</strong> to the contributor
+              {t("uiCTGEmissionRulesTab.withTheCurrentRulesCompletingA")}{" "}
+              <strong className="text-foreground">{impact.contributorAmount} $CTG</strong> {t("uiCTGEmissionRulesTab.toTheContributor")}
               {" "}+{" "}
-              <strong className="text-foreground">{impact.commonsAmount} $CTG</strong> to the commons
+              <strong className="text-foreground">{impact.commonsAmount} $CTG</strong> {t("uiCTGEmissionRulesTab.toTheCommons")}
               {" "}({impact.totalGross} $CTG gross total)
             </p>
           </CardContent>
@@ -335,6 +336,7 @@ export function CTGEmissionRulesTab() {
 
 /* ─── Commons Wallet Card ─── */
 function CommonsWalletCard() {
+  const { t } = useTranslation();
   const { data: commons } = useQuery({
     queryKey: ["admin-ctg-commons-wallet"],
     queryFn: async () => {
@@ -382,7 +384,7 @@ function CommonsWalletCard() {
           <Globe className="h-5 w-5 text-primary" />
             Commons Wallet
           </CardTitle>
-          <CardDescription>Collective funds fed by the commons percentage of each emission.</CardDescription>
+          <CardDescription>{t("uiCTGEmissionRulesTab.collectiveFundsFedByTheCommons")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
@@ -401,7 +403,7 @@ function CommonsWalletCard() {
         </div>
 
         <div>
-          <p className="text-sm font-medium mb-2">Daily commons contributions — Last 30 days</p>
+          <p className="text-sm font-medium mb-2">{t("uiCTGEmissionRulesTab.dailyCommonsContributionsLast30Days")}</p>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData ?? []}>

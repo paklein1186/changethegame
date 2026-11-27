@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { attachEmails } from "@/lib/profileEmails";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import { format } from "date-fns";
 type TxFilter = "ALL" | "GIFT_SENT" | "GIFT_RECEIVED" | "PURCHASE" | "DEMURRAGE_FADE" | "INITIAL_GRANT" | "QUEST_REWARD" | "ADMIN_GRANT";
 
 export function CreditTransfersMonitor() {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<TxFilter>("ALL");
 
@@ -101,13 +103,13 @@ export function CreditTransfersMonitor() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h3 className="font-display text-lg font-semibold flex items-center gap-2">
           <ArrowRightLeft className="h-5 w-5 text-primary" />
-          Credit Transfers & Balances
+          {t("uiCreditTransfersMonitor.creditTransfersBalances")}
         </h3>
         <div className="flex items-center gap-2">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search user…"
+              placeholder={t("uiCreditTransfersMonitor.searchUser")}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-8 w-56"
@@ -118,14 +120,14 @@ export function CreditTransfersMonitor() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All types</SelectItem>
+              <SelectItem value="ALL">{t("uiCreditTransfersMonitor.allTypes")}</SelectItem>
               <SelectItem value="GIFT_SENT">Transfers sent</SelectItem>
               <SelectItem value="GIFT_RECEIVED">Transfers received</SelectItem>
               <SelectItem value="PURCHASE">Purchases</SelectItem>
               <SelectItem value="DEMURRAGE_FADE">Demurrage</SelectItem>
-              <SelectItem value="INITIAL_GRANT">Welcome bonus</SelectItem>
-              <SelectItem value="QUEST_REWARD">Quest rewards</SelectItem>
-              <SelectItem value="ADMIN_GRANT">Admin grants</SelectItem>
+              <SelectItem value="INITIAL_GRANT">{t("uiCreditTransfersMonitor.welcomeBonus")}</SelectItem>
+              <SelectItem value="QUEST_REWARD">{t("uiCreditTransfersMonitor.questRewards")}</SelectItem>
+              <SelectItem value="ADMIN_GRANT">{t("uiCreditTransfersMonitor.adminGrants")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -137,14 +139,14 @@ export function CreditTransfersMonitor() {
           <CardContent className="p-4 flex flex-col items-center text-center gap-1">
             <CurrencyIcon currency="credits" className="h-5 w-5" />
             <p className="text-xl font-bold">{loadingBalances ? "…" : totalCreditsInCirculation.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-foreground">Total in circulation (top 50)</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiCreditTransfersMonitor.totalInCirculationTop50")}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-muted/30">
           <CardContent className="p-4 flex flex-col items-center text-center gap-1">
             <Users className="h-5 w-5 text-blue-500" />
             <p className="text-xl font-bold">{loadingBalances ? "…" : topBalances.length}</p>
-            <p className="text-[10px] text-muted-foreground">Users with balance</p>
+            <p className="text-[10px] text-muted-foreground">{t("uiCreditTransfersMonitor.usersWithBalance")}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50 bg-muted/30">
@@ -172,7 +174,7 @@ export function CreditTransfersMonitor() {
                   {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-10 rounded" />)}
                 </div>
               ) : filteredBalances.length === 0 ? (
-                <p className="text-sm text-muted-foreground p-4">No users found</p>
+                <p className="text-sm text-muted-foreground p-4">{t("uiCreditTransfersMonitor.noUsersFound")}</p>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
@@ -204,7 +206,7 @@ export function CreditTransfersMonitor() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2">
-              <ArrowRightLeft className="h-4 w-4" /> Transaction Log
+              <ArrowRightLeft className="h-4 w-4" /> {t("uiCreditTransfersMonitor.transactionLog")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -214,7 +216,7 @@ export function CreditTransfersMonitor() {
                   {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-12 rounded" />)}
                 </div>
               ) : filteredTx.length === 0 ? (
-                <p className="text-sm text-muted-foreground p-4">No transactions found</p>
+                <p className="text-sm text-muted-foreground p-4">{t("uiCreditTransfersMonitor.noTransactionsFound")}</p>
               ) : (
                 <div className="divide-y">
                   {filteredTx.map(tx => {

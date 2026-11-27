@@ -11,13 +11,13 @@ export default function AIEthicsPage() {
 
       <ContentSection title="Principles">
         <ContentList items={[
-          "What AI can and cannot do is clearly communicated",
-          "Data boundaries are strictly enforced per unit",
-          "Transparency of algorithms and recommendations",
-          "Memory is per unit, not global",
-          "Users control their AI interactions",
-          "Deletion and privacy options are always available",
-          "Commitment to responsible and ethical use",
+          t("uiAIEthicsPage.whatAiCanAndCannotDo"),
+          t("uiAIEthicsPage.dataBoundariesAreStrictlyEnforcedPer"),
+          t("uiAIEthicsPage.transparencyOfAlgorithmsAndRecommendations"),
+          t("uiAIEthicsPage.memoryIsPerUnitNotGlobal"),
+          t("uiAIEthicsPage.usersControlTheirAiInteractions"),
+          t("uiAIEthicsPage.deletionAndPrivacyOptionsAreAlways"),
+          t("uiAIEthicsPage.commitmentToResponsibleAndEthicalUse"),
         ]} />
       </ContentSection>
     </ContentPageShell>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 /**
  * AnalyticsTab — ALL data from real database, zero mocks.
  */
@@ -162,6 +163,7 @@ function useTerritoryStats() {
 }
 
 export function AnalyticsTab() {
+  const { t } = useTranslation();
   const { data: realStats, isLoading: loadingReal } = useAdminStats();
   const { data: counts, isLoading: loadingCounts } = useEntityCounts();
   const { data: courseStats, isLoading: loadingCourses } = useCourseStats();
@@ -179,21 +181,21 @@ export function AnalyticsTab() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><BarChart3 className="h-5 w-5" /> Platform Overview <LiveLabel /></h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><BarChart3 className="h-5 w-5" /> {t("uiAnalyticsTab.platformOverview")} <LiveLabel /></h3>
         {loading ? (
           <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard icon={UsersIcon} label="Total Users" value={realStats?.totalUsers ?? 0} sub={`+${realStats?.recentUsers7d ?? 0} (7d) · +${realStats?.recentUsers30d ?? 0} (30d)`} />
-            <StatCard icon={Compass} label="Quests" value={counts?.quests ?? 0} />
-            <StatCard icon={Shield} label="Guilds" value={counts?.guilds ?? 0} />
+            <StatCard icon={Compass} label={t("uiAnalyticsTab.quests")} value={counts?.quests ?? 0} />
+            <StatCard icon={Shield} label={t("uiAnalyticsTab.guilds")} value={counts?.guilds ?? 0} />
             <StatCard icon={Hash} label="Pods" value={counts?.pods ?? 0} />
             <StatCard icon={ShoppingBag} label="Services" value={counts?.services ?? 0} />
             <StatCard icon={CreditCard} label="Bookings" value={counts?.bookings ?? 0} />
             <StatCard icon={MessageSquare} label="Comments" value={counts?.comments ?? 0} />
             <StatCard icon={Building2} label="Organizations" value={counts?.companies ?? 0} />
             <StatCard icon={ScrollText} label="Courses" value={counts?.courses ?? 0} />
-            <StatCard icon={MapPin} label="Territories" value={counts?.territories ?? 0} />
+            <StatCard icon={MapPin} label={t("uiAnalyticsTab.territories")} value={counts?.territories ?? 0} />
           </div>
         )}
       </div>
@@ -201,13 +203,13 @@ export function AnalyticsTab() {
       <Separator />
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><Zap className="h-5 w-5" /> XP & Engagement <LiveLabel /></h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><Zap className="h-5 w-5" /> {t("uiAnalyticsTab.xpEngagement")} <LiveLabel /></h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: "Total XP Awarded", value: realStats?.totalXpAwarded ?? 0 },
-            { label: "Total XP Spent", value: realStats?.totalXpSpent ?? 0 },
-            { label: "XP Awarded (7d)", value: realStats?.xpLast7d ?? 0 },
-            { label: "XP Awarded (30d)", value: realStats?.xpLast30d ?? 0 },
+            { label: t("uiAnalyticsTab.totalXpAwarded"), value: realStats?.totalXpAwarded ?? 0 },
+            { label: t("uiAnalyticsTab.totalXpSpent"), value: realStats?.totalXpSpent ?? 0 },
+            { label: t("uiAnalyticsTab.xpAwarded7d"), value: realStats?.xpLast7d ?? 0 },
+            { label: t("uiAnalyticsTab.xpAwarded30d"), value: realStats?.xpLast30d ?? 0 },
           ].map((s, i) => (
             <div key={i} className="rounded-xl border border-border bg-card p-4">
               <p className="text-xs text-muted-foreground">{s.label}</p>
@@ -223,11 +225,11 @@ export function AnalyticsTab() {
         <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-4"><CreditCard className="h-5 w-5" /> Subscriptions <LiveLabel /></h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Active Subscriptions</p>
+            <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.activeSubscriptions")}</p>
             <p className="text-2xl font-bold text-primary">{loadingReal ? "…" : realStats?.totalActiveSubscriptions ?? 0}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Avg XP / User</p>
+            <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.avgXpUser")}</p>
             <p className="text-2xl font-bold text-primary">{loadingReal ? "…" : (realStats?.avgXpPerUser ?? 0).toLocaleString()}</p>
           </div>
         </div>
@@ -266,15 +268,15 @@ export function AnalyticsTab() {
             <p className="text-2xl font-bold text-primary">{loadingMkt ? "…" : mktStats?.paidBookings ?? 0}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Credit Purchases</p>
+            <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.creditPurchases")}</p>
             <p className="text-2xl font-bold text-primary">{loadingMkt ? "…" : `€${mktStats?.totalCreditRevenue ?? 0}`}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Shares (A / B)</p>
+            <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.sharesAB")}</p>
             <p className="text-2xl font-bold text-primary">{shareStats ? `${shareStats.totalA} / ${shareStats.totalB}` : "…"}</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Total Share Revenue</p>
+            <p className="text-xs text-muted-foreground">{t("uiAnalyticsTab.totalShareRevenue")}</p>
             <p className="text-2xl font-bold text-primary">{shareStats ? `€${shareStats.totalPaid}` : "…"}</p>
           </div>
         </div>
@@ -283,13 +285,13 @@ export function AnalyticsTab() {
       <Separator />
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Hash className="h-5 w-5" /> Breakdown by Topic <LiveLabel /></h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><Hash className="h-5 w-5" /> {t("uiAnalyticsTab.breakdownByTopic")} <LiveLabel /></h3>
         {topicStats.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No topic data yet.</p>
+          <p className="text-sm text-muted-foreground">{t("uiAnalyticsTab.noTopicDataYet")}</p>
         ) : (
           <div className="rounded-xl border border-border overflow-hidden">
             <Table>
-              <TableHeader><TableRow><TableHead>Topic</TableHead><TableHead className="text-right">Quests</TableHead><TableHead className="text-right">Active Users</TableHead></TableRow></TableHeader>
+              <TableHeader><TableRow><TableHead>{t("uiAnalyticsTab.topic")}</TableHead><TableHead className="text-right">{t("uiAnalyticsTab.quests")}</TableHead><TableHead className="text-right">{t("uiAnalyticsTab.activeUsers")}</TableHead></TableRow></TableHeader>
               <TableBody>
                 {topicStats.map(({ topic, quests, users }) => (
                   <TableRow key={topic.id}>
@@ -307,13 +309,13 @@ export function AnalyticsTab() {
       <Separator />
 
       <div>
-        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><MapPin className="h-5 w-5" /> Breakdown by Territory <LiveLabel /></h3>
+        <h3 className="font-display text-lg font-semibold flex items-center gap-2 mb-3"><MapPin className="h-5 w-5" /> {t("uiAnalyticsTab.breakdownByTerritory")} <LiveLabel /></h3>
         {territoryStats.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No territory data yet.</p>
+          <p className="text-sm text-muted-foreground">{t("uiAnalyticsTab.noTerritoryDataYet")}</p>
         ) : (
           <div className="rounded-xl border border-border overflow-hidden">
             <Table>
-              <TableHeader><TableRow><TableHead>Territory</TableHead><TableHead>Level</TableHead><TableHead className="text-right">Quests</TableHead><TableHead className="text-right">Active Users</TableHead></TableRow></TableHeader>
+              <TableHeader><TableRow><TableHead>{t("uiAnalyticsTab.territory")}</TableHead><TableHead>{t("uiAnalyticsTab.level")}</TableHead><TableHead className="text-right">{t("uiAnalyticsTab.quests")}</TableHead><TableHead className="text-right">{t("uiAnalyticsTab.activeUsers")}</TableHead></TableRow></TableHeader>
               <TableBody>
                 {territoryStats.map(({ territory, quests, users }) => (
                   <TableRow key={territory.id}>

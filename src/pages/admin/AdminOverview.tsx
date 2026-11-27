@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Bell, AlertTriangle, UserPlus, CreditCard, Flag, Bug, Megaphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,7 @@ const typeColors: Record<string, string> = {
 };
 
 export default function AdminOverview() {
+  const { t } = useTranslation();
   const { data: systemNotifications = [] } = useQuery({
     queryKey: ["admin-system-notifications"],
     queryFn: async () => {
@@ -58,7 +60,7 @@ export default function AdminOverview() {
               <Bell className="h-5 w-5 text-primary" /> Recent Critical Notifications
             </h2>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/notifications">View all</Link>
+              <Link to="/notifications">{t("uiAdminOverview.viewAll")}</Link>
             </Button>
           </div>
           <div className="space-y-2">

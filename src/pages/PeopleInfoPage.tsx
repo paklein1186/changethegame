@@ -7,7 +7,7 @@ export default function PeopleInfoPage() {
     <ContentPageShell title={t("pages.peopleInfo.title")} subtitle={t("pages.peopleInfo.subtitle")}>
       <ContentSection title={t("uiPeopleInfoPage.findYourPeople")}>
         <p>{t("uiPeopleInfoPage.useHousesTerritoriesXpAndContributions")}</p>
-        <ContentList items={["Creators", "Experts", "Impact professionals", "Guild leaders", "Company representatives", "Local actors"]} />
+        <ContentList items={[t("uiPeopleInfoPage.creators"), t("uiPeopleInfoPage.experts"), t("uiPeopleInfoPage.impactProfessionals"), t("uiPeopleInfoPage.guildLeaders"), t("uiPeopleInfoPage.companyRepresentatives"), t("uiPeopleInfoPage.localActors")]} />
       </ContentSection>
 
       <ContentCTA links={[{ label: "Explore people", href: "/explore/users" }]} />

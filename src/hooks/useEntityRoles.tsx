@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +22,7 @@ export interface EntityMemberRole {
 }
 
 export function useEntityRoles(entityType: string, entityId: string | undefined) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -95,24 +97,24 @@ export function useEntityRoles(entityType: string, entityId: string | undefined)
       is_default: false,
       sort_order: maxSort + 1,
     } as any);
-    if (error) { toast({ title: "Failed to add role", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiUseEntityRoles.failedToAddRole"), variant: "destructive" }); return; }
     invalidate();
-    toast({ title: "Role added!" });
+    toast({ title: t("uiUseEntityRoles.roleAdded") });
   };
 
   const updateRole = async (roleId: string, name: string, color: string) => {
     const { error } = await supabase.from("entity_roles").update({ name: name.trim(), color } as any).eq("id", roleId);
-    if (error) { toast({ title: "Failed to update role", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiUseEntityRoles.failedToUpdateRole"), variant: "destructive" }); return; }
     invalidate();
   };
 
   const deleteRole = async (roleId: string) => {
     const role = rolesQuery.data?.find((r) => r.id === roleId);
-    if (role?.is_default) { toast({ title: "Cannot delete the Source role", variant: "destructive" }); return; }
+    if (role?.is_default) { toast({ title: t("uiUseEntityRoles.cannotDeleteTheSourceRole"), variant: "destructive" }); return; }
     const { error } = await supabase.from("entity_roles").delete().eq("id", roleId);
-    if (error) { toast({ title: "Failed to delete role", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiUseEntityRoles.failedToDeleteRole"), variant: "destructive" }); return; }
     invalidate();
-    toast({ title: "Role deleted" });
+    toast({ title: t("uiUseEntityRoles.roleDeleted") });
   };
 
   const assignRole = async (roleId: string, userId: string) => {
@@ -120,7 +122,7 @@ export function useEntityRoles(entityType: string, entityId: string | undefined)
       entity_role_id: roleId,
       user_id: userId,
     } as any);
-    if (error && error.code !== "23505") { toast({ title: "Failed to assign role", variant: "destructive" }); return; }
+    if (error && error.code !== "23505") { toast({ title: t("uiUseEntityRoles.failedToAssignRole"), variant: "destructive" }); return; }
     invalidate();
 
     // Fire-and-forget: notify the user about the new role
@@ -147,7 +149,7 @@ export function useEntityRoles(entityType: string, entityId: string | undefined)
       .delete()
       .eq("entity_role_id", roleId)
       .eq("user_id", userId);
-    if (error) { toast({ title: "Failed to remove role", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiUseEntityRoles.failedToRemoveRole"), variant: "destructive" }); return; }
     invalidate();
   };
 

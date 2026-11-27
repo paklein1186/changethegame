@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Settings, ToggleLeft, ToggleRight } from "lucide-react";
 import { useFeatureFlags, useToggleFeatureFlag, type FeatureFlag } from "@/hooks/useFeatureFlags";
 import { Switch } from "@/components/ui/switch";
@@ -16,6 +17,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 const CATEGORY_ORDER = ["CORE", "NETWORK", "AI", "ECONOMY", "MISC"];
 
 export default function AdminFeatureToggles() {
+  const { t } = useTranslation();
   const { data: flags = [], isLoading } = useFeatureFlags();
   const toggle = useToggleFeatureFlag();
 
@@ -30,13 +32,13 @@ export default function AdminFeatureToggles() {
       {
         onSuccess: () =>
           toast.success(`${flag.label} ${!flag.enabled ? "enabled" : "disabled"}`),
-        onError: () => toast.error("Failed to update flag. Are you a Super Admin?"),
+        onError: () => toast.error(t("uiAdminFeatureToggles.failedToUpdateFlagAreYou")),
       }
     );
   };
 
   if (isLoading) {
-    return <div className="text-muted-foreground py-12 text-center">Loading feature flags…</div>;
+    return <div className="text-muted-foreground py-12 text-center">{t("uiAdminFeatureToggles.loadingFeatureFlags")}</div>;
   }
 
   return (
@@ -46,8 +48,7 @@ export default function AdminFeatureToggles() {
         <h2 className="font-display text-2xl font-bold">Platform Controls</h2>
       </div>
       <p className="text-muted-foreground text-sm max-w-xl">
-        Toggle major platform features on or off. Disabling a feature hides it from the UI
-        without deleting any data. Super Admins can always access disabled features in admin views.
+        {t("uiAdminFeatureToggles.toggleMajorPlatformFeaturesOnOr")}
       </p>
 
       {CATEGORY_ORDER.map((cat) => {

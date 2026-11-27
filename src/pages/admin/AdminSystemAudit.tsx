@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ScrollText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminSystemAudit() {
+  const { t } = useTranslation();
   const { data: recentActions = [] } = useQuery({
     queryKey: ["admin-audit-logs"],
     queryFn: async () => {
@@ -24,15 +26,15 @@ export default function AdminSystemAudit() {
         <ScrollText className="h-6 w-6 text-primary" /> Audit Logs
       </h2>
       {recentActions.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No audit log entries yet.</p>
+        <p className="text-sm text-muted-foreground">{t("uiAdminSystemAudit.noAuditLogEntriesYet")}</p>
       ) : (
         <div className="rounded-xl border border-border overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Type</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>{t("uiAdminSystemAudit.title")}</TableHead>
+                <TableHead>{t("uiAdminSystemAudit.date")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

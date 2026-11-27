@@ -186,7 +186,7 @@ export default function PodsList({ bare, hideFilters, externalFilters, externalH
 
           {!isLoggedIn && (
             <PublicExploreCTA
-              message="Pods are collaboration groups. Log in to see details and join."
+              message={t("uiPodsList.podsAreCollaborationGroupsLogIn")}
               className="mb-6"
             />
           )}

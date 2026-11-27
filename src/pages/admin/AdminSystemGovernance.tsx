@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { attachEmails } from "@/lib/profileEmails";
 import { useState, useEffect } from "react";
 import { Star, Crown, Users, Download, Settings } from "lucide-react";
@@ -15,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 function CooperativeSettings() {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -50,7 +52,7 @@ function CooperativeSettings() {
     await supabase.from("cooperative_settings").update({ value: editRate, updated_at: new Date().toISOString() }).eq("key", "coins_eur_rate");
     qc.invalidateQueries({ queryKey: ["admin-coop-settings"] });
     qc.invalidateQueries({ queryKey: ["coins-eur-rate"] });
-    toast({ title: "Coins rate updated" });
+    toast({ title: t("uiAdminSystemGovernance.coinsRateUpdated") });
   };
 
   return (
@@ -59,13 +61,13 @@ function CooperativeSettings() {
         <span className="text-amber-500 text-lg">⚠️</span>
         <div>
           <p className="text-sm font-semibold text-foreground">Alpha Phase</p>
-          <p className="text-sm text-muted-foreground">Shareholding settings are provisional and will be formally defined by the first active co-creators.</p>
+          <p className="text-sm text-muted-foreground">{t("uiAdminSystemGovernance.shareholdingSettingsAreProvisionalAndWill")}</p>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Share Price (€)</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("uiAdminSystemGovernance.sharePrice")}</CardTitle>
           </CardHeader>
           <CardContent>
             <Input
@@ -79,7 +81,7 @@ function CooperativeSettings() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Class A Shares</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("uiAdminSystemGovernance.classAShares")}</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             <Switch checked={classAEnabled} onCheckedChange={(v) => updateSetting("class_a_enabled", { enabled: v })} />
@@ -101,11 +103,11 @@ function CooperativeSettings() {
       {/* Coins ← → € Rate */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">🟩 Coins ← → € Conversion Rate</CardTitle>
+          <CardTitle className="text-sm font-medium">{t("uiAdminSystemGovernance.coinsConversionRate")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-xs text-muted-foreground">
-            Current: 1 Coin = €{coinsRate} · {Math.round(1 / parseFloat(coinsRate || "0.04"))} Coins per €1
+            {t("uiAdminSystemGovernance.current1Coin")}{coinsRate} · {Math.round(1 / parseFloat(coinsRate || "0.04"))} {t("uiAdminSystemGovernance.coinsPer1")}
           </p>
           <div className="flex items-center gap-3">
             <Input
@@ -117,12 +119,12 @@ function CooperativeSettings() {
               className="w-32"
             />
             <span className="text-xs text-muted-foreground">
-              € per Coin (= {Math.round(1 / parseFloat(editRate || "0.04"))} Coins/€)
+              {t("uiAdminSystemGovernance.perCoin")} {Math.round(1 / parseFloat(editRate || "0.04"))} {t("uiAdminSystemGovernance.coins")}
             </span>
-            <Button size="sm" onClick={handleSaveRate}>Save</Button>
+            <Button size="sm" onClick={handleSaveRate}>{t("uiAdminSystemGovernance.save")}</Button>
           </div>
           <p className="text-[11px] text-destructive/80">
-            ⚠️ Changing this rate affects all pending withdrawal calculations. Only change at quarter boundaries.
+            {t("uiAdminSystemGovernance.changingThisRateAffectsAllPending")}
           </p>
         </CardContent>
       </Card>
@@ -132,9 +134,9 @@ function CooperativeSettings() {
           <CardTitle className="text-sm font-medium">Voting Weight Formulas</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <p><strong>Class A:</strong> log(1 + shares)</p>
-          <p><strong>Class B:</strong> log(1 + shares) × 0.2</p>
-          <p className="text-xs text-muted-foreground">Formulas are applied automatically via database trigger.</p>
+          <p><strong>{t("uiAdminSystemGovernance.classA")}</strong> {t("uiAdminSystemGovernance.log1Shares")}</p>
+          <p><strong>Class B:</strong> {t("uiAdminSystemGovernance.log1Shares02")}</p>
+          <p className="text-xs text-muted-foreground">{t("uiAdminSystemGovernance.formulasAreAppliedAutomaticallyViaDatabase")}</p>
         </CardContent>
       </Card>
     </div>
@@ -142,6 +144,7 @@ function CooperativeSettings() {
 }
 
 function ShareholdersList() {
+  const { t } = useTranslation();
   const { data: shareholders = [] } = useQuery({
     queryKey: ["admin-shareholders"],
     queryFn: async () => {
@@ -176,9 +179,9 @@ function ShareholdersList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>{t("uiAdminSystemGovernance.name")}</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead className="text-right">Class A</TableHead>
+              <TableHead className="text-right">{t("uiAdminSystemGovernance.classA2")}</TableHead>
               <TableHead className="text-right">Class B</TableHead>
               <TableHead className="text-right">Weight</TableHead>
             </TableRow>
@@ -194,7 +197,7 @@ function ShareholdersList() {
               </TableRow>
             ))}
             {shareholders.length === 0 && (
-              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">No shareholders yet.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">{t("uiAdminSystemGovernance.noShareholdersYet")}</TableCell></TableRow>
             )}
           </TableBody>
         </Table>
@@ -204,6 +207,7 @@ function ShareholdersList() {
 }
 
 export default function AdminSystemGovernance() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <h2 className="font-display text-2xl font-bold flex items-center gap-2">
@@ -213,7 +217,7 @@ export default function AdminSystemGovernance() {
       <Tabs defaultValue="governance">
         <TabsList>
           <TabsTrigger value="governance"><Star className="h-4 w-4 mr-1" /> Featured Content</TabsTrigger>
-          <TabsTrigger value="cooperative"><Crown className="h-4 w-4 mr-1" /> Cooperative Settings</TabsTrigger>
+          <TabsTrigger value="cooperative"><Crown className="h-4 w-4 mr-1" /> {t("uiAdminSystemGovernance.cooperativeSettings")}</TabsTrigger>
           <TabsTrigger value="shareholders"><Users className="h-4 w-4 mr-1" /> Shareholders</TabsTrigger>
         </TabsList>
 

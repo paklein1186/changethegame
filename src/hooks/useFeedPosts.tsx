@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -106,6 +107,7 @@ export function useFeedPosts(contextType: string, contextId?: string) {
 }
 
 export function useCreatePost() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -316,7 +318,7 @@ export function useCreatePost() {
               const notifRows = eligibleMembers.map((m: any) => ({
                 user_id: m.user_id,
                 type: "FOLLOWED_ENTITY_NEW_POST",
-                title: "New post in your entity",
+                title: t("uiUseFeedPosts.newPostInYourEntity"),
                 body: `${authorName} published a new post`,
                 related_entity_type: contextType.replace("_DISCUSSION", ""),
                 related_entity_id: contextId,

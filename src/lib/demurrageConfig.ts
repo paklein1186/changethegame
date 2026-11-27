@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 // ─── Demurrage (Credit Fade) Configuration ──────────────────
 // Monthly demurrage rate applied to wallet balances
 
@@ -42,44 +43,39 @@ export const ECONOMY_LAYERS = [
     purpose: "Real economic exchange",
     icon: "Banknote",
     convertible: true,
-    description:
-      "Your real-world earnings from paid missions and services. Processed via Stripe Connect. Coins are withdrawable to fiat at the current platform rate.",
+    get description() { return i18n.t("uiDemurrageConfig.yourRealWorldEarningsFromPaid"); },
   },
   {
     key: "coins",
-    label: "🟩 Coins — Fiat-Backed Mission Value",
+    get label() { return i18n.t("uiDemurrageConfig.coinsFiatBackedMissionValue"); },
     purpose: "Quest funding, compensation, OCU distribution",
     icon: "Leaf",
     convertible: true,
-    description:
-      "Internal units backed 1:1 by real fiat (€). Used to fund quests, pay contributors, and run OCU pie distributions. Pre-funded by quest creators or raised through campaigns. No demurrage — Coins hold their value. Withdrawable to fiat via Stripe Connect.",
+    get description() { return i18n.t("uiDemurrageConfig.internalUnitsBacked11By"); },
   },
   {
     key: "ctg",
-    label: "🌱 $CTG — Contribution Token",
+    get label() { return i18n.t("uiDemurrageConfig.ctgContributionToken"); },
     purpose: "Commons value, quest incentive",
     icon: "Sprout",
     convertible: false,
-    description:
-      "Emitted when you produce verified work for the commons. Not fiat-backed, not purchasable. Fades at 1%/month to encourage active circulation — except when held in quest escrow, where demurrage is frozen until distribution. Once distributed to your wallet, normal demurrage resumes. Transferable P2P. Can also be pre-funded into quests as an additional incentive layer alongside Coins.",
+    get description() { return i18n.t("uiDemurrageConfig.emittedWhenYouProduceVerifiedWork"); },
   },
   {
     key: "credits",
-    label: "🔷 Platform Credits",
+    get label() { return i18n.t("uiDemurrageConfig.platformCredits"); },
     purpose: "Feature fuel & gamification only",
     icon: "Coins",
     convertible: false,
-    description:
-      "Non-monetary platform utility. Powers quotas, boosts, and gamification actions. Cannot be withdrawn, exchanged for Coins, or used for quest compensation in any form. Gently fades at 1%/month to encourage use. Obtained via subscription plans, onboarding bonuses, or top-up purchases.",
+    get description() { return i18n.t("uiDemurrageConfig.nonMonetaryPlatformUtilityPowersQuotas"); },
   },
   {
     key: "xp",
-    label: "⭐ XP — Reputation",
+    get label() { return i18n.t("uiDemurrageConfig.xpReputation"); },
     purpose: "Permanent contribution level",
     icon: "Star",
     convertible: false,
-    description:
-      "Reflects your cumulative impact and participation. Never decays, cannot be purchased or transferred. Unlocks governance rights and stewardship eligibility. XP is never clawed back — even on contributor exit.",
+    get description() { return i18n.t("uiDemurrageConfig.reflectsYourCumulativeImpactAndParticipation"); },
   },
   {
     key: "shares",
@@ -87,8 +83,7 @@ export const ECONOMY_LAYERS = [
     purpose: "Stewardship participation",
     icon: "Compass",
     convertible: false,
-    description:
-      "Long-term commitment to the platform mission. Provide governance weight and dividend eligibility. Not tradeable within the platform.",
+    get description() { return i18n.t("uiDemurrageConfig.longTermCommitmentToThePlatform"); },
   },
 ] as const;
 

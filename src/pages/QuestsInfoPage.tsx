@@ -7,11 +7,11 @@ export default function QuestsInfoPage() {
     <ContentPageShell title={t("pages.questsInfo.title")} subtitle={t("pages.questsInfo.subtitle")}>
       <ContentSection title={t("uiQuestsInfoPage.whatAreQuests")}>
         <p>{t("uiQuestsInfoPage.questsAreTheBeatingHeartOf")}</p>
-        <ContentList items={["Personal projects", "Community missions", "Creative journeys", "Impact collaborations", "Guild projects", "Company assignments"]} />
+        <ContentList items={[t("uiQuestsInfoPage.personalProjects"), t("uiQuestsInfoPage.communityMissions"), t("uiQuestsInfoPage.creativeJourneys"), t("uiQuestsInfoPage.impactCollaborations"), t("uiQuestsInfoPage.guildProjects"), t("uiQuestsInfoPage.companyAssignments")]} />
       </ContentSection>
 
       <ContentSection title={t("uiQuestsInfoPage.whatYouCanDo")}>
-        <ContentList items={["Create quests", "Join quests", "Propose contributions", "Earn XP (reputation) for every contribution", "Earn 🟩 Coins from funded quest pools and 🌱 $CTG for commons contributions", "Fund and support quests"]} />
+        <ContentList items={[t("uiQuestsInfoPage.createQuests"), t("uiQuestsInfoPage.joinQuests"), t("uiQuestsInfoPage.proposeContributions"), t("uiQuestsInfoPage.earnXpReputationForEveryContribution"), t("uiQuestsInfoPage.earnCoinsFromFundedQuestPools"), t("uiQuestsInfoPage.fundAndSupportQuests")]} />
       </ContentSection>
 
       <ContentSection title={t("uiQuestsInfoPage.questFundingPools")}>
@@ -19,8 +19,8 @@ export default function QuestsInfoPage() {
           {t("uiQuestsInfoPage.everyProjectOrOngoingMissionQuest")}
         </p>
         <ContentList items={[
-          "🟩 Coins — fiat-backed mission value. Pre-funded by the creator or raised via campaigns. Distributed to contributors via OCU pie, equal split, or manual dispatch. Withdrawable to €.",
-          "🌱 $CTG — contribution token. Also fundable into quest escrow as an incentive. Frozen from demurrage while in escrow. Resumes 1%/month decay on distribution.",
+          t("uiQuestsInfoPage.coinsFiatBackedMissionValuePre"),
+          t("uiQuestsInfoPage.ctgContributionTokenAlsoFundableInto"),
         ]} />
         <p className="text-sm text-muted-foreground mt-2 font-medium">
           {t("uiQuestsInfoPage.platformCreditsAreNeverUsedFor")}

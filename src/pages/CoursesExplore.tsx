@@ -50,7 +50,7 @@ export default function CoursesExplore({ bare }: { bare?: boolean }) {
 
       {!isLoggedIn && (
         <PublicExploreCTA
-          message="Course content and enrollment require an account. Here's what's available."
+          message={t("uiCoursesExplore.courseContentAndEnrollmentRequireAn")}
           className="mb-6"
         />
       )}

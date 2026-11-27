@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -98,6 +99,7 @@ export function useUserContributions(userId: string | undefined) {
 
 // ── Manually log a contribution ──────────────────────────────
 export function useLogContribution() {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -139,11 +141,11 @@ export function useLogContribution() {
         .single();
 
       if (error) {
-        toast({ title: "Failed to log contribution", variant: "destructive" });
+        toast({ title: t("uiUseContributionLog.failedToLogContribution"), variant: "destructive" });
         return null;
       }
 
-      toast({ title: "Contribution logged" });
+      toast({ title: t("uiUseContributionLog.contributionLogged") });
       qc.invalidateQueries({ queryKey: ["contribution-logs"] });
       return data;
     },
@@ -166,11 +168,11 @@ export function useLogContribution() {
         .eq("id", contributionId);
 
       if (error) {
-        toast({ title: "Failed to verify", variant: "destructive" });
+        toast({ title: t("uiUseContributionLog.failedToVerify"), variant: "destructive" });
         return;
       }
 
-      toast({ title: "Contribution verified ✓" });
+      toast({ title: t("uiUseContributionLog.contributionVerified") });
       qc.invalidateQueries({ queryKey: ["contribution-logs"] });
     },
     [session, toast, qc]

@@ -6501,7 +6501,14 @@
     "saveWebSettings": "Save Web Settings"
   },
   "uiCommunityGuidelinesPage": {
-    "ourStandards": "Our Standards"
+    "ourStandards": "Our Standards",
+    "respectAndKindnessInAllInteractions": "Respect and kindness in all interactions",
+    "zeroToleranceForHarassmentOrDiscrimination": "Zero tolerance for harassment or discrimination",
+    "respectForTerritoriesAndLocalCommunities": "Respect for territories and local communities",
+    "appropriateUseOfAiAgents": "Appropriate use of AI agents",
+    "useReportingToolsWhenNeededModeration": "Use reporting tools when needed — moderation is active",
+    "constructiveCollaborationOverConflict": "Constructive collaboration over conflict",
+    "inclusiveLanguageThatWelcomesEveryone": "Inclusive language that welcomes everyone"
   },
   "uiCompanySettings": {
     "identityProfile": "Identity & Profile",
@@ -6615,19 +6622,42 @@
   },
   "uiCreateCompanyInfoPage": {
     "aTraditionalOrganizationRefersToA": "A Traditional Organization refers to a classic structure (SME, non-profit, institution, coop-like, or startup) operating in the conventional world. They manage:",
-    "createATraditionalOrganization": "Create a Traditional Organization"
+    "createATraditionalOrganization": "Create a Traditional Organization",
+    "organizationQuests": "Organization quests",
+    "membersAndRoles": "Members and roles",
+    "organizationServices": "Organization services",
+    "bookings": "Bookings",
+    "governance": "Governance"
   },
   "uiCreateGuildInfoPage": {
     "whatGuildsOffer": "What Guilds Offer",
     "guildsOrCollectivesAreCollaborativeGroups": "Guilds (or collectives) are collaborative groups with:",
     "youCanRequireApplicationsOrKeep": "You can require applications or keep it open.",
-    "createAGuild": "Create a guild"
+    "createAGuild": "Create a guild",
+    "quests": "Quests",
+    "events": "Events",
+    "membersAndRoles": "Members and roles",
+    "anAiAgentForCoordination": "An AI agent for coordination",
+    "collaborationTools": "Collaboration tools",
+    "services": "Services"
   },
   "uiCreateQuestInfoPage": {
     "aQuestCanBe": "A Quest Can Be",
     "questLifecycle": "Quest Lifecycle",
     "youCanAdd": "You Can Add",
-    "createAQuestNow": "Create a quest now"
+    "createAQuestNow": "Create a quest now",
+    "aProjectYouWantToStart": "A project you want to start",
+    "anInitiativeInYourGuild": "An initiative in your guild",
+    "aCreativeAct": "A creative act",
+    "aSocialOrTerritorialAction": "A social or territorial action",
+    "completedAchievement": "Completed (achievement)",
+    "territories": "Territories",
+    "creditsFunding": "Credits / funding",
+    "starting": "Starting",
+    "ongoing": "Ongoing",
+    "houses": "Houses",
+    "images": "Images",
+    "participants": "Participants"
   },
   "uiEventEdit": {
     "loading": "Loading…",
@@ -8778,11 +8808,26 @@
     "attachTo": "Attach to..."
   },
   "uiAIEthicsPage": {
-    "aiAmplifiesHumanCollaborationCreativityAnd": "AI amplifies human collaboration, creativity, and coordination. It is never a replacement for human agency or decision-making."
+    "aiAmplifiesHumanCollaborationCreativityAnd": "AI amplifies human collaboration, creativity, and coordination. It is never a replacement for human agency or decision-making.",
+    "whatAiCanAndCannotDo": "What AI can and cannot do is clearly communicated",
+    "dataBoundariesAreStrictlyEnforcedPer": "Data boundaries are strictly enforced per unit",
+    "transparencyOfAlgorithmsAndRecommendations": "Transparency of algorithms and recommendations",
+    "memoryIsPerUnitNotGlobal": "Memory is per unit, not global",
+    "deletionAndPrivacyOptionsAreAlways": "Deletion and privacy options are always available",
+    "commitmentToResponsibleAndEthicalUse": "Commitment to responsible and ethical use",
+    "usersControlTheirAiInteractions": "Users control their AI interactions"
   },
   "uiAIInfoPage": {
     "aiAgentsAssistYouBy": "AI Agents Assist You By",
-    "eachUnitGuildQuestCompanyTerritory": "Each unit (guild, quest, company, territory, pod) has its own AI agent with contextual memory. Agents only access data within their unit — never globally."
+    "eachUnitGuildQuestCompanyTerritory": "Each unit (guild, quest, company, territory, pod) has its own AI agent with contextual memory. Agents only access data within their unit — never globally.",
+    "draftingGuildOrQuestDescriptions": "Drafting guild or quest descriptions",
+    "analyzingTerritoryActivity": "Analyzing territory activity",
+    "suggestingNextSteps": "Suggesting next steps",
+    "supportingGovernanceWithPollsAndOptions": "Supporting governance with polls and options",
+    "summarizingMissions": "Summarizing missions",
+    "proposingCollaborators": "Proposing collaborators",
+    "generatingUpdates": "Generating updates",
+    "offeringCreativeInspiration": "Offering creative inspiration"
   },
   "uiBookingDetail": {
     "loading": "Loading…",
@@ -8875,11 +8920,16 @@
   "uiCompaniesInfoPage": {
     "traditionalOrganizationsInChangethegame": "Traditional Organizations in changethegame",
     "traditionalOrganizationsRepresentTheProfessionalWorld": "Traditional Organizations represent the professional world inside changethegame — SMEs, non-profits, institutions, cooperatives, and startups. You can:",
-    "createATraditionalOrganization": "Create a Traditional Organization"
+    "createATraditionalOrganization": "Create a Traditional Organization",
+    "attachYourselfToAnOrganization": "Attach yourself to an organization",
+    "createOrJoinOrganizationQuests": "Create or join organization quests",
+    "offerServicesAsAnOrganization": "Offer services as an organization",
+    "buildTeamsAndPods": "Build teams and pods"
   },
   "uiCompaniesList": {
     "logInToSeeDetails": "Log in to see details",
-    "noTraditionalOrganizationsMatchYourFilters": "No traditional organizations match your filters."
+    "noTraditionalOrganizationsMatchYourFilters": "No traditional organizations match your filters.",
+    "thisIsAPreviewOfOrganizations": "This is a preview of organizations in the ecosystem. Log in to see full details."
   },
   "uiCompanyDetail": {
     "loading": "Loading…",
@@ -8950,12 +9000,18 @@
   "uiCoursesExplore": {
     "learnFromTheCommunitySBest": "Learn from the community's best educators.",
     "noCoursesMatchYourFilters": "No courses match your filters.",
-    "logInToEnroll": "Log in to enroll"
+    "logInToEnroll": "Log in to enroll",
+    "courseContentAndEnrollmentRequireAn": "Course content and enrollment require an account. Here's what's available."
   },
   "uiCoursesInfoPage": {
     "coursesAllowUsersAndGuildsTo": "Courses allow users and guilds to publish structured learning modules:",
     "coursesCanBeFreeOrMonetized": "Courses can be free or monetized with credits.",
-    "createACourse": "Create a course"
+    "createACourse": "Create a course",
+    "files": "Files",
+    "lessons": "Lessons",
+    "videos": "Videos",
+    "exercises": "Exercises",
+    "discussions": "Discussions"
   },
   "uiCreditEconomyPage": {
     "xpTracks": "⭐ XP tracks",
@@ -9057,7 +9113,9 @@
     "overview": "Overview",
     "quests": "Quests",
     "guilds": "Guilds",
-    "viewAll": "View all ("
+    "viewAll": "View all (",
+    "kindHouse": "House",
+    "kindTopic": "Topic"
   },
   "uiExploreUsers": {
     "searchByNameHeadlineOrBio": "Search by name, headline, or bio…",
@@ -9070,7 +9128,8 @@
     "tryAdjustingYourFiltersOrSearch": "Try adjusting your filters or search query.",
     "next": "Next",
     "browseAndConnectWithCommunityMembers": "Browse and connect with community members.",
-    "logInToSeeFullProfile": "Log in to see full profile & connect"
+    "logInToSeeFullProfile": "Log in to see full profile & connect",
+    "youReSeeingAPreviewLog": "You're seeing a preview. Log in to view full profiles and connect with people."
   },
   "uiExternalResourceRedirect": {
     "thisExternalResourceLinkIsInvalid": "This external resource link is invalid.",
@@ -9096,7 +9155,12 @@
     "whatAreGuilds": "What are Guilds?",
     "guildsAreLivingCommunitiesThatGather": "Guilds are living communities that gather around shared themes, territories, practices or professions. Inside a guild you can:",
     "browseGuilds": "Browse guilds",
-    "createAGuild": "Create a guild"
+    "createAGuild": "Create a guild",
+    "collaborateOnQuests": "Collaborate on quests",
+    "shareResources": "Share resources",
+    "organizeEvents": "Organize events",
+    "applyOrInviteMembers": "Apply or invite members",
+    "useCollaborationToolsKanbanDocsAi": "Use collaboration tools (kanban, docs, AI agent)"
   },
   "uiGuildsList": {
     "guildCreated": "Guild created!",
@@ -9112,7 +9176,8 @@
     "guilds": "Guilds",
     "logInToSeeDetails": "Log in to see details",
     "noGuildsMatchYourFilters": "No guilds match your filters.",
-    "tryShowingAllHouses": "Try showing all Houses"
+    "tryShowingAllHouses": "Try showing all Houses",
+    "thisIsAPreviewOfThe": "This is a preview of the guilds in our ecosystem. Log in or create an account to see full details and join."
   },
   "uiInboxPage": {
     "useThis": "Use this",
@@ -9322,7 +9387,14 @@
     "quests": "Quests",
     "events": "Events",
     "yourNetworkFeed": "Your network feed",
-    "postsAndUpdatesFromPeopleAnd": "Posts and updates from people and units you follow."
+    "postsAndUpdatesFromPeopleAnd": "Posts and updates from people and units you follow.",
+    "joinGuildsOrganizationsOrQuestsTo": "Join guilds, organizations or quests to build your network.",
+    "noTraditionalOrganizationsLinkedToYour": "No traditional organizations linked to your account.",
+    "addTerritoriesAndTopicsInYour": "Add territories and topics in your profile settings.",
+    "addTerritoriesInYourProfileSettings": "Add territories in your profile settings.",
+    "statGuilds": "Guilds",
+    "statCompanies": "Companies",
+    "statQuests": "Quests"
   },
   "uiNotFound": {
     "oopsPageNotFound": "Oops! Page not found",
@@ -9359,7 +9431,13 @@
   },
   "uiPeopleInfoPage": {
     "findYourPeople": "Find Your People",
-    "useHousesTerritoriesXpAndContributions": "Use Houses, Territories, XP and contributions to find people you align with. Discover:"
+    "useHousesTerritoriesXpAndContributions": "Use Houses, Territories, XP and contributions to find people you align with. Discover:",
+    "guildLeaders": "Guild leaders",
+    "creators": "Creators",
+    "experts": "Experts",
+    "impactProfessionals": "Impact professionals",
+    "companyRepresentatives": "Company representatives",
+    "localActors": "Local actors"
   },
   "uiPlansPage": {
     "yourSubscriptionHasBeenActivated": "Your subscription has been activated.",
@@ -9430,7 +9508,8 @@
     "smallCollaborationGroupsAroundQuestsAnd": "Small collaboration groups around quests and topics.",
     "logInToSeeDetails": "Log in to see details",
     "noPodsMatchYourFilters": "No pods match your filters.",
-    "tryShowingAllHouses": "Try showing all Houses"
+    "tryShowingAllHouses": "Try showing all Houses",
+    "podsAreCollaborationGroupsLogIn": "Pods are collaboration groups. Log in to see details and join."
   },
   "uiProfileEnrichment": {
     "pleaseUploadAPdfFile": "Please upload a PDF file",
@@ -9497,7 +9576,21 @@
     "platformCreditsAreNeverUsedFor": "🔷 Platform Credits are never used for quest compensation.",
     "browseQuests": "Browse quests",
     "createAQuest": "Create a quest",
-    "understandTheValueSystem": "Understand the value system"
+    "understandTheValueSystem": "Understand the value system",
+    "guildProjects": "Guild projects",
+    "createQuests": "Create quests",
+    "joinQuests": "Join quests",
+    "proposeContributions": "Propose contributions",
+    "earnXpReputationForEveryContribution": "Earn XP (reputation) for every contribution",
+    "earnCoinsFromFundedQuestPools": "Earn 🟩 Coins from funded quest pools and 🌱 $CTG for commons contributions",
+    "fundAndSupportQuests": "Fund and support quests",
+    "coinsFiatBackedMissionValuePre": "🟩 Coins — fiat-backed mission value. Pre-funded by the creator or raised via campaigns. Distributed to contributors via OCU pie, equal split, or manual dispatch. Withdrawable to €.",
+    "ctgContributionTokenAlsoFundableInto": "🌱 $CTG — contribution token. Also fundable into quest escrow as an incentive. Frozen from demurrage while in escrow. Resumes 1%/month decay on distribution.",
+    "personalProjects": "Personal projects",
+    "communityMissions": "Community missions",
+    "creativeJourneys": "Creative journeys",
+    "impactCollaborations": "Impact collaborations",
+    "companyAssignments": "Company assignments"
   },
   "uiQuestsMarketplace": {
     "createQuest": "Create Quest",
@@ -9511,7 +9604,8 @@
     "completedHidden": "Completed hidden",
     "credits": "Credits",
     "noQuestsMatchYourFilters": "No quests match your filters.",
-    "tryShowingAllHouses": "Try showing all Houses"
+    "tryShowingAllHouses": "Try showing all Houses",
+    "toSeeQuestDetailsDescriptionsAnd": "To see quest details, descriptions, and participate, please log in or create an account."
   },
   "uiResetPassword": {
     "passwordMustBeAtLeast6": "Password must be at least 6 characters",
@@ -9567,7 +9661,17 @@
   },
   "uiRoadmapPage": {
     "communityProposals": "Community Proposals",
-    "featuresShapedByCommunityFeedbackAre": "Features shaped by community feedback are prioritized in our development cycle. Share your ideas through the governance tools in your guild or via the contact page."
+    "featuresShapedByCommunityFeedbackAre": "Features shaped by community feedback are prioritized in our development cycle. Share your ideas through the governance tools in your guild or via the contact page.",
+    "enhancedTerritoryIntelligenceDashboards": "Enhanced territory intelligence dashboards",
+    "advancedGuildGovernanceTools": "Advanced guild governance tools",
+    "publicApiForIntegrations": "Public API for integrations",
+    "networkHubWithRelationalEcosystemView": "Network hub with relational ecosystem view",
+    "aiMatchmakerIntegrationAcrossAllUnits": "AI matchmaker integration across all units",
+    "courseCreationAndEnrollmentSystem": "Course creation and enrollment system",
+    "questProposalsAndFundingWorkflows": "Quest proposals and funding workflows",
+    "mobileOptimizedExperienceImprovements": "Mobile-optimized experience improvements",
+    "crossPlatformAiMatchmakingUpgrades": "Cross-platform AI matchmaking upgrades",
+    "personaBasedUiPersonalization": "Persona-based UI personalization"
   },
   "uiSearchPage": {
     "guilds": "Guilds",
@@ -9588,7 +9692,14 @@
     "securityIsFoundationalToChangethegameWe": "Security is foundational to changethegame. We implement industry-standard protections across all layers of the platform.",
     "measuresInPlace": "Measures in Place",
     "ifYouDiscoverAVulnerabilityPlease": "If you discover a vulnerability, please report it to",
-    "weTakeAllReportsSeriouslyAnd": ". We take all reports seriously and respond promptly."
+    "weTakeAllReportsSeriouslyAnd": ". We take all reports seriously and respond promptly.",
+    "encryptionInTransitTlsAndAt": "Encryption in transit (TLS) and at rest",
+    "rowLevelSecurityOnAllDatabase": "Row-level security on all database tables",
+    "rateLimitingOnAllSensitiveEndpoints": "Rate limiting on all sensitive endpoints",
+    "roleBasedAccessControlForGuilds": "Role-based access control for guilds, companies, and admin",
+    "secureAuthenticationWithEmailVerification": "Secure authentication with email verification",
+    "sessionManagementWithAutomaticExpiry": "Session management with automatic expiry",
+    "softDeleteWithPermanentRemovalAfter": "Soft-delete with permanent removal after 30 days"
   },
   "uiServiceDetail": {
     "loading": "Loading…",
@@ -9631,7 +9742,8 @@
     "event": "Event",
     "publicBookingPage": "Public booking page",
     "noServicesMatchYourFilters": "No services match your filters.",
-    "tryShowingAllHouses": "Try showing all Houses"
+    "tryShowingAllHouses": "Try showing all Houses",
+    "serviceDetailsAndBookingAreAvailable": "Service details and booking are available to logged-in users. Here's a preview of what's available."
   },
   "uiSharesPage": {
     "purchaseFailed": "Purchase failed",
@@ -9688,7 +9800,25 @@
   "uiSupportPage": {
     "inDepthGuides": "In-depth Guides",
     "askForHelp": "Ask for Help",
-    "stuckContactTheTeamForDirect": "Stuck? Contact the team for direct support."
+    "stuckContactTheTeamForDirect": "Stuck? Contact the team for direct support.",
+    "howToCreateYourProfile": "How to create your profile",
+    "howToLaunchAQuest": "How to launch a quest",
+    "howToJoinAGuild": "How to join a guild",
+    "howToOfferAService": "How to offer a service",
+    "howToUseAiAgents": "How to use AI agents",
+    "xpCreditsContributionIndex": "XP, credits & contribution index",
+    "podsAndCollaborationTools": "Pods and collaboration tools",
+    "guildGovernance": "Guild governance",
+    "territoryActivation": "Territory activation",
+    "howAiWorksAndWhereData": "How AI works and where data goes",
+    "iCanTCreateAQuest": "I can't create a quest",
+    "myGuildDoesnTDisplayProperly": "My guild doesn't display properly",
+    "myCompanyIsnTAttached": "My company isn't attached",
+    "bookingsDonTOpen": "Bookings don't open",
+    "coursesLearningModules": "Courses & learning modules",
+    "notificationsDonTAppear": "Notifications don't appear",
+    "quickstartGuides": "Quickstart Guides",
+    "troubleshooting": "Troubleshooting"
   },
   "uiTerritoryDetail": {
     "territoryNotFound": "Territory not found",
@@ -9778,5 +9908,660 @@
     "createIdea": "Create Idea",
     "noDrafts": "No drafts.",
     "draft": "Draft"
+  },
+  "uiAdminAgentBillingDashboard": {
+    "activeAgents": "Active Agents",
+    "status": "Status",
+    "active": "Active",
+    "creditsMo": "credits/mo"
+  },
+  "uiAdminBountiesTab": {
+    "titleActionTypeAndEndDate": "Title, action type, and end date are required",
+    "createBounty": "Create Bounty",
+    "title": "Title *",
+    "eGDocumentANaturalSystem": "e.g. Document a Natural System",
+    "description": "Description",
+    "startsAt": "Starts At",
+    "endsAt": "Ends At *",
+    "allBounties": "All Bounties (",
+    "noBountiesCreatedYet": "No bounties created yet.",
+    "title2": "Title",
+    "active": "Active"
+  },
+  "uiAdminHarvestTab": {
+    "labelAndEndDateAreRequired": "Label and end date are required",
+    "harvestInProgress": "Harvest in progress ·",
+    "allCtgEmissions": "All $CTG emissions ×",
+    "noActiveHarvestWindowCtgEmissions": "No active harvest window — $CTG emissions at standard rate",
+    "createHarvestWindow": "Create Harvest Window",
+    "moreCtgDuringThisWindow": "% more 🌱 $CTG during this window",
+    "startsAt": "Starts At",
+    "endsAt": "Ends At *",
+    "createWindow": "Create Window",
+    "allHarvestWindows": "All Harvest Windows (",
+    "noHarvestWindowsCreatedYet": "No harvest windows created yet.",
+    "name": "Name",
+    "start": "Start",
+    "status": "Status"
+  },
+  "uiCreditTransfersMonitor": {
+    "creditTransfersBalances": "Credit Transfers & Balances",
+    "searchUser": "Search user…",
+    "allTypes": "All types",
+    "welcomeBonus": "Welcome bonus",
+    "questRewards": "Quest rewards",
+    "adminGrants": "Admin grants",
+    "totalInCirculationTop50": "Total in circulation (top 50)",
+    "usersWithBalance": "Users with balance",
+    "noUsersFound": "No users found",
+    "transactionLog": "Transaction Log",
+    "noTransactionsFound": "No transactions found"
+  },
+  "uiCTGEmissionRulesTab": {
+    "resetToDefaults": "Reset to defaults",
+    "allEmissionRulesWillBeRestored": "All emission rules will be restored to their initial values. This action is irreversible.",
+    "cancel": "Cancel",
+    "contributionType": "Contribution type",
+    "commonsShare": "Commons share %",
+    "active": "Active",
+    "loading": "Loading…",
+    "withTheCurrentRulesCompletingA": "With the current rules, completing a full quest (1 quest + 5 subtasks) would yield:",
+    "toTheContributor": "to the contributor",
+    "toTheCommons": "to the commons",
+    "collectiveFundsFedByTheCommons": "Collective funds fed by the commons percentage of each emission.",
+    "dailyCommonsContributionsLast30Days": "Daily commons contributions — Last 30 days"
+  },
+  "uiCTGUserWalletsTab": {
+    "searchByNameOrEmail": "Search by name or email...",
+    "allWallets": "All wallets",
+    "activeThisMonth": "Active this month",
+    "loading": "Loading…",
+    "noWalletsFound": "No wallets found.",
+    "memberSince": "Member since",
+    "date": "Date",
+    "amount": "Amount",
+    "noTransactions": "No transactions.",
+    "errorDuringAdjustment": "Error during adjustment",
+    "adjustBalanceOf": "Adjust balance of",
+    "justifyTheAdjustment": "Justify the adjustment...",
+    "balanceWillBeReducedTo0": "Balance will be reduced to 0 $CTG (partial deduction of",
+    "ctgInsteadOf": "$CTG instead of",
+    "newBalanceAfterOperation": "New balance after operation:",
+    "confirmAdjustment": "Confirm adjustment",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "uiTreasuryDashboard": {
+    "activeHolders": "Active Holders",
+    "platformCreditVelocity": "Platform Credit Velocity",
+    "platformCreditCirculation30d": "🔷 Platform Credit Circulation (30d)",
+    "platformCreditsMinted": "Platform Credits Minted",
+    "platformCreditsSpent": "Platform Credits Spent",
+    "platformCreditsFaded": "Platform Credits Faded",
+    "platformCreditsFromDemurrageRedistribution": "Platform Credits (from demurrage redistribution)",
+    "allocationModelAppliedToSurplus": "Allocation Model (applied to surplus)",
+    "distributePoolToRecentContributors": "Distribute pool to recent contributors",
+    "date": "Date"
+  },
+  "uiPaths": {
+    "discoverCtgBuildYourProfileFind": "Discover CTG, build your profile, find your territory and guild",
+    "documentYourTerritoryMonitorNaturalSystems": "Document your territory, monitor natural systems, map the land",
+    "createOrStrengthenGuildsCollaborateOn": "Create or strengthen guilds, collaborate on shared missions",
+    "takeActionCompleteMissionsEarnXp": "Take action, complete missions, earn XP through tangible impact",
+    "understandAndShapeTheEconomicFlows": "Understand and shape the economic flows, OVN, and value networks",
+    "leadWithServiceGovernWithConsent": "Lead with service, govern with consent, mentor others"
+  },
+  "uiUseBlock": {
+    "theyWonTBeAbleTo": "They won't be able to interact with your content."
+  },
+  "uiUseContributionLog": {
+    "failedToLogContribution": "Failed to log contribution",
+    "contributionLogged": "Contribution logged",
+    "failedToVerify": "Failed to verify",
+    "contributionVerified": "Contribution verified ✓"
+  },
+  "uiUseEntityRoles": {
+    "failedToAddRole": "Failed to add role",
+    "roleAdded": "Role added!",
+    "failedToUpdateRole": "Failed to update role",
+    "cannotDeleteTheSourceRole": "Cannot delete the Source role",
+    "failedToDeleteRole": "Failed to delete role",
+    "roleDeleted": "Role deleted",
+    "failedToAssignRole": "Failed to assign role",
+    "failedToRemoveRole": "Failed to remove role"
+  },
+  "uiUseFeedPosts": {
+    "newPostInYourEntity": "New post in your entity"
+  },
+  "uiUseFollow": {
+    "failedToFollow": "Failed to follow",
+    "failedToUnfollow": "Failed to unfollow",
+    "pleaseLogInToFollow": "Please log in to follow"
+  },
+  "uiUseGuildMembership": {
+    "youReAlreadyPartOfThis": "You're already part of this guild.",
+    "failedToJoin": "Failed to join",
+    "youJoinedThisGuildAsA": "You joined this guild as a guest.",
+    "paymentCouldNotBeCompleted": "Payment could not be completed",
+    "couldNotUpdateRenewal": "Could not update renewal",
+    "yourMembershipStaysActiveUntilThe": "Your membership stays active until the end of the current period.",
+    "yourMembershipWillRenewAutomaticallyAgain": "Your membership will renew automatically again."
+  },
+  "uiUseOnboardingProgress": {
+    "joinAGuild": "Join a Guild",
+    "findYourCommunity30Xp": "Find your community (+30 XP)",
+    "createYourFirstQuest": "Create your first Quest",
+    "launchAProject50PlatformCredits": "Launch a project (+50 Platform Credits)",
+    "publishAService": "Publish a Service",
+    "offerYourSkills15Xp": "Offer your skills (+15 XP)",
+    "collaborateInAPod": "Collaborate in a Pod",
+    "joinOrCreateAPod20": "Join or create a pod (+20 XP)",
+    "contributeToATerritory": "Contribute to a Territory",
+    "addAMemoryEntry40Xp": "Add a memory entry (+40 XP)",
+    "attendAnEvent": "Attend an Event",
+    "registerForAGuildEvent20": "Register for a guild event (+20 Platform Credits)",
+    "bookASession": "Book a Session",
+    "connectWithSomeone": "Connect with someone",
+    "enrichYourProfileWithAi": "Enrich your profile with AI",
+    "letPulseAnalyzeYourResumeOr": "Let Pulse analyze your resume or LinkedIn (+25 XP)"
+  },
+  "uiUseRateLimit": {
+    "youReDoingTooMuchToo": "You're doing too much too fast. Please slow down."
+  },
+  "uiUseTerritoryDetail": {
+    "failed": "Failed",
+    "excerptSavedToLibrary": "Excerpt saved to Library",
+    "failedToSaveExcerpt": "Failed to save excerpt",
+    "failedToDelete": "Failed to delete",
+    "failedToReport": "Failed to report"
+  },
+  "uiUseTerritoryMemory": {
+    "events": "Events",
+    "failedToAddMemory": "Failed to add memory",
+    "failedToUpdate": "Failed to update",
+    "failedToDelete": "Failed to delete",
+    "territorySynthesisGenerated": "Territory synthesis generated",
+    "failedToGenerateSynthesis": "Failed to generate synthesis"
+  },
+  "uiUseValuePie": {
+    "failedToFetchContributions": "Failed to fetch contributions",
+    "noContributionsToDistribute": "No contributions to distribute",
+    "totalWeightedUnitsIsZero": "Total weighted units is zero",
+    "failedToSaveValuePie": "Failed to save value pie"
+  },
+  "uiUseXpCredits": {
+    "creditsEarned": "Credits earned",
+    "notEnoughCredits": "Not enough Credits",
+    "youDonTHaveEnoughCredits": "You don't have enough credits for this action.",
+    "creditsSpent": "Credits spent"
+  },
+  "uiDemurrageConfig": {
+    "yourRealWorldEarningsFromPaid": "Your real-world earnings from paid missions and services. Processed via Stripe Connect. Coins are withdrawable to fiat at the current platform rate.",
+    "coinsFiatBackedMissionValue": "🟩 Coins — Fiat-Backed Mission Value",
+    "internalUnitsBacked11By": "Internal units backed 1:1 by real fiat (€). Used to fund quests, pay contributors, and run OCU pie distributions. Pre-funded by quest creators or raised through campaigns. No demurrage — Coins hold their value. Withdrawable to fiat via Stripe Connect.",
+    "ctgContributionToken": "🌱 $CTG — Contribution Token",
+    "emittedWhenYouProduceVerifiedWork": "Emitted when you produce verified work for the commons. Not fiat-backed, not purchasable. Fades at 1%/month to encourage active circulation — except when held in quest escrow, where demurrage is frozen until distribution. Once distributed to your wallet, normal demurrage resumes. Transferable P2P. Can also be pre-funded into quests as an additional incentive layer alongside Coins.",
+    "platformCredits": "🔷 Platform Credits",
+    "nonMonetaryPlatformUtilityPowersQuotas": "Non-monetary platform utility. Powers quotas, boosts, and gamification actions. Cannot be withdrawn, exchanged for Coins, or used for quest compensation in any form. Gently fades at 1%/month to encourage use. Obtained via subscription plans, onboarding bonuses, or top-up purchases.",
+    "xpReputation": "⭐ XP — Reputation",
+    "reflectsYourCumulativeImpactAndParticipation": "Reflects your cumulative impact and participation. Never decays, cannot be purchased or transferred. Unlocks governance rights and stewardship eligibility. XP is never clawed back — even on contributor exit.",
+    "longTermCommitmentToThePlatform": "Long-term commitment to the platform mission. Provide governance weight and dividend eligibility. Not tradeable within the platform."
+  },
+  "uiGovernanceConfig": {
+    "createProfile": "Create profile",
+    "setUpYourIdentityInThe": "Set up your identity in the ecosystem",
+    "joinGuilds": "Join guilds",
+    "participateInCollaborativeGroups": "Participate in collaborative groups",
+    "engageInDiscussions": "Engage in discussions",
+    "completeQuests": "Complete quests",
+    "takeOnCollaborativeMissions": "Take on collaborative missions",
+    "createPods": "Create Pods",
+    "proposePublicQuests": "Propose public quests",
+    "submitQuestsForCommunityReview": "Submit quests for community review",
+    "createLocalEvents": "Create local events",
+    "participateInGuildVotes": "Participate in guild votes",
+    "voteOnGuildLevelDecisions": "Vote on guild-level decisions",
+    "manageYourPodSpaces": "Manage your pod spaces",
+    "vouchForTrustedContributors": "Vouch for trusted contributors",
+    "launchPublicQuests": "Launch public quests",
+    "createQuestsWithoutPreApproval": "Create quests without pre-approval",
+    "hostCrossGuildProjects": "Host cross-guild projects",
+    "bridgeMultipleGuilds": "Bridge multiple guilds",
+    "createTerritoryProposals": "Create territory proposals",
+    "proposeChangesToTerritories": "Propose changes to territories",
+    "monetizeYourExpertise": "Monetize your expertise",
+    "suggestModeratorsForPods": "Suggest moderators for pods",
+    "proposeGuildPartnerships": "Propose guild partnerships",
+    "initiateInterGuildCollaborations": "Initiate inter-guild collaborations",
+    "createNewGuilds": "Create new Guilds",
+    "establishCollaborativeGroupsWithReview": "Establish collaborative groups (with review)",
+    "createTerritoryPages": "Create Territory Pages",
+    "setUpTerritoryPresence": "Set up territory presence",
+    "initiateFundingPools": "Initiate funding pools",
+    "startCollectiveResourcePools": "Start collective resource pools",
+    "moderateGuilds": "Moderate Guilds",
+    "stewardGuildCommunities": "Steward guild communities",
+    "voteInTerritoryGovernance": "Vote in Territory governance",
+    "participateInTerritoryDecisions": "Participate in territory decisions",
+    "validateCrossTerritoryProjects": "Validate cross-territory projects",
+    "approveMultiTerritoryInitiatives": "Approve multi-territory initiatives",
+    "participateInPlatformReferendums": "Participate in platform referendums",
+    "initiateTerritoryCouncils": "Initiate Territory Councils",
+    "launchGovernanceProposals": "Launch Governance Proposals",
+    "coModerateTerritories": "Co-moderate territories",
+    "approveGuildCreation": "Approve guild creation",
+    "reviewAndApproveNewGuilds": "Review and approve new guilds",
+    "suspendMaliciousActivity": "Suspend malicious activity",
+    "voteOnPlatformLevelDecisions": "Vote on platform-level decisions",
+    "joinTheHighestStewardshipBody": "Join the highest stewardship body",
+    "finalArbitrationRole": "Final arbitration role",
+    "requiresQuorumOf3Stewards": "Requires quorum of 3+ stewards",
+    "guildLevelDecisionMaking": "Guild-level decision making",
+    "territorialGovernanceAndCoordination": "Territorial governance and coordination",
+    "crossTerritoryStrategicCoordination": "Cross-territory strategic coordination"
+  },
+  "uiGovernanceWeights": {
+    "equalEveryMemberHasOneVote": "Equal — every member has one vote regardless of contribution.",
+    "logarithmicSoftContributionsInfluenceVotesBut": "Logarithmic (soft) — contributions influence votes but are compressed.",
+    "logarithmicStrongContributionsHaveMoreInfluence": "Logarithmic (strong) — contributions have more influence, still capped.",
+    "proportionalVotingPowerDirectlyMirrorsContribution": "Proportional — voting power directly mirrors contribution percentage."
+  },
+  "uiMilestoneRoutes": {
+    "editYourProfile": "Edit your profile",
+    "browseGuilds": "Browse guilds",
+    "goToFeed": "Go to feed",
+    "browseQuests": "Browse quests",
+    "exploreTerritories": "Explore territories",
+    "editProfile": "Edit profile",
+    "openInbox": "Open inbox",
+    "goToWorkHub": "Go to work hub",
+    "browseEvents": "Browse events",
+    "createAQuest": "Create a quest",
+    "createAService": "Create a service",
+    "myGuilds": "My guilds",
+    "createACourse": "Create a course",
+    "viewYourXp": "View your XP",
+    "createAGuild": "Create a guild",
+    "viewShares": "View shares",
+    "create": "Create"
+  },
+  "uiPersonaLabels": {
+    "iWantToMakeSomethingNew": "I want to make something new",
+    "bringAnIdeaIntoTheWorld": "Bring an idea into the world",
+    "iWantToWriteComposeExplore": "I want to write / compose / explore ideas",
+    "iWantToExperimentAndSee": "I want to experiment and see what happens",
+    "iWantToCreateWithOthers": "I want to create with others",
+    "iMLookingForInspiration": "I'm looking for inspiration",
+    "feedTheCreativeFire": "Feed the creative fire",
+    "iMNotSureYetGuide": "I'm not sure yet, guide me",
+    "guildsMissionsServicesXp": "Guilds, Missions, Services, XP",
+    "guildsQuestsServicesXp": "Guilds, Quests, Services, XP"
+  },
+  "uiRitualConfig": {
+    "openArrival": "Open arrival",
+    "2MinPersonalCheckIn": "2-min personal check-in",
+    "emergentTopicClusters": "Emergent topic clusters",
+    "emotionalCheckIn": "Emotional Check-In",
+    "openCouncil": "Open Council",
+    "guildAssembly": "Guild Assembly",
+    "collectiveGovernanceAndDecisionMaking": "Collective governance and decision-making.",
+    "questUpdates": "Quest updates",
+    "proposalPresentations": "Proposal presentations",
+    "assignmentOfResponsibilities": "Assignment of responsibilities",
+    "supportAMemberOrProjectThrough": "Support a member or project through collective intelligence.",
+    "nextStepCommitments": "Next-step commitments",
+    "nextWeekCommitments": "Next week commitments",
+    "followUpDate": "Follow-up date",
+    "crossGuildFederation": "Cross-Guild Federation",
+    "alignMultipleGuilds": "Align multiple guilds.",
+    "crossQuestMapping": "Cross-quest mapping",
+    "highlightQuests": "Highlight quests",
+    "onceAMonth": "Once a month",
+    "public": "Public",
+    "visibleAndJoinableByAnyone": "Visible and joinable by anyone",
+    "guildMembers": "Guild Members",
+    "onlyGuildMembers": "Only guild members",
+    "specificRoles": "Specific Roles",
+    "membersWithSpecificRoles": "Members with specific roles",
+    "xpThreshold": "XP Threshold",
+    "minimumXpLevelRequired": "Minimum XP level required",
+    "specificShareClassRequired": "Specific share class required",
+    "byInvitationOnly": "By invitation only"
+  },
+  "uiUniverseMapping": {
+    "exploreByCreativeTopics": "Explore by Creative Topics",
+    "browseCirclesStudiosAndCreationsBy": "Browse circles, studios, and creations by artistic realms and practices.",
+    "exploreByTopics": "Explore by Topics",
+    "browseMissionsGuildsAndServicesBy": "Browse missions, guilds, and services by theme and impact field.",
+    "mixCreativeAndImpactTopicsTo": "Mix creative and impact topics to find what calls you."
+  },
+  "uiXpCreditsConfig": {
+    "activeContributorsCommunityGovernance": "Active contributors — community governance",
+    "solidarityNewTerritories": "Solidarity & New Territories",
+    "exploreTheEcosystemJoinGuildsAttend": "Explore the ecosystem, join guilds, attend events.",
+    "engageInGovernanceDiscussionsAndCast": "Engage in governance discussions and cast votes on proposals.",
+    "submitGovernanceProposalsAndLeadInitiatives": "Submit governance proposals and lead initiatives.",
+    "eligibleForStewardCouncilRolesAnd": "Eligible for steward council roles and strategic decisions."
+  },
+  "uiAdminCommunityCompanies": {
+    "name": "Name",
+    "noTraditionalOrganizations": "No traditional organizations."
+  },
+  "uiAdminCommunityGuilds": {
+    "guilds": "Guilds"
+  },
+  "uiAdminCommunityPods": {
+    "name": "Name",
+    "status": "Status",
+    "noPods": "No pods."
+  },
+  "uiAdminCommunityUsers": {
+    "failedToDeleteUser": "Failed to delete user",
+    "searchByNameOrEmail": "Search by name or email…",
+    "name": "Name",
+    "role": "Role",
+    "deleteUserPermanently": "Delete user permanently?",
+    "thisWillRemove": "This will remove",
+    "fromTheAuthenticationSystemAndDatabase": "from the authentication system and database. Their email will become available for re-registration. This action cannot be undone.",
+    "cancel": "Cancel",
+    "deletePermanently": "Delete permanently",
+    "noUsersFound": "No users found."
+  },
+  "uiAdminContentQuests": {
+    "quests": "Quests"
+  },
+  "uiAdminDistributionConcerns": {
+    "confidentialReportsFromContributorsAboutDistribution": "Confidential reports from contributors about distribution fairness.",
+    "noDistributionConcernsReported": "No distribution concerns reported.",
+    "quest": "Quest",
+    "date": "Date",
+    "status": "Status",
+    "viewReason": "View reason —",
+    "adminNote": "Admin note:",
+    "addAnInternalNoteNotVisible": "Add an internal note (not visible to the reporter).",
+    "cancel": "Cancel"
+  },
+  "uiAdminEconomyCommissions": {
+    "addTier": "Add Tier",
+    "degressiveCommissionTiersAppliedToMission": "Degressive commission tiers applied to mission payments. Floor:",
+    "description": "Description",
+    "active": "Active",
+    "eachPlanCanReduceTheBase": "Each plan can reduce the base commission by a percentage. E.g. 20% means base 7% → 5.6%.",
+    "missionAmount": "Mission Amount (€)",
+    "edit": "Edit",
+    "add": "Add",
+    "minAmount": "Min Amount (€)",
+    "maxAmountEmpty": "Max Amount (€, empty=∞)",
+    "update": "Update",
+    "create": "Create"
+  },
+  "uiAdminEconomyCTG": {
+    "ctgInCirculation": "$CTG in circulation",
+    "activeWallets": "Active wallets",
+    "overview": "Overview",
+    "errorUpdatingTheRate": "Error updating the rate",
+    "noRateAdjustmentFor": "No rate adjustment for",
+    "considerReviewingTheEconomicRelevanceOf": "Consider reviewing the economic relevance of the current exchange rate.",
+    "setANewRate": "Set a new rate",
+    "theNewRateWillApplyImmediately": "The new rate will apply immediately to all exchanges.",
+    "newRateCreditsPerCtg": "New rate (credits per $CTG)",
+    "valueBetween1And1000No": "Value between 1 and 1000, no decimals.",
+    "reasonForChange": "Reason for change *",
+    "justifyTheRateChange": "Justify the rate change...",
+    "previewWithThisRate": "Preview with this rate:",
+    "applyNewRate": "Apply new rate",
+    "confirmRateChange": "Confirm rate change",
+    "areYouSureTheRate": "Are you sure? The rate",
+    "willApplyImmediatelyToAllExchanges": "will apply immediately to all exchanges on the platform.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "date": "Date",
+    "setBy": "Set by",
+    "status": "Status",
+    "active": "Active",
+    "noRateHistory": "No rate history.",
+    "ctgTokenAdministrationGlobalMetricsExchange": "$CTG token administration: global metrics, exchange rates, user wallets, emission rules, bounties, and harvest windows."
+  },
+  "uiAdminEconomyPayments": {
+    "creditsReconciled": "Credits reconciled",
+    "allGood": "All good",
+    "noMissingCreditsFoundAllPayments": "No missing credits found. All payments are accounted for.",
+    "error": "Error",
+    "reconcileStripeCredits": "Reconcile Stripe Credits",
+    "classAShares": "Class A Shares",
+    "date": "Date",
+    "noSharePurchasesYet": "No share purchases yet."
+  },
+  "uiAdminEconomyPlans": {
+    "plansXpConfig": "Plans & XP Config"
+  },
+  "uiAdminEconomyXp": {
+    "xpRegenerativeCollaborationLadder": "XP & Regenerative Collaboration Ladder",
+    "levelConfig": "Level Config",
+    "totalXpDistributed": "Total XP Distributed",
+    "averageXp": "Average XP",
+    "highestXp": "Highest XP",
+    "levelDistribution": "Level Distribution",
+    "recentXpTransactions": "Recent XP Transactions",
+    "date": "Date",
+    "noXpTransactionsYet": "No XP transactions yet.",
+    "noAchievementsUnlockedYet": "No achievements unlocked yet.",
+    "title": "Title",
+    "level": "Level",
+    "name": "Name",
+    "minXp": "Min XP",
+    "thresholdsAreDefinedIn": "Thresholds are defined in",
+    "andTheDatabaseFunction": "and the database function",
+    "bothMustBeUpdatedTogether": ". Both must be updated together.",
+    "governanceRightsByLevel": "Governance Rights by Level",
+    "governanceRightsAreDefinedIn": "Governance rights are defined in"
+  },
+  "uiAdminEmailTemplates": {
+    "failedToSaveTemplate": "Failed to save template",
+    "edit": "Edit",
+    "save": "Save",
+    "forDynamicValues": "for dynamic values.",
+    "pYourEmailBodyP": "<p>Your email body...</p>",
+    "eGGetStarted": "e.g. Get started",
+    "editTheContentCtaLinksAnd": "Edit the content, CTA links, and design of all platform emails.",
+    "settings": "Settings",
+    "selectATemplateToEdit": "Select a template to edit."
+  },
+  "uiAdminExcerptReports": {
+    "error": "Error",
+    "pending": "Pending",
+    "all": "All",
+    "noReportsFound": "No reports found.",
+    "reportedBy": "Reported by",
+    "deleteExcerpt": "Delete excerpt"
+  },
+  "uiAdminFeatureSuggestions": {
+    "allStatuses": "All statuses",
+    "allPersonas": "All personas",
+    "loading": "Loading…",
+    "noSuggestionsYet": "No suggestions yet.",
+    "adminComment": "Admin comment…",
+    "cancel": "Cancel"
+  },
+  "uiAdminFeatureToggles": {
+    "failedToUpdateFlagAreYou": "Failed to update flag. Are you a Super Admin?",
+    "loadingFeatureFlags": "Loading feature flags…",
+    "toggleMajorPlatformFeaturesOnOr": "Toggle major platform features on or off. Disabling a feature hides it from the UI without deleting any data. Super Admins can always access disabled features in admin views."
+  },
+  "uiAdminMilestones": {
+    "manageMilestoneDefinitionsRewardsAndView": "Manage milestone definitions, rewards, and view completion rates.",
+    "title": "Title",
+    "credits": "Credits",
+    "none": "None"
+  },
+  "uiAdminOverview": {
+    "viewAll": "View all"
+  },
+  "uiAdminStewardship": {
+    "error": "Error"
+  },
+  "uiAdminSuperMode": {
+    "superAdminMode": "Super Admin Mode",
+    "searchAndInspectAnyRecordEdit": "Search and inspect any record. Edit visibility, ownership, and internal flags. Toggle PII masking for screen sharing or demos."
+  },
+  "uiAdminSystemAudit": {
+    "noAuditLogEntriesYet": "No audit log entries yet.",
+    "title": "Title",
+    "date": "Date"
+  },
+  "uiAdminSystemGovernance": {
+    "coinsRateUpdated": "Coins rate updated",
+    "shareholdingSettingsAreProvisionalAndWill": "Shareholding settings are provisional and will be formally defined by the first active co-creators.",
+    "sharePrice": "Share Price (€)",
+    "classAShares": "Class A Shares",
+    "coinsConversionRate": "🟩 Coins ← → € Conversion Rate",
+    "current1Coin": "Current: 1 Coin = €",
+    "coinsPer1": "Coins per €1",
+    "perCoin": "€ per Coin (=",
+    "coins": "Coins/€)",
+    "save": "Save",
+    "changingThisRateAffectsAllPending": "⚠️ Changing this rate affects all pending withdrawal calculations. Only change at quarter boundaries.",
+    "classA": "Class A:",
+    "log1Shares": "log(1 + shares)",
+    "log1Shares02": "log(1 + shares) × 0.2",
+    "formulasAreAppliedAutomaticallyViaDatabase": "Formulas are applied automatically via database trigger.",
+    "name": "Name",
+    "classA2": "Class A",
+    "noShareholdersYet": "No shareholders yet.",
+    "cooperativeSettings": "Cooperative Settings"
+  },
+  "uiAdminSystemHouses": {
+    "topicsTerritories": "Topics & Territories"
+  },
+  "uiAdminSystemRoles": {
+    "usersRoles": "Users & Roles"
+  },
+  "uiAnalyticsTab": {
+    "platformOverview": "Platform Overview",
+    "quests": "Quests",
+    "guilds": "Guilds",
+    "territories": "Territories",
+    "xpEngagement": "XP & Engagement",
+    "totalXpAwarded": "Total XP Awarded",
+    "totalXpSpent": "Total XP Spent",
+    "xpAwarded7d": "XP Awarded (7d)",
+    "xpAwarded30d": "XP Awarded (30d)",
+    "activeSubscriptions": "Active Subscriptions",
+    "avgXpUser": "Avg XP / User",
+    "creditPurchases": "Credit Purchases",
+    "sharesAB": "Shares (A / B)",
+    "totalShareRevenue": "Total Share Revenue",
+    "breakdownByTopic": "Breakdown by Topic",
+    "noTopicDataYet": "No topic data yet.",
+    "topic": "Topic",
+    "activeUsers": "Active Users",
+    "breakdownByTerritory": "Breakdown by Territory",
+    "noTerritoryDataYet": "No territory data yet.",
+    "territory": "Territory",
+    "level": "Level"
+  },
+  "uiContentTabs": {
+    "error": "Error",
+    "xpCiUpdated": "XP / CI updated",
+    "name": "Name",
+    "role": "Role",
+    "admin": "Admin",
+    "removeAdmin": "Remove Admin",
+    "grantAdmin": "Grant Admin",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "no": "No",
+    "removeSuperadmin": "Remove Superadmin",
+    "you": "You",
+    "noUsersFound": "No users found.",
+    "guildUnapproved": "Guild unapproved",
+    "guildApproved": "Guild approved",
+    "createdBy": "Created By",
+    "members": "Members",
+    "quests": "Quests",
+    "noGuildsYet": "No guilds yet.",
+    "questUnfeatured": "Quest unfeatured",
+    "questFeatured": "Quest featured",
+    "status": "Status",
+    "allStatuses": "All Statuses",
+    "open": "Open",
+    "active": "Active",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "title": "Title",
+    "guild": "Guild",
+    "rewardXp": "Reward XP",
+    "noQuestsMatchFilters": "No quests match filters.",
+    "platformCreditPlansAreProvisionalAnd": "Platform credit plans are provisional and subject to change. Final pricing and quotas will be confirmed before public launch.",
+    "questsWk": "Quests/wk",
+    "xp": "XP×",
+    "public": "Public",
+    "noPlansConfigured": "No plans configured.",
+    "failedToRenameTerritory": "Failed to rename territory",
+    "territoryRenamed": "Territory renamed",
+    "topicCreated": "Topic created",
+    "topicsHouses": "Topics (Houses)",
+    "newTopicName": "New topic name…",
+    "add": "Add",
+    "noTopicsYet": "No topics yet.",
+    "territories": "Territories",
+    "addTerritory": "Add Territory",
+    "level": "Level",
+    "noTerritoriesYet": "No territories yet.",
+    "noDecisionsOrPollsYet": "No decisions or polls yet.",
+    "noServicesYet": "No services yet.",
+    "pending": "Pending",
+    "amount": "Amount",
+    "noBookingsMatchFilter": "No bookings match filter.",
+    "allStatuses2": "All statuses",
+    "noReportsMatchingFilters": "No reports matching filters.",
+    "date": "Date",
+    "view": "View",
+    "allComments": "All Comments",
+    "noCommentsYet": "No comments yet.",
+    "volumeByType7Days": "Volume by Type (7 days)",
+    "noNotificationsSentInTheLast": "No notifications sent in the last 7 days.",
+    "adminTools": "Admin Tools",
+    "selectUser": "Select user",
+    "sendTestPush": "Send test push",
+    "sentWhenANewUserSigns": "Sent when a new user signs up.",
+    "summaryOfRecentActivity": "Summary of recent activity.",
+    "sentWhenBookingIsConfirmed": "Sent when booking is confirmed.",
+    "sentWhenAQuestYouFollow": "Sent when a quest you follow is updated.",
+    "manageEmailTemplatesSentToUsers": "Manage email templates sent to users. Toggle to enable/disable."
+  },
+  "uiDeepAnalyticsSection": {
+    "signupsOverTime90d": "Signups Over Time (90d)",
+    "revenueOverTime90d": "Revenue Over Time (90d)",
+    "revenueBreakdownAllTime": "Revenue Breakdown (All Time)",
+    "noRevenueDataYet": "No revenue data yet.",
+    "activeSubscriptions": "Active Subscriptions",
+    "userRetentionByCohort6Months": "User Retention by Cohort (6 months)",
+    "notEnoughDataForRetentionAnalysis": "Not enough data for retention analysis yet.",
+    "thisWeek": "this week"
+  },
+  "uiBreadcrumb": {
+    "more": "More"
+  },
+  "uiDialog": {
+    "close": "Close"
+  },
+  "uiPagination": {
+    "goToPreviousPage": "Go to previous page",
+    "goToNextPage": "Go to next page",
+    "next": "Next",
+    "morePages": "More pages"
+  },
+  "uiSheet": {
+    "close": "Close"
+  },
+  "uiErrorBoundary": {
+    "sessionExpired": "Your session has expired",
+    "somethingWentWrong": "Something went wrong",
+    "signInAgainToContinue": "You need to sign in again to keep using the site.",
+    "unexpectedErrorRetry": "An unexpected error occurred. You can try refreshing this section.",
+    "signInAgain": "Sign in again",
+    "retry": "Retry",
+    "backToHome": "Back to Home"
   }
 }
