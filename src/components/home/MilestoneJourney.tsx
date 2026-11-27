@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ import { useMilestones, type MilestoneWithProgress } from "@/hooks/useMilestones
 import { MILESTONE_ROUTES } from "@/lib/milestoneRoutes";
 
 function MiniMilestone({ m, index, onComplete }: { m: MilestoneWithProgress; index: number; onComplete: (code: string) => Promise<void> }) {
+  const { t } = useTranslation();
   const action = MILESTONE_ROUTES[m.code];
   const [completing, setCompleting] = useState(false);
 
@@ -38,7 +40,7 @@ function MiniMilestone({ m, index, onComplete }: { m: MilestoneWithProgress; ind
           onClick={handleTick}
           disabled={completing}
           className="shrink-0 group relative"
-          title="Mark as completed"
+          title={t("uiMilestoneJourney.markAsCompleted")}
         >
           {completing ? (
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -55,7 +57,7 @@ function MiniMilestone({ m, index, onComplete }: { m: MilestoneWithProgress; ind
         <p className="text-sm font-medium text-foreground truncate">{m.title}</p>
         {m.reward_type !== "NONE" && (
           <span className="text-[10px] text-muted-foreground">
-            +{m.reward_amount} {m.reward_type === "XP" ? "XP" : "Credits"}
+            +{m.reward_amount} {m.reward_type === "XP" ? "XP" : t("uiMilestoneJourney.credits")}
           </span>
         )}
       </div>
@@ -72,6 +74,7 @@ function MiniMilestone({ m, index, onComplete }: { m: MilestoneWithProgress; ind
 }
 
 export function MilestoneJourney() {
+  const { t } = useTranslation();
   const { milestones, completedCount, totalCount, completeMilestone } = useMilestones();
   const [expanded, setExpanded] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
@@ -95,7 +98,7 @@ export function MilestoneJourney() {
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
           <Trophy className="h-5 w-5 text-primary" />
-          Your Journey
+          {t("uiMilestoneJourney.yourJourney")}
         </h2>
         <Button variant="ghost" size="sm" className="text-xs h-7" asChild>
           <Link to="/me/milestones">
@@ -117,7 +120,7 @@ export function MilestoneJourney() {
       {visibleUpcoming.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-primary" /> Next steps ({upcoming.length})
+            <Sparkles className="h-3.5 w-3.5 text-primary" /> {t("uiMilestoneJourney.nextSteps")}{upcoming.length})
           </p>
           {visibleUpcoming.map((m, i) => (
             <MiniMilestone key={m.id} m={m} index={i} onComplete={completeMilestone} />
@@ -133,9 +136,9 @@ export function MilestoneJourney() {
           onClick={() => setExpanded(!expanded)}
         >
           {expanded ? (
-            <><ChevronUp className="h-3.5 w-3.5" /> Show less</>
+            <><ChevronUp className="h-3.5 w-3.5" /> {t("uiMilestoneJourney.showLess")}</>
           ) : (
-            <><ChevronDown className="h-3.5 w-3.5" /> Show all next steps ({upcoming.length})</>
+            <><ChevronDown className="h-3.5 w-3.5" /> {t("uiMilestoneJourney.showAllNextSteps")}{upcoming.length})</>
           )}
         </Button>
       )}
@@ -149,7 +152,7 @@ export function MilestoneJourney() {
             onClick={() => setShowCompleted(!showCompleted)}
           >
             {showCompleted ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-            {showCompleted ? "Hide" : "Show"} completed ({completed.length})
+            {showCompleted ? "Hide" : "Show"} {t("uiMilestoneJourney.completed")}{completed.length})
           </Button>
           {showCompleted && completed.map((m, i) => (
             <MiniMilestone key={m.id} m={m} index={i} onComplete={completeMilestone} />

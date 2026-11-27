@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ interface IncomingBookingsProps {
 }
 
 export function IncomingBookings({ userId }: IncomingBookingsProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const updateStatus = useUpdateBookingStatus();
 
@@ -87,7 +89,7 @@ export function IncomingBookings({ userId }: IncomingBookingsProps) {
           )}
         </h2>
         <Link to="/work?tab=bookings" className="text-xs text-muted-foreground hover:text-primary flex items-center gap-0.5">
-          View all <ChevronRight className="h-3 w-3" />
+          {t("uiIncomingBookings.viewAll")} <ChevronRight className="h-3 w-3" />
         </Link>
       </div>
 

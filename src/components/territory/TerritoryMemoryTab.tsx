@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -30,12 +32,13 @@ interface Props {
 }
 
 const VISIBILITY_LABELS: Record<string, { label: string; icon: typeof Eye }> = {
-  PUBLIC: { label: "Public", icon: Eye },
-  ADMINS: { label: "Members only", icon: EyeOff },
+  PUBLIC: { get label() { return i18n.t("uiTerritoryMemoryTab.public"); }, icon: Eye },
+  ADMINS: { get label() { return i18n.t("uiTerritoryMemoryTab.membersOnly"); }, icon: EyeOff },
   AI_ONLY: { label: "AI only", icon: Bot },
 };
 
 export function TerritoryMemoryTab({ territoryId, territoryName, isMember }: Props) {
+  const { t } = useTranslation();
   const { persona } = usePersona();
   const currentUser = useCurrentUser();
   const isLoggedIn = !!currentUser.id;
@@ -124,7 +127,7 @@ export function TerritoryMemoryTab({ territoryId, territoryName, isMember }: Pro
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search memory..."
+                placeholder={t("uiTerritoryMemoryTab.searchMemory")}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-9 h-9"
@@ -136,7 +139,7 @@ export function TerritoryMemoryTab({ territoryId, territoryName, isMember }: Pro
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All categories</SelectItem>
+                <SelectItem value="ALL">{t("uiTerritoryMemoryTab.allCategories")}</SelectItem>
                 {MEMORY_CATEGORIES.map(c => (
                   <SelectItem key={c.value} value={c.value}>{c.icon} {c.label}</SelectItem>
                 ))}
@@ -155,9 +158,9 @@ export function TerritoryMemoryTab({ territoryId, territoryName, isMember }: Pro
           {!isLoading && filtered.length === 0 && (
             <div className="rounded-xl border border-dashed border-border bg-muted/30 py-12 text-center">
               <Brain className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-              <p className="text-sm font-medium">No memory entries yet</p>
+              <p className="text-sm font-medium">{t("uiTerritoryMemoryTab.noMemoryEntriesYet")}</p>
               <p className="text-xs text-muted-foreground mt-1">
-                {isMember ? "Start adding knowledge to help the AI understand this territory." : "Territory members can contribute knowledge here."}
+                {isMember ? t("uiTerritoryMemoryTab.startAddingKnowledgeToHelpThe") : t("uiTerritoryMemoryTab.territoryMembersCanContributeKnowledgeHere")}
               </p>
             </div>
           )}
@@ -225,6 +228,7 @@ function MemoryEntryCard({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useTranslation();
   const vis = VISIBILITY_LABELS[entry.visibility] ?? VISIBILITY_LABELS.PUBLIC;
   const VisIcon = vis.icon;
 
@@ -252,7 +256,7 @@ function MemoryEntryCard({
       <div className="flex flex-wrap gap-1 mt-2">
         {usedInSummary && (
           <Badge className="text-[10px] bg-primary/10 text-primary border-0 gap-0.5">
-            <CheckCircle2 className="h-2.5 w-2.5" /> Used in AI summary
+            <CheckCircle2 className="h-2.5 w-2.5" /> {t("uiTerritoryMemoryTab.usedInAiSummary")}
           </Badge>
         )}
         {entry.tags?.length > 0 && entry.tags.map(tag => (
@@ -264,10 +268,10 @@ function MemoryEntryCard({
       {canEdit && (
         <div className="flex gap-1 mt-2 justify-end">
           <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={onEdit}>
-            <Pencil className="h-3 w-3 mr-1" /> Edit
+            <Pencil className="h-3 w-3 mr-1" /> {t("uiTerritoryMemoryTab.edit")}
           </Button>
           <Button size="sm" variant="ghost" className="h-7 px-2 text-xs text-destructive hover:text-destructive" onClick={onDelete}>
-            <Trash2 className="h-3 w-3 mr-1" /> Delete
+            <Trash2 className="h-3 w-3 mr-1" /> {t("uiTerritoryMemoryTab.delete")}
           </Button>
         </div>
       )}

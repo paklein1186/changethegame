@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
@@ -62,6 +63,7 @@ function createDotIcon(color: string, count: number) {
 }
 
 export function ExploreUsersMap({ entries, isLoggedIn }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Group entries by territory coordinate
@@ -92,7 +94,7 @@ export function ExploreUsersMap({ entries, isLoggedIn }: Props) {
   if (markers.length === 0) {
     return (
       <div className="flex items-center justify-center h-[400px] rounded-xl border border-border bg-muted/30 text-muted-foreground text-sm">
-        No location data available for the current results.
+        {t("uiExploreUsersMap.noLocationDataAvailableForThe")}
       </div>
     );
   }

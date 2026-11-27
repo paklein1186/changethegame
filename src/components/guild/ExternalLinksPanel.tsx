@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,7 @@ function getDomain(url: string) {
 }
 
 export function ExternalLinksPanel({ links, onLinksChange, canEdit }: ExternalLinksPanelProps) {
+  const { t } = useTranslation();
   const [addOpen, setAddOpen] = useState(false);
   const [label, setLabel] = useState("");
   const [url, setUrl] = useState("");
@@ -68,7 +70,7 @@ export function ExternalLinksPanel({ links, onLinksChange, canEdit }: ExternalLi
         </h3>
         {canEdit && (
           <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
-            <Plus className="h-3.5 w-3.5 mr-1" /> Add Link
+            <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiExternalLinksPanel.addLink")}
           </Button>
         )}
       </div>
@@ -108,23 +110,23 @@ export function ExternalLinksPanel({ links, onLinksChange, canEdit }: ExternalLi
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">
-          {canEdit ? "No external links yet. Add a link to Google Drive, Nextcloud, Dropbox, or any resource." : "No external resources shared."}
+          {canEdit ? t("uiExternalLinksPanel.noExternalLinksYetAddA") : t("uiExternalLinksPanel.noExternalResourcesShared")}
         </p>
       )}
 
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Add External Link</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("uiExternalLinksPanel.addExternalLink")}</DialogTitle></DialogHeader>
           <div className="space-y-4 mt-2">
             <div>
               <label className="text-sm font-medium mb-1 block">Label</label>
-              <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Shared Drive, Project Files…" maxLength={100} />
+              <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder={t("uiExternalLinksPanel.eGSharedDriveProjectFiles")} maxLength={100} />
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">URL</label>
               <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://drive.google.com/…" className="font-mono text-xs" />
             </div>
-            <Button onClick={addLink} disabled={!label.trim() || !url.trim()} className="w-full">Add Link</Button>
+            <Button onClick={addLink} disabled={!label.trim() || !url.trim()} className="w-full">{t("uiExternalLinksPanel.addLink")}</Button>
           </div>
         </DialogContent>
       </Dialog>

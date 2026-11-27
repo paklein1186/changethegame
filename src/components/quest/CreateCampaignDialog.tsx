@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
@@ -35,6 +36,7 @@ interface Props {
 export function CreateCampaignDialog({
   open, onOpenChange, currency, questId, ocuEnabled = false, editingCampaign,
 }: Props) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -65,7 +67,7 @@ export function CreateCampaignDialog({
 
   const handleSave = async () => {
     if (!title.trim() || !threshold) {
-      toast({ title: "Title and threshold are required", variant: "destructive" });
+      toast({ title: t("uiCreateCampaignDialog.titleAndThresholdAreRequired"), variant: "destructive" });
       return;
     }
     setSaving(true);
@@ -82,7 +84,7 @@ export function CreateCampaignDialog({
 
     if (isEditing) {
       const { error } = await supabase.from("quest_campaigns" as any).update(payload).eq("id", editingCampaign.id);
-      if (error) { toast({ title: "Failed to update campaign", description: error.message, variant: "destructive" }); setSaving(false); return; }
+      if (error) { toast({ title: t("uiCreateCampaignDialog.failedToUpdateCampaign"), description: error.message, variant: "destructive" }); setSaving(false); return; }
       toast({ title: "Campaign updated" });
     } else {
       payload.quest_id = questId;
@@ -90,7 +92,7 @@ export function CreateCampaignDialog({
       payload.status = "ACTIVE";
       payload.raised_amount = 0;
       const { error } = await supabase.from("quest_campaigns" as any).insert(payload);
-      if (error) { toast({ title: "Failed to create campaign", description: error.message, variant: "destructive" }); setSaving(false); return; }
+      if (error) { toast({ title: t("uiCreateCampaignDialog.failedToCreateCampaign"), description: error.message, variant: "destructive" }); setSaving(false); return; }
       toast({ title: "Campaign created" });
     }
 
@@ -107,18 +109,18 @@ export function CreateCampaignDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit" : "New"} {currencyEmoji} {currencyLabel} Campaign
+            {isEditing ? t("uiCreateCampaignDialog.edit") : t("uiCreateCampaignDialog.new")} {currencyEmoji} {currencyLabel} Campaign
           </DialogTitle>
           <DialogDescription>
             {currency === "coins"
-              ? "Create a Coins fundraising campaign. Coins are fiat-backed and withdrawable."
-              : "Create a $CTG campaign. $CTG is not fiat-backed — it represents contribution to the commons."}
+              ? t("uiCreateCampaignDialog.createACoinsFundraisingCampaignCoins")
+              : t("uiCreateCampaignDialog.createACtgCampaignCtgIs")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium mb-1 block">Campaign Title</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiCreateCampaignDialog.campaignTitle")}</label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -127,11 +129,11 @@ export function CreateCampaignDialog({
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1 block">Description (optional)</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiCreateCampaignDialog.descriptionOptional")}</label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What will the funds be used for?"
+              placeholder={t("uiCreateCampaignDialog.whatWillTheFundsBeUsed")}
               rows={3}
             />
           </div>
@@ -139,7 +141,7 @@ export function CreateCampaignDialog({
           <div>
             <label className="text-sm font-medium mb-1 flex items-center gap-1.5">
               <CurrencyIcon currency={currency === "coins" ? "coins" : "ctg"} className="h-4 w-4" />
-              Threshold Amount ({currency === "coins" ? "Coins" : "$CTG"})
+              {t("uiCreateCampaignDialog.thresholdAmount")}{currency === "coins" ? t("uiCreateCampaignDialog.coins") : "$CTG"})
             </label>
             <Input
               type="number"
@@ -157,7 +159,7 @@ export function CreateCampaignDialog({
             {currency === "ctg" && threshold && (
               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                 <CurrencyIcon currency="ctg" className="h-3 w-3" />
-                {Number(threshold).toLocaleString()} $CTG — not fiat-backed
+                {Number(threshold).toLocaleString()} {t("uiCreateCampaignDialog.ctgNotFiatBacked")}
               </p>
             )}
           </div>
@@ -167,22 +169,22 @@ export function CreateCampaignDialog({
             <Select value={dispatchMode} onValueChange={setDispatchMode}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="manual">Manual — admin distributes when ready</SelectItem>
+                <SelectItem value="manual">{t("uiCreateCampaignDialog.manualAdminDistributesWhenReady")}</SelectItem>
                 {ocuEnabled && (
-                  <SelectItem value="auto_pie">Auto: OCU pie — proportional on threshold</SelectItem>
+                  <SelectItem value="auto_pie">{t("uiCreateCampaignDialog.autoOcuPieProportionalOnThreshold")}</SelectItem>
                 )}
-                <SelectItem value="auto_equal">Auto: Equal split — equal to all participants</SelectItem>
+                <SelectItem value="auto_equal">{t("uiCreateCampaignDialog.autoEqualSplitEqualToAll")}</SelectItem>
               </SelectContent>
             </Select>
             {!ocuEnabled && dispatchMode !== "manual" && dispatchMode !== "auto_equal" && (
               <p className="text-xs text-muted-foreground mt-1">
-                OCU pie mode requires OCU to be enabled on this quest.
+                {t("uiCreateCampaignDialog.ocuPieModeRequiresOcuTo")}
               </p>
             )}
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1 block">End Date (optional)</label>
+            <label className="text-sm font-medium mb-1 block">{t("uiCreateCampaignDialog.endDateOptional")}</label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -193,7 +195,7 @@ export function CreateCampaignDialog({
                   )}
                 >
                   <CalendarIcon className="h-4 w-4 mr-2" />
-                  {endDate ? format(endDate, "PPP") : "No end date"}
+                  {endDate ? format(endDate, "PPP") : t("uiCreateCampaignDialog.noEndDate")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -211,10 +213,10 @@ export function CreateCampaignDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("uiCreateCampaignDialog.cancel")}</Button>
           <Button onClick={handleSave} disabled={saving || !title.trim() || !threshold}>
             {saving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-            {isEditing ? "Update" : "Create"} Campaign
+            {isEditing ? t("uiCreateCampaignDialog.update") : t("uiCreateCampaignDialog.create")} Campaign
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -39,6 +39,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, questCoinBudget = 0, valuePieCalculated = false, coinBudget = 0 }: QuestSubtasksProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const { i18n } = useTranslation();
@@ -151,7 +152,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
       assignee_user_id: currentUser.id || null,
       assignee_user_ids: currentUser.id ? [currentUser.id] : [],
     } as any);
-    if (error) { toast({ title: "Failed to add subtask", variant: "destructive" }); }
+    if (error) { toast({ title: t("uiQuestSubtasks.failedToAddSubtask"), variant: "destructive" }); }
     else { setNewTitle(""); setNewDescription(""); setShowDescField(false); qc.invalidateQueries({ queryKey: ["quest-subtasks", questId] }); }
     setAdding(false);
   };
@@ -262,7 +263,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
     // Check if ALL subtasks are now DONE → notify quest owner for Value Pie
     const allOtherDone = subtasks.every((s: any) => s.id === subtaskId || s.status === "DONE");
     if (allOtherDone && subtasks.length > 0 && questCoinBudget > 0 && !valuePieCalculated) {
-      toast({ title: "All tasks complete — the Value Pie is ready!" });
+      toast({ title: t("uiQuestSubtasks.allTasksCompleteTheValuePie") });
       // Notify quest owner
       if (questOwnerId && questOwnerId !== currentUser.id) {
         supabase.from("notifications" as any).insert({
@@ -353,13 +354,13 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
   const canEditSubtask = (subtask: any) =>
     canManage || (subtask.assignee_user_ids || []).includes(currentUser.id);
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Loading subtasks…</p>;
+  if (isLoading) return <p className="text-sm text-muted-foreground">{t("uiQuestSubtasks.loadingSubtasks")}</p>;
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-display font-semibold text-sm flex items-center gap-2">
-          Subtasks
+          {t("uiQuestSubtasks.subtasks")}
           {totalCount > 0 && (
             <Badge variant="secondary" className="text-xs">{doneCount}/{totalCount} done</Badge>
           )}
@@ -382,7 +383,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
               <div key={subtask.id} className="flex items-center gap-2 rounded-md border border-border bg-emerald-500/5 p-2">
                 <div className="flex-1">
                   <span className="text-sm text-muted-foreground line-through">{subtaskTrMap.get(subtask.id) || subtask.title}</span>
-                  <span className="block text-[10px] text-amber-600">Contribution automatically logged</span>
+                  <span className="block text-[10px] text-amber-600">{t("uiQuestSubtasks.contributionAutomaticallyLogged")}</span>
                 </div>
                 <Button
                   variant="outline"
@@ -456,7 +457,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
                     </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-48 p-2" align="end">
-                    <p className="text-xs font-medium text-muted-foreground mb-2">Assign members</p>
+                    <p className="text-xs font-medium text-muted-foreground mb-2">{t("uiQuestSubtasks.assignMembers")}</p>
                     <div className="space-y-1 max-h-48 overflow-y-auto">
                       {guildMembers.map((m: any) => {
                         const isAssigned = (subtask.assignee_user_ids || []).includes(m.user_id);
@@ -482,7 +483,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
             </div>
             {/* Credit reward indicator */}
             {canManage ? (
-              <div className="flex items-center gap-0.5" title="🟩 Coins — fiat-backed reward for completing this subtask">
+              <div className="flex items-center gap-0.5" title={t("uiQuestSubtasks.coinsFiatBackedRewardForCompleting")}>
                 <CurrencyIcon currency="coins" className="h-3 w-3" />
                 <Input
                   type="number"
@@ -490,7 +491,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
                   value={subtask.credit_reward ?? 0}
                   onChange={(e) => updateSubtaskCredits(subtask.id, parseInt(e.target.value) || 0)}
                   className="w-14 h-6 text-[10px] text-center p-0"
-                  title="🟩 Coins — fiat-backed reward for completing this subtask"
+                  title={t("uiQuestSubtasks.coinsFiatBackedRewardForCompleting")}
                 />
               </div>
             ) : (subtask.credit_reward ?? 0) > 0 ? (
@@ -500,7 +501,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
             ) : null}
             {/* $CTG reward input */}
             {canManage ? (
-              <div className="flex items-center gap-0.5" title="🌱 $CTG — contribution token reward on completion">
+              <div className="flex items-center gap-0.5" title={t("uiQuestSubtasks.ctgContributionTokenRewardOnCompletion")}>
                 <CurrencyIcon currency="ctg" className="h-3 w-3" />
                 <Input
                   type="number"
@@ -513,7 +514,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
                       .then(() => qc.invalidateQueries({ queryKey: ["quest-subtasks", questId] }));
                   }}
                   className="w-14 h-6 text-[10px] text-center p-0"
-                  title="🌱 $CTG — contribution token reward on completion"
+                  title={t("uiQuestSubtasks.ctgContributionTokenRewardOnCompletion")}
                 />
               </div>
             ) : (
@@ -523,7 +524,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
             )}
             {/* $CTG weight input */}
             {canManage && (
-              <div className="flex items-center gap-0.5" title="⚖️ Contribution weight — multiplier in the Value Pie (0.5–5.0)">
+              <div className="flex items-center gap-0.5" title={t("uiQuestSubtasks.contributionWeightMultiplierInTheValue")}>
                 <CurrencyIcon currency="weight" className="h-3 w-3" />
                 <Input
                   type="number"
@@ -533,7 +534,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
                   value={subtask.contribution_weight ?? 1.0}
                   onChange={(e) => updateSubtaskWeight(subtask.id, parseFloat(e.target.value) || 1.0)}
                   className="w-14 h-6 text-[10px] text-center p-0"
-                  title="⚖️ Contribution weight — multiplier in the Value Pie (0.5–5.0)"
+                  title={t("uiQuestSubtasks.contributionWeightMultiplierInTheValue")}
                 />
               </div>
             )}
@@ -565,7 +566,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
           onClick={() => setShowDone(!showDone)}
         >
           {showDone ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-          {showDone ? "Hide completed tasks" : `View completed tasks (${doneCount})`}
+          {showDone ? t("uiQuestSubtasks.hideCompletedTasks") : `View completed tasks (${doneCount})`}
         </Button>
       )}
 
@@ -573,14 +574,14 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
         <div className="space-y-2">
           <div className="flex gap-2">
             <Input
-              placeholder="Add a subtask…"
+              placeholder={t("uiQuestSubtasks.addASubtask")}
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !showDescField && addSubtask()}
               className="h-8 text-sm"
             />
             <Button size="sm" onClick={addSubtask} disabled={!newTitle.trim() || adding} className="h-8">
-              <Plus className="h-3.5 w-3.5 mr-1" /> Add
+              <Plus className="h-3.5 w-3.5 mr-1" /> {t("uiQuestSubtasks.add")}
             </Button>
           </div>
           <div className="flex items-center gap-2">
@@ -589,7 +590,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
               context={{ entityType: "subtask" }}
               currentText={newTitle}
               onAccept={(text) => setNewTitle(text)}
-              label="AI title"
+              label={t("uiQuestSubtasks.aiTitle")}
             />
             <Button
               type="button"
@@ -598,13 +599,13 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
               className="h-7 text-xs"
               onClick={() => setShowDescField(!showDescField)}
             >
-              {showDescField ? "Hide description" : "+ Description"}
+              {showDescField ? t("uiQuestSubtasks.hideDescription") : t("uiQuestSubtasks.description")}
             </Button>
           </div>
           {showDescField && (
             <div>
               <Textarea
-                placeholder="Subtask description (optional)…"
+                placeholder={t("uiQuestSubtasks.subtaskDescriptionOptional")}
                 value={newDescription}
                 onChange={(e) => setNewDescription(e.target.value)}
                 className="text-sm"
@@ -615,7 +616,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
                 context={{ entityType: "subtask", title: newTitle }}
                 currentText={newDescription}
                 onAccept={(text) => setNewDescription(text)}
-                label="AI description"
+                label={t("uiQuestSubtasks.aiDescription")}
                 className="mt-1"
               />
             </div>
@@ -624,7 +625,7 @@ export function QuestSubtasks({ questId, questOwnerId, guildId, canManage, quest
       )}
 
       {totalCount > 0 && doneCount === totalCount && (
-        <p className="text-xs text-emerald-600 font-medium">✓ All subtasks completed! Consider marking this quest as completed.</p>
+        <p className="text-xs text-emerald-600 font-medium">{t("uiQuestSubtasks.allSubtasksCompletedConsiderMarkingThis")}</p>
       )}
     </div>
   );

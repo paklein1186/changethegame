@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Coins as CoinsIcon } from "lucide-react";
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function FundQuestCard({ questId, className }: Props) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -263,7 +265,7 @@ export function FundQuestCard({ questId, className }: Props) {
     <div className={className}>
       <div className="rounded-xl border border-border bg-card p-5 space-y-4">
         <h3 className="font-display font-semibold flex items-center gap-2">
-          <CoinsIcon className="h-4 w-4 text-primary" /> Fund this Quest
+          <CoinsIcon className="h-4 w-4 text-primary" /> {t("uiFundQuestCard.fundThisQuest")}
         </h3>
 
         <div className="space-y-2">
@@ -275,7 +277,7 @@ export function FundQuestCard({ questId, className }: Props) {
               <CampaignRow
                 key={c.id}
                 emoji="🟩"
-                title={c.title || "Coins Campaign"}
+                title={c.title || t("uiFundQuestCard.coinsCampaign")}
                 raised={raised}
                 threshold={threshold}
                 pct={pct}
@@ -309,25 +311,25 @@ export function FundQuestCard({ questId, className }: Props) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Contribute {currency === "coins" ? "🟩 Coins" : "🌱 $CTG"}
+              Contribute {currency === "coins" ? t("uiFundQuestCard.coins") : "🌱 $CTG"}
             </DialogTitle>
             <DialogDescription>
               {selectedCampaign?.title || "Campaign"}
               {selectedCampaign?.threshold_amount && (
-                <> — {Number(selectedCampaign.raised_amount || 0).toLocaleString()} / {Number(selectedCampaign.threshold_amount).toLocaleString()} {currency === "coins" ? "Coins" : "$CTG"}</>
+                <> — {Number(selectedCampaign.raised_amount || 0).toLocaleString()} / {Number(selectedCampaign.threshold_amount).toLocaleString()} {currency === "coins" ? t("uiFundQuestCard.coins2") : "$CTG"}</>
               )}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">
-              Your balance: <strong>{userBalance.toLocaleString()}</strong> {currency === "coins" ? "🟩 Coins" : "🌱 $CTG"}
+              {t("uiFundQuestCard.yourBalance")} <strong>{userBalance.toLocaleString()}</strong> {currency === "coins" ? t("uiFundQuestCard.coins") : "🌱 $CTG"}
             </p>
             <Input
               type="number"
               min={1}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="Amount to contribute"
+              placeholder={t("uiFundQuestCard.amountToContribute")}
             />
             {Number(amount) > userBalance && (
               <p className="text-xs text-destructive">Insufficient balance.</p>
@@ -337,7 +339,7 @@ export function FundQuestCard({ questId, className }: Props) {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setContributeOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setContributeOpen(false)}>{t("uiFundQuestCard.cancel")}</Button>
             <Button
               onClick={handleContribute}
               disabled={contributing || !amount || Number(amount) <= 0 || Number(amount) > userBalance}

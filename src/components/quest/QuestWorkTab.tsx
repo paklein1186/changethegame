@@ -395,7 +395,7 @@ export function QuestWorkTab({
                     {(coinsEscrow > 0 || coinsBudget > 0) && (
                       <div>
                         <p className="text-xs text-muted-foreground">{t("questWork.coinsInEscrow")}</p>
-                        <p className="text-sm font-bold">{(coinsEscrow || coinsBudget).toLocaleString()} Coins</p>
+                        <p className="text-sm font-bold">{(coinsEscrow || coinsBudget).toLocaleString()} {t("uiQuestWorkTab.coins")}</p>
                       </div>
                     )}
                     {(ctgEscrow > 0 || ctgBudget > 0) && (

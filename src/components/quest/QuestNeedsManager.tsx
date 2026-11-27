@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +20,7 @@ import { Plus, Pencil, Trash2, Loader2, Lightbulb } from "lucide-react";
 export const NEED_CATEGORIES = [
   { value: "GENERAL", label: "General" },
   { value: "SKILLS", label: "Skills / Expertise" },
-  { value: "FUNDING", label: "Funding" },
+  { value: "FUNDING", get label() { return i18n.t("uiQuestNeedsManager.funding"); } },
   { value: "TOOLS", label: "Tools / Equipment" },
   { value: "MENTORSHIP", label: "Mentorship" },
   { value: "VISIBILITY", label: "Visibility / Promotion" },
@@ -28,8 +29,8 @@ export const NEED_CATEGORIES = [
 ];
 
 export const NEED_STATUSES = [
-  { value: "OPEN", label: "Open" },
-  { value: "ACTIVE", label: "Active" },
+  { value: "OPEN", get label() { return i18n.t("uiQuestNeedsManager.open"); } },
+  { value: "ACTIVE", get label() { return i18n.t("uiQuestNeedsManager.active"); } },
   { value: "MET", label: "Met" },
 ];
 
@@ -55,9 +56,9 @@ interface QuestNeedsManagerProps {
 }
 
 export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: QuestNeedsManagerProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
-  const { t } = useTranslation();
   const qc = useQueryClient();
 
   const isOwner = currentUser.id === questOwnerId;
@@ -124,13 +125,13 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
     };
     if (editingId) {
       const { error } = await supabase.from("quest_needs" as any).update(payload).eq("id", editingId);
-      if (error) { toast({ title: "Error saving", variant: "destructive" }); setSaving(false); return; }
-      toast({ title: "Need updated" });
+      if (error) { toast({ title: t("uiQuestNeedsManager.errorSaving"), variant: "destructive" }); setSaving(false); return; }
+      toast({ title: t("uiQuestNeedsManager.needUpdated") });
     } else {
       payload.quest_id = questId;
       payload.created_by_user_id = currentUser.id;
       const { error } = await supabase.from("quest_needs" as any).insert(payload);
-      if (error) { toast({ title: "Error saving", variant: "destructive" }); setSaving(false); return; }
+      if (error) { toast({ title: t("uiQuestNeedsManager.errorSaving"), variant: "destructive" }); setSaving(false); return; }
       // Auto-post an update for the new opportunity
       const catLabel = NEED_CATEGORIES.find(c => c.value === form.category)?.label ?? form.category;
       await supabase.from("quest_updates").insert({
@@ -142,7 +143,7 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
         visibility: "PUBLIC",
       });
       qc.invalidateQueries({ queryKey: ["quest-updates", questId] });
-      toast({ title: "Need added" });
+      toast({ title: t("uiQuestNeedsManager.needAdded") });
     }
     qc.invalidateQueries({ queryKey: ["quest-needs", questId] });
     setSaving(false);
@@ -150,10 +151,10 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
   };
 
   const deleteNeed = async (id: string) => {
-    if (!confirm("Remove this need?")) return;
+    if (!confirm(t("uiQuestNeedsManager.removeThisNeed"))) return;
     await supabase.from("quest_needs" as any).delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["quest-needs", questId] });
-    toast({ title: "Need removed" });
+    toast({ title: t("uiQuestNeedsManager.needRemoved") });
   };
 
   if (isLoading) return <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />;
@@ -171,9 +172,9 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
       {needs.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           <Lightbulb className="h-8 w-8 mx-auto mb-2 opacity-40" />
-          <p>No needs listed yet.</p>
+          <p>{t("uiQuestNeedsManager.noNeedsListedYet")}</p>
           {!readOnly && canEdit && (
-            <p className="mt-1 text-xs">Add what this quest requires — skills, funding, tools, volunteers…</p>
+            <p className="mt-1 text-xs">{t("uiQuestNeedsManager.addWhatThisQuestRequiresSkills")}</p>
           )}
         </div>
       ) : (
@@ -219,26 +220,26 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Opportunity" : "Add an Opportunity"}</DialogTitle>
+            <DialogTitle>{editingId ? t("uiQuestNeedsManager.editOpportunity") : t("uiQuestNeedsManager.addAnOpportunity")}</DialogTitle>
             <DialogDescription>
-              Describe what this quest needs from the community.
+              {t("uiQuestNeedsManager.describeWhatThisQuestNeedsFrom")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-1 block">Title <span className="text-destructive">*</span></label>
+              <label className="text-sm font-medium mb-1 block">{t("uiQuestNeedsManager.title")} <span className="text-destructive">*</span></label>
               <Input
                 value={form.title}
                 onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                placeholder="e.g. UX designer for 2 weeks"
+                placeholder={t("uiQuestNeedsManager.eGUxDesignerFor2")}
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Description</label>
+              <label className="text-sm font-medium mb-1 block">{t("uiQuestNeedsManager.description")}</label>
               <Textarea
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                placeholder="More details about this need…"
+                placeholder={t("uiQuestNeedsManager.moreDetailsAboutThisNeed")}
                 rows={3}
                 className="resize-none"
               />
@@ -256,7 +257,7 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
                 </Select>
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Status</label>
+                <label className="text-sm font-medium mb-1 block">{t("uiQuestNeedsManager.status")}</label>
                 <Select value={form.status} onValueChange={v => setForm(f => ({ ...f, status: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -269,10 +270,10 @@ export function QuestNeedsManager({ questId, questOwnerId, readOnly = false }: Q
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{t("uiQuestNeedsManager.cancel")}</Button>
             <Button onClick={saveNeed} disabled={saving || !form.title.trim()}>
               {saving && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-              {editingId ? "Update" : t("questActivity.addNeed")}
+              {editingId ? t("uiQuestNeedsManager.update") : t("questActivity.addNeed")}
             </Button>
           </DialogFooter>
         </DialogContent>

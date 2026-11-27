@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ type Destination = {
 };
 
 export function DestinationPostComposer() {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const userId = currentUser.id;
 
@@ -51,7 +53,7 @@ export function DestinationPostComposer() {
   });
 
   const destinations: Destination[] = [
-    { contextType: "USER", contextId: userId, label: "My Wall", icon: <User className="h-3.5 w-3.5" /> },
+    { contextType: "USER", contextId: userId, label: t("uiDestinationPostComposer.myWall"), icon: <User className="h-3.5 w-3.5" /> },
     ...myGuilds.map((g: any) => ({
       contextType: "GUILD",
       contextId: g.id,
@@ -75,7 +77,7 @@ export function DestinationPostComposer() {
     <div className="space-y-2">
       <div className="flex items-center gap-2">
         <MessageSquare className="h-4 w-4 text-muted-foreground" />
-        <span className="text-xs font-medium text-muted-foreground">Post to:</span>
+        <span className="text-xs font-medium text-muted-foreground">{t("uiDestinationPostComposer.postTo")}</span>
         <Select value={selectedIdx} onValueChange={setSelectedIdx}>
           <SelectTrigger className="h-8 w-[220px] text-xs">
             <SelectValue />

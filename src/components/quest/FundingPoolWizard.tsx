@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -29,14 +30,15 @@ export function FundingPoolWizard({
   coinsBalance, ctgBalance,
   coinEurRate, toEur,
 }: FundingPoolWizardProps) {
+  const { t } = useTranslation();
   const coinsVal = Number(coinsBudget) || 0;
   const ctgVal = Number(ctgBudget) || 0;
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold">Funding Pools</h3>
+      <h3 className="text-sm font-semibold">{t("uiFundingPoolWizard.fundingPools")}</h3>
       <p className="text-xs text-muted-foreground">
-        Allocate funds from your wallet to this quest. You can add more after creation.
+        {t("uiFundingPoolWizard.allocateFundsFromYourWalletTo")}
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -45,7 +47,7 @@ export function FundingPoolWizard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CurrencyIcon currency="coins" className="h-4 w-4" />
-              <Label className="text-sm font-semibold">🟩 Coins Pool</Label>
+              <Label className="text-sm font-semibold">{t("uiFundingPoolWizard.coinsPool")}</Label>
             </div>
             <Switch checked={coinsEnabled} onCheckedChange={setCoinsEnabled} />
           </div>
@@ -53,7 +55,7 @@ export function FundingPoolWizard({
           {coinsEnabled && (
             <>
               <div>
-                <Label className="text-xs">Coins to allocate (≈ €{toEur(coinsVal)})</Label>
+                <Label className="text-xs">{t("uiFundingPoolWizard.coinsToAllocate")}{toEur(coinsVal)})</Label>
                 <Input
                   type="number"
                   min="0"
@@ -65,15 +67,15 @@ export function FundingPoolWizard({
                 />
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Coins are fiat-backed and withdrawable. Contributors earn Coins for their work.
+                {t("uiFundingPoolWizard.coinsAreFiatBackedAndWithdrawable")}
               </p>
               <p className="text-[11px] text-muted-foreground">
-                Your balance: <span className="font-medium text-foreground">{coinsBalance.toFixed(0)} Coins</span>
+                {t("uiFundingPoolWizard.yourBalance")} <span className="font-medium text-foreground">{coinsBalance.toFixed(0)} {t("uiFundingPoolWizard.coins")}</span>
               </p>
               {coinsVal > coinsBalance && (
                 <div className="flex items-center gap-1.5 text-xs text-destructive">
                   <AlertTriangle className="h-3 w-3" />
-                  Insufficient Coins balance.
+                  {t("uiFundingPoolWizard.insufficientCoinsBalance")}
                 </div>
               )}
             </>
@@ -93,7 +95,7 @@ export function FundingPoolWizard({
           {ctgEnabled && (
             <>
               <div>
-                <Label className="text-xs">$CTG to allocate</Label>
+                <Label className="text-xs">{t("uiFundingPoolWizard.ctgToAllocate")}</Label>
                 <Input
                   type="number"
                   min="0"
@@ -105,12 +107,10 @@ export function FundingPoolWizard({
                 />
               </div>
               <p className="text-[11px] text-muted-foreground">
-                $CTG is frozen from demurrage while held in quest escrow.
-                It resumes normal circulation once distributed to contributors.
-                $CTG is not fiat-backed — it represents contribution to the commons.
+                {t("uiFundingPoolWizard.ctgIsFrozenFromDemurrageWhile")}
               </p>
               <p className="text-[11px] text-muted-foreground">
-                Your balance: <span className="font-medium text-foreground">{ctgBalance.toFixed(1)} $CTG</span>
+                {t("uiFundingPoolWizard.yourBalance")} <span className="font-medium text-foreground">{ctgBalance.toFixed(1)} $CTG</span>
               </p>
               {ctgVal > ctgBalance && (
                 <div className="flex items-center gap-1.5 text-xs text-destructive">
@@ -126,13 +126,13 @@ export function FundingPoolWizard({
       {(coinsVal > 0 || ctgVal > 0) && (
         <div className="rounded-md bg-muted/50 p-3 text-sm">
           <p>
-            This quest will hold:
-            {coinsVal > 0 && <> 🟩 <span className="font-semibold">{coinsVal}</span> Coins</>}
+            {t("uiFundingPoolWizard.thisQuestWillHold")}
+            {coinsVal > 0 && <> 🟩 <span className="font-semibold">{coinsVal}</span> {t("uiFundingPoolWizard.coins")}</>}
             {coinsVal > 0 && ctgVal > 0 && "  +  "}
             {ctgVal > 0 && <> 🌱 <span className="font-semibold">{ctgVal}</span> $CTG</>}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            You can add more funds or launch a fundraising campaign at any time after creation.
+            {t("uiFundingPoolWizard.youCanAddMoreFundsOr")}
           </p>
         </div>
       )}

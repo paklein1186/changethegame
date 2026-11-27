@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -14,37 +15,37 @@ interface ActionItem {
 
 const ACTIONS: Record<PersonaType | "ORG_REP", ActionItem[]> = {
   CREATIVE: [
-    { label: "Start a new Creation", icon: PlusCircle, route: "/quests/new" },
-    { label: "Offer a Skill Session", icon: Briefcase, route: "/services/new" },
-    { label: "Join a Circle or Studio", icon: Shield, route: "/explore?tab=guilds" },
-    { label: "Explore your Houses", icon: Hash, route: "/explore/houses" },
-    { label: "See inspirations from your circles", icon: Sparkles, route: "/network" },
+    { get label() { return i18n.t("uiContextualActions.startANewCreation"); }, icon: PlusCircle, route: "/quests/new" },
+    { get label() { return i18n.t("uiContextualActions.offerASkillSession"); }, icon: Briefcase, route: "/services/new" },
+    { get label() { return i18n.t("uiContextualActions.joinACircleOrStudio"); }, icon: Shield, route: "/explore?tab=guilds" },
+    { get label() { return i18n.t("uiContextualActions.exploreYourHouses"); }, icon: Hash, route: "/explore/houses" },
+    { get label() { return i18n.t("uiContextualActions.seeInspirationsFromYourCircles"); }, icon: Sparkles, route: "/network" },
   ],
   IMPACT: [
-    { label: "Start a Mission", icon: PlusCircle, route: "/quests/new" },
-    { label: "Post a Service", icon: Briefcase, route: "/services/new" },
-    { label: "Join a Guild", icon: Shield, route: "/explore?tab=guilds" },
+    { get label() { return i18n.t("uiContextualActions.startAMission"); }, icon: PlusCircle, route: "/quests/new" },
+    { get label() { return i18n.t("uiContextualActions.postAService"); }, icon: Briefcase, route: "/services/new" },
+    { get label() { return i18n.t("uiContextualActions.joinAGuild"); }, icon: Shield, route: "/explore?tab=guilds" },
     { label: "Review partnership requests", icon: Handshake, route: "/work" },
-    { label: "Explore opportunities in your territories", icon: Compass, route: "/explore" },
+    { get label() { return i18n.t("uiContextualActions.exploreOpportunitiesInYourTerritories"); }, icon: Compass, route: "/explore" },
   ],
   HYBRID: [
-    { label: "Start a Quest", icon: PlusCircle, route: "/quests/new" },
-    { label: "Share an Offering", icon: Briefcase, route: "/services/new" },
-    { label: "Join a Circle or Guild", icon: Shield, route: "/explore?tab=guilds" },
-    { label: "Check collaborations in progress", icon: Users, route: "/work" },
-    { label: "Explore your hybrid Houses", icon: Hash, route: "/explore/houses" },
+    { get label() { return i18n.t("uiContextualActions.startAQuest"); }, icon: PlusCircle, route: "/quests/new" },
+    { get label() { return i18n.t("uiContextualActions.shareAnOffering"); }, icon: Briefcase, route: "/services/new" },
+    { get label() { return i18n.t("uiContextualActions.joinACircleOrGuild"); }, icon: Shield, route: "/explore?tab=guilds" },
+    { get label() { return i18n.t("uiContextualActions.checkCollaborationsInProgress"); }, icon: Users, route: "/work" },
+    { get label() { return i18n.t("uiContextualActions.exploreYourHybridHouses"); }, icon: Hash, route: "/explore/houses" },
   ],
   ORG_REP: [
-    { label: "Manage my Organizations", icon: Users, route: "/me/companies" },
-    { label: "Create a Service", icon: Briefcase, route: "/services/new" },
-    { label: "Post a Job", icon: Compass, route: "/jobs" },
+    { get label() { return i18n.t("uiContextualActions.manageMyOrganizations"); }, icon: Users, route: "/me/companies" },
+    { get label() { return i18n.t("uiContextualActions.createAService"); }, icon: Briefcase, route: "/services/new" },
+    { get label() { return i18n.t("uiContextualActions.postAJob"); }, icon: Compass, route: "/jobs" },
     { label: "Find partners", icon: Handshake, route: "/explore?tab=companies" },
-    { label: "Explore Guilds & Networks", icon: Shield, route: "/explore?tab=guilds" },
+    { get label() { return i18n.t("uiContextualActions.exploreGuildsNetworks"); }, icon: Shield, route: "/explore?tab=guilds" },
   ],
   UNSET: [
-    { label: "Start a Quest", icon: PlusCircle, route: "/quests/new" },
-    { label: "Offer a Service", icon: Briefcase, route: "/services/new" },
-    { label: "Join a Community", icon: Shield, route: "/explore?tab=guilds" },
+    { get label() { return i18n.t("uiContextualActions.startAQuest"); }, icon: PlusCircle, route: "/quests/new" },
+    { get label() { return i18n.t("uiContextualActions.offerAService"); }, icon: Briefcase, route: "/services/new" },
+    { get label() { return i18n.t("uiContextualActions.joinACommunity"); }, icon: Shield, route: "/explore?tab=guilds" },
     { label: "Explore", icon: Eye, route: "/explore" },
   ],
 };

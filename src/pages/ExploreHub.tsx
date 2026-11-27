@@ -210,10 +210,10 @@ export default function ExploreHub() {
         <TabsContent value="territories" className="space-y-8">
           <div className="flex justify-end gap-2 mb-4">
             <Button size="sm" variant="outline" asChild>
-              <Link to="/territories"><Map className="h-4 w-4 mr-1" /> Territory Portal</Link>
+              <Link to="/territories"><Map className="h-4 w-4 mr-1" /> {t("uiExploreHub.territoryPortal")}</Link>
             </Button>
             <Button size="sm" asChild>
-              <Link to="/create/bioregion"><Plus className="h-4 w-4 mr-1" /> Create Bioregion</Link>
+              <Link to="/create/bioregion"><Plus className="h-4 w-4 mr-1" /> {t("uiExploreHub.createBioregion")}</Link>
             </Button>
           </div>
           <TerritoryBrowseSection />
@@ -269,11 +269,12 @@ function ExploreTabsInner({ tab, onTabChange, isGuest, isCreative, currentUserId
 }
 
 function QuestsSubTabs() {
+  const { t } = useTranslation();
   const [sub, setSub] = useState<"quests" | "ideas" | "missions">("quests");
   return (
     <div>
       <div className="flex gap-2 mb-4">
-        <Button variant={sub === "quests" ? "default" : "outline"} size="sm" onClick={() => setSub("quests")}>Quests</Button>
+        <Button variant={sub === "quests" ? "default" : "outline"} size="sm" onClick={() => setSub("quests")}>{t("uiExploreHub.quests")}</Button>
         <Button variant={sub === "missions" ? "default" : "outline"} size="sm" onClick={() => setSub("missions")}>
           <Target className="h-3.5 w-3.5 mr-1" /> Missions
         </Button>

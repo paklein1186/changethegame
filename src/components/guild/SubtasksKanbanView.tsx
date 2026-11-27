@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,9 +13,9 @@ import { translateTaskStatus } from "@/lib/entityLabels";
 
 const COLUMNS = [
   { key: "BACKLOG", label: "Backlog", color: "border-muted-foreground/30 bg-muted/20" },
-  { key: "TODO", label: "To do next", color: "border-blue-400/50 bg-blue-50/30 dark:bg-blue-950/20" },
-  { key: "IN_PROGRESS", label: "In Progress", color: "border-amber-400/50 bg-amber-50/30 dark:bg-amber-950/20" },
-  { key: "DONE", label: "Done", color: "border-emerald-400/50 bg-emerald-50/30 dark:bg-emerald-950/20" },
+  { key: "TODO", get label() { return i18n.t("uiSubtasksKanbanView.toDoNext"); }, color: "border-blue-400/50 bg-blue-50/30 dark:bg-blue-950/20" },
+  { key: "IN_PROGRESS", get label() { return i18n.t("uiSubtasksKanbanView.inProgress"); }, color: "border-amber-400/50 bg-amber-50/30 dark:bg-amber-950/20" },
+  { key: "DONE", get label() { return i18n.t("uiSubtasksKanbanView.done"); }, color: "border-emerald-400/50 bg-emerald-50/30 dark:bg-emerald-950/20" },
 ] as const;
 
 interface SubtasksKanbanViewProps {
@@ -147,7 +148,7 @@ export function SubtasksKanbanView({
                 );
               })}
               {colTasks.length === 0 && (
-                <p className="text-[10px] text-muted-foreground text-center py-3">No tasks</p>
+                <p className="text-[10px] text-muted-foreground text-center py-3">{t("uiSubtasksKanbanView.noTasks")}</p>
               )}
             </div>
           </div>

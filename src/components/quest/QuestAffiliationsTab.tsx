@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link2, X, Loader2, Shield, Building2, Plus, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ interface Affiliation {
 }
 
 export function QuestAffiliationsTab({ questId, quest }: Props) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -104,11 +106,11 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
       status: "PENDING",
     } as any);
     if (error) {
-      toast({ title: "Error sending request", description: error.message, variant: "destructive" });
+      toast({ title: t("uiQuestAffiliationsTab.errorSendingRequest"), description: error.message, variant: "destructive" });
     } else {
       qc.invalidateQueries({ queryKey: ["quest-affiliations", questId] });
       qc.invalidateQueries({ queryKey: ["quest", questId] });
-      toast({ title: "Affiliation request sent", description: "The entity admins will review your request." });
+      toast({ title: t("uiQuestAffiliationsTab.affiliationRequestSent"), description: t("uiQuestAffiliationsTab.theEntityAdminsWillReviewYour") });
       setAddEntityId("");
     }
     setSaving(false);
@@ -118,7 +120,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
     setSaving(true);
     const { error } = await supabase.from("quest_affiliations" as any).delete().eq("id", affiliationId);
     if (error) {
-      toast({ title: "Error removing affiliation", description: error.message, variant: "destructive" });
+      toast({ title: t("uiQuestAffiliationsTab.errorRemovingAffiliation"), description: error.message, variant: "destructive" });
     } else {
       await syncLegacyIds();
       qc.invalidateQueries({ queryKey: ["quest-affiliations", questId] });
@@ -146,7 +148,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
   const statusBadge = (status: string) => {
     switch (status) {
       case "PENDING":
-        return <Badge variant="outline" className="text-[10px] gap-1 text-amber-600 border-amber-300"><Clock className="h-2.5 w-2.5" /> Pending</Badge>;
+        return <Badge variant="outline" className="text-[10px] gap-1 text-amber-600 border-amber-300"><Clock className="h-2.5 w-2.5" /> {t("uiQuestAffiliationsTab.pending")}</Badge>;
       case "APPROVED":
         return <Badge variant="outline" className="text-[10px] gap-1 text-emerald-600 border-emerald-300"><CheckCircle2 className="h-2.5 w-2.5" /> Approved</Badge>;
       case "REJECTED":
@@ -164,17 +166,17 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
             <Link2 className="h-4 w-4 text-primary" /> Entity Affiliations
           </h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Request to attach this quest to Guilds or Organizations. Entity admins must approve the request.
+            {t("uiQuestAffiliationsTab.requestToAttachThisQuestTo")}
           </p>
         </div>
 
         {/* Current affiliations */}
         {isLoading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+            <Loader2 className="h-4 w-4 animate-spin" /> {t("uiQuestAffiliationsTab.loading")}
           </div>
         ) : affiliations.length === 0 ? (
-          <p className="text-sm text-muted-foreground italic">No entities attached yet. This quest is independent.</p>
+          <p className="text-sm text-muted-foreground italic">{t("uiQuestAffiliationsTab.noEntitiesAttachedYetThisQuest")}</p>
         ) : (
           <div className="space-y-2">
             {affiliations.map((aff) => (
@@ -190,7 +192,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
                     <p className="text-sm font-medium">{aff.name}</p>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Badge variant="outline" className="text-[10px]">
-                        {aff.entity_type === "GUILD" ? "Guild" : "Organization"}
+                        {aff.entity_type === "GUILD" ? t("uiQuestAffiliationsTab.guild") : "Organization"}
                       </Badge>
                       {statusBadge(aff.status)}
                     </div>
@@ -212,14 +214,14 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
 
         {/* Add new affiliation */}
         <div className="space-y-3 pt-2 border-t border-border">
-          <p className="text-sm font-medium">Request affiliation</p>
+          <p className="text-sm font-medium">{t("uiQuestAffiliationsTab.requestAffiliation")}</p>
           <div className="flex gap-2">
             <Select value={addEntityType} onValueChange={(v) => { setAddEntityType(v as "GUILD" | "COMPANY"); setAddEntityId(""); }}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="GUILD">Guild</SelectItem>
+                <SelectItem value="GUILD">{t("uiQuestAffiliationsTab.guild")}</SelectItem>
                 <SelectItem value="COMPANY">Organization</SelectItem>
               </SelectContent>
             </Select>
@@ -233,7 +235,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
                 ))}
                 {availableEntities.length === 0 && (
                   <p className="text-xs text-muted-foreground p-2">
-                    {addEntityType === "GUILD" ? "No more guilds available" : "No more organizations available"}
+                    {addEntityType === "GUILD" ? t("uiQuestAffiliationsTab.noMoreGuildsAvailable") : t("uiQuestAffiliationsTab.noMoreOrganizationsAvailable")}
                   </p>
                 )}
               </SelectContent>
@@ -241,7 +243,7 @@ export function QuestAffiliationsTab({ questId, quest }: Props) {
           </div>
           <Button size="sm" onClick={addAffiliation} disabled={saving || !addEntityId}>
             {saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Plus className="h-4 w-4 mr-1" />}
-            Send request
+            {t("uiQuestAffiliationsTab.sendRequest")}
           </Button>
         </div>
       </div>

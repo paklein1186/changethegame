@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { compressImage } from "@/lib/compressImage";
 import { motion } from "framer-motion";
@@ -52,6 +53,7 @@ type EnrichedMessage = TerritoryChatMessage & {
 };
 
 export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<EnrichedMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -75,7 +77,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("File too large. Maximum size is 25 MB.");
+      toast.error(t("uiTerritoryChatTab.fileTooLargeMaximumSizeIs"));
       return;
     }
     const preview = IMAGE_TYPES.includes(file.type) ? URL.createObjectURL(file) : undefined;
@@ -234,10 +236,10 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
       {/* Header */}
       <div className="space-y-1">
         <h2 className="text-lg font-display font-semibold flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-primary" /> Territory Chat
+          <MessageSquare className="h-5 w-5 text-primary" /> {t("uiTerritoryChatTab.territoryChat")}
         </h2>
         <p className="text-sm text-muted-foreground">
-          This AI is trained on what we know about {territoryName}. You can both ask and teach it.
+          {t("uiTerritoryChatTab.thisAiIsTrainedOnWhat")} {territoryName}{t("uiTerritoryChatTab.youCanBothAskAndTeach")}
         </p>
       </div>
 
@@ -248,9 +250,9 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
             <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-12">
               <Brain className="h-10 w-10 text-muted-foreground/40" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Start a conversation</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("uiTerritoryChatTab.startAConversation")}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Ask questions or contribute knowledge about {territoryName}
+                  {t("uiTerritoryChatTab.askQuestionsOrContributeKnowledgeAbout")} {territoryName}
                 </p>
               </div>
             </div>
@@ -276,7 +278,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
               >
                 {msg.is_knowledge_contribution && (
                   <Badge variant="secondary" className="text-[10px] mb-2 gap-1">
-                    <Sparkles className="h-2.5 w-2.5" /> Knowledge contribution
+                    <Sparkles className="h-2.5 w-2.5" /> {t("uiTerritoryChatTab.knowledgeContribution")}
                   </Badge>
                 )}
 
@@ -354,7 +356,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
                     className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-primary text-xs font-medium hover:bg-primary/20 hover:border-primary/30 transition-all group"
                   >
                     <BookOpen className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
-                    <span>Save to Library</span>
+                    <span>{t("uiTerritoryChatTab.saveToLibrary")}</span>
                     <Sparkles className="h-3 w-3 opacity-50" />
                   </button>
                 )}
@@ -401,7 +403,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
                 className="scale-75"
               />
               <Label htmlFor="knowledge-mode" className="text-xs text-muted-foreground cursor-pointer">
-                {isKnowledge ? "Adding knowledge (+10 $CTG)" : "Asking a question"}
+                {isKnowledge ? "Adding knowledge (+10 $CTG)" : t("uiTerritoryChatTab.askingAQuestion")}
               </Label>
             </div>
           </div>
@@ -419,14 +421,14 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
               className="h-11 w-11 shrink-0"
               onClick={() => fileInputRef.current?.click()}
               disabled={loading || !userId || !!attachment}
-              title="Attach file (max 25 MB)"
+              title={t("uiTerritoryChatTab.attachFileMax25Mb")}
             >
               <Paperclip className="h-4 w-4" />
             </Button>
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isKnowledge ? "Share knowledge about this territory…" : "Ask about this territory…"}
+              placeholder={isKnowledge ? t("uiTerritoryChatTab.shareKnowledgeAboutThisTerritory") : t("uiTerritoryChatTab.askAboutThisTerritory")}
               className="min-h-[44px] max-h-[100px] resize-none text-sm flex-1"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -449,7 +451,7 @@ export function TerritoryChatTab({ territoryId, territoryName, userId }: Props) 
 
       {!userId && (
         <p className="text-xs text-center text-muted-foreground">
-          Sign in to chat and contribute to this territory's knowledge.
+          {t("uiTerritoryChatTab.signInToChatAndContribute")}
         </p>
       )}
     </div>

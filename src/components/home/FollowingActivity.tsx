@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -35,16 +36,16 @@ const ACTION_LABELS: Record<string, { label: string; icon: React.ReactNode }> = 
   guild_joined: { label: "joined", icon: <UserPlus className="h-3 w-3 text-green-500" /> },
   company_joined: { label: "joined", icon: <UserPlus className="h-3 w-3 text-green-500" /> },
   pod_joined: { label: "joined", icon: <UserPlus className="h-3 w-3 text-green-500" /> },
-  quest_joined: { label: "joined quest", icon: <Zap className="h-3 w-3 text-amber-500" /> },
-  quest_highlighted: { label: "highlighted quest", icon: <Star className="h-3 w-3 text-yellow-500" /> },
+  quest_joined: { get label() { return i18n.t("uiFollowingActivity.joinedQuest"); }, icon: <Zap className="h-3 w-3 text-amber-500" /> },
+  quest_highlighted: { get label() { return i18n.t("uiFollowingActivity.highlightedQuest"); }, icon: <Star className="h-3 w-3 text-yellow-500" /> },
   followed: { label: "started following", icon: <UserPlus className="h-3 w-3 text-primary" /> },
-  course_enrolled: { label: "enrolled in course", icon: <BookOpen className="h-3 w-3 text-blue-500" /> },
-  event_registered: { label: "registered for event", icon: <CalendarCheck className="h-3 w-3 text-purple-500" /> },
-  comment_created: { label: "commented on", icon: <MessageSquare className="h-3 w-3 text-muted-foreground" /> },
-  post_upvoted: { label: "upvoted a post", icon: <ThumbsUp className="h-3 w-3 text-pink-500" /> },
+  course_enrolled: { get label() { return i18n.t("uiFollowingActivity.enrolledInCourse"); }, icon: <BookOpen className="h-3 w-3 text-blue-500" /> },
+  event_registered: { get label() { return i18n.t("uiFollowingActivity.registeredForEvent"); }, icon: <CalendarCheck className="h-3 w-3 text-purple-500" /> },
+  comment_created: { get label() { return i18n.t("uiFollowingActivity.commentedOn"); }, icon: <MessageSquare className="h-3 w-3 text-muted-foreground" /> },
+  post_upvoted: { get label() { return i18n.t("uiFollowingActivity.upvotedAPost"); }, icon: <ThumbsUp className="h-3 w-3 text-pink-500" /> },
   post_created: { label: "posted", icon: <MessageSquare className="h-3 w-3 text-primary" /> },
-  quest_funded: { label: "funded quest", icon: <Zap className="h-3 w-3 text-emerald-600" /> },
-  welcome_email_sent: { label: "joined the platform", icon: <UserPlus className="h-3 w-3 text-green-500" /> },
+  quest_funded: { get label() { return i18n.t("uiFollowingActivity.fundedQuest"); }, icon: <Zap className="h-3 w-3 text-emerald-600" /> },
+  welcome_email_sent: { get label() { return i18n.t("uiFollowingActivity.joinedThePlatform"); }, icon: <UserPlus className="h-3 w-3 text-green-500" /> },
 };
 
 const TARGET_ROUTES: Record<string, string> = {
@@ -245,7 +246,7 @@ export function FollowingActivity() {
           <Users className="h-5 w-5 text-primary" /> {t("home.fromNetwork")}
         </h2>
         <p className="text-sm text-muted-foreground text-center py-6">
-          No recent activity from people you follow yet.
+          {t("uiFollowingActivity.noRecentActivityFromPeopleYou")}
         </p>
       </div>
     );

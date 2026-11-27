@@ -104,6 +104,7 @@ const updateIcons: Record<string, typeof Sparkles> = {
 };
 
 function QuestExternalLinks({ questId, isOwner }: { questId: string; isOwner: boolean }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
 
@@ -153,8 +154,8 @@ function QuestExternalLinks({ questId, isOwner }: { questId: string; isOwner: bo
     } catch (error: any) {
       qc.setQueryData<ExternalLinkItem[]>(["quest-external-links", questId], previousLinks);
       toast({
-        title: "Failed to save link",
-        description: error?.message ?? "Unknown error",
+        title: t("uiQuestDetail.failedToSaveLink"),
+        description: error?.message ?? t("uiQuestDetail.unknownError"),
         variant: "destructive",
       });
     } finally {
@@ -166,6 +167,7 @@ function QuestExternalLinks({ questId, isOwner }: { questId: string; isOwner: bo
 }
 
 function QuestFollowersSection({ questId, participantUserIds }: { questId: string; participantUserIds: string[] }) {
+  const { t } = useTranslation();
   const { data: followers = [] } = useQuery({
     queryKey: ["quest-followers-overview", questId],
     queryFn: async () => {
@@ -195,7 +197,7 @@ function QuestFollowersSection({ questId, participantUserIds }: { questId: strin
     <div className="mt-2">
       <h3 className="font-display font-semibold flex items-center gap-2 mb-3 text-sm">
         <Heart className="h-4 w-4 text-muted-foreground" />
-        <span>Following this Quest</span>
+        <span>{t("uiQuestDetail.followingThisQuest")}</span>
         <Badge variant="secondary" className="text-[10px]">{nonParticipantFollowers.length}</Badge>
       </h3>
       <div className="flex flex-wrap gap-2">
@@ -427,7 +429,7 @@ export default function QuestDetail() {
     },
   });
 
-  if (isLoading || accessLoading) return <PageShell><p>Loading…</p></PageShell>;
+  if (isLoading || accessLoading) return <PageShell><p>{t("uiQuestDetail.loading")}</p></PageShell>;
   if (!quest) return (
     <PageShell>
       <div className="max-w-md mx-auto mt-16 text-center space-y-3">
@@ -438,10 +440,10 @@ export default function QuestDetail() {
   );
   // Quête réservée à d'autres membranes : la fiche et la demande d'accès seulement.
   if (myAccess?.level === "teaser") return <PageShell><QuestTeaser quest={quest} access={myAccess} /></PageShell>;
-  if (quest.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>This quest has been removed.</p></PageShell>;
+  if (quest.is_deleted && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>{t("uiQuestDetail.thisQuestHasBeenRemoved")}</p></PageShell>;
 
   const isCancelled = quest.status === "CANCELLED";
-  if (quest.is_draft && quest.created_by_user_id !== currentUser.id && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>Quest not found.</p></PageShell>;
+  if (quest.is_draft && quest.created_by_user_id !== currentUser.id && !checkIsGlobalAdmin(currentUser.email)) return <PageShell><p>{t("uiQuestDetail.questNotFound")}</p></PageShell>;
 
   const isLoggedIn = !!currentUser.id;
   const guild = quest.guilds;
@@ -475,13 +477,13 @@ export default function QuestDetail() {
           window.open(data.url, "_blank");
         }
       } catch (err: any) {
-        toast({ title: "Payment error", description: err.message, variant: "destructive" });
+        toast({ title: t("uiQuestDetail.paymentError"), description: err.message, variant: "destructive" });
       }
       return;
     }
     await supabase.from("quest_participants").insert({ quest_id: quest.id, user_id: currentUser.id, role: "COLLABORATOR", status: "ACCEPTED" });
     qc.invalidateQueries({ queryKey: ["quest-participants", id] });
-    toast({ title: "Joined quest!" });
+    toast({ title: t("uiQuestDetail.joinedQuest") });
   };
 
   const postUpdate = async () => {
@@ -515,7 +517,7 @@ export default function QuestDetail() {
     }
     qc.invalidateQueries({ queryKey: ["quest-updates", id] });
     setUpdateOpen(false); setUTitle(""); setUContent(""); setUType("GENERAL"); setUImageUrl(undefined); setUDraft(false); setUVisibility("PUBLIC"); setEditingUpdateId(null); setUPostAs(null);
-    toast({ title: uDraft ? "Draft saved!" : editingUpdateId ? "Update edited!" : "Update posted!" });
+    toast({ title: uDraft ? t("uiQuestDetail.draftSaved") : editingUpdateId ? t("uiQuestDetail.updateEdited") : t("uiQuestDetail.updatePosted") });
   };
 
   const openEditUpdate = (update: any) => {
@@ -525,7 +527,7 @@ export default function QuestDetail() {
   const deleteUpdate = async (updateId: string) => {
     await supabase.from("quest_updates").update({ is_deleted: true, deleted_at: new Date().toISOString() } as any).eq("id", updateId);
     qc.invalidateQueries({ queryKey: ["quest-updates", id] });
-    toast({ title: "Update deleted" });
+    toast({ title: t("uiQuestDetail.updateDeleted") });
   };
 
   const togglePin = async (updateId: string, currentPinned: boolean) => {
@@ -537,7 +539,7 @@ export default function QuestDetail() {
   const createPod = async () => {
     if (!podName.trim()) return;
     const { data: pod, error } = await supabase.from("pods").insert({ name: podName.trim(), description: podDesc.trim() || null, image_url: podImageUrl || null, type: "QUEST_POD" as any, quest_id: quest.id, creator_id: currentUser.id, start_date: podStart || null, end_date: podEnd || null }).select().single();
-    if (error) { toast({ title: "Failed to create pod", variant: "destructive" }); return; }
+    if (error) { toast({ title: t("uiQuestDetail.failedToCreatePod"), variant: "destructive" }); return; }
     await supabase.from("pod_members").insert({ pod_id: pod.id, user_id: currentUser.id, role: "HOST" as any });
     autoFollowEntity(currentUser.id, "POD", pod.id);
     qc.invalidateQueries({ queryKey: ["pods-for-quest", id] });
@@ -654,7 +656,7 @@ export default function QuestDetail() {
         });
       }
 
-      toast({ title: "🎉 Quest completed!", description: "XP and rewards have been distributed to all participants." });
+      toast({ title: t("uiQuestDetail.questCompleted"), description: t("uiQuestDetail.xpAndRewardsHaveBeenDistributed") });
     }
 
     // ─── Quest Cancellation: refund all credit funding ──────
@@ -664,22 +666,22 @@ export default function QuestDetail() {
       });
       if (refundError) {
         console.error("Refund error:", refundError.message);
-        toast({ title: "Refund failed", description: refundError.message, variant: "destructive" });
+        toast({ title: t("uiQuestDetail.refundFailed"), description: refundError.message, variant: "destructive" });
       } else {
         const result = refundResult?.[0] || refundResult;
-        toast({ title: "Credits refunded", description: `${result?.refunded_total ?? 0} Credits returned to ${result?.refunded_count ?? 0} contributor(s).` });
+        toast({ title: t("uiQuestDetail.creditsRefunded"), description: `${result?.refunded_total ?? 0} Credits returned to ${result?.refunded_count ?? 0} contributor(s).` });
       }
     }
 
     qc.invalidateQueries({ queryKey: ["quest", id] });
-    setEditOpen(false); toast({ title: "Quest updated" });
+    setEditOpen(false); toast({ title: t("uiQuestDetail.questUpdated") });
   };
 
   return (
     <PageShell>
       <SectionBanner {...HINTS.banners.questFirst} />
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        <ArrowLeft className="h-4 w-4 mr-1" /> {t("uiQuestDetail.back")}
       </Button>
       {quest.is_draft && <DraftBanner />}
 
@@ -689,16 +691,16 @@ export default function QuestDetail() {
           <div className="flex items-center gap-3">
             <Ban className="h-6 w-6 text-destructive shrink-0" />
             <div>
-              <h3 className="font-display font-bold text-destructive">Quest Cancelled</h3>
+              <h3 className="font-display font-bold text-destructive">{t("uiQuestDetail.questCancelled")}</h3>
               <p className="text-sm text-muted-foreground">
-                This quest has been cancelled. All interactions are locked.
+                {t("uiQuestDetail.thisQuestHasBeenCancelledAll")}
                 {(quest as any).funding_type === "CREDITS" && " Credit contributions have been refunded."}
               </p>
             </div>
           </div>
           {questTimeline.length > 0 && (
             <div className="border-t border-border pt-3">
-              <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> Activity Timeline</p>
+              <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {t("uiQuestDetail.activityTimeline")}</p>
               <div className="space-y-1.5 max-h-48 overflow-y-auto">
                 {questTimeline.map((ev: any) => (
                   <div key={ev.id} className="flex items-center gap-2 text-xs">
@@ -744,7 +746,7 @@ export default function QuestDetail() {
               if (coinsAvail > 0) {
                 return (
                   <span className="flex items-center gap-1.5 text-lg font-bold text-amber-600">
-                    🟩 {coinsAvail.toLocaleString()} Coins
+                    🟩 {coinsAvail.toLocaleString()} {t("uiQuestDetail.coins")}
                     <span className="text-xs text-muted-foreground font-normal">≈ €{(coinsAvail * coinsRate).toFixed(2)}</span>
                   </span>
                 );
@@ -773,55 +775,55 @@ export default function QuestDetail() {
           <div className="rounded-lg border border-border bg-muted/30 p-4 mb-4 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             {((quest as any).mission_budget_min || (quest as any).mission_budget_max) && (
               <div>
-                <p className="text-xs text-muted-foreground font-medium">💰 Mission Budget</p>
+                <p className="text-xs text-muted-foreground font-medium">{t("uiQuestDetail.missionBudget")}</p>
                 <p className="text-lg font-bold">
-                  🟩 {toCoins((quest as any).mission_budget_min ?? 0).toLocaleString()} – {toCoins((quest as any).mission_budget_max ?? 0).toLocaleString()} Coins
+                  🟩 {toCoins((quest as any).mission_budget_min ?? 0).toLocaleString()} – {toCoins((quest as any).mission_budget_max ?? 0).toLocaleString()} {t("uiQuestDetail.coins")}
                 </p>
                 <p className="text-[10px] text-muted-foreground">≈ €{(quest as any).mission_budget_min ?? 0} – €{(quest as any).mission_budget_max ?? 0} • {(quest as any).payment_type || "INVOICE"}</p>
               </div>
             )}
             <div>
-              <p className="text-xs text-muted-foreground font-medium">🏆 XP Reward</p>
+              <p className="text-xs text-muted-foreground font-medium">{t("uiQuestDetail.xpReward")}</p>
               <p className="text-lg font-bold text-primary">+{quest.reward_xp} XP</p>
               <p className="text-[10px] text-muted-foreground">
-                Creator: +{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_CREATOR]} XP • Participant: +{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_USER]} XP
+                Creator: +{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_CREATOR]} {t("uiQuestDetail.xpParticipant")}{XP_REWARDS[XP_EVENT_TYPES.QUEST_COMPLETED_USER]} XP
               </p>
               <p className="text-[10px] text-muted-foreground mt-2">
-                ⭐ XP is permanent reputation. 🌱 $CTG is contribution to the commons (fades 1%/month).
+                {t("uiQuestDetail.xpIsPermanentReputationCtgIs")}
               </p>
             </div>
             {quest.credit_reward > 0 && (
               <div>
                 <p className="text-xs text-muted-foreground font-medium">🌱 $CTG Reward</p>
                 <p className="text-lg font-bold text-primary">{quest.credit_reward} $CTG</p>
-                <p className="text-[10px] text-muted-foreground">Per participant on completion</p>
+                <p className="text-[10px] text-muted-foreground">{t("uiQuestDetail.perParticipantOnCompletion")}</p>
               </div>
             )}
             <CTGEstimateBlock subtaskCount={subtaskCounts?.total ?? 0} />
             {Number((quest as any).coins_budget ?? 0) > 0 && (
               <div>
-                <p className="text-xs text-muted-foreground font-medium">🟩 Coins Pool</p>
-                <p className="text-lg font-bold">{Number((quest as any).coins_escrow ?? 0).toLocaleString()} Coins</p>
-                <p className="text-[10px] text-muted-foreground">≈ €{(Number((quest as any).coins_escrow ?? 0) * coinsRate).toFixed(2)} in escrow</p>
+                <p className="text-xs text-muted-foreground font-medium">{t("uiQuestDetail.coinsPool")}</p>
+                <p className="text-lg font-bold">{Number((quest as any).coins_escrow ?? 0).toLocaleString()} {t("uiQuestDetail.coins")}</p>
+                <p className="text-[10px] text-muted-foreground">≈ €{(Number((quest as any).coins_escrow ?? 0) * coinsRate).toFixed(2)} {t("uiQuestDetail.inEscrow")}</p>
               </div>
             )}
             {Number((quest as any).ctg_budget ?? 0) > 0 && (
               <div>
                 <p className="text-xs text-muted-foreground font-medium">🌱 $CTG Pool</p>
                 <p className="text-lg font-bold">{Number((quest as any).ctg_escrow ?? 0).toLocaleString()} $CTG</p>
-                <p className="text-[10px] text-muted-foreground">❄️ Frozen in escrow</p>
+                <p className="text-[10px] text-muted-foreground">{t("uiQuestDetail.frozenInEscrow")}</p>
               </div>
             )}
             {(quest as any).credit_budget > 0 && Number((quest as any).coins_budget ?? 0) === 0 && (
               <div>
-                <p className="text-xs text-muted-foreground font-medium">🏦 $CTG Budget</p>
+                <p className="text-xs text-muted-foreground font-medium">{t("uiQuestDetail.ctgBudget")}</p>
                 <p className="text-lg font-bold">{(quest as any).credit_budget} $CTG</p>
-                <p className="text-[10px] text-muted-foreground">Funded by quest creator</p>
+                <p className="text-[10px] text-muted-foreground">{t("uiQuestDetail.fundedByQuestCreator")}</p>
               </div>
             )}
             {quest.status === "COMPLETED" && (
               <div className="md:col-span-full">
-                <Badge variant="default" className="bg-green-600 text-white">✅ Completed — Rewards distributed</Badge>
+                <Badge variant="default" className="bg-green-600 text-white">{t("uiQuestDetail.completedRewardsDistributed")}</Badge>
               </div>
             )}
           </div>
@@ -851,7 +853,7 @@ export default function QuestDetail() {
           <span>·</span>
           <Badge variant="outline" className="capitalize">{quest.status.toLowerCase().replace(/_/g, " ")}</Badge>
           {quest.price_fiat > 0 && (
-            <Badge className="bg-amber-500/10 text-amber-600 border-0"><CreditCard className="h-3 w-3 mr-1" /> Paid — 🟩 {toCoins(quest.price_fiat / 100).toLocaleString()} Coins (≈ €{(quest.price_fiat / 100).toFixed(2)})</Badge>
+            <Badge className="bg-amber-500/10 text-amber-600 border-0"><CreditCard className="h-3 w-3 mr-1" /> Paid — 🟩 {toCoins(quest.price_fiat / 100).toLocaleString()} {t("uiQuestDetail.coins2")}{(quest.price_fiat / 100).toFixed(2)})</Badge>
           )}
           {quest.monetization_type === "FREE" && quest.price_fiat === 0 && (
             <Badge variant="secondary" className="capitalize">Free</Badge>
@@ -896,21 +898,21 @@ export default function QuestDetail() {
               <Button size="sm" variant={isFollowing ? "outline" : "default"} onClick={() => {
                 if (!isLoggedIn) { setAuthPromptAction("follow this quest"); setAuthPromptOpen(true); return; }
                 toggleFollow();
-              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? "Unfollow" : "Follow"}</Button>
+              }}><Heart className={`h-4 w-4 mr-1 ${isFollowing ? "fill-current" : ""}`} />{isFollowing ? "Unfollow" : t("uiQuestDetail.follow")}</Button>
             )}
             {!isParticipant && !isCancelled && (
               <Button size="sm" variant={isPaidQuest ? "default" : "outline"} onClick={() => {
                 if (!isLoggedIn) { setAuthPromptAction("join this quest"); setAuthPromptOpen(true); return; }
                 joinQuest();
               }}>
-                {isPaidQuest ? <><Lock className="h-4 w-4 mr-1" /> Pay & Join — 🟩 {toCoins(quest.price_fiat / 100).toLocaleString()} Coins</> : <><UserPlus className="h-4 w-4 mr-1" /> Join Quest</>}
+                {isPaidQuest ? <><Lock className="h-4 w-4 mr-1" /> {t("uiQuestDetail.payJoin")} {toCoins(quest.price_fiat / 100).toLocaleString()} {t("uiQuestDetail.coins")}</> : <><UserPlus className="h-4 w-4 mr-1" /> {t("uiQuestDetail.joinQuest")}</>}
               </Button>
             )}
             <ShareLinkButton entityType="quest" entityId={quest.id} entityName={quest.title} />
             {isLoggedIn && quest.status === "COMPLETED" && <GiveTrustButton targetNodeType={TrustNodeType.QUEST} targetNodeId={quest.id} targetName={quest.title} contextQuestId={quest.id} />}
             {isLoggedIn && <ReportButton targetType={ReportTargetType.QUEST} targetId={quest.id} />}
             {canPostUpdate && <InviteLinkButton entityType="quest" entityId={quest.id} entityName={quest.title} />}
-            {isOwner && <Button size="sm" variant="outline" asChild><Link to={`/quests/${quest.id}/settings`}><Pencil className="h-4 w-4 mr-1" /> Edit / Settings</Link></Button>}
+            {isOwner && <Button size="sm" variant="outline" asChild><Link to={`/quests/${quest.id}/settings`}><Pencil className="h-4 w-4 mr-1" /> {t("uiQuestDetail.editSettings")}</Link></Button>}
             
             {(isOwner || isGuildAdmin || isCompanyAdmin) && !isCancelled && (() => {
               const entityPinned = !!(quest as any).pinned_at;
@@ -922,12 +924,12 @@ export default function QuestDetail() {
                   .eq("id", quest.id);
                 if (error) {
                   toast({
-                    title: "Couldn't update highlight",
-                    description: error.message?.includes("limit reached") ? "You can highlight at most 5 quests per entity." : error.message,
+                    title: t("uiQuestDetail.couldnTUpdateHighlight"),
+                    description: error.message?.includes("limit reached") ? t("uiQuestDetail.youCanHighlightAtMost5") : error.message,
                     variant: "destructive",
                   });
                 } else {
-                  toast({ title: entityPinned ? "Removed from entity highlights" : "Featured on entity Work tab", duration: 1500 });
+                  toast({ title: entityPinned ? t("uiQuestDetail.removedFromEntityHighlights") : t("uiQuestDetail.featuredOnEntityWorkTab"), duration: 1500 });
                   qc.invalidateQueries({ queryKey: ["quest", id] });
                   if (quest.guild_id) qc.invalidateQueries({ queryKey: ["quests-for-guild", quest.guild_id] });
                   if (quest.company_id) qc.invalidateQueries({ queryKey: ["quests-for-company", quest.company_id] });
@@ -937,7 +939,7 @@ export default function QuestDetail() {
               // No entity context → keep simple toggle for profile only
               if (!entityLabel || !(isGuildAdmin || isCompanyAdmin)) {
                 return isOwner ? (
-                  <Button size="sm" variant="outline" onClick={toggleHighlight} title={isHighlighted ? "Remove from featured" : "Feature on your profile"}>
+                  <Button size="sm" variant="outline" onClick={toggleHighlight} title={isHighlighted ? t("uiQuestDetail.removeFromFeatured") : t("uiQuestDetail.featureOnYourProfile")}>
                     <Star className={`h-4 w-4 mr-1 ${isHighlighted ? "text-amber-500 fill-amber-500" : ""}`} />
                     {isHighlighted ? "Featured" : "Feature"}
                   </Button>
@@ -957,7 +959,7 @@ export default function QuestDetail() {
                     {isOwner && (
                       <DropdownMenuItem onClick={toggleHighlight}>
                         <Star className={`h-4 w-4 mr-2 ${isHighlighted ? "text-amber-500 fill-amber-500" : ""}`} />
-                        {isHighlighted ? "Remove from your profile" : "Feature on your profile"}
+                        {isHighlighted ? t("uiQuestDetail.removeFromYourProfile") : t("uiQuestDetail.featureOnYourProfile")}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem onClick={togglePinEntity}>
@@ -970,13 +972,13 @@ export default function QuestDetail() {
             })()}
             {canPostUpdate && !isCancelled && (
               <Dialog open={updateOpen} onOpenChange={(open) => { setUpdateOpen(open); if (!open) { setEditingUpdateId(null); setUTitle(""); setUContent(""); setUType("GENERAL"); setUImageUrl(undefined); setUDraft(false); setUVisibility("PUBLIC"); setUPostAs(null); } }}>
-                <DialogTrigger asChild><Button size="sm" variant="outline"><Send className="h-4 w-4 mr-1" /> Post Update</Button></DialogTrigger>
+                <DialogTrigger asChild><Button size="sm" variant="outline"><Send className="h-4 w-4 mr-1" /> {t("uiQuestDetail.postUpdate")}</Button></DialogTrigger>
                 <DialogContent>
-                  <DialogHeader><DialogTitle>{editingUpdateId ? "Edit Quest Update" : "Post Quest Update"}</DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle>{editingUpdateId ? t("uiQuestDetail.editQuestUpdate") : t("uiQuestDetail.postQuestUpdate")}</DialogTitle></DialogHeader>
                   <div className="space-y-4 mt-2">
                     <PostAsSelector value={uPostAs} onChange={setUPostAs} questId={quest.id} />
-                    <div><label className="text-sm font-medium mb-1 block">Type</label><Select value={uType} onValueChange={setUType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="GENERAL">General</SelectItem><SelectItem value="MILESTONE">Milestone</SelectItem><SelectItem value="CALL_FOR_HELP">Call for Help</SelectItem><SelectItem value="REFLECTION">Reflection</SelectItem></SelectContent></Select></div>
-                    <div><label className="text-sm font-medium mb-1 block">Title</label><Input value={uTitle} onChange={e => setUTitle(e.target.value)} maxLength={120} /></div>
+                    <div><label className="text-sm font-medium mb-1 block">Type</label><Select value={uType} onValueChange={setUType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="GENERAL">General</SelectItem><SelectItem value="MILESTONE">Milestone</SelectItem><SelectItem value="CALL_FOR_HELP">{t("uiQuestDetail.callForHelp")}</SelectItem><SelectItem value="REFLECTION">Reflection</SelectItem></SelectContent></Select></div>
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.title")}</label><Input value={uTitle} onChange={e => setUTitle(e.target.value)} maxLength={120} /></div>
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label className="text-sm font-medium">Content</label>
@@ -994,31 +996,31 @@ export default function QuestDetail() {
                       <Select value={uVisibility} onValueChange={setUVisibility}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="PUBLIC">Public — anyone can see</SelectItem>
+                          <SelectItem value="PUBLIC">{t("uiQuestDetail.publicAnyoneCanSee")}</SelectItem>
                           <SelectItem value="FOLLOWERS">Followers only</SelectItem>
-                          <SelectItem value="INTERNAL">Internal — hosts & members only</SelectItem>
+                          <SelectItem value="INTERNAL">{t("uiQuestDetail.internalHostsMembersOnly")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="flex items-center justify-between"><label className="text-sm font-medium">Save as draft</label><Switch checked={uDraft} onCheckedChange={setUDraft} /></div>
-                    <Button onClick={postUpdate} disabled={!uTitle.trim() || !uContent.trim()} className="w-full"><Send className="h-4 w-4 mr-1" /> {uDraft ? "Save Draft" : editingUpdateId ? "Save Changes" : "Post Update"}</Button>
+                    <div className="flex items-center justify-between"><label className="text-sm font-medium">{t("uiQuestDetail.saveAsDraft")}</label><Switch checked={uDraft} onCheckedChange={setUDraft} /></div>
+                    <Button onClick={postUpdate} disabled={!uTitle.trim() || !uContent.trim()} className="w-full"><Send className="h-4 w-4 mr-1" /> {uDraft ? t("uiQuestDetail.saveDraft") : editingUpdateId ? t("uiQuestDetail.saveChanges") : t("uiQuestDetail.postUpdate")}</Button>
                   </div>
                 </DialogContent>
               </Dialog>
             )}
             <Dialog open={podOpen} onOpenChange={setPodOpen}>
-              <DialogTrigger asChild><Button size="sm" variant="outline"><CircleDot className="h-4 w-4 mr-1" /> Create Pod</Button></DialogTrigger>
+              <DialogTrigger asChild><Button size="sm" variant="outline"><CircleDot className="h-4 w-4 mr-1" /> {t("uiQuestDetail.createPod")}</Button></DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>Create Pod</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>{t("uiQuestDetail.createPod")}</DialogTitle></DialogHeader>
                 <div className="space-y-4 mt-2">
-                  <div><label className="text-sm font-medium mb-1 block">Pod name</label><Input value={podName} onChange={e => setPodName(e.target.value)} maxLength={100} /></div>
-                  <div><label className="text-sm font-medium mb-1 block">Description</label><Textarea value={podDesc} onChange={e => setPodDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.podName")}</label><Input value={podName} onChange={e => setPodName(e.target.value)} maxLength={100} /></div>
+                  <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.description")}</label><Textarea value={podDesc} onChange={e => setPodDesc(e.target.value)} maxLength={500} className="resize-none" /></div>
                   <ImageUpload label="Pod Image (optional)" currentImageUrl={podImageUrl} onChange={setPodImageUrl} aspectRatio="16/9" />
                   <div className="grid grid-cols-2 gap-3">
-                    <div><label className="text-sm font-medium mb-1 block">Start date</label><Input type="date" value={podStart} onChange={e => setPodStart(e.target.value)} /></div>
-                    <div><label className="text-sm font-medium mb-1 block">End date</label><Input type="date" value={podEnd} onChange={e => setPodEnd(e.target.value)} /></div>
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.startDate")}</label><Input type="date" value={podStart} onChange={e => setPodStart(e.target.value)} /></div>
+                    <div><label className="text-sm font-medium mb-1 block">{t("uiQuestDetail.endDate")}</label><Input type="date" value={podEnd} onChange={e => setPodEnd(e.target.value)} /></div>
                   </div>
-                  <Button onClick={createPod} disabled={!podName.trim()} className="w-full">Create Pod</Button>
+                  <Button onClick={createPod} disabled={!podName.trim()} className="w-full">{t("uiQuestDetail.createPod")}</Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -1031,7 +1033,7 @@ export default function QuestDetail() {
           <TabsList>
             <TabsTrigger value="explore">Explore</TabsTrigger>
             {isLoggedIn && <TabsTrigger value="work"><ListChecks className="h-3.5 w-3.5 mr-1" /> Work</TabsTrigger>}
-            <TabsTrigger value="activity"><MessageCircle className="h-3.5 w-3.5 mr-1" /> Activity</TabsTrigger>
+            <TabsTrigger value="activity"><MessageCircle className="h-3.5 w-3.5 mr-1" /> {t("uiQuestDetail.activity")}</TabsTrigger>
           </TabsList>
 
           {/* ─── Contextual More Menu ─── */}
@@ -1039,7 +1041,7 @@ export default function QuestDetail() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-9 px-2.5">
                 <MoreHorizontal className="h-4 w-4" />
-                <span className="ml-1 text-sm">More</span>
+                <span className="ml-1 text-sm">{t("uiQuestDetail.more")}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -1094,34 +1096,34 @@ export default function QuestDetail() {
                     <CurrencyIcon currency="coins" className="h-4 w-4 mr-2" /> Fundraising AI
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={`/quests/${quest.id}/settings`}><Puzzle className="h-4 w-4 mr-2" /> Settings</Link>
+                    <Link to={`/quests/${quest.id}/settings`}><Puzzle className="h-4 w-4 mr-2" /> {t("uiQuestDetail.settings")}</Link>
                   </DropdownMenuItem>
                   {!isCancelled && (
                     <DropdownMenuItem
                       className="text-orange-600 focus:text-orange-600"
                       onClick={async () => {
-                        if (!confirm("Cancel this quest? Credit contributions will be refunded.")) return;
+                        if (!confirm(t("uiQuestDetail.cancelThisQuestCreditContributionsWill"))) return;
                         if ((quest as any).funding_type === "CREDITS" && (quest as any).escrow_credits > 0) {
                           await supabase.rpc("refund_quest_funding" as any, { _quest_id: quest.id });
                         }
                         await supabase.from("quests").update({ status: "CANCELLED" } as any).eq("id", quest.id);
                         qc.invalidateQueries({ queryKey: ["quest", id] });
-                        toast({ title: "Quest cancelled" });
+                        toast({ title: t("uiQuestDetail.questCancelled2") });
                       }}
                     >
-                      <Ban className="h-4 w-4 mr-2" /> Cancel Quest
+                      <Ban className="h-4 w-4 mr-2" /> {t("uiQuestDetail.cancelQuest")}
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem
                     className="text-destructive focus:text-destructive"
                     onClick={async () => {
-                      if (!confirm("Are you sure you want to delete this quest?")) return;
+                      if (!confirm(t("uiQuestDetail.areYouSureYouWantTo"))) return;
                       await supabase.from("quests").update({ is_deleted: true, deleted_at: new Date().toISOString() } as any).eq("id", quest.id);
-                      toast({ title: "Quest deleted" });
+                      toast({ title: t("uiQuestDetail.questDeleted") });
                       navigate("/explore?tab=quests");
                     }}
                   >
-                    <Trash2 className="h-4 w-4 mr-2" /> Delete Quest
+                    <Trash2 className="h-4 w-4 mr-2" /> {t("uiQuestDetail.deleteQuest")}
                   </DropdownMenuItem>
                 </>
               )}
@@ -1220,7 +1222,7 @@ export default function QuestDetail() {
         )}
 
         <TabsContent value="pods" className="mt-6 space-y-3">
-          {(questPods || []).length === 0 && <p className="text-muted-foreground">No pods yet. Create one above!</p>}
+          {(questPods || []).length === 0 && <p className="text-muted-foreground">{t("uiQuestDetail.noPodsYetCreateOneAbove")}</p>}
           {(questPods || []).map((pod: any) => {
             const memberCount = (pod.pod_members || []).length;
             return (

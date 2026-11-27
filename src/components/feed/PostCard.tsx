@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Trash2, ExternalLink, FileText, Download, Film, ArrowBigUp, Loader2, Globe, Compass, MessageSquare, Pencil, Check, X as XIcon, Languages, Repeat2, Send, Shield, Link2, ImagePlus, Paperclip } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -43,6 +44,7 @@ interface PendingEditLink {
 const CONTENT_CHAR_LIMIT = 1000;
 
 function TruncatedContent({ content, maxChars = CONTENT_CHAR_LIMIT }: { content: string; maxChars?: number }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const needsTruncation = content.length > maxChars;
   const displayed = needsTruncation && !expanded ? content.slice(0, maxChars) : content;
@@ -58,7 +60,7 @@ function TruncatedContent({ content, maxChars = CONTENT_CHAR_LIMIT }: { content:
           onClick={() => setExpanded(!expanded)}
           className="text-xs font-medium text-primary hover:underline"
         >
-          {expanded ? "Show less" : "See more"}
+          {expanded ? t("uiPostCard.showLess") : t("uiPostCard.seeMore")}
         </button>
       )}
     </div>
@@ -166,6 +168,7 @@ function DocumentChip({ attachment }: { attachment: PostAttachment }) {
 
 /** Compact embedded view of a reshared/quoted original post */
 function EmbeddedPost({ post }: { post: FeedPostWithAttachments }) {
+  const { t } = useTranslation();
   const images = (post.post_attachments || []).filter((a) => a.type === "IMAGE");
 
   return (
@@ -200,7 +203,7 @@ function EmbeddedPost({ post }: { post: FeedPostWithAttachments }) {
         </div>
       )}
       {post.is_deleted && (
-        <p className="text-xs text-muted-foreground italic">This post has been deleted</p>
+        <p className="text-xs text-muted-foreground italic">{t("uiPostCard.thisPostHasBeenDeleted")}</p>
       )}
     </div>
   );
@@ -216,6 +219,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, hasUpvoted = false, allowComments = true, guildContext }: PostCardProps) {
+  const { t } = useTranslation();
   const currentUser = useCurrentUser();
   const { session } = useAuth();
   const deletePost = useDeletePost();
@@ -269,14 +273,14 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
   const handleDelete = () => {
     deletePost.mutate(post.id, {
       onSuccess: () => toast.success("Post deleted"),
-      onError: () => toast.error("Failed to delete post"),
+      onError: () => toast.error(t("uiPostCard.failedToDeletePost")),
     });
   };
 
   const handleUpvote = () => {
     toggleUpvote.mutate(
       { postId: post.id, hasUpvoted, postAuthorId: post.author_user_id },
-      { onError: () => toast.error("Failed to update vote") }
+      { onError: () => toast.error(t("uiPostCard.failedToUpdateVote")) }
     );
   };
 
@@ -373,7 +377,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       setRemovedAttachmentIds([]);
       toast.success("Post updated");
     } catch {
-      toast.error("Failed to update post");
+      toast.error(t("uiPostCard.failedToUpdatePost"));
     } finally {
       setEditUploading(false);
     }
@@ -417,7 +421,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       });
       toast.success("Reshared!");
     } catch {
-      toast.error("Failed to reshare");
+      toast.error(t("uiPostCard.failedToReshare"));
     } finally {
       setIsResharing(false);
     }
@@ -438,7 +442,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       setQuoteDialogOpen(false);
       toast.success("Quote posted!");
     } catch {
-      toast.error("Failed to post quote");
+      toast.error(t("uiPostCard.failedToPostQuote"));
     } finally {
       setIsResharing(false);
     }
@@ -458,7 +462,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       });
       toast.success(`Reposted to ${guildContext.guildName}`);
     } catch {
-      toast.error("Failed to repost");
+      toast.error(t("uiPostCard.failedToRepost"));
     } finally {
       setIsResharing(false);
     }
@@ -471,7 +475,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
 
   const handleCopyLink = () => {
     const url = `https://changethegame.xyz/feed?post=${post.id}`;
-    navigator.clipboard.writeText(url).then(() => toast.success("Link copied!"));
+    navigator.clipboard.writeText(url).then(() => toast.success(t("uiPostCard.linkCopied")));
   };
 
   return (
@@ -480,7 +484,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
       {post.reshared_post_id && (
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground -mt-1 mb-1">
           <Repeat2 className="h-3.5 w-3.5" />
-          <span>{isOwn ? "You" : post.author?.name || "Someone"} reshared</span>
+          <span>{isOwn ? t("uiPostCard.you") : post.author?.name || "Someone"} reshared</span>
         </div>
       )}
       {/* Header */}
@@ -627,7 +631,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
             <div className="flex gap-2">
               <Input value={editLinkUrl} onChange={e => setEditLinkUrl(e.target.value)} placeholder="https://…" className="flex-1 h-8 text-sm"
                 onKeyDown={e => { if (e.key === "Enter") { try { new URL(editLinkUrl.trim()); fetchEditLinkPreview(editLinkUrl.trim()); } catch { toast.error("Invalid URL"); } } }} />
-              <Button size="sm" className="h-8" onClick={() => { try { new URL(editLinkUrl.trim()); fetchEditLinkPreview(editLinkUrl.trim()); } catch { toast.error("Invalid URL"); } }}>Add</Button>
+              <Button size="sm" className="h-8" onClick={() => { try { new URL(editLinkUrl.trim()); fetchEditLinkPreview(editLinkUrl.trim()); } catch { toast.error("Invalid URL"); } }}>{t("uiPostCard.add")}</Button>
               <Button size="sm" variant="ghost" className="h-8" onClick={() => { setShowEditLinkInput(false); setEditLinkUrl(""); }}><XIcon className="h-4 w-4" /></Button>
             </div>
           )}
@@ -646,7 +650,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
                 <ImagePlus className="h-3.5 w-3.5 mr-1" /> Image
               </Button>
               <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => editDocRef.current?.click()} disabled={editFiles.length >= MAX_ATTACHMENTS_PER_POST}>
-                <Paperclip className="h-3.5 w-3.5 mr-1" /> File
+                <Paperclip className="h-3.5 w-3.5 mr-1" /> {t("uiPostCard.file")}
               </Button>
               <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground" onClick={() => setShowEditLinkInput(true)} disabled={!!editLink}>
                 <Link2 className="h-3.5 w-3.5 mr-1" /> URL
@@ -654,11 +658,11 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
             </div>
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm" onClick={handleCancelEdit} disabled={editUploading || editPost.isPending}>
-                <XIcon className="h-3.5 w-3.5 mr-1" /> Cancel
+                <XIcon className="h-3.5 w-3.5 mr-1" /> {t("uiPostCard.cancel")}
               </Button>
               <Button size="sm" onClick={handleSaveEdit} disabled={editUploading || editPost.isPending}>
                 {(editUploading || editPost.isPending) ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Check className="h-3.5 w-3.5 mr-1" />}
-                Save
+                {t("uiPostCard.save")}
               </Button>
             </div>
           </div>
@@ -710,7 +714,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
             <Link key={pt.territory_id} to={`/territories/${pt.territories?.slug || pt.territory_id}`}>
               <Badge variant="outline" className="text-[10px] h-5 gap-1 hover:bg-accent transition-colors cursor-pointer">
                 <Globe className="h-2.5 w-2.5" />
-                {pt.territories?.name || "Territory"}
+                {pt.territories?.name || t("uiPostCard.territory")}
               </Badge>
             </Link>
           ))}
@@ -718,7 +722,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
             <Link key={pt.topic_id} to={`/topics/${pt.topics?.slug || pt.topic_id}`}>
               <Badge variant="outline" className="text-[10px] h-5 gap-1 hover:bg-accent transition-colors cursor-pointer">
                 <Compass className="h-2.5 w-2.5" />
-                {pt.topics?.name || "Topic"}
+                {pt.topics?.name || t("uiPostCard.topic")}
               </Badge>
             </Link>
           ))}
@@ -749,7 +753,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-xs">
-              {hasUpvoted ? "Remove upvote" : "Upvote"}
+              {hasUpvoted ? t("uiPostCard.removeUpvote") : "Upvote"}
             </TooltipContent>
           </Tooltip>
           {needsTranslation && (
@@ -808,14 +812,14 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
               </Tooltip>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={handleInstantReshare}>
-                  <Repeat2 className="h-4 w-4 mr-2" /> Reshare now
+                  <Repeat2 className="h-4 w-4 mr-2" /> {t("uiPostCard.reshareNow")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setQuoteDialogOpen(true)}>
                   <Pencil className="h-4 w-4 mr-2" /> Quote post
                 </DropdownMenuItem>
                 {guildContext?.isAdmin && post.context_type !== "GUILD_DISCUSSION" && (
                   <DropdownMenuItem onClick={handleRepostToGuild}>
-                    <Shield className="h-4 w-4 mr-2" /> Repost to {guildContext.guildName}
+                    <Shield className="h-4 w-4 mr-2" /> {t("uiPostCard.repostTo")} {guildContext.guildName}
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -827,7 +831,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
         <div className="ml-auto">
           <button
             onClick={handleCopyLink}
-            title="Copy link to post"
+            title={t("uiPostCard.copyLinkToPost")}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
           >
             <Link2 className="h-3.5 w-3.5" />
@@ -845,7 +849,7 @@ export function PostCard({ post, hasUpvoted = false, allowComments = true, guild
             <Textarea
               value={quoteContent}
               onChange={(e) => setQuoteContent(e.target.value)}
-              placeholder="Add your thoughts…"
+              placeholder={t("uiPostCard.addYourThoughts")}
               className="min-h-[80px] text-sm"
               maxLength={2000}
             />

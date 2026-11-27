@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { ArrowBigUp, MessageSquare, Link2 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -23,6 +24,7 @@ interface PostTileProps {
 }
 
 export function PostTile({ post, hasUpvoted = false, size }: PostTileProps) {
+  const { t } = useTranslation();
   const toggleUpvote = useTogglePostUpvote();
   const upvoteCount = post.upvote_count ?? 0;
   const [showComments, setShowComments] = useState(false);
@@ -58,7 +60,7 @@ export function PostTile({ post, hasUpvoted = false, size }: PostTileProps) {
     e.stopPropagation();
     toggleUpvote.mutate(
       { postId: post.id, hasUpvoted, postAuthorId: post.author_user_id },
-      { onError: () => toast.error("Failed to update vote") }
+      { onError: () => toast.error(t("uiPostTile.failedToUpdateVote")) }
     );
   };
 
@@ -70,7 +72,7 @@ export function PostTile({ post, hasUpvoted = false, size }: PostTileProps) {
   const handleCopyLink = (e: React.MouseEvent) => {
     e.stopPropagation();
     const url = `https://changethegame.xyz/feed?post=${post.id}`;
-    navigator.clipboard.writeText(url).then(() => toast.success("Link copied!"));
+    navigator.clipboard.writeText(url).then(() => toast.success(t("uiPostTile.linkCopied")));
   };
 
   const contentLines = size === "small" ? 2 : size === "medium" ? 3 : 5;
@@ -107,7 +109,7 @@ export function PostTile({ post, hasUpvoted = false, size }: PostTileProps) {
                   {stripMentions(post.content).slice(0, 200)}
                 </p>
               ) : (
-                <span className="text-muted-foreground text-xs italic">No content</span>
+                <span className="text-muted-foreground text-xs italic">{t("uiPostTile.noContent")}</span>
               )}
             </div>
           )}
@@ -173,7 +175,7 @@ export function PostTile({ post, hasUpvoted = false, size }: PostTileProps) {
           </button>
           <button
             onClick={handleCopyLink}
-            title="Copy link"
+            title={t("uiPostTile.copyLink")}
             className="ml-auto flex items-center justify-center rounded-full bg-white/20 text-white p-1.5 backdrop-blur-sm hover:bg-white/30 transition-colors"
           >
             <Link2 className="h-3.5 w-3.5" />

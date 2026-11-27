@@ -59,7 +59,7 @@ export function ThisWeekInEcosystem() {
   return (
     <section className="space-y-6">
       <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-        <Rss className="h-5 w-5 text-primary" /> This week in the ecosystem
+        <Rss className="h-5 w-5 text-primary" /> {t("uiThisWeekInEcosystem.thisWeekInTheEcosystem")}
       </h2>
 
       {/* Featured Quests */}
@@ -67,10 +67,10 @@ export function ThisWeekInEcosystem() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
-              <Compass className="h-4 w-4" /> Curated Quests
+              <Compass className="h-4 w-4" /> {t("uiThisWeekInEcosystem.curatedQuests")}
             </h3>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/explore?tab=quests">View all <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+              <Link to="/explore?tab=quests">{t("uiThisWeekInEcosystem.viewAll")} <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
             </Button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -80,7 +80,7 @@ export function ThisWeekInEcosystem() {
                   className="block rounded-xl border border-border bg-card p-4 hover:shadow-md hover:border-primary/30 transition-all h-full">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                     <Badge className="bg-primary/10 text-primary border-0 text-xs">{q.reward_xp} XP</Badge>
-                    {q.coin_budget > 0 && <Badge variant="outline" className="text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-800 text-[10px]">🟩 {q.coin_budget.toLocaleString()} Coins</Badge>}
+                    {q.coin_budget > 0 && <Badge variant="outline" className="text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-800 text-[10px]">🟩 {q.coin_budget.toLocaleString()} {t("uiThisWeekInEcosystem.coins")}</Badge>}
                     {q.credit_budget > 0 && <Badge variant="outline" className="text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 text-[10px]">🌱 {q.credit_budget} $CTG</Badge>}
                     {q.is_featured && <Star className="h-3.5 w-3.5 text-warning" />}
                   </div>
@@ -98,10 +98,10 @@ export function ThisWeekInEcosystem() {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
-              <Shield className="h-4 w-4" /> Highlighted Guilds
+              <Shield className="h-4 w-4" /> {t("uiThisWeekInEcosystem.highlightedGuilds")}
             </h3>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/explore?tab=guilds">View all <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+              <Link to="/explore?tab=guilds">{t("uiThisWeekInEcosystem.viewAll")} <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
             </Button>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
@@ -144,7 +144,7 @@ export function ThisWeekInEcosystem() {
         {data.territories.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 mb-3">
-              <MapPin className="h-4 w-4" /> Trending Territories
+              <MapPin className="h-4 w-4" /> {t("uiThisWeekInEcosystem.trendingTerritories")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {data.territories.map((t: any) => (

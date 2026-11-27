@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -191,6 +192,7 @@ interface HeroAIProps {
 }
 
 export function HeroAI({ userName, userContext }: HeroAIProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<AIResponse | null>(null);
@@ -355,7 +357,7 @@ export function HeroAI({ userName, userContext }: HeroAIProps) {
                   ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
                   : "text-muted-foreground hover:text-primary hover:bg-primary/10"
               }`}
-              title={isListening ? "Stop listening" : "Voice input"}
+              title={isListening ? t("uiHeroAI.stopListening") : "Voice input"}
             >
               {isListening ? (
                 <MicOff className="h-4 w-4 animate-pulse" />
@@ -438,7 +440,7 @@ export function HeroAI({ userName, userContext }: HeroAIProps) {
               {recCategories.length > 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
                   className="space-y-2 pt-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Suggestions for you</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("uiHeroAI.suggestionsForYou")}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {recCategories.map(([category, items]) => {
                       const Icon = REC_ICONS[category] || Compass;

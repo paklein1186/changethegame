@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import i18n from "@/i18n/config";
 import { useEffect, useState } from "react";
 import { Bot, Plus, RefreshCw, Trash2, Loader2, Sparkles, FileText, Link as LinkIcon, MessageSquare, Send } from "lucide-react";
@@ -63,6 +64,7 @@ async function call(action: string, payload: Record<string, unknown> = {}) {
 }
 
 export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [agent, setAgent] = useState<Agent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -101,7 +103,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         setAllowMcp(a.allow_mcp_write);
       }
     } catch (e: any) {
-      toast({ title: "Failed to load agent", description: e.message, variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.failedToLoadAgent"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -113,7 +115,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
       const res = await call("list_sources", { agent_id: agentId });
       setSources(((res as any).sources as Source[]) ?? []);
     } catch (e: any) {
-      toast({ title: "Failed to load sources", description: e.message, variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.failedToLoadSources"), description: e.message, variant: "destructive" });
     } finally {
       setSourcesLoading(false);
     }
@@ -140,7 +142,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
       setAgent((res as any).agent);
       toast({ title: "Agent saved" });
     } catch (e: any) {
-      toast({ title: "Save failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.saveFailed"), description: e.message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -153,11 +155,11 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         ? { content: sourceContent }
         : { url: sourceUrl };
     if (sourceType === "manual" && !sourceContent.trim()) {
-      toast({ title: "Add some content first", variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.addSomeContentFirst"), variant: "destructive" });
       return;
     }
     if (sourceType === "url" && !sourceUrl.trim()) {
-      toast({ title: "Add a URL first", variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.addAUrlFirst"), variant: "destructive" });
       return;
     }
     setAdding(true);
@@ -168,14 +170,14 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         title: sourceTitle || (sourceType === "url" ? sourceUrl : "Manual entry"),
         config,
       });
-      toast({ title: "Source added — indexing in background…" });
+      toast({ title: t("uiGuildAgentSettingsPanel.sourceAddedIndexingInBackground") });
       setOpenAddSource(false);
       setSourceTitle("");
       setSourceContent("");
       setSourceUrl("");
       setTimeout(() => loadSources(agent.id), 1500);
     } catch (e: any) {
-      toast({ title: "Add source failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.addSourceFailed"), description: e.message, variant: "destructive" });
     } finally {
       setAdding(false);
     }
@@ -188,18 +190,18 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
       toast({ title: "Resync started" });
       setTimeout(() => loadSources(agent.id), 1500);
     } catch (e: any) {
-      toast({ title: "Resync failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.resyncFailed"), description: e.message, variant: "destructive" });
     }
   };
 
   const remove = async (id: string) => {
     if (!agent) return;
-    if (!confirm("Delete this source and all its indexed content?")) return;
+    if (!confirm(t("uiGuildAgentSettingsPanel.deleteThisSourceAndAllIts"))) return;
     try {
       await call("delete_source", { source_id: id });
       setSources((prev) => prev.filter((s) => s.id !== id));
     } catch (e: any) {
-      toast({ title: "Delete failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiGuildAgentSettingsPanel.deleteFailed"), description: e.message, variant: "destructive" });
     }
   };
 
@@ -231,7 +233,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
   if (loading) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground">
-        <Loader2 className="w-4 h-4 animate-spin" /> Loading agent…
+        <Loader2 className="w-4 h-4 animate-spin" /> {t("uiGuildAgentSettingsPanel.loadingAgent")}
       </div>
     );
   }
@@ -243,11 +245,9 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
           <Bot className="w-5 h-5 text-primary" />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-semibold">Guild AI Agent</h2>
+          <h2 className="text-lg font-semibold">{t("uiGuildAgentSettingsPanel.guildAiAgent")}</h2>
           <p className="text-sm text-muted-foreground">
-            Give your guild a private AI agent with its own knowledge base (RAG).
-            Connect documents, URLs and (soon) Google Drive, Nextcloud, Telegram, WhatsApp & Signal.
-            Anything ingested is queryable through the guild MCP, and the agent can write back into the guild via the MCP tools.
+            {t("uiGuildAgentSettingsPanel.giveYourGuildAPrivateAi")}
           </p>
         </div>
       </div>
@@ -263,7 +263,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         {/* IDENTITY */}
         <TabsContent value="identity" className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="agent-name">Agent name</Label>
+            <Label htmlFor="agent-name">{t("uiGuildAgentSettingsPanel.agentName")}</Label>
             <Input id="agent-name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
@@ -276,7 +276,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
               placeholder={`You are the AI agent of ${guildName ?? "this guild"}. Be concise, professional, and accurate.`}
             />
             <p className="text-xs text-muted-foreground">
-              The agent always knows the name of the guild and the retrieved context. Use this field to set its voice, role, and rules.
+              {t("uiGuildAgentSettingsPanel.theAgentAlwaysKnowsTheName")}
             </p>
           </div>
           <div className="space-y-2">
@@ -292,16 +292,16 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
           </div>
           <div className="flex items-center justify-between rounded-md border p-3">
             <div>
-              <Label className="text-sm">Allow the agent to write through the MCP</Label>
+              <Label className="text-sm">{t("uiGuildAgentSettingsPanel.allowTheAgentToWriteThrough")}</Label>
               <p className="text-xs text-muted-foreground">
-                When on, the agent can post updates, log contributions, create subtasks… via the guild MCP token.
+                {t("uiGuildAgentSettingsPanel.whenOnTheAgentCanPost")}
               </p>
             </div>
             <Switch checked={allowMcp} onCheckedChange={setAllowMcp} />
           </div>
           <Button onClick={saveAgent} disabled={saving}>
             {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
-            {agent ? "Save changes" : "Create agent"}
+            {agent ? t("uiGuildAgentSettingsPanel.saveChanges") : t("uiGuildAgentSettingsPanel.createAgent")}
           </Button>
         </TabsContent>
 
@@ -311,15 +311,15 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
             <div>
               <h3 className="font-medium">Knowledge sources</h3>
               <p className="text-xs text-muted-foreground">
-                Anything you add here is chunked, embedded and used by the agent at answer time.
+                {t("uiGuildAgentSettingsPanel.anythingYouAddHereIsChunked")}
               </p>
             </div>
             <Dialog open={openAddSource} onOpenChange={setOpenAddSource}>
               <DialogTrigger asChild>
-                <Button size="sm"><Plus className="w-4 h-4 mr-1" /> Add source</Button>
+                <Button size="sm"><Plus className="w-4 h-4 mr-1" /> {t("uiGuildAgentSettingsPanel.addSource")}</Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>Add a knowledge source</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>{t("uiGuildAgentSettingsPanel.addAKnowledgeSource")}</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="flex gap-2">
                     <Button
@@ -331,12 +331,12 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
                       size="sm"
                       variant={sourceType === "url" ? "default" : "outline"}
                       onClick={() => setSourceType("url")}
-                    >From URL</Button>
+                    >{t("uiGuildAgentSettingsPanel.fromUrl")}</Button>
                     <Button size="sm" variant="outline" disabled>Google Drive (soon)</Button>
                     <Button size="sm" variant="outline" disabled>Nextcloud (soon)</Button>
                   </div>
                   <div className="space-y-2">
-                    <Label>Title (optional)</Label>
+                    <Label>{t("uiGuildAgentSettingsPanel.titleOptional")}</Label>
                     <Input value={sourceTitle} onChange={(e) => setSourceTitle(e.target.value)} />
                   </div>
                   {sourceType === "manual" ? (
@@ -348,12 +348,12 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
                     <div className="space-y-2">
                       <Label>URL</Label>
                       <Input value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://…" />
-                      <p className="text-xs text-muted-foreground">We will fetch the page and strip the HTML.</p>
+                      <p className="text-xs text-muted-foreground">{t("uiGuildAgentSettingsPanel.weWillFetchThePageAnd")}</p>
                     </div>
                   )}
                   <Button onClick={addSource} disabled={adding}>
                     {adding ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
-                    Add & index
+                    {t("uiGuildAgentSettingsPanel.addIndex")}
                   </Button>
                 </div>
               </DialogContent>
@@ -363,9 +363,9 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
           <Separator />
 
           {sourcesLoading ? (
-            <div className="text-sm text-muted-foreground">Loading…</div>
+            <div className="text-sm text-muted-foreground">{t("uiGuildAgentSettingsPanel.loading")}</div>
           ) : sources.length === 0 ? (
-            <div className="text-sm text-muted-foreground">No sources yet. Add the first one to give the agent something to read.</div>
+            <div className="text-sm text-muted-foreground">{t("uiGuildAgentSettingsPanel.noSourcesYetAddTheFirst")}</div>
           ) : (
             <div className="space-y-2">
               {sources.map((s) => (
@@ -399,16 +399,16 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         {/* CHANNELS (placeholder, next batch) */}
         <TabsContent value="channels" className="space-y-3 mt-4">
           <p className="text-sm text-muted-foreground">
-            Conversational channels are shipping in the next iteration. Planned:
+            {t("uiGuildAgentSettingsPanel.conversationalChannelsAreShippingInThe")}
           </p>
           <ul className="text-sm list-disc pl-5 space-y-1">
-            <li>Telegram bot (paste a token from @BotFather, we wire the webhook)</li>
+            <li>{t("uiGuildAgentSettingsPanel.telegramBotPasteATokenFrom")}</li>
             <li>WhatsApp via Twilio / Meta Business</li>
             <li>Signal via self-hosted signal-cli bridge</li>
             <li>Embeddable web widget (<code>&lt;iframe&gt;</code> snippet)</li>
           </ul>
           <p className="text-xs text-muted-foreground">
-            For now you can already talk to your agent inside this settings page (Test chat tab).
+            {t("uiGuildAgentSettingsPanel.forNowYouCanAlreadyTalk")}
           </p>
         </TabsContent>
 
@@ -416,7 +416,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
         <TabsContent value="chat" className="space-y-3 mt-4">
           <div className="rounded-md border h-72 overflow-y-auto p-3 space-y-2 bg-muted/30">
             {chatLog.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Ask your agent something. It will use the sources you added above.</p>
+              <p className="text-sm text-muted-foreground">{t("uiGuildAgentSettingsPanel.askYourAgentSomethingItWill")}</p>
             ) : (
               chatLog.map((m, i) => (
                 <div key={i} className={m.role === "user" ? "text-right" : ""}>
@@ -439,7 +439,7 @@ export function GuildAgentSettingsPanel({ guildId, guildName }: Props) {
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } }}
-              placeholder="Ask the agent…"
+              placeholder={t("uiGuildAgentSettingsPanel.askTheAgent")}
               disabled={chatLoading}
             />
             <Button onClick={sendChat} disabled={chatLoading || !chatInput.trim()}>

@@ -1,3 +1,5 @@
+import i18n from "@/i18n/config";
+import { useTranslation } from "react-i18next";
 /**
  * TerritoryCreateWizard.tsx
  * Multi-step wizard for creating a territory.
@@ -34,14 +36,14 @@ const TERRITORY_TYPES = [
   {
     id: "location",
     label: "Location",
-    description: "A town, city, region, or country",
+    get description() { return i18n.t("uiTerritoryCreateWizard.aTownCityRegionOrCountry"); },
     icon: MapPin,
     color: "text-blue-500 bg-blue-500/10",
   },
   {
     id: "bioregion",
     label: "Bioregion",
-    description: "An ecological bioregion (watershed, ecoregion...)",
+    get description() { return i18n.t("uiTerritoryCreateWizard.anEcologicalBioregionWatershedEcoregion"); },
     icon: Leaf,
     color: "text-emerald-500 bg-emerald-500/10",
   },
@@ -49,19 +51,19 @@ const TERRITORY_TYPES = [
 
 /* ── Level options with explanations ── */
 const LOCATION_LEVELS = [
-  { value: "TOWN", label: "Town / City", description: "A municipality or urban area" },
-  { value: "PROVINCE", label: "Province / County", description: "A sub-regional administrative division" },
-  { value: "REGION", label: "Region / State", description: "A major sub-national area" },
-  { value: "NATIONAL", label: "Country", description: "A sovereign nation" },
-  { value: "CONTINENT", label: "Continent", description: "A continental landmass" },
+  { value: "TOWN", label: "Town / City", get description() { return i18n.t("uiTerritoryCreateWizard.aMunicipalityOrUrbanArea"); } },
+  { value: "PROVINCE", label: "Province / County", get description() { return i18n.t("uiTerritoryCreateWizard.aSubRegionalAdministrativeDivision"); } },
+  { value: "REGION", label: "Region / State", get description() { return i18n.t("uiTerritoryCreateWizard.aMajorSubNationalArea"); } },
+  { value: "NATIONAL", label: "Country", get description() { return i18n.t("uiTerritoryCreateWizard.aSovereignNation"); } },
+  { value: "CONTINENT", label: "Continent", get description() { return i18n.t("uiTerritoryCreateWizard.aContinentalLandmass"); } },
 ];
 
 /* ── Granularity options with explanations ── */
 const GRANULARITY_OPTIONS = [
-  { value: "DISTRICT_OR_COMMUNE", label: "District / Commune", description: "Most precise — matches a specific municipality" },
-  { value: "NUTS3", label: "NUTS3 (County-level)", description: "European statistical unit — e.g. arrondissement, Landkreis" },
-  { value: "NUTS2", label: "NUTS2 (Province-level)", description: "European statistical unit — e.g. département, Regierungsbezirk" },
-  { value: "NUTS1", label: "NUTS1 (Region-level)", description: "European statistical unit — e.g. Länder, grandes régions" },
+  { value: "DISTRICT_OR_COMMUNE", label: "District / Commune", get description() { return i18n.t("uiTerritoryCreateWizard.mostPreciseMatchesASpecificMunicipality"); } },
+  { value: "NUTS3", get label() { return i18n.t("uiTerritoryCreateWizard.nuts3CountyLevel"); }, description: "European statistical unit — e.g. arrondissement, Landkreis" },
+  { value: "NUTS2", get label() { return i18n.t("uiTerritoryCreateWizard.nuts2ProvinceLevel"); }, description: "European statistical unit — e.g. département, Regierungsbezirk" },
+  { value: "NUTS1", get label() { return i18n.t("uiTerritoryCreateWizard.nuts1RegionLevel"); }, description: "European statistical unit — e.g. Länder, grandes régions" },
   { value: "COUNTRY", label: "Country", description: "National boundary" },
   { value: "CUSTOM_PERIMETER", label: "Custom Perimeter", description: "Manually defined area" },
 ];
@@ -116,6 +118,7 @@ interface TerritoryCreateWizardProps {
 }
 
 export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -204,12 +207,12 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ["admin-territories"] });
       qc.invalidateQueries({ queryKey: ["territory-leaderboard"] });
-      toast({ title: "Territory created! 🌍", description: `${name} has been added.` });
+      toast({ title: t("uiTerritoryCreateWizard.territoryCreated"), description: `${name} has been added.` });
       onClose();
       navigate(`/territories/${data.id}`);
     },
     onError: (e: any) => {
-      toast({ title: "Creation failed", description: e.message, variant: "destructive" });
+      toast({ title: t("uiTerritoryCreateWizard.creationFailed"), description: e.message, variant: "destructive" });
     },
   });
 
@@ -219,7 +222,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-primary" />
-            {step === 1 ? "Add new Territory" : step === 2 ? "Location details" : "Confirm"}
+            {step === 1 ? t("uiTerritoryCreateWizard.addNewTerritory") : step === 2 ? t("uiTerritoryCreateWizard.locationDetails") : t("uiTerritoryCreateWizard.confirm")}
           </DialogTitle>
         </DialogHeader>
 
@@ -229,7 +232,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
           {/* ── Step 1: Type Selection ── */}
           {step === 1 && (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">What type of territory do you want to create?</p>
+              <p className="text-sm text-muted-foreground">{t("uiTerritoryCreateWizard.whatTypeOfTerritoryDoYou")}</p>
               <div className="grid gap-3">
                 {TERRITORY_TYPES.map(t => {
                   const Icon = t.icon;
@@ -259,7 +262,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
             <div className="space-y-4">
               {/* Name */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Name *</Label>
+                <Label className="text-xs font-medium">{t("uiTerritoryCreateWizard.name")}</Label>
                 <Input
                   placeholder="e.g. Marseille, Bavaria, Costa Rica..."
                   value={name}
@@ -270,7 +273,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
 
               {/* Level */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Level</Label>
+                <Label className="text-xs font-medium">{t("uiTerritoryCreateWizard.level")}</Label>
                 <Select value={level} onValueChange={setLevel}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -316,7 +319,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Locate on map</Label>
+                <Label className="text-xs font-medium">{t("uiTerritoryCreateWizard.locateOnMap")}</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
                   <Input
@@ -324,7 +327,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                     value={searchQuery || (postalCode ? `${postalCode} ${name}` : name)}
                     onChange={e => { setSearchQuery(e.target.value); setShowGeoResults(true); }}
                     onFocus={() => setShowGeoResults(true)}
-                    placeholder="Search location..."
+                    placeholder={t("uiTerritoryCreateWizard.searchLocation")}
                     className="pl-9 text-sm"
                   />
 
@@ -348,7 +351,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                           ))}
                         </div>
                       ) : (
-                        <p className="text-xs text-muted-foreground text-center py-3">No results</p>
+                        <p className="text-xs text-muted-foreground text-center py-3">{t("uiTerritoryCreateWizard.noResults")}</p>
                       )}
                     </div>
                   )}
@@ -366,9 +369,9 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
 
               {/* Description */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Description (optional)</Label>
+                <Label className="text-xs font-medium">{t("uiTerritoryCreateWizard.descriptionOptional")}</Label>
                 <Textarea
-                  placeholder="A brief description of this territory..."
+                  placeholder={t("uiTerritoryCreateWizard.aBriefDescriptionOfThisTerritory")}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   rows={2}
@@ -378,7 +381,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
 
               <div className="flex items-center gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => setStep(1)} className="gap-1.5">
-                  <ArrowLeft className="h-3.5 w-3.5" /> Back
+                  <ArrowLeft className="h-3.5 w-3.5" /> {t("uiTerritoryCreateWizard.back")}
                 </Button>
                 <Button
                   size="sm"
@@ -386,7 +389,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                   onClick={() => setStep(3)}
                   disabled={!name.trim()}
                 >
-                  Continue <ArrowRight className="h-3.5 w-3.5" />
+                  {t("uiTerritoryCreateWizard.continue")} <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
@@ -401,11 +404,11 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                 </h4>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Name</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTerritoryCreateWizard.name2")}</p>
                     <p className="text-sm font-medium">{name}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Level</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTerritoryCreateWizard.level")}</p>
                     <p className="text-sm font-medium">{LOCATION_LEVELS.find(l => l.value === level)?.label}</p>
                   </div>
                   <div>
@@ -417,14 +420,14 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                     <p className="text-sm font-medium">
                       {selectedGeo
                         ? `${parseFloat(selectedGeo.lat).toFixed(3)}, ${parseFloat(selectedGeo.lon).toFixed(3)}`
-                        : <span className="text-amber-500">Will be auto-detected</span>
+                        : <span className="text-amber-500">{t("uiTerritoryCreateWizard.willBeAutoDetected")}</span>
                       }
                     </p>
                   </div>
                 </div>
                 {description && (
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Description</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{t("uiTerritoryCreateWizard.description")}</p>
                     <p className="text-sm text-muted-foreground">{description}</p>
                   </div>
                 )}
@@ -434,14 +437,14 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                 <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
                   <p className="text-xs text-muted-foreground">
-                    No coordinates selected. We'll try to auto-detect the location from the name. You can always update coordinates later.
+                    {t("uiTerritoryCreateWizard.noCoordinatesSelectedWeLlTry")}
                   </p>
                 </div>
               )}
 
               <div className="flex items-center gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => setStep(2)} className="gap-1.5">
-                  <ArrowLeft className="h-3.5 w-3.5" /> Back
+                  <ArrowLeft className="h-3.5 w-3.5" /> {t("uiTerritoryCreateWizard.back")}
                 </Button>
                 <Button
                   size="sm"
@@ -452,7 +455,7 @@ export function TerritoryCreateWizard({ open, onClose }: TerritoryCreateWizardPr
                   {createMutation.isPending ? (
                     <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Creating...</>
                   ) : (
-                    <><Globe className="h-3.5 w-3.5" /> Create Territory</>
+                    <><Globe className="h-3.5 w-3.5" /> {t("uiTerritoryCreateWizard.createTerritory")}</>
                   )}
                 </Button>
               </div>

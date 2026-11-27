@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -60,6 +61,7 @@ const MAX_COMPARE = 5;
 
 // ─── Component ───────────────────────────────────────────────
 export function TerritoryExplorer() {
+  const { t } = useTranslation();
   const { label, persona } = usePersona();
   const { data: allTerritories = [] } = useTerritories();
   const { data: allTopics = [] } = useTopics();
@@ -280,7 +282,7 @@ export function TerritoryExplorer() {
         <h2 className="font-display text-2xl font-bold flex items-center gap-2">
           <MapPin className="h-6 w-6 text-primary" /> {pageTitle}
         </h2>
-        <p className="text-muted-foreground text-sm mt-1">Compare one or more territories, or see them as a combined ecosystem.</p>
+        <p className="text-muted-foreground text-sm mt-1">{t("uiTerritoryExplorer.compareOneOrMoreTerritoriesOr")}</p>
       </div>
 
       {/* ─── Filters Panel ─── */}
@@ -288,9 +290,9 @@ export function TerritoryExplorer() {
         {/* Territory selector */}
         <div>
           <Label className="text-sm font-semibold flex items-center gap-1.5 mb-2">
-            <MapPin className="h-4 w-4 text-primary" /> Select territories
+            <MapPin className="h-4 w-4 text-primary" /> {t("uiTerritoryExplorer.selectTerritories")}
           </Label>
-          <p className="text-xs text-muted-foreground mb-3">Compare one or more territories, or see them as a combined ecosystem.</p>
+          <p className="text-xs text-muted-foreground mb-3">{t("uiTerritoryExplorer.compareOneOrMoreTerritoriesOr")}</p>
 
           {/* Selected chips */}
           {selectedTerritoryNames.length > 0 && (
@@ -305,7 +307,7 @@ export function TerritoryExplorer() {
               ))}
               {selectedTerritoryIds.length > 1 && (
                 <button onClick={() => { setSelectedTerritoryIds([]); setFiltersDirty(true); }} className="text-xs text-muted-foreground hover:text-foreground underline">
-                  Clear all
+                  {t("uiTerritoryExplorer.clearAll")}
                 </button>
               )}
             </div>
@@ -315,13 +317,13 @@ export function TerritoryExplorer() {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full justify-start text-muted-foreground font-normal">
-                <Search className="h-4 w-4 mr-2" /> Search & select territories...
+                <Search className="h-4 w-4 mr-2" /> {t("uiTerritoryExplorer.searchSelectTerritories")}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="start">
               <div className="p-2 border-b border-border">
                 <Input
-                  placeholder="Search territories..."
+                  placeholder={t("uiTerritoryExplorer.searchTerritories")}
                   value={territorySearch}
                   onChange={e => setTerritorySearch(e.target.value)}
                   className="h-8 text-sm"
@@ -330,7 +332,7 @@ export function TerritoryExplorer() {
               <ScrollArea className="max-h-60">
                 <div className="p-1">
                   {filteredTerritories.length === 0 ? (
-                    <p className="text-xs text-muted-foreground p-2 text-center">No territories found</p>
+                    <p className="text-xs text-muted-foreground p-2 text-center">{t("uiTerritoryExplorer.noTerritoriesFound")}</p>
                   ) : (
                     filteredTerritories.map((t: any) => {
                       const checked = selectedTerritoryIds.includes(t.id);
@@ -350,7 +352,7 @@ export function TerritoryExplorer() {
             </PopoverContent>
           </Popover>
           {mode === "compare" && selectedTerritoryIds.length >= MAX_COMPARE && (
-            <p className="text-xs text-muted-foreground mt-1.5">For clarity, comparisons are limited to {MAX_COMPARE} territories at once.</p>
+            <p className="text-xs text-muted-foreground mt-1.5">{t("uiTerritoryExplorer.forClarityComparisonsAreLimitedTo")} {MAX_COMPARE} {t("uiTerritoryExplorer.territoriesAtOnce")}</p>
           )}
         </div>
 
@@ -362,11 +364,11 @@ export function TerritoryExplorer() {
           <RadioGroup value={mode} onValueChange={(v) => { setMode(v as AnalysisMode); setFiltersDirty(true); }} className="flex gap-4">
             <div className="flex items-center gap-2">
               <RadioGroupItem value="compare" id="mode-compare" />
-              <Label htmlFor="mode-compare" className="text-sm cursor-pointer">Compare side by side</Label>
+              <Label htmlFor="mode-compare" className="text-sm cursor-pointer">{t("uiTerritoryExplorer.compareSideBySide")}</Label>
             </div>
             <div className="flex items-center gap-2">
               <RadioGroupItem value="aggregate" id="mode-aggregate" />
-              <Label htmlFor="mode-aggregate" className="text-sm cursor-pointer">Aggregate into combined view</Label>
+              <Label htmlFor="mode-aggregate" className="text-sm cursor-pointer">{t("uiTerritoryExplorer.aggregateIntoCombinedView")}</Label>
             </div>
           </RadioGroup>
         </div>
@@ -376,7 +378,7 @@ export function TerritoryExplorer() {
         {/* Unit type filters */}
         <div>
           <Label className="text-sm font-semibold flex items-center gap-1.5 mb-2">
-            <Layers className="h-4 w-4 text-primary" /> What do you want to see?
+            <Layers className="h-4 w-4 text-primary" /> {t("uiTerritoryExplorer.whatDoYouWantToSee")}
           </Label>
           <div className="flex flex-wrap gap-2">
             {UNIT_TYPES.map(({ key, icon: Icon }) => {
@@ -403,7 +405,7 @@ export function TerritoryExplorer() {
         {(allTopics as any[]).length > 0 && (
           <div>
             <Label className="text-sm font-semibold flex items-center gap-1.5 mb-2">
-              <Hash className="h-4 w-4 text-primary" /> Filter by Houses
+              <Hash className="h-4 w-4 text-primary" /> {t("uiTerritoryExplorer.filterByHouses")}
             </Label>
             <div className="flex flex-wrap gap-1.5">
               {(allTopics as any[]).slice(0, 20).map((t: any) => {
@@ -430,15 +432,15 @@ export function TerritoryExplorer() {
         {/* Time filter */}
         <div>
           <Label className="text-sm font-semibold flex items-center gap-1.5 mb-2">
-            <Clock className="h-4 w-4 text-primary" /> Activity period
+            <Clock className="h-4 w-4 text-primary" /> {t("uiTerritoryExplorer.activityPeriod")}
           </Label>
           <Select value={timeFilter} onValueChange={(v) => { setTimeFilter(v as TimeFilter); setFiltersDirty(true); }}>
             <SelectTrigger className="w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="any">Any time</SelectItem>
-              <SelectItem value="active">Active now</SelectItem>
+              <SelectItem value="any">{t("uiTerritoryExplorer.anyTime")}</SelectItem>
+              <SelectItem value="active">{t("uiTerritoryExplorer.activeNow")}</SelectItem>
               <SelectItem value="3months">Last 3 months</SelectItem>
               <SelectItem value="12months">Last 12 months</SelectItem>
             </SelectContent>
@@ -456,16 +458,16 @@ export function TerritoryExplorer() {
             className="gap-2"
           >
             {analysisLoading ? (
-              <><Loader2 className="h-4 w-4 animate-spin" /> Analyzing territories…</>
+              <><Loader2 className="h-4 w-4 animate-spin" /> {t("uiTerritoryExplorer.analyzingTerritories")}</>
             ) : (
               <><Play className="h-4 w-4" /> Run analysis</>
             )}
           </Button>
           {filtersDirty && analysisResults && (
-            <p className="text-xs text-muted-foreground animate-pulse">Filters changed — re-run to update results.</p>
+            <p className="text-xs text-muted-foreground animate-pulse">{t("uiTerritoryExplorer.filtersChangedReRunToUpdate")}</p>
           )}
           {selectedTerritoryIds.length === 0 && (
-            <p className="text-xs text-muted-foreground">Select at least one territory to begin.</p>
+            <p className="text-xs text-muted-foreground">{t("uiTerritoryExplorer.selectAtLeastOneTerritoryTo")}</p>
           )}
         </div>
       </div>
@@ -479,7 +481,7 @@ export function TerritoryExplorer() {
               <BarChart3 className="h-5 w-5 text-primary" />
               {mode === "aggregate" && selectedTerritoryIds.length > 1
                 ? `Combined view of ${selectedTerritoryNames.map(t => t.name).join(" + ")}`
-                : "Territory Overview"
+                : t("uiTerritoryExplorer.territoryOverview")
               }
             </h3>
 
@@ -552,7 +554,7 @@ export function TerritoryExplorer() {
             {synthesisLoading && (
               <div className="flex items-center gap-3 py-6 justify-center">
                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                <p className="text-sm text-muted-foreground">Generating AI synthesis of this territory…</p>
+                <p className="text-sm text-muted-foreground">{t("uiTerritoryExplorer.generatingAiSynthesisOfThisTerritory")}</p>
               </div>
             )}
 
@@ -578,7 +580,7 @@ export function TerritoryExplorer() {
 
                 {/* Gaps */}
                 {synthesisData.gaps?.length > 0 && (
-                  <SynthesisSection icon={AlertTriangle} title="Territory Gaps">
+                  <SynthesisSection icon={AlertTriangle} title={t("uiTerritoryExplorer.territoryGaps")}>
                     {synthesisData.gaps.map((gap: any, i: number) => (
                       <div key={i} className="flex items-start gap-2 rounded-lg border border-border bg-background p-2.5">
                         <AlertTriangle className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
@@ -611,7 +613,7 @@ export function TerritoryExplorer() {
 
                 {/* Funding Priorities */}
                 {synthesisData.fundingPriorities?.length > 0 && (
-                  <SynthesisSection icon={getCurrencyConfig("coins").icon} title="Funding Priorities">
+                  <SynthesisSection icon={getCurrencyConfig("coins").icon} title={t("uiTerritoryExplorer.fundingPriorities")}>
                     {synthesisData.fundingPriorities.map((f: any, i: number) => (
                       <div key={i} className="flex items-start gap-2 rounded-lg border border-border bg-background p-2.5">
                         <CurrencyIcon currency="coins" className="h-3.5 w-3.5 mt-0.5 shrink-0" />
@@ -668,13 +670,13 @@ export function TerritoryExplorer() {
           {displayedUnits.length === 0 ? (
             <div className="text-center py-12 rounded-xl border border-dashed border-border bg-muted/20">
               <AlertCircle className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
-              <p className="font-display font-semibold text-lg">No units match your filters in these territories yet.</p>
+              <p className="font-display font-semibold text-lg">{t("uiTerritoryExplorer.noUnitsMatchYourFiltersIn")}</p>
               <div className="flex justify-center gap-2 mt-4">
                 <Button size="sm" variant="outline" asChild>
-                  <Link to="/quests/new">Start a {label("quest.label").toLowerCase()}</Link>
+                  <Link to="/quests/new">{t("uiTerritoryExplorer.startA")} {label("quest.label").toLowerCase()}</Link>
                 </Button>
                 <Button size="sm" variant="outline" asChild>
-                  <Link to="/explore?tab=entities&create=guild">Create a {label("guild.label").toLowerCase()}</Link>
+                  <Link to="/explore?tab=entities&create=guild">{t("uiTerritoryExplorer.createA")} {label("guild.label").toLowerCase()}</Link>
                 </Button>
               </div>
             </div>
@@ -690,7 +692,7 @@ export function TerritoryExplorer() {
                 )}
                 {mode === "aggregate" && (
                   <h3 className="font-display font-semibold text-lg mb-3">
-                    All units ({items.length})
+                    {t("uiTerritoryExplorer.allUnits")}{items.length})
                   </h3>
                 )}
                 <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -738,9 +740,9 @@ export function TerritoryExplorer() {
       {!analysisResults && !analysisLoading && (
         <div className="text-center py-16 rounded-xl border border-dashed border-border bg-muted/10">
           <Brain className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
-          <p className="font-display font-semibold text-lg">Select territories and run analysis</p>
+          <p className="font-display font-semibold text-lg">{t("uiTerritoryExplorer.selectTerritoriesAndRunAnalysis")}</p>
           <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
-            Choose one or more territories above, configure your filters, then run analysis to explore the ecosystem.
+            {t("uiTerritoryExplorer.chooseOneOrMoreTerritoriesAbove")}
           </p>
         </div>
       )}

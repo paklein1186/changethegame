@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 /**
  * BioregionMembersSection.tsx — Shows the towns/localities included in a bioregion
  */
@@ -45,6 +46,7 @@ export function useBioregionMembers(bioregionId: string | undefined) {
 }
 
 export function BioregionMembersSection({ bioregionId }: { bioregionId: string }) {
+  const { t } = useTranslation();
   const { data: members = [], isLoading } = useBioregionMembers(bioregionId);
 
   if (isLoading) {
@@ -61,7 +63,7 @@ export function BioregionMembersSection({ bioregionId }: { bioregionId: string }
     <section className="space-y-3">
       <div className="flex items-center gap-2">
         <MapPin className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-semibold text-foreground">Territories in this bioregion</h3>
+        <h3 className="text-sm font-semibold text-foreground">{t("uiBioregionMembersSection.territoriesInThisBioregion")}</h3>
         <Badge variant="secondary" className="text-[10px]">{members.length}</Badge>
       </div>
       <div className="flex flex-wrap gap-2">

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -12,6 +13,7 @@ interface HighlightedPostsTilesProps {
 }
 
 export function HighlightedPostsTiles({ guildId, onViewAll }: HighlightedPostsTilesProps) {
+  const { t } = useTranslation();
   // Fetch guild to get highlighted post IDs from features_config
   const { data: guild } = useQuery({
     queryKey: ["guild-config-highlights", guildId],
@@ -56,7 +58,7 @@ export function HighlightedPostsTiles({ guildId, onViewAll }: HighlightedPostsTi
           <MessageCircle className="h-4 w-4" /> Highlighted Posts
         </h3>
         <Button variant="ghost" size="sm" onClick={onViewAll} className="text-xs">
-          View all <ArrowRight className="h-3 w-3 ml-1" />
+          {t("uiHighlightedPostsTiles.viewAll")} <ArrowRight className="h-3 w-3 ml-1" />
         </Button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

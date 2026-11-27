@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -59,6 +60,7 @@ const LANDING_PROMPTS = [
 ];
 
 export function LandingAIGuide() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<AIResponse | null>(null);
@@ -102,10 +104,10 @@ export function LandingAIGuide() {
               <Bot className="h-3.5 w-3.5" /> AI Guide
             </div>
             <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
-              Not sure where to start?
+              {t("uiLandingAIGuide.notSureWhereToStart")}
             </h2>
             <p className="text-sm text-muted-foreground">
-              Tell our AI guide what you're looking for — it'll point you to the right quests, guilds, and collaborators.
+              {t("uiLandingAIGuide.tellOurAiGuideWhatYou")}
             </p>
           </motion.div>
 
@@ -115,7 +117,7 @@ export function LandingAIGuide() {
             className="flex gap-2">
             <Input
               ref={inputRef}
-              placeholder="What are you looking for?"
+              placeholder={t("uiLandingAIGuide.whatAreYouLookingFor")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
@@ -232,7 +234,7 @@ export function LandingAIGuide() {
                     Ask something else
                   </Button>
                   <Button size="sm" asChild>
-                    <Link to="/welcome">Sign up to get started <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
+                    <Link to="/welcome">{t("uiLandingAIGuide.signUpToGetStarted")} <ArrowRight className="h-3.5 w-3.5 ml-1" /></Link>
                   </Button>
                 </div>
               </motion.div>

@@ -437,7 +437,7 @@ export function GuidedPathways({ persona, userName, userId, isOrgRep, onActionSe
                   className="space-y-4"
                 >
                   <button onClick={backToSubActions} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <ArrowLeft className="h-3 w-3" /> Back
+                    <ArrowLeft className="h-3 w-3" /> {t("uiGuidedPathways.back")}
                   </button>
                   <p className="text-sm font-medium text-foreground/80">
                     {p(promptStep.promptText || { DEFAULT: "Tell us more…" }, persona)}
@@ -446,7 +446,7 @@ export function GuidedPathways({ persona, userName, userId, isOrgRep, onActionSe
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Describe what you have in mind…"
+                    placeholder={t("uiGuidedPathways.describeWhatYouHaveInMind")}
                     className="min-h-[60px] max-h-[120px] resize-none text-sm bg-card border-border focus-visible:ring-primary/30"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
@@ -474,7 +474,7 @@ export function GuidedPathways({ persona, userName, userId, isOrgRep, onActionSe
                   className="space-y-4"
                 >
                   <button onClick={backToSubActions} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <ArrowLeft className="h-3 w-3" /> Back
+                    <ArrowLeft className="h-3 w-3" /> {t("uiGuidedPathways.back")}
                   </button>
 
                   {aiResult.summary && (
@@ -485,7 +485,7 @@ export function GuidedPathways({ persona, userName, userId, isOrgRep, onActionSe
 
                   {aiResult.suggestions?.length > 0 && (
                     <div className="space-y-1.5">
-                      <p className="text-xs text-muted-foreground font-medium">Suggested next steps:</p>
+                      <p className="text-xs text-muted-foreground font-medium">{t("uiGuidedPathways.suggestedNextSteps")}</p>
                       {aiResult.suggestions.map((s: any, i: number) => (
                         <button
                           key={i}

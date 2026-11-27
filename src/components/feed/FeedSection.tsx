@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { PostComposer } from "@/components/feed/PostComposer";
 import { PostCard } from "@/components/feed/PostCard";
@@ -30,6 +31,7 @@ const gridClasses: Record<Exclude<FeedDisplayMode, "list">, string> = {
 };
 
 export function FeedSection({ contextType, contextId, canPost = true, className, showDisplayToggle = false, initialTerritoryIds, initialTopicIds }: FeedSectionProps) {
+  const { t } = useTranslation();
   const { session } = useAuth();
   const { data: posts = [], isLoading } = useFeedPosts(contextType, contextId);
   const [sortMode, setSortMode] = useState<FeedSortMode>("recent");
@@ -66,7 +68,7 @@ export function FeedSection({ contextType, contextId, canPost = true, className,
           </div>
         ) : sortedPosts.length === 0 ? (
           <p className="text-sm text-muted-foreground italic text-center py-8">
-            No posts yet. Be the first to share something!
+            {t("uiFeedSection.noPostsYetBeTheFirst")}
           </p>
         ) : displayMode === "list" ? (
           <div className="space-y-4">
