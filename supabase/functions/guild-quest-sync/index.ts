@@ -3,7 +3,7 @@
 //   POST /functions/v1/guild-quest-sync
 //   X-Site-Key: <clé du site>                                (toujours)
 //   Authorization: Bearer <jeton CTG de la personne>         (création seulement : admin de la guilde)
-//   { "action": "create" | "update" | "withdraw" | "status", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
+//   { "action": "create" | "update" | "withdraw" | "status" | "news", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
 //     "visibilite"?: { "mode": "public" } | { "mode": "membres", "niveau_minimum": "N2" | "N3" } }
 //
 // Chaque réponse porte "visibilite_appliquee_par_la_base" : vrai seulement si la base empêche vraiment la lecture
@@ -14,7 +14,7 @@
 // Fermée tant que SITE_SYNC_KEY, SITE_SYNC_GUILD_ID et SITE_SYNC_ORIGINS ne sont pas posés.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-import { accessEnforced, createQuest, questFields, sameKey, SyncError, updateQuest, visibilityFields, withdrawQuest } from "../_shared/guild-quest-sync.ts";
+import { accessEnforced, createQuest, publishNews, questFields, sameKey, SyncError, updateQuest, visibilityFields, withdrawQuest } from "../_shared/guild-quest-sync.ts";
 import { isGuildAdmin } from "../_shared/guild-quests.ts";
 
 const json = (body: unknown, status = 200) =>
@@ -43,6 +43,12 @@ serve(async (req) => {
       const questId = String(body?.quest_id ?? "");
       if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
       return reply(await withdrawQuest(admin, guildId, projetId, questId));
+    }
+    // Nouvelle de quête (B3) : clé du site seule, sur une quête reliée au projet.
+    if (body?.action === "news") {
+      const questId = String(body?.quest_id ?? "");
+      if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
+      return reply(await publishNews(admin, guildId, projetId, questId, body?.nouvelle ?? {}, body?.auteur));
     }
     const visibility = visibilityFields(body?.visibilite);
     // Une quête réservée aux membres n'est publiée que si la base en empêche vraiment la lecture.

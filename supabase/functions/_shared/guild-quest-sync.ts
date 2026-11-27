@@ -133,6 +133,47 @@ export async function withdrawQuest(admin: any, guildId: string, projetId: strin
   return { quest_id: questId, withdrawn: true };
 }
 
+export interface Nouvelle { id?: unknown; titre?: unknown; texte?: unknown }
+
+/**
+ * Publie une nouvelle sur une quête reliée au projet (palier 2, B3 : un changement d'étape validé par le référent sur
+ * le site). Une même nouvelle du site n'est publiée qu'une fois (quest_update_external_links). Auteur : la personne qui
+ * l'a validée si elle est membre de la guilde, sinon la personne qui a créé la quête.
+ */
+export async function publishNews(admin: any, guildId: string, projetId: string, questId: string, n: Nouvelle, auteur?: unknown) {
+  const id = typeof n?.id === "string" ? n.id.trim() : "";
+  const titre = typeof n?.titre === "string" ? n.titre.trim() : "";
+  const texte = typeof n?.texte === "string" ? n.texte.trim() : "";
+  if (!/^[0-9a-zA-Z_-]{1,120}$/.test(id) || !titre) throw new SyncError("invalid_news", "id et titre de la nouvelle attendus");
+  const linked = await linkedQuest(admin, projetId);
+  if (linked !== questId) throw new SyncError("not_linked", "quête non reliée à ce projet", 409);
+  const { data: quest } = await admin.from("quests").select("id, guild_id, is_deleted, created_by_user_id").eq("id", questId).maybeSingle();
+  if (!quest || quest.is_deleted) throw new SyncError("gone", "quête supprimée", 410);
+  if (quest.guild_id !== guildId) throw new SyncError("forbidden", "quête hors de la guilde", 403);
+  const { data: deja } = await admin.from("quest_update_external_links").select("update_id")
+    .eq("source", SOURCE).eq("external_id", id).maybeSingle();
+  if (deja?.update_id) return { quest_id: questId, update_id: deja.update_id, created: false };
+  let author = quest.created_by_user_id;
+  if (typeof auteur === "string" && /^[0-9a-f-]{36}$/i.test(auteur)) {
+    const { data: membre } = await admin.from("guild_members").select("user_id").eq("guild_id", guildId).eq("user_id", auteur).maybeSingle();
+    if (membre) author = auteur;
+  }
+  const { data: upd, error } = await admin.from("quest_updates").insert({
+    quest_id: questId, author_id: author, title: titre.slice(0, 200), content: texte.slice(0, 4000) || null,
+    type: "GENERAL", visibility: "PUBLIC", posted_as_label: "Trois-Tiers",
+  }).select("id").single();
+  if (error || !upd) throw new SyncError("db", error?.message ?? "insert failed", 500);
+  const { error: e2 } = await admin.from("quest_update_external_links").insert({ update_id: upd.id, source: SOURCE, external_id: id });
+  if (e2) {
+    // Publiée en même temps par un autre appel : on retire la nôtre.
+    await admin.from("quest_updates").update({ is_deleted: true, deleted_at: new Date().toISOString() }).eq("id", upd.id);
+    const { data: gagnant } = await admin.from("quest_update_external_links").select("update_id").eq("source", SOURCE).eq("external_id", id).maybeSingle();
+    if (gagnant?.update_id) return { quest_id: questId, update_id: gagnant.update_id, created: false };
+    throw new SyncError("db", e2.message ?? "link failed", 500);
+  }
+  return { quest_id: questId, update_id: upd.id, created: true };
+}
+
 /** Comparaison en temps constant de la clé du site. */
 export function sameKey(a: string, b: string): boolean {
   if (!a || !b || a.length !== b.length) return false;
