@@ -8140,6 +8140,15 @@
   "uiNsTimeseriesChart": {
     "noDataInTheLast30": "No data in the last 30 days"
   },
+  "followActivity": {
+    "followed": "followed",
+    "startedFollowing": "started following",
+    "peopleCount": "{{count}} people",
+    "peopleFollowedBy": "People followed by {{actor}}",
+    "followedPeopleDescription": "{{actor}} followed {{count}} people in a row.",
+    "viewFollowedPeople": "View the {{count}} people followed",
+    "unknownPerson": "Someone"
+  },
   "uiNetworkActivityTab": {
     "all": "All",
     "networkActivity": "Network Activity",

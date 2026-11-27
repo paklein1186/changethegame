@@ -1,6 +1,6 @@
 import i18n from "@/i18n/config";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -12,6 +12,8 @@ import {
   Rss, FileText, Activity, ChevronDown,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { groupConsecutiveFollows } from "@/lib/followActivity";
+import { FollowedPeopleDialog } from "@/components/activity/FollowedPeopleDialog";
 
 // ─── Action config ───────────────────────────────────────────
 const ACTION_CONFIG: Record<string, {
@@ -86,6 +88,7 @@ type ActivityEntry = {
   created_at: string;
   actor_name?: string;
   actor_avatar?: string | null;
+  target_avatar?: string | null;
 };
 
 const PAGE_SIZE = 30;
@@ -112,12 +115,18 @@ export default function NetworkActivityTab() {
       if (error) throw error;
       if (!data?.length) return [] as ActivityEntry[];
 
-      // Fetch actor profiles
-      const actorIds = [...new Set(data.map((a: any) => a.actor_user_id))];
+      // Fetch actor profiles and the people shown in grouped follow popups.
+      const targetUserIds = data
+        .filter((a: any) => a.action_type === "followed" && a.target_type?.toLowerCase() === "user" && a.target_id)
+        .map((a: any) => a.target_id);
+      const profileIds = [...new Set([
+        ...data.map((a: any) => a.actor_user_id),
+        ...targetUserIds,
+      ])];
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id, name, avatar_url")
-        .in("user_id", actorIds);
+        .in("user_id", profileIds);
 
       const profileMap = new Map(
         (profiles ?? []).map((p: any) => [p.user_id, p])
@@ -153,6 +162,7 @@ export default function NetworkActivityTab() {
       // Resolve missing target_name for followed entries
       const missingNameEntries = data.filter(
         (a: any) => !a.target_name && a.target_id && a.target_type
+          && !(a.action_type === "followed" && a.target_type?.toLowerCase() === "user")
       );
       const nameMap = new Map<string, string>();
 
@@ -202,9 +212,10 @@ export default function NetworkActivityTab() {
           ...a,
           target_type: effective_target_type,
           resolved_link_id,
-          target_name: a.target_name || nameMap.get(a.target_id) || null,
+          target_name: a.target_name || nameMap.get(a.target_id) || profileMap.get(a.target_id)?.name || null,
           actor_name: profile?.name || "Someone",
           actor_avatar: profile?.avatar_url,
+          target_avatar: a.target_type === "user" ? profileMap.get(a.target_id)?.avatar_url : null,
         } as ActivityEntry;
       });
     },
@@ -212,6 +223,7 @@ export default function NetworkActivityTab() {
   });
 
   const hasMore = activities.length >= limit;
+  const displayActivities = useMemo(() => groupConsecutiveFollows(activities), [activities]);
 
   return (
     <div className="space-y-5">
@@ -254,8 +266,10 @@ export default function NetworkActivityTab() {
         </div>
       ) : (
         <div className="space-y-1">
-          {activities.map((entry) => (
-            <ActivityRow key={entry.id} entry={entry} />
+          {displayActivities.map((grouping) => (
+            grouping.type === "follow_group"
+              ? <FollowGroupRow key={grouping.id} entries={grouping.entries} />
+              : <ActivityRow key={grouping.entry.id} entry={grouping.entry} />
           ))}
 
           {hasMore && (
@@ -273,6 +287,61 @@ export default function NetworkActivityTab() {
         </div>
       )}
     </div>
+  );
+}
+
+function FollowGroupRow({ entries }: { entries: ActivityEntry[] }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const entry = entries[0];
+  const people = entries.map((item) => ({
+    id: item.target_id!,
+    name: item.target_name ? stripMentionSyntax(item.target_name) : t("followActivity.unknownPerson"),
+    avatarUrl: item.target_avatar,
+    followedAt: item.created_at,
+  }));
+
+  return (
+    <>
+      <div className="group flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/40">
+        <div className="mt-0.5 shrink-0 rounded-full bg-muted/60 p-1.5 text-pink-500">
+          <UserPlus className="h-3.5 w-3.5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm leading-snug">
+            <Link to={`/users/${entry.actor_user_id}`} className="font-medium transition-colors hover:text-primary">
+              {entry.actor_name}
+            </Link>
+            <span className="text-muted-foreground"> {t("followActivity.followed")} </span>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-label={t("followActivity.viewFollowedPeople", { count: entries.length })}
+              className="rounded-sm font-medium text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              {t("followActivity.peopleCount", { count: entries.length })}
+            </button>
+          </p>
+          <span className="text-[10px] text-muted-foreground">
+            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true })}
+          </span>
+        </div>
+        <Link to={`/users/${entry.actor_user_id}`} className="shrink-0">
+          <Avatar className="h-7 w-7">
+            <AvatarImage src={entry.actor_avatar || undefined} />
+            <AvatarFallback className="text-[10px]">
+              {entry.actor_name?.[0]?.toUpperCase() || "?"}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
+      </div>
+      <FollowedPeopleDialog
+        open={open}
+        onOpenChange={setOpen}
+        actorName={entry.actor_name || t("followActivity.unknownPerson")}
+        people={people}
+      />
+    </>
   );
 }
 
