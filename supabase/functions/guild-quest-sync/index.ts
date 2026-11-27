@@ -3,7 +3,7 @@
 //   POST /functions/v1/guild-quest-sync
 //   X-Site-Key: <clé du site>                                (toujours)
 //   Authorization: Bearer <jeton CTG de la personne>         (création seulement : admin de la guilde)
-//   { "action": "create" | "update" | "withdraw" | "status" | "news", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
+//   { "action": "create" | "update" | "withdraw" | "status" | "news" | "needs" | "needs_push" | "proposals" | "proposal_decide", "projet_id": "<uuid>", "quest_id"?: "<uuid>", "face": { … },
 //     "visibilite"?: { "mode": "public" } | { "mode": "membres", "niveau_minimum": "N2" | "N3" } }
 //
 // Chaque réponse porte "visibilite_appliquee_par_la_base" : vrai seulement si la base empêche vraiment la lecture
@@ -16,6 +16,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { accessEnforced, createQuest, publishNews, questFields, sameKey, SyncError, updateQuest, visibilityFields, withdrawQuest } from "../_shared/guild-quest-sync.ts";
 import { isGuildAdmin } from "../_shared/guild-quests.ts";
+import { decideProposal, listNeeds, listProposals, pushNeeds } from "../_shared/guild-quest-needs.ts";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -49,6 +50,17 @@ serve(async (req) => {
       const questId = String(body?.quest_id ?? "");
       if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
       return reply(await publishNews(admin, guildId, projetId, questId, body?.nouvelle ?? {}, body?.auteur));
+    }
+    // Besoins et propositions d'aide (B4) : clé du site seule, sur une quête reliée au projet.
+    if (["needs", "needs_push", "proposals", "proposal_decide"].includes(body?.action)) {
+      const questId = String(body?.quest_id ?? "");
+      if (!UUID.test(questId)) return reply({ error: "invalid quest_id" }, 400);
+      if (body.action === "needs") return reply(await listNeeds(admin, guildId, projetId, questId));
+      if (body.action === "needs_push") return reply(await pushNeeds(admin, guildId, projetId, questId, body?.besoins, body?.auteur));
+      if (body.action === "proposals") return reply(await listProposals(admin, guildId, projetId, questId));
+      const proposalId = String(body?.proposal_id ?? "");
+      if (!UUID.test(proposalId)) return reply({ error: "invalid proposal_id" }, 400);
+      return reply(await decideProposal(admin, guildId, projetId, questId, proposalId, body?.decision, body?.auteur));
     }
     const visibility = visibilityFields(body?.visibilite);
     // Une quête réservée aux membres n'est publiée que si la base en empêche vraiment la lecture.

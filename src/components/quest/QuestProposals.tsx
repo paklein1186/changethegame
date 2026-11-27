@@ -41,7 +41,7 @@ export function QuestProposals({
   const currentUser = useCurrentUser();
   const { toast } = useToast();
   const qc = useQueryClient();
-  const { grantXp, grantCredits, spendCredits } = useXpCredits();
+  const { grantXp, spendCredits } = useXpCredits();
   const { plan } = usePlanLimits();
   const isOwner = currentUser.id === questOwnerId;
 
@@ -222,52 +222,30 @@ export function QuestProposals({
     qc.invalidateQueries({ queryKey: ["my-proposal-upvotes", questId] });
   };
 
-  // ── Accept proposal ───────────────────────────────────
-  const acceptProposal = async (proposal: any) => {
-    // Grant credits to proposer
-    await grantCredits(proposal.proposer_id, {
-      type: CREDIT_TX_TYPES.EARNED_ACTION,
-      amount: proposal.requested_credits,
-      source: "QUEST_PROPOSAL_ACCEPTED",
-      relatedEntityType: "Quest",
-      relatedEntityId: questId,
-    }, true);
-
-    // Update proposal status
-    await (supabase.from("quest_proposals" as any) as any)
-      .update({ status: "ACCEPTED" }).eq("id", proposal.id);
-
-    // XP for proposer
-    await grantXp(proposal.proposer_id, {
-      type: XP_EVENT_TYPES.PROPOSAL_ACCEPTED,
-      relatedEntityType: "Quest",
-      relatedEntityId: questId,
-    }, true);
-
-    // CTG emission is handled by the DB trigger on contribution_logs INSERT — no manual RPC needed.
-    // XP notification (from grantXp) already informs the user — no extra notification needed.
-
-    qc.invalidateQueries({ queryKey: ["quest-proposals", questId] });
-    qc.invalidateQueries({ queryKey: ["quest", questId] });
-    toast({ title: t("uiQuestProposals.proposalAccepted"), description: `${proposal.requested_credits} $CTG transferred.` });
-  };
-
-  // ── Decline proposal ──────────────────────────────────
-  const declineProposal = async (proposal: any) => {
-    await (supabase.from("quest_proposals" as any) as any)
-      .update({ status: "REJECTED" }).eq("id", proposal.id);
-    await supabase.from("notifications").insert({
-      user_id: proposal.proposer_id,
-      type: "QUEST_PROPOSAL_REJECTED",
-      title: t("uiQuestProposals.proposalDeclined"),
-      body: `Your proposal "${proposal.title}" was not accepted.`,
-      related_entity_type: "QUEST",
-      related_entity_id: questId,
-      deep_link_url: `/quests/${questId}`,
+  // ── Accept / decline proposal ─────────────────────────
+  // Une seule fonction de la base (decide_quest_proposal), la même que pour les sites partenaires : statut, crédits
+  // demandés, XP et notification d'un bloc. Les euros demandés se règlent à part (la personne en est prévenue).
+  const decideProposal = async (proposal: any, decision: "accept" | "reject") => {
+    const { data, error } = await (supabase.rpc as any)("decide_quest_proposal", {
+      p_proposal_id: proposal.id, p_decision: decision,
     });
     qc.invalidateQueries({ queryKey: ["quest-proposals", questId] });
-    toast({ title: t("uiQuestProposals.proposalDeclined") });
+    if (error) {
+      toast({ title: "Action impossible", description: error.message, variant: "destructive" });
+      return;
+    }
+    qc.invalidateQueries({ queryKey: ["quest", questId] });
+    if (decision === "reject") { toast({ title: t("uiQuestProposals.proposalDeclined") }); return; }
+    const credits = Number((data as any)?.credits_granted ?? 0);
+    const fiat = Number((data as any)?.fiat_to_follow ?? 0);
+    toast({
+      title: t("uiQuestProposals.proposalAccepted"),
+      description: [credits > 0 ? `${credits} $CTG transferred.` : "", fiat > 0 ? `€${fiat} to settle directly with the contributor.` : ""]
+        .filter(Boolean).join(" ") || undefined,
+    });
   };
+  const acceptProposal = (proposal: any) => decideProposal(proposal, "accept");
+  const declineProposal = (proposal: any) => decideProposal(proposal, "reject");
 
   // ── Fund quest ────────────────────────────────────────
   const [fundOpen, setFundOpen] = useState(false);

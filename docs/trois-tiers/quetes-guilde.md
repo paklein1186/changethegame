@@ -80,3 +80,24 @@ projet. Une même nouvelle du site (`id`) n'est publiée qu'une fois (`quest_upd
 qui l'a validée sur le site si elle est membre de la guilde, sinon la personne qui a créé la quête. La nouvelle suit les
 règles d'accès de la quête (contenu à l'équipe pour une quête réservée). Typiquement : un changement d'étape du projet,
 dont le référent a validé le texte sur le site.
+
+## Besoins et propositions d'aide depuis le site (palier 2, B4)
+
+Toujours par `guild-quest-sync`, clé du site seule, sur une quête reliée au projet :
+
+- `needs` : besoins de la quête (avec l'identifiant du site quand il y en a un) et nombre de propositions en attente.
+- `needs_push` `{ besoins: [{ id, need_id?, titre, description, categorie, statut, supprime? }], auteur? }` : écrit les
+  besoins retenus par le site. Un besoin né ici et repris par le site garde le même `quest_needs` (lien posé à ce moment).
+  Un besoin retiré sur le site est fermé (`CLOSED`), jamais effacé. Lien : `quest_need_external_links`.
+- `proposals` : propositions d'aide en attente, lues en direct pour le référent (nom et identifiant de profil, jamais
+  d'e-mail ; le site ne les enregistre pas, il ne garde qu'un compteur).
+- `proposal_decide` `{ proposal_id, decision: "accept" | "reject", auteur? }` : accepte ou refuse par la fonction de
+  la base `decide_quest_proposal`, **la même que l'écran de la quête** : statut, crédits demandés versés (QUEST_REWARD),
+  XP et notification d'un bloc. Les euros demandés ne sont pas versés par la plateforme : la personne est prévenue
+  qu'ils se règlent directement avec l'équipe.
+
+`decide_quest_proposal` corrige aussi l'écran de la quête, qui versait les crédits avec un type refusé par la base
+(« EARNED_ACTION ») : la proposition passait acceptée sans versement. Peuvent décider : la personne qui a créé la
+quête, un·e admin de la guilde hôte, un·e admin de la plateforme, ou le serveur (clé service_role).
+
+Un besoin peut naître des deux côtés ; c'est le site qui fusionne (la dernière modification l'emporte).
