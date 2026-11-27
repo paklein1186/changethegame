@@ -1,3 +1,4 @@
+import { OpportunitiesPanel } from "@/components/opportunities/OpportunitiesPanel";
 import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { translateTopicName } from "@/lib/entityLabels";
@@ -1145,6 +1146,7 @@ export default function QuestDetail() {
             translatedSummary={questTr.ai_summary?.text ?? null}
             isSummaryTranslated={questTr.ai_summary?.isTranslated ?? false}
           />
+          {(isParticipant || isOwner || isCollaborator) && <OpportunitiesPanel questId={quest.id} className="mt-4" />}
         </TabsContent>
 
         {/* ═══════════ WORK TAB ═══════════ */}
