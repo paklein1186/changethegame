@@ -52,7 +52,7 @@ serve(async (req) => {
       admin.from("profiles").select("name").eq("user_id", user.id).maybeSingle(),
       admin
         .from("entity_member_roles")
-        .select("expires_at, scope_type, scope_id, entity_roles!inner(code, entity_type, entity_id)")
+        .select("expires_at, scope_type, scope_id, entity_roles!inner(code, level, entity_type, entity_id)")
         .eq("user_id", user.id)
         .eq("entity_roles.entity_type", "guild")
         .eq("entity_roles.entity_id", guildId),
@@ -99,6 +99,18 @@ serve(async (req) => {
         scope: r.scope_type && r.scope_id ? { type: r.scope_type as string, id: r.scope_id as string } : null,
       }));
 
+    // Rôles à code non expirés (fondateur, Source, actif, effectif…), recopiés par le site.
+    const rolesOut = ((roles as any[]) ?? [])
+      .filter((r) => r.entity_roles?.code)
+      .filter((r) => !r.expires_at || new Date(r.expires_at).getTime() > now)
+      .map((r) => ({
+        code: r.entity_roles.code as string,
+        level: (r.entity_roles.level as number | null) ?? null,
+        expires_at: (r.expires_at as string | null) ?? null,
+        scope_type: (r.scope_type as string | null) ?? null,
+        scope_id: (r.scope_id as string | null) ?? null,
+      }));
+
     return json({
       email: user.email,
       name: profile?.name ?? user.user_metadata?.full_name ?? null,
@@ -116,6 +128,7 @@ serve(async (req) => {
           }
         : null,
       badges,
+      roles: rolesOut,
       plans: ((planRows as any[]) ?? []).map((p) => {
         const planEnd = (p.current_period_end ?? p.membership_expires_at ?? null) as string | null;
         const graceMs = p.status === "grace" ? 7 * 24 * 3600 * 1000 : 0;
