@@ -161,3 +161,6 @@ verify_jwt = false
 
 [functions.guild-quests]
 verify_jwt = false
+
+[functions.guild-quest-sync]
+verify_jwt = false
