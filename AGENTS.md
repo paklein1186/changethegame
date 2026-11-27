@@ -1,6 +1,6 @@
 # Agent notes
 
-- Digest match selection uses a per-display seeded shuffle; reuse personal opportunity feedback for dismissals and invalidate all matching views without changing relevance scores.
+- Digest and home spotted-opportunity selections use a per-display seeded shuffle; reuse personal opportunity feedback for dismissals and invalidate all matching views without changing relevance scores. Other quest/guild panels retain relevance ordering.
 
 - Work lists use compact company memberships and one-minute query freshness; load drafts only when opened so inactive drafts do not compete with visible lists.
 

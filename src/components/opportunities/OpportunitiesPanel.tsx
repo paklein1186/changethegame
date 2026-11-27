@@ -66,7 +66,7 @@ const helperUrl = (o: Opportunity) =>
  * - Guild: everything around one guild (its quests, the guild itself, its members).
  * - Quest: who could help this quest.
  */
-export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", initialCount = 5, className, asDigest = false, showMapLink = false }: {
+export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", initialCount = 5, className, asDigest = false, showMapLink = false, varySelection = false }: {
   guildId?: string;
   questId?: string;
   defaultScope?: Scope;
@@ -74,6 +74,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   className?: string;
   asDigest?: boolean;
   showMapLink?: boolean;
+  varySelection?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
@@ -109,7 +110,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
   });
 
   const rows = useMemo(() => data.filter((o) => o.my_verdict !== "not_relevant" && (!questId || o.quest_id === questId)), [data, questId]);
-  const orderedRows = useMemo(() => asDigest ? digestSelection(rows, selectionSeed) : rows, [rows, asDigest, selectionSeed]);
+  const orderedRows = useMemo(() => asDigest || varySelection ? digestSelection(rows, selectionSeed) : rows, [rows, asDigest, varySelection, selectionSeed]);
   const categories = useMemo(() => [...new Set(rows.map((o) => o.need_category))].sort(), [rows]);
   const places = useMemo(() => [...new Set(rows.flatMap((o) => o.territory_names ?? []))].sort(), [rows]);
   const filtered = orderedRows.filter((o) =>
@@ -224,7 +225,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
           {showMapLink && !guildId && !questId && (
             <Button variant="outline" size="sm" asChild><Link to="/opportunities/carte"><MapIcon className="mr-1.5 h-4 w-4" /> {t("matchOpportunities.map")}</Link></Button>
           )}
-          {asDigest && !guildId && !questId && (
+          {(asDigest || varySelection) && !guildId && !questId && (
             <Button variant="ghost" size="icon" onClick={() => setSelectionSeed((seed) => (seed + 1) >>> 0)} title={t("matchOpportunities.refreshSelection")} aria-label={t("matchOpportunities.refreshSelection")} disabled={isLoading || filtered.length <= initialCount}>
               <Shuffle className="h-4 w-4" />
             </Button>
@@ -413,7 +414,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
                           <CircleCheckBig className="h-3.5 w-3.5" /> {t("matchOpportunities.markDone")}
                         </Button>
                       )}
-                      <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: o.match_id, verdict: "not_relevant" })} title={t("matchOpportunities.notRelevant")} aria-label={t("matchOpportunities.notRelevant")}>
+                      <Button size="sm" variant="ghost" className="h-7 text-xs" disabled={feedback.isPending} onClick={() => feedback.mutate({ id: o.match_id, verdict: "not_relevant" })} title={t(varySelection ? "matchOpportunities.hide" : "matchOpportunities.notRelevant")} aria-label={t(varySelection ? "matchOpportunities.hide" : "matchOpportunities.notRelevant")}>
                         <X className="h-3.5 w-3.5" />
                       </Button>
                     </div>

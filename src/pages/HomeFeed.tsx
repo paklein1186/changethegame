@@ -515,7 +515,7 @@ export default function HomeFeed() {
             >
               <OpportunitiesPanel asDigest showMapLink initialCount={3} className="mb-5" />
               <DigestSections userId={currentUser.id} />
-              <OpportunitiesPanel className="mb-5" />
+              <OpportunitiesPanel varySelection className="mb-5" />
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <h2 className="text-base font-semibold text-foreground">{t("uiHomeFeed.myTaskBoard")}</h2>
@@ -636,7 +636,7 @@ export default function HomeFeed() {
               <PathwayCards persona={persona} progress={progress} steps={steps} />
               <OpportunitiesPanel asDigest showMapLink initialCount={3} />
               <DigestSections userId={currentUser.id} />
-              <OpportunitiesPanel />
+              <OpportunitiesPanel varySelection />
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <h2 className="text-base font-semibold text-foreground">{t("uiHomeFeed.myTaskBoard")}</h2>
