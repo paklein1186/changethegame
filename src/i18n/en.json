@@ -4965,5 +4965,43 @@
     "n3Title": "Guild level N3",
     "n3Hint": "The roles and plans that make up level N3 (membranes). Every quest set to N3 follows this table.",
     "saveN3": "Save level N3"
+  },
+  "guildMcp": {
+    "title": "MCP Agents",
+    "intro": "Let an external AI agent (Claude, ChatGPT, Cursor, n8n…) read this guild, and act on it if allowed, through the Model Context Protocol.",
+    "oauthTitle": "Connector on behalf of a person (recommended)",
+    "oauthHint": "Add this address as a connector in the Claude app: it asks you to sign in to ChangeTheGame. The agent then reads with that person's rights, with no key to keep, and access is removed by disconnecting the connector. To follow the guild, connect a coordination account.",
+    "keyTitle": "Connector with a guild key",
+    "keyHeader": "Authenticate with the header",
+    "keyAddress": "For a connector in the Claude app (which sends no headers), the address",
+    "keyAddressReadOnly": "also works: use a read-only key then, as the address may be logged.",
+    "activityHint": "To follow everything in the guild (discussions, decisions, quests…), the agent calls",
+    "activityHintSince": "starting from the",
+    "createTitle": "Create a key",
+    "readOnly": "Read only (recommended for an agent that follows the guild)",
+    "nameLabel": "Key name",
+    "namePlaceholder": "e.g. \"{{guild}}\" — Claude",
+    "myGuild": "My guild",
+    "generate": "Generate",
+    "copyNow": "Copy this key now: it will not be shown again.",
+    "connectorAddress": "Connector address for the Claude app:",
+    "saved": "I've saved it",
+    "activeTitle": "Active keys",
+    "none": "No keys yet.",
+    "created": "created {{date}}",
+    "lastUsed": "last used {{date}}",
+    "revokedBadge": "Revoked",
+    "scope": {
+      "read": "read",
+      "write": "write"
+    },
+    "copy": "Copy",
+    "copied": "Copied to clipboard",
+    "revoke": "Revoke",
+    "revokeConfirm": "Revoke this key? Connected agents will lose access immediately.",
+    "revoked": "Key revoked",
+    "revokeFailed": "Couldn't revoke the key",
+    "loadFailed": "Couldn't load the keys",
+    "createFailed": "Couldn't create the key"
   }
 }

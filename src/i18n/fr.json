@@ -4951,5 +4951,43 @@
     "n3Title": "Niveau N3 de la guilde",
     "n3Hint": "Les rôles et formules qui forment le niveau N3 (membranes). Toutes les quêtes réglées sur N3 suivent cette table.",
     "saveN3": "Enregistrer le niveau N3"
+  },
+  "guildMcp": {
+    "title": "Agents MCP",
+    "intro": "Permettez à un agent IA externe (Claude, ChatGPT, Cursor, n8n…) de lire cette guilde, et d'y agir s'il en a le droit, grâce au Model Context Protocol.",
+    "oauthTitle": "Connecteur au nom d'une personne (recommandé)",
+    "oauthHint": "Ajoutez cette adresse comme connecteur dans l'application Claude : elle demande de se connecter à ChangeTheGame. L'agent lit alors avec les droits de cette personne, sans clé à garder, et l'accès se retire en déconnectant le connecteur. Pour suivre la guilde, connectez un compte de la coordination.",
+    "keyTitle": "Connecteur par clé de guilde",
+    "keyHeader": "Authentification par l'en-tête",
+    "keyAddress": "Pour un connecteur de l'application Claude (qui n'envoie pas d'en-tête), l'adresse",
+    "keyAddressReadOnly": "convient aussi : utilisez alors une clé en lecture seule, car l'adresse peut être enregistrée.",
+    "activityHint": "Pour suivre toute la guilde (discussions, décisions, quêtes…), l'agent appelle",
+    "activityHintSince": "en repartant du",
+    "createTitle": "Créer une clé",
+    "readOnly": "Lecture seule (recommandé pour un agent qui suit la guilde)",
+    "nameLabel": "Nom de la clé",
+    "namePlaceholder": "ex. « {{guild}} » — Claude",
+    "myGuild": "Ma guilde",
+    "generate": "Générer",
+    "copyNow": "Copiez cette clé maintenant : elle ne sera plus affichée.",
+    "connectorAddress": "Adresse du connecteur pour l'application Claude :",
+    "saved": "Je l'ai enregistrée",
+    "activeTitle": "Clés actives",
+    "none": "Aucune clé pour l'instant.",
+    "created": "créée le {{date}}",
+    "lastUsed": "dernière utilisation le {{date}}",
+    "revokedBadge": "Révoquée",
+    "scope": {
+      "read": "lecture",
+      "write": "écriture"
+    },
+    "copy": "Copier",
+    "copied": "Copié dans le presse-papiers",
+    "revoke": "Révoquer",
+    "revokeConfirm": "Révoquer cette clé ? Les agents connectés perdront l'accès immédiatement.",
+    "revoked": "Clé révoquée",
+    "revokeFailed": "Impossible de révoquer la clé",
+    "loadFailed": "Impossible de charger les clés",
+    "createFailed": "Impossible de créer la clé"
   }
 }

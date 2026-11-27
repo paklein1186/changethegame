@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ type TokenRecord = {
 type Props = { guildId: string; guildName?: string };
 
 export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [tokens, setTokens] = useState<TokenRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,6 +32,8 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
   const [revealed, setRevealed] = useState<{ name: string; token: string } | null>(null);
 
   const mcpUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/guild-mcp`;
+  // Connecteur OAuth : agit au nom de la personne connectée (recommandé pour suivre la guilde).
+  const oauthUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mcp`;
 
   const load = async () => {
     setLoading(true);
@@ -37,7 +41,7 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
       `guild-mcp-tokens?guild_id=${guildId}`,
       { method: "GET" },
     );
-    if (error) toast({ title: "Failed to load tokens", description: error.message, variant: "destructive" });
+    if (error) toast({ title: t("guildMcp.loadFailed"), description: error.message, variant: "destructive" });
     setTokens((data as any)?.tokens ?? []);
     setLoading(false);
   };
@@ -53,7 +57,7 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
     });
     setCreating(false);
     if (error || (data as any)?.error) {
-      toast({ title: "Failed to create token", description: error?.message ?? (data as any)?.error, variant: "destructive" });
+      toast({ title: t("guildMcp.createFailed"), description: error?.message ?? (data as any)?.error, variant: "destructive" });
       return;
     }
     setRevealed({ name: name.trim(), token: (data as any).token });
@@ -62,116 +66,128 @@ export function GuildMcpTokensPanel({ guildId, guildName }: Props) {
   };
 
   const revoke = async (id: string) => {
-    if (!confirm("Revoke this token? Connected agents will lose access immediately.")) return;
+    if (!confirm(t("guildMcp.revokeConfirm"))) return;
     const { error } = await supabase.functions.invoke(`guild-mcp-tokens?id=${id}`, { method: "DELETE" });
     if (error) {
-      toast({ title: "Failed to revoke", description: error.message, variant: "destructive" });
+      toast({ title: t("guildMcp.revokeFailed"), description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: "Token revoked" });
+    toast({ title: t("guildMcp.revoked") });
     load();
   };
 
   const copy = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast({ title: "Copied to clipboard" });
+    toast({ title: t("guildMcp.copied") });
   };
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Plug className="h-5 w-5" /> MCP Agents
+          <Plug className="h-5 w-5" /> {t("guildMcp.title")}
         </h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          Generate an API key so an external AI agent (Claude Desktop, ChatGPT, Cursor, n8n, …)
-          can read and act on this guild via the Model Context Protocol.
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">{t("guildMcp.intro")}</p>
       </div>
 
       <Card className="p-4 space-y-3">
         <div className="text-sm font-medium flex items-center gap-2">
-          <KeyRound className="h-4 w-4" /> Endpoint
+          <KeyRound className="h-4 w-4" /> {t("guildMcp.oauthTitle")}
+        </div>
+        <div className="flex items-center gap-2">
+          <code className="flex-1 text-xs bg-muted px-2 py-1.5 rounded font-mono break-all">{oauthUrl}</code>
+          <Button size="sm" variant="ghost" onClick={() => copy(oauthUrl)} aria-label={t("guildMcp.copy")}>
+            <Copy className="h-4 w-4" />
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground">{t("guildMcp.oauthHint")}</p>
+      </Card>
+
+      <Card className="p-4 space-y-3">
+        <div className="text-sm font-medium flex items-center gap-2">
+          <KeyRound className="h-4 w-4" /> {t("guildMcp.keyTitle")}
         </div>
         <div className="flex items-center gap-2">
           <code className="flex-1 text-xs bg-muted px-2 py-1.5 rounded font-mono break-all">{mcpUrl}</code>
-          <Button size="sm" variant="ghost" onClick={() => copy(mcpUrl)}>
+          <Button size="sm" variant="ghost" onClick={() => copy(mcpUrl)} aria-label={t("guildMcp.copy")}>
             <Copy className="h-4 w-4" />
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          Authenticate with header <code>Authorization: Bearer ctg_…</code> (your token), or, for a connector
-          added in the Claude app (no headers), with the address <code>{mcpUrl}?key=ctg_…</code> — use a
-          read-only token then. To follow everything in the guild (discussions, decisions, quests…), an agent calls
-          <code> get_guild_activity</code> with the <code>next_since</code> of its previous call.
+          {t("guildMcp.keyHeader")} <code>Authorization: Bearer ctg_…</code>. {t("guildMcp.keyAddress")}{" "}
+          <code>{mcpUrl}?key=ctg_…</code> {t("guildMcp.keyAddressReadOnly")}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {t("guildMcp.activityHint")} <code>get_guild_activity</code> {t("guildMcp.activityHintSince")} <code>next_since</code>.
         </p>
       </Card>
 
       <Card className="p-4 space-y-3">
-        <div className="text-sm font-medium">Create a new token</div>
+        <div className="text-sm font-medium">{t("guildMcp.createTitle")}</div>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={readOnly} onChange={(e) => setReadOnly(e.target.checked)} className="accent-primary" />
-          Read only (recommended for an agent that follows the guild)
+          {t("guildMcp.readOnly")}
         </label>
         <div className="flex gap-2">
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder={`e.g. "${guildName ?? "My guild"}" — Claude Desktop`}
+            placeholder={t("guildMcp.namePlaceholder", { guild: guildName ?? t("guildMcp.myGuild") })}
+            aria-label={t("guildMcp.nameLabel")}
           />
           <Button onClick={createToken} disabled={creating || !name.trim()}>
-            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Generate"}
+            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : t("guildMcp.generate")}
           </Button>
         </div>
         {revealed && (
           <div className="mt-2 rounded-md border border-amber-500/40 bg-amber-500/5 p-3 space-y-2">
-            <p className="text-sm font-medium">Copy this token now — it will not be shown again.</p>
+            <p className="text-sm font-medium">{t("guildMcp.copyNow")}</p>
             <div className="flex items-center gap-2">
               <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono break-all">
                 {revealed.token}
               </code>
-              <Button size="sm" variant="outline" onClick={() => copy(revealed.token)}>
+              <Button size="sm" variant="outline" onClick={() => copy(revealed.token)} aria-label={t("guildMcp.copy")}>
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">Connector address for the Claude app:</p>
+            <p className="text-xs text-muted-foreground">{t("guildMcp.connectorAddress")}</p>
             <div className="flex items-center gap-2">
               <code className="flex-1 text-xs bg-background px-2 py-1.5 rounded font-mono break-all">
                 {`${mcpUrl}?key=${revealed.token}`}
               </code>
-              <Button size="sm" variant="outline" onClick={() => copy(`${mcpUrl}?key=${revealed.token}`)}>
+              <Button size="sm" variant="outline" onClick={() => copy(`${mcpUrl}?key=${revealed.token}`)} aria-label={t("guildMcp.copy")}>
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
-            <Button size="sm" variant="ghost" onClick={() => setRevealed(null)}>I've saved it</Button>
+            <Button size="sm" variant="ghost" onClick={() => setRevealed(null)}>{t("guildMcp.saved")}</Button>
           </div>
         )}
       </Card>
 
       <Card className="p-4 space-y-3">
-        <div className="text-sm font-medium">Active tokens</div>
+        <div className="text-sm font-medium">{t("guildMcp.activeTitle")}</div>
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : tokens.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No tokens yet.</p>
+          <p className="text-sm text-muted-foreground">{t("guildMcp.none")}</p>
         ) : (
           <ul className="divide-y">
-            {tokens.map((t) => (
-              <li key={t.id} className="py-2 flex items-center justify-between gap-2">
+            {tokens.map((tk) => (
+              <li key={tk.id} className="py-2 flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="text-sm font-medium truncate">{t.name}</div>
+                  <div className="text-sm font-medium truncate">{tk.name}</div>
                   <div className="text-xs text-muted-foreground">
-                    <code>{t.token_prefix}…</code> · created {new Date(t.created_at).toLocaleDateString()}
-                    {t.last_used_at && ` · last used ${new Date(t.last_used_at).toLocaleDateString()}`}
+                    <code>{tk.token_prefix}…</code> · {t("guildMcp.created", { date: new Date(tk.created_at).toLocaleDateString() })}
+                    {tk.last_used_at && ` · ${t("guildMcp.lastUsed", { date: new Date(tk.last_used_at).toLocaleDateString() })}`}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {t.revoked_at ? (
-                    <Badge variant="outline">Revoked</Badge>
+                  {tk.revoked_at ? (
+                    <Badge variant="outline">{t("guildMcp.revokedBadge")}</Badge>
                   ) : (
                     <>
-                      {t.scopes.map((s) => <Badge key={s} variant="secondary">{s}</Badge>)}
-                      <Button size="sm" variant="ghost" onClick={() => revoke(t.id)}>
+                      {tk.scopes.map((s) => <Badge key={s} variant="secondary">{t(`guildMcp.scope.${s}`, { defaultValue: s })}</Badge>)}
+                      <Button size="sm" variant="ghost" onClick={() => revoke(tk.id)} aria-label={t("guildMcp.revoke")}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </>
