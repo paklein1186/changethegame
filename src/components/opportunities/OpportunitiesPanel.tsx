@@ -17,6 +17,7 @@ import { CreateTrustEdgeDialog } from "@/components/CreateTrustEdgeDialog";
 import { TrustNodeType } from "@/types/enums";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { publicOrigin } from "@/lib/shareUrl";
 
 export interface Opportunity {
   match_id: string;
@@ -127,7 +128,7 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
 
   // « Demander » : message direct, prérempli et modifiable, à la personne (ou aux admins de la guilde).
   const openAsk = (o: Opportunity) => {
-    const origin = window.location.origin;
+    const origin = publicOrigin();
     setAskText(t("matchOpportunities.askTemplate", {
       name: o.helper_name ?? "",
       quest: o.quest_title,

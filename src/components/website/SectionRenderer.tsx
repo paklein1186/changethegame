@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ExternalLink } from "lucide-react";
+import { publicOrigin } from "@/lib/shareUrl";
 
 interface SectionItem {
   id: string;
@@ -197,7 +198,7 @@ function ItemRow({ item, entityType }: { item: SectionItem; entityType: string }
 }
 
 function entityLink(type: string, id: string): string {
-  const base = window.location.origin;
+  const base = publicOrigin();
   const map: Record<string, string> = {
     service: `/services/${id}`,
     quest: `/quests/${id}`,

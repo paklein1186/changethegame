@@ -23,6 +23,36 @@ const SHARE_DOMAIN =
 /** Production domain used for display / canonical URLs */
 const PRODUCTION_DOMAIN = "https://changethegame.xyz";
 
+/** Hosts that only people with access to this project can open. */
+const PREVIEW_HOSTS = [
+  "lovableproject.com",
+  "lovableproject-dev.com",
+  "lovable.app",
+  "gpt-eng.com",
+  "gptengineer.run",
+];
+
+/** True for Lovable editor/preview addresses, which outsiders cannot open. */
+export function isPreviewHost(hostname: string): boolean {
+  const host = hostname.toLowerCase();
+  return (
+    host.startsWith("id-preview--") ||
+    PREVIEW_HOSTS.some((domain) => host === domain || host.endsWith("." + domain))
+  );
+}
+
+/**
+ * Origin to use in anything sent to another person (messages, e-mails,
+ * copied links). In the editor preview this returns the published site
+ * address, so the recipient gets a link they can actually open.
+ */
+export function publicOrigin(): string {
+  if (typeof window === "undefined") return PRODUCTION_DOMAIN;
+  return isPreviewHost(window.location.hostname)
+    ? PRODUCTION_DOMAIN
+    : window.location.origin;
+}
+
 
 
 

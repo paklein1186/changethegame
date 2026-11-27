@@ -11,6 +11,7 @@ import { useTrustSummary } from "@/hooks/useTrustSummary";
 import { TrustSummaryBadge } from "@/components/trust/TrustSummaryBadge";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { publicOrigin } from "@/lib/shareUrl";
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 
@@ -116,7 +117,7 @@ export function MonOVNPanel({ userId }: Props) {
   });
 
   const handleCopyPassport = async () => {
-    const url = `${window.location.origin}/users/${userId}?tab=ovn`;
+    const url = `${publicOrigin()}/users/${userId}?tab=ovn`;
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
