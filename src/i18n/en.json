@@ -4645,6 +4645,8 @@
     }
   },
   "matchOpportunities": {
+    "hide": "Don't show again",
+    "refreshSelection": "Other matches",
     "markDone": "It happened",
     "markDoneHint": "The help was actually delivered",
     "markDoneTitle": "The help was delivered?",

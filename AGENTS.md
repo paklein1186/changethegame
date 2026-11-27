@@ -1,5 +1,7 @@
 # Agent notes
 
+- Digest match selection uses a per-display seeded shuffle; reuse personal opportunity feedback for dismissals and invalidate all matching views without changing relevance scores.
+
 - Work lists use compact company memberships and one-minute query freshness; load drafts only when opened so inactive drafts do not compete with visible lists.
 
 - Derive the guild header's membership-aware follow display through `guildFollowState`; keep this presentation rule tested without changing stored follows.

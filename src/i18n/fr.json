@@ -4645,6 +4645,8 @@
     }
   },
   "matchOpportunities": {
+    "hide": "Ne plus voir",
+    "refreshSelection": "Autres rapprochements",
     "markDone": "C'est réalisé",
     "markDoneHint": "L'aide a bien eu lieu",
     "markDoneTitle": "L'aide a bien eu lieu ?",
