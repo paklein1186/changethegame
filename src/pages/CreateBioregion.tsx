@@ -629,20 +629,7 @@ export default function CreateBioregion() {
       }
 
       // 4. Add creator as steward via trust edge
-      const { error: stewardErr } = await supabase.from("trust_edges").insert({
-        from_node_id: currentUser.id,
-        from_node_type: "profile",
-        to_node_id: bioregionId,
-        to_node_type: "territory",
-        edge_type: "stewardship",
-        score: 3,
-        status: "active",
-        created_by: currentUser.id,
-        context_territory_id: bioregionId,
-        tags: ["founder"],
-        note: "Créateur du territoire",
-      });
-      if (stewardErr) console.error("Failed to add creator as steward:", stewardErr);
+      // (Done by the database: trg_territory_creator_steward, on insert.)
 
       // 5. Add user_territory association
       await supabase.from("user_territories").insert({
