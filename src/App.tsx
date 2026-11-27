@@ -172,6 +172,7 @@ import PublicWebsite from "./pages/PublicWebsite";
 import PublicBooking from "./pages/PublicBooking";
 import NaturalSystemPage from "./pages/NaturalSystemPage";
 import OpportunitiesPage from "./pages/OpportunitiesPage";
+const OpportunityMap = lazy(() => import("./pages/OpportunityMap"));
 const DemoFeveMap = lazy(() => import("./pages/DemoFeveMap"));
 const DemoFeveMatchmaker = lazy(() => import("./pages/DemoFeveMatchmaker"));
 
@@ -261,6 +262,7 @@ const App = () => (
                 <Route path="/explore" element={<ExploreHub />} />
                 <Route path="/jobs" element={<JobsPage />} />
                 <Route path="/opportunities" element={<OpportunitiesPage />} />
+                <Route path="/opportunities/carte" element={<RequireAuth><Suspense fallback={null}><OpportunityMap /></Suspense></RequireAuth>} />
                 <Route path="/demo/carte" element={<RequireAuth><Suspense fallback={null}><DemoFeveMap /></Suspense></RequireAuth>} />
                 <Route path="/demo/matchmaker" element={<RequireAuth><Suspense fallback={null}><DemoFeveMatchmaker /></Suspense></RequireAuth>} />
                 <Route path="/explore/users" element={<ExploreUsers />} />

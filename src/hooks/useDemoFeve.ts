@@ -48,10 +48,10 @@ export function useDemoFeveAccess() {
 }
 
 export function useDemoFeveSnapshot() {
-  const { loading, user } = useDemoFeveAccess();
+  const { access, loading, user } = useDemoFeveAccess();
   return useQuery<DemoFeveSnapshot>({
     queryKey: ["demo-feve-snapshot"],
-    enabled: !loading && canViewDemoFeveShowcase(user?.id),
+    enabled: !loading && canViewDemoFeveShowcase(user?.id, access),
     queryFn: async () => {
       const { data, error } = await (supabase as any).rpc("demo_feve_snapshot");
       if (error) throw error;

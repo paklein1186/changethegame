@@ -11,10 +11,10 @@ describe("démo FEVE", () => {
     expect(isDemoFeveEmail("personne@example.com")).toBe(false);
   });
 
-  it("ouvre la présentation fictive à tout compte connecté, mais pas aux visiteurs", () => {
-    expect(canViewDemoFeveShowcase("compte-reel-123")).toBe(true);
-    expect(canViewDemoFeveShowcase("demo-maurice-456")).toBe(true);
-    expect(canViewDemoFeveShowcase(null)).toBe(false);
-    expect(canViewDemoFeveShowcase(undefined)).toBe(false);
+  it("réserve la présentation fictive aux comptes autorisés, même parmi les comptes connectés", () => {
+    expect(canViewDemoFeveShowcase("compte-reel-123", false)).toBe(false);
+    expect(canViewDemoFeveShowcase("demo-maurice-456", true)).toBe(true);
+    expect(canViewDemoFeveShowcase(null, true)).toBe(false);
+    expect(canViewDemoFeveShowcase(undefined, true)).toBe(false);
   });
 });

@@ -51,7 +51,7 @@ export function DemoFeveDigest() {
   return <section className="rounded-2xl border border-primary/20 bg-primary/[0.03] p-4 sm:p-5 space-y-4">
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><h2 className="flex items-center gap-2 font-display text-lg font-semibold"><Sparkles className="h-5 w-5 text-primary" /> {isMaurice ? "Ton digest du jour" : "Digest du jour — démo FEVE"}</h2><p className="text-sm text-muted-foreground">{isMaurice ? "Des rapprochements concrets pour ton installation en Bresse." : "Exemple fictif de rapprochements autour de l’installation de Maurice en Bresse. Consultation libre, actions réservées au compte démo."}</p></div>
-      <div className="flex gap-2"><Button variant="outline" size="sm" asChild><Link to="/demo/carte"><MapIcon className="mr-1.5 h-4 w-4" /> Carte</Link></Button><Button variant="outline" size="sm" asChild><Link to="/demo/matchmaker">27 demandes</Link></Button></div>
+      <div className="flex gap-2"><Button variant="outline" size="sm" asChild><Link to="/demo/carte"><MapIcon className="mr-1.5 h-4 w-4" /> Carte démo</Link></Button><Button variant="outline" size="sm" asChild><Link to="/demo/matchmaker">27 demandes</Link></Button></div>
     </div>
     <div className="grid gap-3 md:grid-cols-3">
       {wanted.map((card) => <article key={card.id} className="rounded-xl border border-border bg-card p-4 flex flex-col">

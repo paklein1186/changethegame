@@ -12105,6 +12105,28 @@ export type Database = {
           updated_at: string
         }[]
       }
+      get_opportunity_map: {
+        Args: { p_scope?: string }
+        Returns: {
+          direction: string
+          helper_id: string
+          helper_latitude: number
+          helper_longitude: number
+          helper_name: string
+          helper_territory_name: string
+          helper_type: string
+          match_id: string
+          need_label: string
+          quest_id: string
+          quest_latitude: number
+          quest_longitude: number
+          quest_territory_name: string
+          quest_title: string
+          reason_en: string
+          reason_fr: string
+          score: number
+        }[]
+      }
       get_profile_emails: {
         Args: { _user_ids: string[] }
         Returns: {

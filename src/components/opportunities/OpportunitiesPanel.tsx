@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, CalendarCheck, Send, Check, Loader2, CircleCheckBig, Shield } from "lucide-react";
+import { Sparkles, HandHeart, Clock, X, ArrowRight, MapPin, Map as MapIcon, CalendarCheck, Send, Check, Loader2, CircleCheckBig, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -64,12 +64,14 @@ const helperUrl = (o: Opportunity) =>
  * - Guild: everything around one guild (its quests, the guild itself, its members).
  * - Quest: who could help this quest.
  */
-export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", initialCount = 5, className }: {
+export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", initialCount = 5, className, asDigest = false, showMapLink = false }: {
   guildId?: string;
   questId?: string;
   defaultScope?: Scope;
   initialCount?: number;
   className?: string;
+  asDigest?: boolean;
+  showMapLink?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
@@ -206,11 +208,14 @@ export function OpportunitiesPanel({ guildId, questId, defaultScope = "me", init
         <div className="min-w-0">
           <h2 className="flex items-center gap-2 text-base font-semibold text-foreground">
             <Sparkles className="h-4 w-4 text-primary" />
-            {questId ? t("matchOpportunities.titleQuest") : guildId ? t("matchOpportunities.titleGuild") : t("matchOpportunities.title")}
+            {questId ? t("matchOpportunities.titleQuest") : guildId ? t("matchOpportunities.titleGuild") : asDigest ? t("matchOpportunities.digestTitle") : t("matchOpportunities.title")}
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">{t("matchOpportunities.subtitle")}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{t(asDigest && !guildId && !questId ? "matchOpportunities.digestSubtitle" : "matchOpportunities.subtitle")}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {showMapLink && !guildId && !questId && (
+            <Button variant="outline" size="sm" asChild><Link to="/opportunities/carte"><MapIcon className="mr-1.5 h-4 w-4" /> {t("matchOpportunities.map")}</Link></Button>
+          )}
           {!guildId && !questId && (
             <div className="inline-flex rounded-lg border border-border bg-background p-0.5" role="tablist">
               {(["me", "guilds", "all"] as Scope[]).map((s) => (

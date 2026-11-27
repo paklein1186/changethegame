@@ -31,7 +31,6 @@ import { useOnboardingProgress } from "@/hooks/useOnboardingProgress";
 import { MilestoneJourney } from "@/components/home/MilestoneJourney";
 import { ModelOverviewSection } from "@/components/home/ModelOverviewSection";
 import { OpportunitiesPanel } from "@/components/opportunities/OpportunitiesPanel";
-import { DemoFeveDigest } from "@/components/demo/DemoFeveDigest";
 
 
 /* ───────── Persona-specific config ───────── */
@@ -326,7 +325,6 @@ export default function HomeFeed() {
   const verb = useRotatingVerb(effectivePersona as PersonaType);
 
   const userName = (authUser?.name || currentUser.name).split(" ")[0];
-  const isDemoMaurice = currentUser.email.toLowerCase() === "demo+maurice@changethegame.xyz";
 
 
   const submitIntent = useCallback(async (text: string, source = "HOME_GUIDED") => {
@@ -513,15 +511,14 @@ export default function HomeFeed() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <OpportunitiesPanel className="mb-5" />
-              <DemoFeveDigest />
-              {!isDemoMaurice && <>
+              <OpportunitiesPanel asDigest showMapLink className="mb-5" />
+              <div>
                 <div className="flex items-center gap-2 mb-3">
                   <h2 className="text-base font-semibold text-foreground">My Task Board</h2>
                   <HintTooltip {...HINTS.tooltips.taskBoard} />
                 </div>
                 <MyTaskBoard userId={currentUser.id} />
-              </>}
+              </div>
             </motion.div>
           )}
           <MilestoneJourney />
@@ -633,15 +630,14 @@ export default function HomeFeed() {
           {currentUser.id &&
           <div className="max-w-[960px] mx-auto px-3 sm:px-4 pb-8 space-y-5 sm:space-y-6">
               <PathwayCards persona={persona} progress={progress} steps={steps} />
-              <OpportunitiesPanel />
-              <DemoFeveDigest />
-              {!isDemoMaurice && <div>
+              <OpportunitiesPanel asDigest showMapLink />
+              <div>
                 <div className="flex items-center gap-2 mb-3">
                   <h2 className="text-base font-semibold text-foreground">My Task Board</h2>
                   <HintTooltip {...HINTS.tooltips.taskBoard} />
                 </div>
                 <MyTaskBoard userId={currentUser.id} />
-              </div>}
+              </div>
               <MilestoneJourney />
               <FollowingActivity />
               <ModelOverviewSection />

@@ -24,4 +24,4 @@ export const isDemoFeveEmail = (email: string | null | undefined) => {
   return value.startsWith("demo+") && value.endsWith("@changethegame.xyz");
 };
 
-export const canViewDemoFeveShowcase = (userId: string | null | undefined) => Boolean(userId);
+export const canViewDemoFeveShowcase = (userId: string | null | undefined, access: boolean) => Boolean(userId && access);
