@@ -11688,6 +11688,17 @@ export type Database = {
         Args: { _evidence: Json }
         Returns: boolean
       }
+      charge_guild_membership_coins: {
+        Args: {
+          p_amount: number
+          p_guild_id: string
+          p_guild_source: string
+          p_tx_type: string
+          p_user_id: string
+          p_user_source: string
+        }
+        Returns: number
+      }
       check_agent_billing: {
         Args: { _agent_id: string; _user_id: string }
         Returns: Json
@@ -11758,6 +11769,48 @@ export type Database = {
       exchange_ctg_to_credits: {
         Args: { p_ctg_amount: number; p_user_id: string }
         Returns: Json
+      }
+      explore_needs: {
+        Args: {
+          p_category?: string
+          p_limit?: number
+          p_offset?: number
+          p_query?: string
+          p_scope?: string
+          p_territory_id?: string
+        }
+        Returns: {
+          category: string
+          created_at: string
+          description: string
+          guild_id: string
+          guild_logo: string
+          guild_name: string
+          is_mine: boolean
+          match_label: string
+          match_owner_name: string
+          match_owner_type: string
+          match_score: number
+          need_id: string
+          owner_id: string
+          owner_name: string
+          quest_cover: string
+          quest_id: string
+          quest_title: string
+          status: string
+          territory_names: string[]
+          title: string
+          total_count: number
+        }[]
+      }
+      explore_needs_territories: {
+        Args: never
+        Returns: {
+          level: string
+          name: string
+          need_count: number
+          territory_id: string
+        }[]
       }
       feed_post_allows: {
         Args: { p_action?: string; p_post_id: string; p_user_id: string }
@@ -12207,6 +12260,17 @@ export type Database = {
           total_released: number
           users_processed: number
         }[]
+      }
+      renew_guild_membership_coins: {
+        Args: {
+          p_amount: number
+          p_expected_period_end: string
+          p_guild_source: string
+          p_interval: string
+          p_membership_id: string
+          p_user_source: string
+        }
+        Returns: Json
       }
       request_opportunity_help: {
         Args: { p_match_id: string; p_message: string }
