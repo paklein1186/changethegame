@@ -80,7 +80,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
   const [entryFeeMax, setEntryFeeMax] = useState<number>(guild.entry_fee_max_credits ?? 0);
   const [joiningFee, setJoiningFee] = useState<number>(guild.joining_fee_credits ?? 0);
   const [priceMode, setPriceMode] = useState<"fixed" | "range">(
-    (guild.billing_model === "monthly"
+    (guild.billing_model === "monthly" || guild.billing_model === "yearly"
       ? Number(guild.monthly_fee_max_credits ?? 0) > Number(guild.monthly_fee_credits ?? 0)
       : Number(guild.entry_fee_max_credits ?? 0) > Number(guild.entry_fee_credits ?? 0))
       ? "range"
@@ -118,7 +118,8 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
   };
 
   const handleSave = async () => {
-    const isMonthly = billingModel === "monthly";
+    // Mensuelle ou annuelle : même champs (montant par période), seule la durée change.
+    const isMonthly = billingModel === "monthly" || billingModel === "yearly";
     const useRange = priceMode === "range";
     const { error } = await supabase
       .from("guilds")
@@ -196,7 +197,8 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="one_time">One-time entry fee</SelectItem>
-                <SelectItem value="monthly">Monthly fee (keeps the member role active)</SelectItem>
+                <SelectItem value="monthly">Monthly fee, renewed automatically</SelectItem>
+                <SelectItem value="yearly">Yearly fee, renewed automatically</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -208,8 +210,9 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
 
           {/* Fee editor — depends on the billing model */}
           {(() => {
-            const isMonthly = billingModel === "monthly";
-            const per = isMonthly ? " / month" : "";
+            const isMonthly = billingModel === "monthly" || billingModel === "yearly";
+            const yearly = billingModel === "yearly";
+            const per = isMonthly ? (yearly ? " / year" : " / month") : "";
             const fee = isMonthly ? monthlyFee : entryFee;
             const feeMax = isMonthly ? monthlyFeeMax : entryFeeMax;
             const setFee = isMonthly ? setMonthlyFee : setEntryFee;
@@ -220,10 +223,12 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
               <div className="rounded-lg border border-border bg-card p-4 space-y-4">
                 <div>
                   <Label className="text-sm font-medium mb-1 block">
-                    {isMonthly ? "Monthly membership price" : "One-time entry price"}
+                    {isMonthly ? (yearly ? "Yearly membership price" : "Monthly membership price") : "One-time entry price"}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Paid in 🟩 Coins{isMonthly ? ", every month, to keep the member role" : " to become a member"}.
+                    Paid in 🟩 Coins{isMonthly
+                      ? `, every ${yearly ? "year" : "month"}, to keep the member role. Renewed automatically from the member's Coins balance, with a reminder email one week before`
+                      : " to become a member"}.
                   </p>
                 </div>
 
@@ -295,7 +300,7 @@ export function GuildMembershipSettingsPanel({ guild, guildId }: Props) {
                       onChange={(e) => setJoiningFee(parseInt(e.target.value) || 0)}
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Charged once, on top of the first monthly payment
+                      Charged once, on top of the first {yearly ? "yearly" : "monthly"} payment
                       {joiningFee > 0 ? ` — about ${toEur(joiningFee)} €` : ""}.
                     </p>
                   </div>

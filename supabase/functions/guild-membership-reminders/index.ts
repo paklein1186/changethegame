@@ -11,13 +11,13 @@ import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { authenticateCronRequest } from "../_shared/cron-auth.ts";
 import { periodEnd } from "../_shared/guild-euro-membership.ts";
+import { BASE_URL, esc, renderBrandEmail, sendBrandEmail } from "../_shared/brand-email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cron-secret",
 };
 
-const BASE_URL = "https://changethegame.xyz";
 const REMIND_DAYS = 7;
 const DAY = 86_400_000;
 
@@ -26,9 +26,6 @@ const log = (step: string, details?: unknown) =>
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-
-const esc = (v: string) =>
-  v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
 const money = (cents: number, currency: string) =>
   (cents / 100).toLocaleString("fr-BE", { style: "currency", currency: currency.toUpperCase(), maximumFractionDigits: 2 });
@@ -58,65 +55,24 @@ interface Reminder {
 }
 
 function buildHtml(name: string, r: Reminder): string {
-  const manage = `${BASE_URL}/guilds/${r.guildId}?cotisation=gerer`;
-  const rhythm = r.interval === "month" ? "mensuelle" : r.interval === "year" ? "annuelle" : "";
-  const amountLine = r.amount
-    ? `<strong>${esc(r.amount)}</strong>${r.paymentMethod ? ` seront prélevés sur ${esc(r.paymentMethod)}` : " seront prélevés sur le moyen de paiement enregistré"}`
-    : r.paymentMethod ? `Le montant sera prélevé sur ${esc(r.paymentMethod)}` : "Le montant sera prélevé sur le moyen de paiement enregistré";
-  return `<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body style="margin:0;padding:0;background:#f5f4fb;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
-    <div style="background:linear-gradient(135deg,hsl(262,83%,58%),hsl(290,70%,58%));border-radius:12px 12px 0 0;padding:20px 28px;">
-      <span style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.9);">changethegame</span>
-    </div>
-    <div style="background:#ffffff;border:1px solid hsl(250,18%,90%);border-top:none;border-radius:0 0 12px 12px;padding:32px 28px;">
-      <h1 style="font-size:22px;font-weight:700;color:hsl(250,30%,8%);margin:0 0 12px;">${name ? `Bonjour ${esc(name)},` : "Bonjour,"}</h1>
-      <p style="font-size:15px;line-height:1.6;color:hsl(250,12%,36%);margin:0 0 20px;">
-        Votre cotisation ${rhythm} à <strong>${esc(r.guildName)}</strong> se renouvelle automatiquement le <strong>${esc(r.renewsOn)}</strong>.
-      </p>
-      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 24px;background:hsl(250,30%,98%);border:1px solid hsl(250,18%,90%);border-radius:8px;">
-        <tr><td style="padding:12px 16px;font-size:14px;color:hsl(250,12%,36%);">Formule</td><td style="padding:12px 16px;font-size:14px;color:hsl(250,30%,8%);text-align:right;">${esc(r.planLabel)}</td></tr>
-        <tr><td colspan="2" style="padding:0 16px 12px;font-size:14px;line-height:1.5;color:hsl(250,30%,8%);">${amountLine} le ${esc(r.renewsOn)}.</td></tr>
-      </table>
-      <p style="font-size:15px;line-height:1.6;color:hsl(250,12%,36%);margin:0 0 20px;">
-        Vous n'avez rien à faire pour rester adhérent. Pour changer de carte ou arrêter le renouvellement, c'est ici :
-      </p>
-      <a href="${manage}" style="display:inline-block;background:hsl(262,83%,58%);color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Gérer ma cotisation</a>
-      <hr style="border:none;border-top:1px solid hsl(250,18%,90%);margin:32px 0 20px;" />
-      <p style="font-size:12px;color:hsl(250,12%,46%);line-height:1.6;margin:0;">
-        Vous recevez cet e-mail parce que vous avez une cotisation active à ${esc(r.guildName)}. Si vous arrêtez le renouvellement, votre adhésion reste valable jusqu'au ${esc(r.renewsOn)}.
-      </p>
-    </div>
-    <p style="text-align:center;font-size:11px;color:hsl(250,12%,46%);margin-top:16px;">
-      <a href="${BASE_URL}" style="color:hsl(250,12%,46%);">changethegame.xyz</a>
-    </p>
-  </div>
-</body>
-</html>`;
-}
-
-async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
-  const key = Deno.env.get("RESEND_API_KEY");
-  if (!key) {
-    log("RESEND_API_KEY absent : e-mail non envoyé");
-    return false;
-  }
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: "changethegame <hello@changethegame.xyz>", to: [to], subject, html }),
+  const rhythm = r.interval === "month" ? "mensuelle " : r.interval === "year" ? "annuelle " : "";
+  const how = r.paymentMethod ? `sur ${r.paymentMethod}` : "sur le moyen de paiement enregistré";
+  return renderBrandEmail({
+    lang: "fr",
+    heading: name ? `Bonjour ${name},` : "Bonjour,",
+    paragraphs: [
+      `Votre cotisation ${rhythm}à <strong>${esc(r.guildName)}</strong> se renouvelle automatiquement le <strong>${esc(r.renewsOn)}</strong>.`,
+      "Vous n'avez rien à faire pour rester adhérent. Pour changer de carte ou arrêter le renouvellement, c'est ici :",
+    ],
+    details: [
+      ["Formule", r.planLabel],
+      ["Montant", r.amount ?? "inchangé"],
+      ["Prélevé le", r.renewsOn],
+      ["Moyen de paiement", how.replace(/^sur /, "")],
+    ],
+    cta: { label: "Gérer ma cotisation", url: `${BASE_URL}/guilds/${r.guildId}?cotisation=gerer` },
+    footer: `Vous recevez cet e-mail parce que vous avez une cotisation active à ${esc(r.guildName)}. Si vous arrêtez le renouvellement, votre adhésion reste valable jusqu'au ${esc(r.renewsOn)}.`,
   });
-  if (!res.ok) {
-    log("Resend error", { status: res.status, body: (await res.text()).slice(0, 300) });
-    return false;
-  }
-  return true;
 }
 
 serve(async (req) => {
@@ -236,7 +192,7 @@ serve(async (req) => {
 
       let emailed = false;
       if (profile?.email) {
-        emailed = await sendEmail(
+        emailed = await sendBrandEmail(
           profile.email,
           `Votre cotisation à ${guild.name} se renouvelle le ${reminder.renewsOn}`,
           buildHtml(String(profile.name ?? "").trim(), reminder),

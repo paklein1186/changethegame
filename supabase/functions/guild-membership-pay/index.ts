@@ -48,7 +48,10 @@ serve(async (req) => {
     if (!guild) return fail("Guild not found", 404);
     if (!guild.enable_membership) return fail("This guild has not enabled membership yet.");
 
-    const monthly = guild.billing_model === "monthly";
+    // Formules récurrentes : mensuelle ou annuelle. Le montant par période est dans monthly_fee_credits (nom historique).
+    const interval: "month" | "year" | null =
+      guild.billing_model === "monthly" ? "month" : guild.billing_model === "yearly" ? "year" : null;
+    const monthly = interval !== null;
 
     const { data: membership } = await admin
       .from("user_guild_memberships")
@@ -99,54 +102,22 @@ serve(async (req) => {
 
     if (!amount || amount <= 0) return fail("No membership fee is configured for this guild.");
 
-    // Debit the user (membership fees are paid in Coins)
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("coins_balance, name")
-      .eq("user_id", userId)
-      .maybeSingle();
+    // Débit atomique (solde suffisant vérifié dans la même requête) et crédit de la guilde dans la même transaction.
+    const { data: profile } = await admin.from("profiles").select("name").eq("user_id", userId).maybeSingle();
     if (!profile) return fail("Profile not found", 404);
-
-    const balance = Number(profile.coins_balance ?? 0);
-    if (balance < amount) return fail(`Not enough Coins. You need ${amount} Coins.`, 402);
-
-    await admin.from("profiles").update({ coins_balance: balance - amount }).eq("user_id", userId);
-
-    await admin.from("coin_transactions").insert({
-      user_id: userId,
-      type: "GUILD_MEMBERSHIP",
-      amount: -amount,
-      source: monthly
-        ? `Monthly membership – ${guild.name}${joiningFee ? " (incl. joining fee)" : ""}`
+    const label = interval === "year" ? "Yearly" : "Monthly";
+    const { data: newBalance, error: chargeError } = await admin.rpc("charge_guild_membership_coins", {
+      p_user_id: userId,
+      p_guild_id: guildId,
+      p_amount: amount,
+      p_tx_type: monthly ? (interval === "year" ? "MEMBERSHIP_YEARLY" : "MEMBERSHIP_MONTHLY") : "MEMBERSHIP_ENTRY",
+      p_user_source: monthly
+        ? `${label} membership – ${guild.name}${joiningFee ? " (incl. joining fee)" : ""}`
         : `Membership entry fee – ${guild.name}`,
-      related_entity_type: "guild",
-      related_entity_id: guildId,
+      p_guild_source: `${profile.name ?? "A member"} paid ${amount} Coins`,
     });
-
-    // Credit the guild wallet (Coins)
-    const { data: wallet } = await admin
-      .from("guild_wallets")
-      .select("id, coins_balance")
-      .eq("guild_id", guildId)
-      .maybeSingle();
-
-    if (wallet) {
-      await admin
-        .from("guild_wallets")
-        .update({ coins_balance: Number(wallet.coins_balance ?? 0) + amount })
-        .eq("id", wallet.id);
-    } else {
-      await admin.from("guild_wallets").insert({ guild_id: guildId, coins_balance: amount });
-    }
-
-    await admin.from("guild_credit_transactions").insert({
-      guild_id: guildId,
-      user_id: userId,
-      amount,
-      currency: "coins",
-      type: monthly ? "MEMBERSHIP_MONTHLY" : "MEMBERSHIP_ENTRY",
-      source: `${profile.name ?? "A member"} paid ${amount} Coins`,
-    });
+    if (chargeError) throw chargeError;
+    if (newBalance === null) return fail(`Not enough Coins. You need ${amount} Coins.`, 402);
 
     // Membership period
     const now = new Date();
@@ -156,7 +127,7 @@ serve(async (req) => {
         membership?.current_period_end && new Date(membership.current_period_end) > now
           ? new Date(membership.current_period_end)
           : now;
-      base.setMonth(base.getMonth() + 1);
+      base.setMonth(base.getMonth() + (interval === "year" ? 12 : 1));
       periodEnd = base.toISOString();
     } else if (guild.membership_duration_months) {
       const d = new Date(now);
@@ -211,7 +182,7 @@ serve(async (req) => {
     log("Payment completed", { userId, guildId, amount });
 
     return new Response(
-      JSON.stringify({ ok: true, amount, current_period_end: periodEnd, new_balance: balance - amount }),
+      JSON.stringify({ ok: true, amount, current_period_end: periodEnd, new_balance: Number(newBalance) }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {

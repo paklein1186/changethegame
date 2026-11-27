@@ -46,7 +46,10 @@ export function GuildMembershipCard({ guild }: Props) {
 
   if (!guild.enable_membership) return null;
 
-  const monthly = guild.billing_model === "monthly";
+  // « monthly » désigne ici toute formule récurrente (mensuelle ou annuelle) ; `period` donne le mot affiché.
+  const yearly = guild.billing_model === "yearly";
+  const monthly = guild.billing_model === "monthly" || yearly;
+  const period = yearly ? "year" : "month";
   const joiningFee = Number(guild.joining_fee_credits ?? 0);
   const recurringFee = Number(guild.monthly_fee_credits ?? 0);
   const oneTimeFee = Number(guild.entry_fee_credits ?? 0);
@@ -68,6 +71,15 @@ export function GuildMembershipCard({ guild }: Props) {
   const blockedByApproval = needsApproval && !approved && !isCreator;
 
   const periodEnd = membership?.current_period_end ?? membership?.membership_expires_at;
+  // Montant du prochain renouvellement : celui choisi par le membre dans la fourchette, sinon le prix fixe.
+  const renewalFee = isRange
+    ? Math.min(Math.max(Number(membership?.chosen_fee_credits ?? 0) || minFee, minFee), maxFee)
+    : minFee;
+  const renewalShort =
+    monthly && !membership?.cancel_at_period_end && coinsBalance !== undefined && renewalFee > 0 && coinsBalance < renewalFee;
+  const graceEnd = membership?.status === "grace" && periodEnd
+    ? new Date(new Date(periodEnd).getTime() + 7 * 86_400_000).toISOString()
+    : null;
   const formatDate = (d: string) => new Date(d).toLocaleDateString();
 
   const handleBecomeMember = async () => {
@@ -80,7 +92,7 @@ export function GuildMembershipCard({ guild }: Props) {
     isRange ? (
       <div className="space-y-1.5 rounded-lg border border-border bg-muted/30 p-2.5">
         <p className="text-xs text-foreground">
-          Choose what you pay{monthly ? " each month" : ""}: <strong>🟩 {chosenFee} Coins</strong> (~{toEur(chosenFee)} €)
+          Choose what you pay{monthly ? ` each ${period}` : ""}: <strong>🟩 {chosenFee} Coins</strong> (~{toEur(chosenFee)} €)
         </p>
         <Slider
           value={[chosenFee]}
@@ -97,7 +109,7 @@ export function GuildMembershipCard({ guild }: Props) {
     ) : null;
 
   const payLabel = monthly
-    ? `Become Member (${dueNow} Coins / month${firstPayment && joiningFee ? ", incl. joining fee" : ""})`
+    ? `Become Member (${dueNow} Coins / ${period}${firstPayment && joiningFee ? ", incl. joining fee" : ""})`
     : `Become Member (${dueNow} Coins)`;
 
   const notEnoughCoins = dueNow > 0 && coinsBalance !== undefined && coinsBalance < dueNow;
@@ -159,9 +171,9 @@ export function GuildMembershipCard({ guild }: Props) {
               <span>
                 {monthly ? (
                   <>
-                    Monthly fee:{" "}
+                    {yearly ? "Yearly" : "Monthly"} fee:{" "}
                     <strong className="text-foreground">
-                      🟩 {isRange ? `${minFee} – ${maxFee}` : recurringFee} Coins / month
+                      🟩 {isRange ? `${minFee} – ${maxFee}` : recurringFee} Coins / {period}
                     </strong>{" "}
                     (~{toEur(minFee)} €{isRange ? ` – ${toEur(maxFee)} €` : ""})
                     {joiningFee > 0 && (
@@ -238,6 +250,19 @@ export function GuildMembershipCard({ guild }: Props) {
                     : `Valid until ${formatDate(periodEnd)}`}
                 </p>
               )}
+              {monthly && !membership?.cancel_at_period_end && periodEnd && (
+                <p className="text-[11px] text-muted-foreground">
+                  🟩 {renewalFee} Coins will be taken from your balance on {formatDate(periodEnd)}. You get a reminder email one week before.
+                </p>
+              )}
+              {renewalShort && (
+                <p className="text-xs text-destructive">
+                  {membership?.status === "grace"
+                    ? `Renewal failed: you need 🟩 ${renewalFee} Coins and have ${coinsBalance}. Top up before ${graceEnd ? formatDate(graceEnd) : "the end of the grace period"} to stay a member.`
+                    : `Your balance (🟩 ${coinsBalance}) is below the next renewal (🟩 ${renewalFee}).`}{" "}
+                  <Link to="/settings/wallet" className="underline underline-offset-2">Top up your wallet</Link>
+                </p>
+              )}
               {membership?.last_payment_at && (
                 <p className="text-[11px] text-muted-foreground">
                   Last payment: {formatDate(membership.last_payment_at)}
@@ -250,7 +275,7 @@ export function GuildMembershipCard({ guild }: Props) {
                   className="w-full"
                   onClick={() => cancelRenewal(!membership?.cancel_at_period_end)}
                 >
-                  {membership?.cancel_at_period_end ? "Reactivate monthly renewal" : "Stop monthly renewal"}
+                  {membership?.cancel_at_period_end ? "Reactivate automatic renewal" : "Stop automatic renewal"}
                 </Button>
               )}
             </div>

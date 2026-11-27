@@ -18,6 +18,7 @@ export type GuildMembershipRow = {
   /** Cotisation en euros : renseignés pour le payeur seulement. */
   stripe_customer_id?: string | null;
   payer_user_id?: string | null;
+  chosen_fee_credits?: number | null;
 };
 
 type GuildLike = {
@@ -36,7 +37,9 @@ export function isActiveMember(
   if (membership.status && !["active", "grace"].includes(membership.status)) return false;
   const end = membership.current_period_end ?? membership.membership_expires_at;
   if (!end) return true;
-  return new Date(end) > new Date();
+  // Renouvellement en Coins refusé faute de solde : le membre garde ses droits pendant 7 jours de grâce.
+  const graceMs = membership.status === "grace" ? 7 * 86_400_000 : 0;
+  return new Date(end).getTime() + graceMs > Date.now();
 }
 
 export function canCreateGuildQuest(

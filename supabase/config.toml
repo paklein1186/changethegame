@@ -153,6 +153,9 @@ verify_jwt = false
 [functions.guild-membership-reminders]
 verify_jwt = false
 
+[functions.guild-membership-renew]
+verify_jwt = false
+
 [functions.opportunity-engine]
 verify_jwt = false
 
