@@ -214,16 +214,18 @@ export function WorkTasksTab() {
     queryKey: ["my-units-for-quest", userId],
     queryFn: async () => {
       const units: UnitOption[] = [];
-      const { data: guildMemberships } = await supabase
-        .from("guild_members").select("guild_id, role").eq("user_id", userId);
+      const [guildMembershipResult, companyMembershipResult] = await Promise.all([
+        supabase.from("guild_members").select("guild_id, role").eq("user_id", userId),
+        supabase.from("company_members").select("company_id").eq("user_id", userId),
+      ]);
+      const guildMemberships = guildMembershipResult.data;
+      const companyMemberships = companyMembershipResult.data;
       if (guildMemberships && guildMemberships.length > 0) {
         const guildIds = guildMemberships.map((gm) => gm.guild_id);
         const { data: guilds } = await supabase
           .from("guilds").select("id, name, logo_url").in("id", guildIds).eq("is_deleted", false);
         for (const g of guilds || []) units.push({ id: g.id, name: g.name, type: "GUILD", logo_url: g.logo_url });
       }
-      const { data: companyMemberships } = await supabase
-        .from("company_members").select("company_id").eq("user_id", userId);
       if (companyMemberships && companyMemberships.length > 0) {
         const companyIds = companyMemberships.map((cm) => cm.company_id);
         const { data: companies } = await supabase
@@ -233,6 +235,7 @@ export function WorkTasksTab() {
       return units;
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 
   // Fetch task assignees with profile info
